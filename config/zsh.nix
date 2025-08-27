@@ -1,0 +1,150 @@
+{ config, pkgs, ... }:
+
+{
+  home.shell.enableZshIntegration = true;
+
+  home.packages = with pkgs; [
+    eza          # better ls
+    bat          # better cat
+    fd           # better find
+    ripgrep      # better grep
+  ];
+
+  programs.zsh = {
+    enable = true;
+    defaultKeymap = "viins";
+    dotDir = "${config.xdg.configHome}/zsh";
+    history = {
+      size = 10000;
+      save = 10000;
+      path = "${config.xdg.dataHome}/zsh/history";
+      ignoreAllDups = true;
+      ignoreSpace = true;
+      expireDuplicatesFirst = true;
+      share = true;
+      extended = true;
+    };
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    enableCompletion = true;
+    completionInit = ''
+      # Add Nix-installed completions to fpath
+      if [[ -n "''${NIX_PROFILES:-}" ]]; then
+        for profile in ''${(z)NIX_PROFILES}; do
+          if [[ -d "$profile/share/zsh/site-functions" ]]; then
+            fpath=("$profile/share/zsh/site-functions" $fpath)
+          fi
+        done
+      fi
+      
+      # Add Home Manager completions
+      if [[ -d "${config.home.profileDirectory}/share/zsh/site-functions" ]]; then
+        fpath=("${config.home.profileDirectory}/share/zsh/site-functions" $fpath)
+      fi
+
+      autoload -Uz compinit
+      compinit -C
+      zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+      zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+      zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+      '';
+    initContent = ''
+      # Vi mode keybindings
+      bindkey -M vicmd 'H' beginning-of-line
+      bindkey -M vicmd 'L' end-of-line
+      bindkey '^p' history-search-backward
+      bindkey '^n' history-search-forward
+      bindkey '^y' autosuggest-accept
+
+      # FZF custom completion functions
+      # Use fd for path completion
+      _fzf_compgen_path() {
+        fd --hidden --exclude .git . "$1"
+      }
+      
+      # Use fd for directory completion
+      _fzf_compgen_dir() {
+        fd --type=d --hidden --exclude .git . "$1"
+      }
+      
+      # Advanced customization of fzf options via _fzf_comprun function
+      _fzf_comprun() {
+        local command=$1
+        shift
+        
+        case "$command" in
+          cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+          export|unset) fzf --preview "eval 'echo \''${}" "$@" ;;
+          ssh)          fzf --preview 'dig {}'                   "$@" ;;
+          *)            fzf --preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi' "$@" ;;
+        esac
+      }
+      
+      # Yazi file manager with directory change
+      function e() {
+        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+        yazi "$@" --cwd-file="$tmp"
+        if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+          builtin cd -- "$cwd"
+        fi
+        rm -f -- "$tmp"
+      }
+      
+      # Lazygit with directory change
+      G() {
+        export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
+        lazygit "$@"
+        if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
+          cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
+          rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
+        fi
+      }
+    '';
+    shellAliases = {
+      hms = "home-manager switch --flake ~/nix-dotfiles#chenxinyan";
+      # File operations
+      ls = "eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
+      ll = "eza -ah --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
+      tree = "eza -TL 3 --color=always --icons=always --git";
+      cat = "bat";
+      
+      v = "nvim";
+      c = "clear";
+    };
+
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+    options = [ "--cmd cd" ];
+  }; # better cd
+
+  programs.carapace = {
+    enable = true;
+    enableZshIntegration = true;
+  }; # completion
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    
+    # defaultOptions = [
+    #   "--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8"
+    #   "--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc"
+    #   "--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
+    # ];
+    
+    defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
+    fileWidgetCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
+    changeDirWidgetCommand = "fd --type=d --hidden --strip-cwd-prefix --exclude .git";
+    
+    fileWidgetOptions = [
+      "--preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'"
+    ];
+    
+    changeDirWidgetOptions = [
+      "--preview 'eza --tree --color=always {} | head -200'"
+    ];
+  };
+}

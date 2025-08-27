@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 
 {
+  imports = [
+    ./config/zsh.nix
+  ];
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "chenxinyan";
@@ -23,7 +27,6 @@
     nerd-fonts.jetbrains-mono
 
     btop
-    ripgrep
     lazygit
     neovim
   ];
@@ -117,4 +120,19 @@
   };
 
   programs.gh-dash.enable = true;
+
+  # SSH client configuration
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    matchBlocks = {
+      "github.com" = {
+        addKeysToAgent = "yes";
+        identityFile = "~/.ssh/id_ed25519";
+      };
+    };
+  };
+
+  # SSH agent service
+  services.ssh-agent.enable = true;
 }
