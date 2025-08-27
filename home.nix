@@ -11,6 +11,9 @@
     zsh-syntax-highlighting.enable = false;
   };
 
+  nixpkgs.config.allowUnfree = true;
+
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "chenxinyan";
@@ -33,6 +36,9 @@
     nerd-fonts.jetbrains-mono
 
     neovim
+    curlie
+    rainfrog
+    claude-code
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
