@@ -5,6 +5,12 @@
     ./config/zsh.nix
   ];
 
+  catppuccin = {
+    enable = true;
+    flavor = "mocha"; 
+    zsh-syntax-highlighting.enable = false;
+  };
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "chenxinyan";
@@ -26,8 +32,6 @@
   home.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
 
-    btop
-    lazygit
     neovim
   ];
 
@@ -68,6 +72,13 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  programs.btop = {
+    enable = true;
+    settings = {
+      vim_keys = true;
+    };
+  };
 
   programs.git = {
     enable = true;
@@ -120,6 +131,8 @@
   };
 
   programs.gh-dash.enable = true;
+
+  programs.lazygit.enable = true;
 
   # SSH client configuration
   programs.ssh = {
