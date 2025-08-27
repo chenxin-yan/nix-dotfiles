@@ -147,4 +147,113 @@
       "--preview 'eza --tree --color=always {} | head -200'"
     ];
   };
+  programs.oh-my-posh = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      version = 3;
+      final_space = true;
+      
+      palette = {
+        blue = "#89B4FA";
+        closer = "p:os";
+        lavender = "#B4BEFE";
+        os = "#ACB0BE";
+        pink = "#F5C2E7";
+        yellow = "#f9e2af";
+      };
+      
+      secondary_prompt = {
+        template = " ";
+        foreground = "p:closer";
+      };
+      
+      transient_prompt = {
+        template = " ";
+        foreground_templates = [
+          "{{if gt .Code 0}}p:pink{{end}}"
+          "{{if eq .Code 0}}p:closer{{end}}"
+        ];
+      };
+      
+      blocks = [
+        {
+          type = "prompt";
+          alignment = "left";
+          newline = true;
+          segments = [
+            {
+              template = "{{ .Path }} ";
+              foreground = "p:pink";
+              type = "path";
+              style = "plain";
+              properties = {
+                folder_icon = "....";
+                home_icon = "~";
+                style = "agnoster_short";
+              };
+            }
+            {
+              template = "{{ .HEAD }} ";
+              foreground = "p:lavender";
+              type = "git";
+              style = "plain";
+              properties = {
+                branch_icon = " ";
+                cherry_pick_icon = " ";
+                commit_icon = " ";
+                fetch_status = false;
+                fetch_upstream_icon = false;
+                merge_icon = " ";
+                no_commits_icon = " ";
+                rebase_icon = " ";
+                revert_icon = " ";
+                tag_icon = " ";
+              };
+            }
+	    {
+              template = "(nix-{{ .Type }})";
+              foreground = "p:blue";
+              type = "nix-shell";
+              style = "plain";
+            }
+          ];
+        }
+        {
+          type = "rprompt";
+          overflow = "hidden";
+          segments = [
+            {
+              template = "{{ .FormattedMs }}";
+              foreground = "p:yellow";
+              type = "executiontime";
+              style = "plain";
+            }
+            {
+              type = "project";
+              template = " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }} {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} ";
+              foreground = "p:blue";
+              style = "plain";
+            }
+          ];
+        }
+        {
+          type = "prompt";
+          alignment = "left";
+          newline = true;
+          segments = [
+            {
+              template = "";
+              type = "text";
+              style = "plain";
+              foreground_templates = [
+                "{{if gt .Code 0}}p:pink{{end}}"
+                "{{if eq .Code 0}}p:closer{{end}}"
+              ];
+            }
+          ];
+        }
+      ];
+    };
+  };
 }
