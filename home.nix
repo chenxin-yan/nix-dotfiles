@@ -99,9 +99,16 @@
   # Keychain service for SSH key management
   programs.keychain = {
     enable = true;
+    enableZshIntegration = true;
     keys = [ "id_ed25519" ];
   };
 
   # SSH agent service
   services.ssh-agent.enable = true;
+
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
 }
