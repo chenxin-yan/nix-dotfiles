@@ -15,7 +15,8 @@ vim.keymap.del('n', '<c-w>d')
 vim.keymap.del('n', '<c-w><c-d>')
 
 --  deleting/paste without yanking the deleted text into the register
-vim.keymap.set('x', '<leader>p', '"_dP', { desc = 'Paste in without yanking selected text' })
+vim.keymap.set('x', 'p', '"_dP', { desc = 'Paste in without yanking selected text' })
+vim.keymap.set('x', '<leader>p', 'p', { desc = 'Paste in and yank selected text' })
 vim.keymap.set({ 'n', 'x' }, 'x', '"_x', { desc = 'Delete without yanking' })
 
 -- Keybinds to make split navigation easier.
