@@ -17,7 +17,9 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
-    { import = "cyan.plugins.core" },
+    { import = "cyan.plugins.editor" },
     { import = "cyan.plugins.ui" },
+    { import = "cyan.plugins.coding" },
+    { import = "cyan.plugins.extras" },
   },
 })
