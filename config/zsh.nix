@@ -9,6 +9,12 @@
     ripgrep      # better grep
   ];
 
+  home.file = {
+    # yazi config
+    ".config/yazi/yazi.toml".source = yazi/yazi.toml;
+    ".config/yazi/keymap.toml".source = yazi/keymap.toml;
+  };
+
   programs.zsh = {
     enable = true;
     defaultKeymap = "viins";
@@ -100,7 +106,7 @@
       }
     '';
     shellAliases = {
-      hms = "home-manager switch --flake ~/nix-dotfiles#chenxinyan";
+      hms = "home-manager switch --flake ~/dotfiles#chenxinyan";
       # File operations
       ls = "eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
       ll = "eza -ah --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
@@ -144,6 +150,7 @@
       "--preview 'eza --tree --color=always {} | head -200'"
     ];
   };
+
   programs.oh-my-posh = {
     enable = true;
     enableZshIntegration = true;
@@ -252,5 +259,10 @@
         }
       ];
     };
+  };
+
+  programs.yazi = {
+    enable = true;
+    enableZshIntegration = true;
   };
 }

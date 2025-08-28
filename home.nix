@@ -8,6 +8,7 @@
   catppuccin = {
     enable = true;
     flavor = "mocha"; 
+    accent = "lavender";
     zsh-syntax-highlighting.enable = false;
   };
 
@@ -36,9 +37,11 @@
     nerd-fonts.jetbrains-mono
 
     neovim
+    tlrc
     curlie
     rainfrog
     claude-code
+    opencode
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
