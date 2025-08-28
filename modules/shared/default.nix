@@ -4,5 +4,6 @@
   imports = [
     ./git
     ./zsh
+    ./yazi
   ];
 }

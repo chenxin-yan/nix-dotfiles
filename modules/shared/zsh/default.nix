@@ -9,12 +9,6 @@
     ripgrep      # better grep
   ];
 
-  home.file = {
-    # yazi config
-    ".config/yazi/yazi.toml".source = yazi/yazi.toml;
-    ".config/yazi/keymap.toml".source = yazi/keymap.toml;
-  };
-
   programs.zsh = {
     enable = true;
     defaultKeymap = "viins";
@@ -48,6 +42,7 @@
       fi
 
       autoload -Uz compinit
+      compinit -C
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
       zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
       zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
@@ -214,12 +209,6 @@
                 tag_icon = " ";
               };
             }
-	    {
-              template = "(nix-{{ .Type }})";
-              foreground = "p:blue";
-              type = "nix-shell";
-              style = "plain";
-            }
           ];
         }
         {
@@ -230,6 +219,12 @@
               template = "{{ .FormattedMs }}";
               foreground = "p:yellow";
               type = "executiontime";
+              style = "plain";
+            }
+	    {
+              type = "nix-shell";
+              template = " 󱄅 {{ .Type }}";
+              foreground = "p:blue";
               style = "plain";
             }
             {
@@ -258,10 +253,5 @@
         }
       ];
     };
-  };
-
-  programs.yazi = {
-    enable = true;
-    enableZshIntegration = true;
   };
 }
