@@ -1,10 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  imports = [
-    modules/shared
-  ];
-
   catppuccin = {
     enable = true;
     flavor = "mocha"; 
@@ -36,7 +32,6 @@
   home.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
 
-    neovim
     tlrc
     curlie
     rainfrog
@@ -99,6 +94,12 @@
         identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
       };
     };
+  };
+
+  # Keychain service for SSH key management
+  programs.keychain = {
+    enable = true;
+    keys = [ "id_ed25519" ];
   };
 
   # SSH agent service

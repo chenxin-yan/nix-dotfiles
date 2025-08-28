@@ -5,5 +5,6 @@
     ./git
     ./zsh
     ./yazi
+    ./nvim
   ];
 }

@@ -8,7 +8,6 @@
 in
 {
   home.file = {
-    # yazi config
     ".config/yazi/yazi.toml".source = ./config/yazi.toml;
     ".config/yazi/keymap.toml".source = ./config/keymap.toml;
   };

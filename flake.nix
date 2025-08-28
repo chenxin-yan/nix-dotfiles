@@ -25,6 +25,7 @@
         # the path to your home.nix.
         modules = [ 
 	  ./home.nix
+	  ./modules/shared
 	  catppuccin.homeModules.catppuccin
 	];
 
