@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./config/zsh.nix
+    modules/shared/zsh
   ];
 
   catppuccin = {
