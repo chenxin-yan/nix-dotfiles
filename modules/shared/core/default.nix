@@ -2,7 +2,9 @@
 
 {
   imports = [
-    ./core
+    ./git
+    ./zsh
+    ./yazi
+    ./nvim
   ];
 }
-
