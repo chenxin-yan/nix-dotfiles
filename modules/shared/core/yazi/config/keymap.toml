@@ -15,8 +15,6 @@ keymap = [
 
 	{ on = "<C-u>", run = "arrow -50%",  desc = "Move cursor up half page" },
 	{ on = "<C-d>", run = "arrow 50%",   desc = "Move cursor down half page" },
-	{ on = "<C-b>", run = "arrow -100%", desc = "Move cursor up one page" },
-	{ on = "<C-f>", run = "arrow 100%",  desc = "Move cursor down one page" },
 
 	{ on = [ "g", "g" ], run = "arrow top", desc = "Go to top" },
 	{ on = "G",          run = "arrow bot", desc = "Go to bottom" },
