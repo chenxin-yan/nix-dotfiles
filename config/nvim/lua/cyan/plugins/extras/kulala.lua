@@ -1,4 +1,11 @@
 return {
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = { "http", "graphql" },
+    },
+  },
+  {
   'mistweaverco/kulala.nvim',
   ft = 'http',
   init = function()
@@ -9,5 +16,5 @@ return {
     }
   end,
   opts = {},
+  }
 }
-

@@ -10,6 +10,7 @@ return {
       { '<leader>c', group = 'Code', mode = { 'n', 'x' } },
       { '<leader>x', group = 'Diagnostic/QuickFix' },
       { '<leader>t', group = 'Testing' },
+      { '<leader>dp', group = '+Debug Print' },
       { '<leader>d', group = 'Debug' },
       { '<leader>s', group = 'Search' },
       { '<leader>r', group = 'Refactor', mode = { 'n', 'x' } },

@@ -14,7 +14,15 @@ return {
         snacks = {
           enabled = true,
           indent_scope_color = "lavender", -- catppuccin color (eg. `lavender`) Default: text
-        }
+        },
+        noice = true,
+        grug_far = true,
+        lsp_trouble = true,
+        which_key = true,
+        mason = true,
+        blink_cmp = true,
+        gitgraph = true,
+        octo = true,
       },
     },
 }
