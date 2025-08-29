@@ -2,8 +2,7 @@
 
 {
   imports = [
-    ./core
-    ./dev
+    ./lua
+    ./nix
   ];
 }
-
