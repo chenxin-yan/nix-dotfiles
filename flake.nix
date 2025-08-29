@@ -12,7 +12,12 @@
   };
 
   outputs =
-    { nixpkgs, catppuccin, home-manager, ... }:
+    {
+      nixpkgs,
+      catppuccin,
+      home-manager,
+      ...
+    }:
     let
       system = "aarch64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
@@ -23,11 +28,11 @@
 
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
-        modules = [ 
-	  ./home.nix
-	  ./modules/shared
-	  catppuccin.homeModules.catppuccin
-	];
+        modules = [
+          ./home.nix
+          ./modules/shared
+          catppuccin.homeModules.catppuccin
+        ];
 
         # Optionally use extraSpecialArgs
         # to pass through arguments to home.nix

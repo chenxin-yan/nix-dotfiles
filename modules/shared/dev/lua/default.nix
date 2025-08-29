@@ -2,7 +2,7 @@
 
 {
   home.packages = with pkgs; [
-    pkgs.lua-language-server
-    pkgs.stylua
+    lua-language-server
+    stylua
   ];
 }
