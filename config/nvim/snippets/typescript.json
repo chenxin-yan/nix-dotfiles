@@ -1,0 +1,6 @@
+{
+  "ed": {
+    "body": "export default $0;",
+    "prefix": "ed"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "doc-meta": {
+    "body": [
+      "---",
+      "title: \"${1}\"",
+      "author: [Chenxin Yan]",
+      "date: \"${2}\"",
+      "---"
+    ],
+    "prefix": "doc-meta"
+  }
+}

@@ -18,6 +18,7 @@ return {
       { '<leader>g', group = 'Git' },
       { '<leader>h', group = 'Hunk', mode = { 'n', 'x' }, icon = " "},
       { '<leader>b', group = 'Buffer' },
+      { '<leader>S', group = 'Snippet' },
     },
     plugins = {
       spelling = {
