@@ -1,7 +1,7 @@
 return {
   'folke/snacks.nvim',
   priority = 1000,
-  fazy = false,
+  lazy = false,
   opts = {
     notifier = {
       enabled = true,

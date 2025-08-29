@@ -1,4 +1,5 @@
 return {
-    'NMAC427/guess-indent.nvim',
-    event = { 'BufReadPre', 'BufNewFile' },
+  'NMAC427/guess-indent.nvim',
+  cmd = 'GuessIndent',
+  event = { 'BufReadPre', 'BufNewFile' },
 }
