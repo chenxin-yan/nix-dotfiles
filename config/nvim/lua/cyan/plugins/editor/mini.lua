@@ -23,6 +23,7 @@ return { -- Collection of various small independent plugins/modules
         ['='] = ai.gen_spec.treesitter { a = '@assignment.outer', i = '@assignment.inner' }, -- assignment
       },
     }
+
     -- Add/delete/replace surroundings (brackets, quotes, etc.)
     require('mini.surround').setup {
       mappings = {

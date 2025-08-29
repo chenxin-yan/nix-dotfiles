@@ -12,12 +12,17 @@ return {
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     opts = {
       ensure_installed = {
-        'bash',
-        'regex',
-        'diff',
-        'vim',
-        'vimdoc',
-        'xml',
+        "bash",
+        "diff",
+        "lua",
+        "luadoc",
+        "luap",
+        "printf",
+        "query",
+        "regex",
+        "vim",
+        "vimdoc",
+        "xml",
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -85,6 +90,7 @@ return {
           },
         },
       },
+      additional_vim_regex_highlighting = false
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`

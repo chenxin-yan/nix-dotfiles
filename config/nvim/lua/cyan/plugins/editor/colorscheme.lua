@@ -23,6 +23,9 @@ return {
         blink_cmp = true,
         gitgraph = true,
         octo = true,
+        mini = {
+          enabled = true
+        }
       },
     },
 }
