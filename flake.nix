@@ -9,33 +9,49 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-darwin.url = "github:nix-darwin/nix-darwin/master";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
-    {
+    inputs@{
       nixpkgs,
       catppuccin,
       home-manager,
+      nix-darwin,
       ...
     }:
-    let
-      system = "aarch64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
     {
-      homeConfigurations."chenxinyan" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-
-        # Specify your home configuration modules here, for example,
-        # the path to your home.nix.
+      homeConfigurations."chenxinyan@linux" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.aarch64-linux;
         modules = [
-          ./home.nix
+          ./hosts/linux/home.nix
           ./modules/shared
           catppuccin.homeModules.catppuccin
         ];
+      };
 
-        # Optionally use extraSpecialArgs
-        # to pass through arguments to home.nix
+      darwinConfigurations."chenxinyan@darwin" = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        modules = [
+          ./hosts/darwin/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.yanchenxin = {
+                imports = [
+                  ./hosts/darwin/home.nix
+                  ./modules/shared
+                  catppuccin.homeModules.catppuccin
+                ];
+              };
+            };
+          }
+        ];
+        specialArgs = { inherit inputs; };
       };
     };
 }
