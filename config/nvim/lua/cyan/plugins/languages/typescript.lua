@@ -16,5 +16,5 @@ return {
       'nvim-treesitter/nvim-treesitter',
     },
     opts = {}, -- your configuration
-  }
+  },
 }

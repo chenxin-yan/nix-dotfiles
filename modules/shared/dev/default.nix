@@ -4,5 +4,6 @@
   imports = [
     ./lua
     ./nix
+    ./markdown
   ];
 }

@@ -1,11 +1,11 @@
 return {
   {
-    "nvim-treesitter/nvim-treesitter",
+    'nvim-treesitter/nvim-treesitter',
     opts = {
-      ensure_installed = { 
-        "markdown",
-        "markdown_inline",
-        "yaml",
+      ensure_installed = {
+        'markdown',
+        'markdown_inline',
+        'yaml',
       },
     },
   },
@@ -62,5 +62,37 @@ return {
         enabled = false,
       },
     },
-  }
+  },
+  {
+    'mfussenegger/nvim-lint',
+    opts = {
+      linters = {
+        ['markdownlint-cli2'] = {
+          args = { '--config', vim.fn.expand '~/.markdownlint.jsonc' },
+        },
+      },
+      linters_by_ft = {
+        markdown = { 'markdownlint-cli2' },
+      },
+    },
+  },
+  {
+    'neovim/nvim-lspconfig',
+    opts = {
+      servers = {
+        marksman = {},
+      },
+    },
+  },
+  {
+    'stevearc/conform.nvim',
+    opts = {
+      ['markdownlint-cli2'] = {
+        args = { '--fix', '$FILENAME', '--config', vim.fn.expand '~/.markdownlint.jsonc' },
+      },
+      formatters_by_ft = {
+        markdown = { 'prettierd', 'markdownlint-cli2' },
+      },
+    },
+  },
 }
