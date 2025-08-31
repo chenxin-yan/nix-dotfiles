@@ -23,7 +23,7 @@
       ...
     }:
     {
-      homeConfigurations."chenxinyan@linux" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."chenxinyan@linux-arm64" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.aarch64-linux;
         modules = [
           ./hosts/linux/home.nix
