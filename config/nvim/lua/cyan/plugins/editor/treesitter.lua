@@ -1,10 +1,10 @@
 return {
   {
     'windwp/nvim-ts-autotag',
-    event = { 'BufReadPre', 'BufNewFile' },
+    event = { 'VeryLazy' },
     opts = {},
   },
-  { 
+  {
     'nvim-treesitter/nvim-treesitter',
     event = { 'BufReadPre', 'BufNewFile' },
     build = ':TSUpdate',
@@ -12,17 +12,17 @@ return {
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     opts = {
       ensure_installed = {
-        "bash",
-        "diff",
-        "lua",
-        "luadoc",
-        "luap",
-        "printf",
-        "query",
-        "regex",
-        "vim",
-        "vimdoc",
-        "xml",
+        'bash',
+        'diff',
+        'lua',
+        'luadoc',
+        'luap',
+        'printf',
+        'query',
+        'regex',
+        'vim',
+        'vimdoc',
+        'xml',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -62,9 +62,7 @@ return {
             [']f'] = { query = '@function.outer', desc = 'Next function/method start' },
             [']a'] = { query = '@parameter.outer', desc = 'Next argument' },
           },
-          goto_next_end = {
-           
-          },
+          goto_next_end = {},
           goto_previous_start = {
             ['[f'] = { query = '@function.outer', desc = 'Previous function/method start' },
             ['[a'] = { query = '@parameter.outer', desc = 'Previous argument' },
@@ -90,7 +88,7 @@ return {
           },
         },
       },
-      additional_vim_regex_highlighting = false
+      additional_vim_regex_highlighting = false,
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -109,6 +107,5 @@ return {
         tsc.toggle()
       end, { desc = 'Toggle tressiter Context' })
     end,
-  }
+  },
 }
- 
