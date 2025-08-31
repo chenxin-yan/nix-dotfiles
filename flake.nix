@@ -1,5 +1,5 @@
 {
-  description = "Home Manager configuration of chenxinyan";
+  description = "chenxinyan dotfiles flake";
 
   inputs = {
     # Specify the source of Home Manager and Nixpkgs.

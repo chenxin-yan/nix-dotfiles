@@ -7,5 +7,6 @@
     ./yazi
     ./nvim
     ./opencode
+    ./zellij
   ];
 }

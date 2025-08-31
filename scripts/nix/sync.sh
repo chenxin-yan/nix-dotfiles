@@ -94,7 +94,6 @@ run_switch() {
     
     case $platform in
         darwin)
-            print_status "Running darwin-rebuild switch..."
             sudo darwin-rebuild switch --flake "$dotfiles_path#chenxinyan@darwin"
             ;;
         linux-x86_64)
@@ -102,7 +101,6 @@ run_switch() {
             return 1
             ;;
         linux-arm64)
-            print_status "Running home-manager switch for Linux ARM64..."
             home-manager switch --flake "$dotfiles_path#chenxinyan@linux-arm64"
             ;;
         *)

@@ -1,0 +1,189 @@
+keybinds clear-defaults=true {
+    locked {
+        bind "Ctrl s" { SwitchToMode "normal"; }
+    }
+    pane {
+        bind "r" { SwitchToMode "renamepane"; PaneNameInput 0; }
+        bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "locked"; }
+        bind "m" { ToggleFocusFullscreen; SwitchToMode "locked"; }
+        bind "i" { TogglePanePinned; SwitchToMode "locked"; }
+        bind "n" { NewPane; SwitchToMode "locked"; }
+        bind "p" { SwitchToMode "normal"; }
+        bind "x" { CloseFocus; SwitchToMode "locked"; }
+        bind "tab" { SwitchFocus; }
+    }
+    tab {
+        bind "[" { BreakPaneLeft; SwitchToMode "locked"; }
+        bind "]" { BreakPaneRight; SwitchToMode "locked"; }
+        bind "b" { BreakPane; SwitchToMode "locked"; }
+        bind "n" { NewTab; SwitchToMode "locked"; }
+        bind "r" { SwitchToMode "renametab"; TabNameInput 0; }
+        bind "s" { ToggleActiveSyncTab; SwitchToMode "locked"; }
+        bind "t" { SwitchToMode "normal"; }
+        bind "x" { CloseTab; SwitchToMode "locked"; }
+        bind "tab" { ToggleTab; }
+    }
+    resize {
+        bind "-" { Resize "Decrease"; }
+        bind "+" { Resize "Increase"; }
+        bind "H" { Resize "Decrease left"; }
+        bind "J" { Resize "Decrease down"; }
+        bind "K" { Resize "Decrease up"; }
+        bind "L" { Resize "Decrease right"; }
+        bind "h" { Resize "Increase left"; }
+        bind "j" { Resize "Increase down"; }
+        bind "k" { Resize "Increase up"; }
+        bind "l" { Resize "Increase right"; }
+        bind "r" { SwitchToMode "normal"; }
+    }
+    move {
+        bind "h" { MovePane "left"; }
+        bind "j" { MovePane "down"; }
+        bind "k" { MovePane "up"; }
+        bind "l" { MovePane "right"; }
+        bind "m" { SwitchToMode "normal"; }
+        bind "n" { MovePane; }
+        bind "p" { MovePaneBackwards; }
+        bind "tab" { MovePane; }
+    }
+    scroll {
+        bind "e" { EditScrollback; SwitchToMode "locked"; }
+        bind "f" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "s" { SwitchToMode "normal"; }
+    }
+    search {
+        bind "c" { SearchToggleOption "CaseSensitivity"; }
+        bind "n" { Search "down"; }
+        bind "o" { SearchToggleOption "WholeWord"; }
+        bind "p" { Search "up"; }
+        bind "w" { SearchToggleOption "Wrap"; }
+    }
+    session {
+        bind "d" { Detach; }
+        bind "o" { SwitchToMode "normal"; }
+        bind "p" {
+            LaunchOrFocusPlugin "plugin-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "locked"
+        }
+        bind "w" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "locked"
+        }
+    }
+    shared_among "normal" "locked" {
+        bind "Alt f" { ToggleFloatingPanes; }
+        bind "Alt i" { GoToPreviousTab; }
+        bind "Alt o" { GoToNextTab; }
+        bind "Alt I" { MoveTab "left"; }
+        bind "Alt O" { MoveTab "right"; }
+    }
+    shared_except "scroll" {
+        bind "Ctrl h" { MessagePlugin { name "nvim_nav_left"; payload "8"; }; }
+        bind "Ctrl j" { MessagePlugin { name "nvim_nav_down"; payload "10"; }; }
+        bind "Ctrl k" { MessagePlugin { name "nvim_nav_up"; payload "11"; }; }
+        bind "Ctrl l" { MessagePlugin { name "nvim_nav_right"; payload "12"; }; }
+    }
+    shared_except "locked" "renametab" "renamepane" {
+        bind "Ctrl s" { SwitchToMode "locked"; }
+        bind "Ctrl q" { Quit; }
+    }
+    shared_among "normal" {
+        bind "-" { Resize "Decrease"; }
+        bind "+" { Resize "Increase"; }
+        bind "d" { Detach; }
+        bind "_" { NewPane "down"; SwitchToMode "locked"; }
+        bind "|" { NewPane "right"; SwitchToMode "locked"; }
+        bind "1" { GoToTab 1; SwitchToMode "locked"; }
+        bind "2" { GoToTab 2; SwitchToMode "locked"; }
+        bind "3" { GoToTab 3; SwitchToMode "locked"; }
+        bind "4" { GoToTab 4; SwitchToMode "locked"; }
+        bind "5" { GoToTab 5; SwitchToMode "locked"; }
+        bind "6" { GoToTab 6; SwitchToMode "locked"; }
+        bind "7" { GoToTab 7; SwitchToMode "locked"; }
+        bind "8" { GoToTab 8; SwitchToMode "locked"; }
+        bind "9" { GoToTab 9; SwitchToMode "locked"; }
+    }
+    shared_except "locked" "entersearch" {
+        bind "enter" { SwitchToMode "locked"; }
+    }
+    shared_except "locked" "entersearch" "renametab" "renamepane" {
+        bind "esc" { SwitchToMode "locked"; }
+    }
+    shared_except "locked" "entersearch" "renametab" "renamepane" "move" {
+        bind "m" { SwitchToMode "move"; }
+    }
+    shared_except "locked" "entersearch" "search" "renametab" "renamepane" "session" {
+        bind "o" { SwitchToMode "session"; }
+    }
+    shared_except "locked" "tab" "entersearch" "renametab" "renamepane" {
+        bind "t" { SwitchToMode "tab"; }
+    }
+    shared_except "locked" "tab" "scroll" "entersearch" "renametab" "renamepane" {
+        bind "s" { SwitchToMode "scroll"; }
+    }
+    shared_among "normal" "resize" "tab" "scroll" "prompt" {
+        bind "p" { SwitchToMode "pane"; }
+    }
+    shared_except "locked" "resize" "pane" "tab" "entersearch" "renametab" "renamepane" {
+        bind "r" { SwitchToMode "resize"; }
+    }
+    shared_among "scroll" "search" {
+        bind "Ctrl b" { PageScrollUp; }
+        bind "Ctrl c" { ScrollToBottom; SwitchToMode "locked"; }
+        bind "Ctrl d" { HalfPageScrollDown; }
+        bind "Ctrl u" { HalfPageScrollUp; }
+        bind "Ctrl f" { PageScrollDown; }
+        bind "h" { PageScrollUp; }
+        bind "j" { ScrollDown; }
+        bind "k" { ScrollUp; }
+        bind "l" { PageScrollDown; }
+    }
+    entersearch {
+        bind "Ctrl c" { SwitchToMode "scroll"; }
+        bind "esc" { SwitchToMode "scroll"; }
+        bind "enter" { SwitchToMode "search"; }
+    }
+    renametab {
+        bind "esc" { UndoRenameTab; SwitchToMode "tab"; }
+    }
+    shared_among "renametab" "renamepane" {
+        bind "Ctrl c" { SwitchToMode "locked"; }
+    }
+    renamepane {
+        bind "esc" { UndoRenamePane; SwitchToMode "pane"; }
+    }
+}
+
+// Plugin aliases - can be used to change the implementation of Zellij
+// changing these requires a restart to take effect
+plugins {
+    compact-bar location="zellij:compact-bar"
+    session-manager location="zellij:session-manager"
+    plugin-manager location="zellij:plugin-manager"
+    nvim-nav location="https://github.com/sharph/zellij-nvim-nav-plugin/releases/download/v1.0.0/zellij-nvim-nav-plugin.wasm"
+}
+
+load_plugins {
+  nvim-nav
+}
+
+default_mode "locked"
+show_startup_tips false
+attach_to_session true
+
+theme "catppuccin-mocha"
+simplified_ui true
+pane_frames false
+
+session_serialization true
+serialize_pane_viewport true
+
+web_client {
+    font "monospace"
+}
