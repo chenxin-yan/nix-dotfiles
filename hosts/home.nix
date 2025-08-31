@@ -34,6 +34,8 @@
     home.sessionVariables = {
       EDITOR = "nvim";
       DOTFILES_PATH = config.dotfiles;
+      DEV_PATH = "${config.home.homeDirectory}/dev";
+      OBSIDIAN_VAULT_PATH = "${config.home.homeDirectory}/Ideaverse";
     };
 
     # Let Home Manager install and manage itself.

@@ -104,8 +104,19 @@ in
       c = "clear";
 
       # scripts
-      ns = "${scriptsDir}/nix/sync.sh ${config.home.homeDirectory}/dotfiles";
-      nu = "${scriptsDir}/nix/update.sh ${config.home.homeDirectory}/dotfiles";
+      ns = "${scriptsDir}/nix/sync.sh";
+      nu = "${scriptsDir}/nix/update.sh";
+
+      devc = "${scriptsDir}/dev/clone.sh";
+      devrm = "${scriptsDir}/dev/remove.sh";
+      scu = "${scriptsDir}/dev/cleanup.sh";
+      se = "${scriptsDir}/dev/attach.sh";
+
+      obs = "${scriptsDir}/obsidian/search.sh";
+      obg = "${scriptsDir}/obsidian/grep.sh";
+      obc = "${scriptsDir}/obsidian/new_note.sh";
+
+      fzg = "${scriptsDir}/utils/rg_with_fzf.sh";
     };
   };
 
