@@ -28,7 +28,6 @@ return {
         formatter = 'path.dirname_first',
       },
       winopts = {
-        height = 0.5,
         backdrop = 0,
         preview = {
           scrollchars = { '┃', '' },
@@ -102,4 +101,3 @@ return {
     { '<leader>sn', '<cmd>FzfLua files cwd=' .. vim.fn.stdpath 'config' .. '<cr>', desc = 'Neovim Config' },
   },
 }
-
