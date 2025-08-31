@@ -16,9 +16,10 @@ return {
       { '<leader>r', group = 'Refactor', mode = { 'n', 'x' } },
       { '<leader>u', group = 'Toggle' },
       { '<leader>g', group = 'Git' },
-      { '<leader>h', group = 'Hunk', mode = { 'n', 'x' }, icon = " "},
+      { '<leader>h', group = 'Hunk', mode = { 'n', 'x' }, icon = ' ' },
       { '<leader>b', group = 'Buffer' },
-      { '<leader>S', group = 'Snippet' },
+      { '<leader>S', icon = ' ', group = 'Snippet' },
+      { '<leader>a', group = 'AI' },
     },
     plugins = {
       spelling = {
@@ -39,4 +40,3 @@ return {
     end, { desc = 'Buffer Local Keymaps (which-key)' })
   end,
 }
-

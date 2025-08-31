@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -6,5 +6,6 @@
     ./zsh
     ./yazi
     ./nvim
+    ./opencode
   ];
 }

@@ -8,4 +8,3 @@ vim.keymap.set('n', 'k', 'gk', { buffer = 0 })
 
 -- Spell check
 vim.opt_local.spell = true
-
