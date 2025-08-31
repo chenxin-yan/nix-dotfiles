@@ -30,8 +30,8 @@
         };
         modules = [
           ./hosts/linux/home.nix
-          ./modules/shared
           catppuccin.homeModules.catppuccin
+          ./modules/shared
         ];
       };
 
@@ -48,8 +48,9 @@
               users.yanchenxin = {
                 imports = [
                   ./hosts/darwin/home.nix
-                  ./modules/shared
                   catppuccin.homeModules.catppuccin
+                  ./modules/shared
+                  ./modules/darwin
                 ];
               };
             };

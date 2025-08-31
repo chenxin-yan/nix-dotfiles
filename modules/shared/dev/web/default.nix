@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
-    jq
     curlie
 
     # editor
@@ -12,4 +11,6 @@
     prettierd
     biome
   ];
+
+  programs.jq.enable = true;
 }

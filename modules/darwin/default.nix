@@ -1,0 +1,9 @@
+{ ... }:
+
+{
+  imports = [
+    ./aerospace
+    ./sketchybar
+    ./karabiner
+  ];
+}
