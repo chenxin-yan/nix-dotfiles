@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  self,
+  config,
+  pkgs,
+  ...
+}:
 
 {
   catppuccin = {
@@ -26,16 +31,16 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
+
   programs.btop = {
     enable = true;
     settings = {
       vim_keys = true;
     };
-  };
-
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
   };
 }

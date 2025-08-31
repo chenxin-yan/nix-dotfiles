@@ -7,7 +7,7 @@ return {
   keys = {
     -- Recommended keymaps
     {
-      '<leader>ao',
+      '<leader>aa',
       function()
         require('opencode').ask()
       end,
@@ -38,7 +38,7 @@ return {
       mode = 'n',
     },
     {
-      '<leader>aa',
+      '<leader>ao',
       function()
         require('opencode').toggle()
       end,

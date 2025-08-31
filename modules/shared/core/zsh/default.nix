@@ -1,5 +1,8 @@
 { config, pkgs, ... }:
 
+let
+  scriptsDir = "${config.home.homeDirectory}/.local/bin/scripts";
+in
 {
   home.shell.enableZshIntegration = true;
 
@@ -8,6 +11,13 @@
     fd # better find
     ripgrep # better grep
   ];
+
+  home.file = {
+    ".local/bin/scripts" = {
+      source = ./scripts;
+      recursive = true;
+    };
+  };
 
   programs.zsh = {
     enable = true;
@@ -27,20 +37,6 @@
     syntaxHighlighting.enable = true;
     enableCompletion = true;
     completionInit = ''
-      # Add Nix-installed completions to fpath
-      if [[ -n "''${NIX_PROFILES:-}" ]]; then
-        for profile in ''${(z)NIX_PROFILES}; do
-          if [[ -d "$profile/share/zsh/site-functions" ]]; then
-            fpath=("$profile/share/zsh/site-functions" $fpath)
-          fi
-        done
-      fi
-
-      # Add Home Manager completions
-      if [[ -d "${config.home.profileDirectory}/share/zsh/site-functions" ]]; then
-        fpath=("${config.home.profileDirectory}/share/zsh/site-functions" $fpath)
-      fi
-
       autoload -Uz compinit
       compinit -C
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
@@ -98,9 +94,10 @@
           rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
         fi
       }
+
+      fpath+="${pkgs.script-directory}/share/zsh/site-functions"
     '';
     shellAliases = {
-      ns = "${config.home.homeDirectory}/switch.sh ${config.home.homeDirectory}";
       # File operations
       ls = "eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
       ll = "eza -ah --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
@@ -109,6 +106,9 @@
 
       v = "nvim";
       c = "clear";
+
+      # scripts
+      ns = "${scriptsDir}/nix/sync.sh ${config.home.homeDirectory}/dotfiles";
     };
 
   };
@@ -254,4 +254,5 @@
       ];
     };
   };
+
 }

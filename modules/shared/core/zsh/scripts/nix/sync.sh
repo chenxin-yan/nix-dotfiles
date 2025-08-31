@@ -116,7 +116,7 @@ run_switch() {
 main() {
     local dotfiles_path="${1:-$(pwd)}"
     
-    print_status "Platform-agnostic Nix configuration switcher"
+    print_status "Nix configuration Sync"
     echo
     
     # Detect platform
