@@ -4,9 +4,9 @@
   home.shell.enableZshIntegration = true;
 
   home.packages = with pkgs; [
-    eza          # better ls
-    fd           # better find
-    ripgrep      # better grep
+    eza # better ls
+    fd # better find
+    ripgrep # better grep
   ];
 
   programs.zsh = {
@@ -35,7 +35,7 @@
           fi
         done
       fi
-      
+
       # Add Home Manager completions
       if [[ -d "${config.home.profileDirectory}/share/zsh/site-functions" ]]; then
         fpath=("${config.home.profileDirectory}/share/zsh/site-functions" $fpath)
@@ -46,7 +46,7 @@
       zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
       zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
       zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-      '';
+    '';
     initContent = ''
       # Vi mode keybindings
       bindkey -M vicmd 'H' beginning-of-line
@@ -60,12 +60,12 @@
       _fzf_compgen_path() {
         fd --hidden --exclude .git . "$1"
       }
-      
+
       # Use fd for directory completion
       _fzf_compgen_dir() {
         fd --type=d --hidden --exclude .git . "$1"
       }
-      
+
       # Advanced customization of fzf options via _fzf_comprun function
       _fzf_comprun() {
         local command=$1
@@ -78,7 +78,7 @@
           *)            fzf --preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi' "$@" ;;
         esac
       }
-      
+
       # Yazi file manager with directory change
       function e() {
         local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
@@ -88,7 +88,7 @@
         fi
         rm -f -- "$tmp"
       }
-      
+
       # Lazygit with directory change
       G() {
         export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
@@ -100,13 +100,13 @@
       }
     '';
     shellAliases = {
-      hms = "home-manager switch --flake ~/dotfiles#chenxinyan";
+      ns = "${config.home.homeDirectory}/switch.sh ${config.home.homeDirectory}";
       # File operations
       ls = "eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
       ll = "eza -ah --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
       tree = "eza -TL 3 --color=always --icons=always --git";
       cat = "bat";
-      
+
       v = "nvim";
       c = "clear";
     };
@@ -131,15 +131,15 @@
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
-    
+
     defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
     fileWidgetCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
     changeDirWidgetCommand = "fd --type=d --hidden --strip-cwd-prefix --exclude .git";
-    
+
     fileWidgetOptions = [
       "--preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'"
     ];
-    
+
     changeDirWidgetOptions = [
       "--preview 'eza --tree --color=always {} | head -200'"
     ];
@@ -151,7 +151,7 @@
     settings = {
       version = 3;
       final_space = true;
-      
+
       palette = {
         blue = "#89B4FA";
         closer = "p:os";
@@ -160,12 +160,12 @@
         pink = "#F5C2E7";
         yellow = "#f9e2af";
       };
-      
+
       secondary_prompt = {
         template = " ";
         foreground = "p:closer";
       };
-      
+
       transient_prompt = {
         template = " ";
         foreground_templates = [
@@ -173,7 +173,7 @@
           "{{if eq .Code 0}}p:closer{{end}}"
         ];
       };
-      
+
       blocks = [
         {
           type = "prompt";
@@ -221,7 +221,7 @@
               type = "executiontime";
               style = "plain";
             }
-	    {
+            {
               type = "nix-shell";
               template = " 󱄅 {{ .Type }}";
               foreground = "p:blue";
