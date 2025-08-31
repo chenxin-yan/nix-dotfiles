@@ -1,4 +1,9 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   # List packages installed in system profile. To search by name, run:
@@ -27,4 +32,8 @@
 
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
+
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
 }

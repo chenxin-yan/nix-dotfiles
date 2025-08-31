@@ -24,12 +24,9 @@
       zsh-syntax-highlighting.enable = false;
     };
 
-    fonts.fontconfig.enable = true;
     home.stateVersion = "25.05";
 
     home.packages = with pkgs; [
-      nerd-fonts.jetbrains-mono
-
       tlrc
       rainfrog
     ];

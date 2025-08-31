@@ -8,10 +8,13 @@
   imports = [ ../home.nix ];
 
   home.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
   ];
 
   home.file = {
   };
+
+  fonts.fontconfig.enable = true;
 
   programs.ssh = {
     enable = true;
