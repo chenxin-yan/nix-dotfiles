@@ -135,10 +135,6 @@ return {
         lualine_b = {
           { 'branch', icon = '', padding = { left = 1, right = 1 } },
           {
-            'grapple',
-            padding = { left = -1 },
-          },
-          {
             'diff',
             symbols = { added = ' ', modified = ' ', removed = ' ' },
             padding = { right = 1 },
@@ -160,13 +156,6 @@ return {
           },
         },
         lualine_x = {
-          -- stylua: ignore
-          {
-            function() return require("noice").api.status.command.get() end,
-            cond = function() return package.loaded["noice"] and require("noice").api.status.command.has() end,
-            color = function() return { fg = Snacks.util.color("Statement") } end,
-          },
-
           -- stylua: ignore
           {
             function() return require("noice").api.status.mode.get() end,
@@ -219,6 +208,7 @@ return {
             padding = { left = 0 },
             color = { fg = colors.text },
           },
+          { 'navic', color_correction = 'dynamic' },
         },
         lualine_x = {},
         lualine_y = {},

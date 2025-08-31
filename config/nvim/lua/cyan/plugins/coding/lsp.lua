@@ -1,5 +1,15 @@
 return {
   {
+    'catppuccin/nvim',
+    opts = {
+      integrations = {
+        navic = {
+          enabled = true,
+        },
+      },
+    },
+  },
+  {
     'saecki/live-rename.nvim',
     keys = {
       {
@@ -52,5 +62,14 @@ return {
       --
       -- vim.lsp.enable 'jdtls'
     end,
+  },
+  {
+    'SmiteshP/nvim-navic',
+    lazy = true,
+    opts = {
+      highlight = true,
+      depth_limit = 5,
+      lazy_update_context = true,
+    },
   },
 }
