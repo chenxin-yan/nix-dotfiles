@@ -61,6 +61,14 @@ end
 
 return {
   {
+    'catppuccin/nvim',
+    opts = {
+      integrations = {
+        blink_cmp = true,
+      },
+    },
+  },
+  {
     'saghen/blink.compat',
     lazy = true,
     opts = {},
@@ -221,7 +229,7 @@ return {
           'git',
         },
         per_filetype = {
-          lua = { inherit_defaults = true, 'lazydev' }
+          lua = { inherit_defaults = true, 'lazydev' },
         },
         providers = {
           lsp = {
@@ -320,4 +328,3 @@ return {
     signature = { enabled = true },
   },
 }
-

@@ -1,5 +1,13 @@
 return {
   {
+    'catppuccin/nvim',
+    opts = {
+      integrations = {
+        lsp_trouble = true,
+      },
+    },
+  },
+  {
     'folke/trouble.nvim',
     opts = {
       warn_no_results = false,
@@ -53,7 +61,7 @@ return {
         '<cmd>Trouble loclist toggle<cr>',
         desc = 'Location List',
       },
-     {
+      {
         '<leader>xq',
         '<cmd>Trouble qflist toggle<cr>',
         desc = 'Quickfix List',
@@ -91,4 +99,3 @@ return {
     },
   },
 }
-
