@@ -37,6 +37,7 @@
 
     home.sessionVariables = {
       EDITOR = "nvim";
+      DOTFILES_PATH = config.dotfiles;
     };
 
     # Let Home Manager install and manage itself.

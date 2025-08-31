@@ -114,7 +114,13 @@ run_switch() {
 
 # Main function
 main() {
-    local dotfiles_path="${1:-$(pwd)}"
+    # Use DOTFILES_PATH environment variable
+    local dotfiles_path="${DOTFILES_PATH:-}"
+    
+    if [ -z "$dotfiles_path" ]; then
+        print_error "DOTFILES_PATH environment variable is not set"
+        exit 1
+    fi
     
     print_status "Nix configuration Sync"
     echo
@@ -161,4 +167,4 @@ main() {
 }
 
 # Run main function
-main "$@"
+main

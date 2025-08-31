@@ -10,6 +10,7 @@ in
     eza # better ls
     fd # better find
     ripgrep # better grep
+    tokei # code counter
   ];
 
   home.file = {
@@ -104,8 +105,8 @@ in
 
       # scripts
       ns = "${scriptsDir}/nix/sync.sh ${config.home.homeDirectory}/dotfiles";
+      nu = "${scriptsDir}/nix/update.sh ${config.home.homeDirectory}/dotfiles";
     };
-
   };
 
   programs.bat = {
