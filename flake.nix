@@ -24,7 +24,10 @@
     }:
     {
       homeConfigurations."chenxinyan@linux-arm64" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.aarch64-linux;
+        pkgs = import nixpkgs {
+          system = "aarch64-linux";
+          config.allowUnfree = true;
+        };
         modules = [
           ./hosts/linux/home.nix
           ./modules/shared
@@ -38,6 +41,7 @@
           ./hosts/darwin/configuration.nix
           home-manager.darwinModules.home-manager
           {
+            nixpkgs.config.allowUnfree = true;
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
