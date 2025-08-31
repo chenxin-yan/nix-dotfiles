@@ -13,10 +13,7 @@ in
   ];
 
   home.file = {
-    ".local/bin/scripts" = {
-      source = ./scripts;
-      recursive = true;
-    };
+    ".local/bin/scripts".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/scripts";
   };
 
   programs.zsh = {
@@ -94,8 +91,6 @@ in
           rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
         fi
       }
-
-      fpath+="${pkgs.script-directory}/share/zsh/site-functions"
     '';
     shellAliases = {
       # File operations

@@ -1,46 +1,58 @@
 {
-  self,
   config,
   pkgs,
+  lib,
   ...
 }:
 
 {
-  catppuccin = {
-    enable = true;
-    flavor = "mocha";
-    accent = "lavender";
-    zsh-syntax-highlighting.enable = false;
+  options = {
+    dotfiles = lib.mkOption {
+      type = lib.types.path;
+      apply = toString;
+      default = "${config.home.homeDirectory}/dotfiles";
+      example = "${config.home.homeDirectory}/dotfiles";
+      description = "Location of the dotfiles working copy";
+    };
   };
 
-  fonts.fontconfig.enable = true;
-  home.stateVersion = "25.05";
+  config = {
+    catppuccin = {
+      enable = true;
+      flavor = "mocha";
+      accent = "lavender";
+      zsh-syntax-highlighting.enable = false;
+    };
 
-  home.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
+    fonts.fontconfig.enable = true;
+    home.stateVersion = "25.05";
 
-    tlrc
-    curlie
-    rainfrog
-  ];
+    home.packages = with pkgs; [
+      nerd-fonts.jetbrains-mono
 
-  home.sessionVariables = {
-    EDITOR = "nvim";
-  };
+      tlrc
+      curlie
+      rainfrog
+    ];
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+    home.sessionVariables = {
+      EDITOR = "nvim";
+    };
 
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
+    # Let Home Manager install and manage itself.
+    programs.home-manager.enable = true;
 
-  programs.btop = {
-    enable = true;
-    settings = {
-      vim_keys = true;
+    nix.gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
+
+    programs.btop = {
+      enable = true;
+      settings = {
+        vim_keys = true;
+      };
     };
   };
 }
