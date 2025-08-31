@@ -6,5 +6,6 @@
     ./nix
     ./markdown
     ./typescript
+    ./web
   ];
 }

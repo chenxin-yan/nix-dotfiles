@@ -8,8 +8,6 @@
 
     # editor
     vtsls
-    prettierd
-    vscode-langservers-extracted
-    biome
+    nodePackages."@astrojs/language-server"
   ];
 }

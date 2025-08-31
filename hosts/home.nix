@@ -31,7 +31,6 @@
       nerd-fonts.jetbrains-mono
 
       tlrc
-      curlie
       rainfrog
     ];
 

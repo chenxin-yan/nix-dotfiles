@@ -8,16 +8,6 @@ return {
     },
   },
   {
-    'luckasRanarison/tailwind-tools.nvim',
-    name = 'tailwind-tools',
-    build = ':UpdateRemotePlugins',
-    event = { 'BufReadPre', 'BufNewFile' },
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-    },
-    opts = {}, -- your configuration
-  },
-  {
     'nvim-treesitter/nvim-treesitter',
     opts = {
       ensure_installed = {
@@ -133,67 +123,8 @@ return {
             end
           end,
         },
-        eslint = { -- linter for javascript
-          settings = {
-            -- helps eslint find the eslintrc when it's placed in a subfolder instead of the cwd root
-            workingDirectories = { mode = 'auto' },
-            format = true,
-          },
-          on_attach = function(_, buffer)
-            vim.keymap.set('n', '<leader>cF', '<cmd>EslintFixAll<cr>', { desc = 'Eslint: [F]ix all', buffer = buffer })
-          end,
-        },
-        biome = {},
-        jsonls = { -- JSON lsp
-          on_new_config = function(new_config)
-            new_config.settings.json.schemas = new_config.settings.json.schemas or {}
-            vim.list_extend(new_config.settings.json.schemas, require('schemastore').json.schemas())
-          end,
-          settings = {
-            json = {
-              format = {
-                enable = true,
-              },
-              validate = { enable = true },
-            },
-          },
-        },
+        astro = {}, -- astro lsp
       },
     },
-  },
-
-  {
-    'stevearc/conform.nvim',
-    opts = function(_, opts)
-      opts.formatters = vim.tbl_extend('force', opts.formatters or {}, {
-        biome = {
-          require_cwd = true,
-        },
-      })
-
-      -- setup biome & prettier fallback
-      local biome_supported = {
-        'css',
-        'javascript',
-        'javascriptreact',
-        'json',
-        'jsonc',
-        'typescript',
-        'typescriptreact',
-        'vue',
-      }
-
-      for _, ft in ipairs(biome_supported) do
-        opts.formatters_by_ft[ft] = function(bufnr)
-          if require('conform').get_formatter_info('biome', bufnr).available then
-            return { 'biome' }
-          else
-            return { 'prettierd' }
-          end
-        end
-      end
-
-      return opts
-    end,
   },
 }
