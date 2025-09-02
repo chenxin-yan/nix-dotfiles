@@ -14,12 +14,15 @@
 
     userSettings = {
       after-login-command = [ ];
-      after-startup-command = [ "exec-and-forget /etc/profiles/per-user/yanchenxin/bin/sketchybar" ];
-      exec-on-workspace-change = [
-        "/bin/bash"
-        "-c"
-        "/etc/profiles/per-user/yanchenxin/bin/sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE"
+      after-startup-command = [
+        "exec-and-forget ${lib.getExe' pkgs.sketchybar "sketchybar"}"
       ];
+      exec-on-workspace-change = [
+        (lib.getExe' pkgs.bash "bash")
+        "-c"
+        "${lib.getExe' pkgs.sketchybar "sketchybar"} --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE"
+      ];
+
       enable-normalization-flatten-containers = true;
       enable-normalization-opposite-orientation-for-nested-containers = true;
 
