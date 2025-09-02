@@ -10,6 +10,8 @@
     emmet-language-server
     prettierd
     biome
+    taplo
+    yaml-language-server
   ];
 
   programs.jq.enable = true;
