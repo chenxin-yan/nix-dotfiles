@@ -1,13 +1,5 @@
 return {
   {
-    'catppuccin/nvim',
-    opts = {
-      integrations = {
-        octo = true,
-      },
-    },
-  },
-  {
     'pwntester/octo.nvim',
     dependencies = {
       'nvim-lua/plenary.nvim',

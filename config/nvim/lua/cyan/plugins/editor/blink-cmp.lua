@@ -61,14 +61,6 @@ end
 
 return {
   {
-    'catppuccin/nvim',
-    opts = {
-      integrations = {
-        blink_cmp = true,
-      },
-    },
-  },
-  {
     'saghen/blink.compat',
     lazy = true,
     opts = {},

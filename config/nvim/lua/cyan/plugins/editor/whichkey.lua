@@ -1,13 +1,5 @@
 return {
   {
-    'catppuccin/nvim',
-    opts = {
-      integrations = {
-        which_key = true,
-      },
-    },
-  },
-  {
     'folke/which-key.nvim',
     event = 'VeryLazy',
     opts = {

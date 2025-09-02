@@ -2,14 +2,6 @@ if vim.g.vscode then
   return {}
 end
 return {
-  {
-    'catppuccin/nvim',
-    opts = {
-      integrations = {
-        noice = true,
-      },
-    },
-  },
   'folke/noice.nvim',
   event = 'VeryLazy',
   opts = {

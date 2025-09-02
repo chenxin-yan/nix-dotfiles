@@ -1,13 +1,5 @@
 return {
   {
-    'catppuccin/nvim',
-    opts = {
-      integrations = {
-        lsp_trouble = true,
-      },
-    },
-  },
-  {
     'folke/trouble.nvim',
     opts = {
       warn_no_results = false,

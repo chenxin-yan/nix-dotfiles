@@ -1,14 +1,4 @@
 return {
-  {
-    'catppuccin/nvim',
-    opts = {
-      integrations = {
-        mini = {
-          enabled = true,
-        },
-      },
-    },
-  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     event = 'VeryLazy',

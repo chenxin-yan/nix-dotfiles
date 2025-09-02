@@ -1,15 +1,5 @@
 return {
   {
-    'catppuccin/nvim',
-    opts = {
-      integrations = {
-        navic = {
-          enabled = true,
-        },
-      },
-    },
-  },
-  {
     'saecki/live-rename.nvim',
     keys = {
       {

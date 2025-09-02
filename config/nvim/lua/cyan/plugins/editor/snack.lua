@@ -1,16 +1,5 @@
 return {
   {
-    'catppuccin/nvim',
-    opts = {
-      integrations = {
-        snacks = {
-          enabled = true,
-          indent_scope_color = 'lavender', -- catppuccin color (eg. `lavender`) Default: text
-        },
-      },
-    },
-  },
-  {
     'folke/snacks.nvim',
     priority = 1000,
     lazy = false,
