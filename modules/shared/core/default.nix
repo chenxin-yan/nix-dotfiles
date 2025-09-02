@@ -8,5 +8,6 @@
     ./nvim
     ./opencode
     ./zellij
+    ./podman
   ];
 }
