@@ -14,6 +14,12 @@ in
     podman
     podman-compose
     lazydocker
+    dive
+
+    # editor
+    dockerfile-language-server-nodejs
+    docker-compose-language-service
+    hadolint
   ];
 
   # Linux-specific Podman service configuration
