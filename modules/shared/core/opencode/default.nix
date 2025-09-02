@@ -8,4 +8,9 @@
   home.file = {
     ".config/opencode/opencode.json".source = ./config/opencode.json;
   };
+  programs.zsh = {
+    shellAliases = {
+      oc = "opencode";
+    };
+  };
 }
