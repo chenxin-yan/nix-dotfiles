@@ -27,6 +27,18 @@ if [ "$CLONE_BARE" == "y" ]; then
   # Check if the clone was successful
   if [ $? -eq 0 ]; then
     echo "Bare repository cloned successfully into $DEV_PATH"
+    
+    # Change to the bare repository directory
+    cd "$DEV_PATH/$REPO_NAME.git"
+    
+    # Try to add main worktree first, fallback to master
+    if git worktree add main; then
+      echo "Added 'main' worktree successfully"
+    elif git worktree add master; then
+      echo "Added 'master' worktree successfully"
+    else
+      echo "Warning: Could not add 'main' or 'master' worktree"
+    fi
   else
     echo "Failed to clone the bare repository"
     exit 1
