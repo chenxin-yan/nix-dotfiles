@@ -6,11 +6,15 @@
   ];
 
   home.file = {
-    ".config/opencode/opencode.json".source = ./config/opencode.json;
+    ".config/opencode" = {
+      source = ./config;
+      recursive = true;
+    };
   };
   programs.zsh = {
     shellAliases = {
       oc = "opencode";
+      occ = "opencode run \"/commit analyze and commit staged changes\"";
     };
   };
 }

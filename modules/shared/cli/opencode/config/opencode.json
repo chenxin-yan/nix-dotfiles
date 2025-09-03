@@ -5,6 +5,16 @@
     "edit": "ask",
     "bash": "ask"
   },
+  "agent": {
+    "commit": {
+      "description": "Generate conventional commit message and commit staged changes",
+      "mode": "subagent",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    }
+  },
   "mcp": {
     "context7": {
       "type": "local",
