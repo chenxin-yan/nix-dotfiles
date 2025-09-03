@@ -7,5 +7,6 @@
     ./markdown
     ./typescript
     ./web
+    ./python
   ];
 }

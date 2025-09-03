@@ -12,7 +12,7 @@ SELECTED_DIR=$(
 # Check if a directory was actually selected
 if [[ -z "$SELECTED_DIR" ]]; then
   echo "No directory selected."
-  return
+  exit 1
 fi
 
 # Derive zellij session name from the directory name
