@@ -107,8 +107,8 @@ in
       ns = "${scriptsDir}/nix/sync.sh";
       nu = "${scriptsDir}/nix/update.sh";
 
-      devc = "${scriptsDir}/dev/clone.sh";
-      devrm = "${scriptsDir}/dev/remove.sh";
+      dvc = "${scriptsDir}/dev/clone.sh";
+      dvrm = "${scriptsDir}/dev/remove.sh";
       scu = "${scriptsDir}/dev/cleanup.sh";
       se = "${scriptsDir}/dev/attach.sh";
 
