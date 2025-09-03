@@ -5,20 +5,15 @@
     "edit": "ask",
     "bash": "ask"
   },
-  "agent": {
-    "commit": {
-      "description": "Generate conventional commit message and commit staged changes",
-      "mode": "subagent",
-      "permission": {
-        "edit": "allow",
-        "bash": "allow"
-      }
-    }
-  },
   "mcp": {
     "context7": {
       "type": "local",
       "command": ["npx", "-y", "@upstash/context7-mcp"],
+      "enabled": true
+    },
+    "convex": {
+      "type": "local",
+      "command": ["npx", "-y", "convex@latest", "mcp", "start"],
       "enabled": true
     }
   }

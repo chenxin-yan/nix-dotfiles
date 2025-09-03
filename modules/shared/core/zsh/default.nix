@@ -86,6 +86,7 @@ in
       ns = "${scriptsDir}/nix/sync.sh";
       nu = "${scriptsDir}/nix/update.sh";
 
+      cdv = "cd $DEV_PATH";
       dvc = "${scriptsDir}/dev/clone.sh";
       dvrm = "${scriptsDir}/dev/remove.sh";
       scu = "${scriptsDir}/dev/cleanup.sh";
