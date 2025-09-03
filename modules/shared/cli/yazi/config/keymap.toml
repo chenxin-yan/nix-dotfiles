@@ -265,6 +265,16 @@ run = '''
 desc = "Go back to root of Git repo"
 
 [[mgr.prepend_keymap]]
+on = [",", "c"]
+run = "plugin vcs-files"
+desc = "Show Git file changes"
+
+[[mgr.prepend_keymap]]
+on = ["c", "m"]
+run = "plugin chmod"
+desc = "Chmod on selected files"
+
+[[mgr.prepend_keymap]]
 
 on = "<C-y>"
 run = ["plugin system-clipboard"]

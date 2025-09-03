@@ -23,6 +23,9 @@ in
     plugins = {
       full-border = "${yazi-plugins}/full-border.yazi";
       no-status = "${yazi-plugins}/no-status.yazi";
+      vcs-files = "${yazi-plugins}/vcs-files.yazi";
+      chmod = "${yazi-plugins}/chmod.yazi";
+      git = "${yazi-plugins}/git.yazi";
       omp = pkgs.fetchFromGitHub {
         owner = "saumyajyoti";
         repo = "omp.yazi";
@@ -38,6 +41,7 @@ in
     };
 
     initLua = ''
+      require("git"):setup()
       require("full-border"):setup()
       require("no-status"):setup()
       require("omp"):setup({ config = "${config.xdg.configHome}/oh-my-posh/config.json" })
