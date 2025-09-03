@@ -28,6 +28,7 @@ return {
       which_key = true,
       octo = true,
       gitgraph = true,
+      dap = true,
     },
   },
 }

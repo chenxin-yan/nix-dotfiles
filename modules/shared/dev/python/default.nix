@@ -7,5 +7,6 @@
     # editor
     ruff
     basedpyright
+    python313Packages.debugpy
   ];
 }
