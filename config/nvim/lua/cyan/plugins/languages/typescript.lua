@@ -127,4 +127,29 @@ return {
       },
     },
   },
+  {
+    'nvim-neotest/neotest',
+    dependencies = {
+      'marilari88/neotest-vitest',
+      'arthur944/neotest-bun',
+    },
+    keys = {
+      {
+        '<leader>tvW',
+        "<cmd>lua require('neotest').run.run({ vim.fn.expand('%'), vitestCommand = 'npx vitest' })<cr>",
+        desc = 'Vitest: Run Watch File',
+      },
+      {
+        '<leader>tvw',
+        "<cmd>lua require('neotest').run.run({ vitestCommand = 'npx vitest' })<cr>",
+        desc = 'Vitest: Run Watch',
+      },
+    },
+    opts = {
+      adapters = {
+        ['neotest-vitest'] = {},
+        ['neotest-bun'] = {},
+      },
+    },
+  },
 }
