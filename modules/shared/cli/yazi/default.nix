@@ -13,6 +13,10 @@ in
     ".config/yazi/keymap.toml".source = ./config/keymap.toml;
   };
 
+  home.packages = with pkgs; [
+    clipboard-jh # clipboard manager
+  ];
+
   programs.yazi = {
     enable = true;
     enableZshIntegration = true;
@@ -24,6 +28,12 @@ in
         repo = "omp.yazi";
         rev = "main";
         hash = "sha256-MvItTUorB0rWg7L3KXUsF3+1KE+wm38C1yAGSfpQ5gg=";
+      };
+      system-clipboard = pkgs.fetchFromGitHub {
+        owner = "orhnk";
+        repo = "system-clipboard.yazi";
+        rev = "master";
+        hash = "sha256-M7zKUlLcQA3ihpCAZyOkAy/SzLu31eqHGLkCSQPX1dY=";
       };
     };
 
