@@ -31,7 +31,7 @@
 
   programs.gh = {
     enable = true;
-  
+
     settings = {
       git_protocol = "https";
       aliases = {
@@ -54,5 +54,22 @@
   programs.gh-dash.enable = true;
 
   programs.lazygit.enable = true;
-}
 
+  programs.zsh = {
+    initContent = ''
+      # Lazygit with directory change
+      G() {
+        export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
+        lazygit "$@"
+        if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
+          cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
+          rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
+        fi
+      }
+    '';
+    shellAliases = {
+      g = "git";
+    };
+  };
+
+}

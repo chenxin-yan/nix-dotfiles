@@ -72,26 +72,6 @@ in
           *)            fzf --preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi' "$@" ;;
         esac
       }
-
-      # Yazi file manager with directory change
-      function e() {
-        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-        yazi "$@" --cwd-file="$tmp"
-        if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-          builtin cd -- "$cwd"
-        fi
-        rm -f -- "$tmp"
-      }
-
-      # Lazygit with directory change
-      G() {
-        export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
-        lazygit "$@"
-        if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
-          cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
-          rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
-        fi
-      }
     '';
     shellAliases = {
       # File operations
@@ -100,7 +80,6 @@ in
       tree = "eza -TL 3 --color=always --icons=always --git";
       cat = "bat";
 
-      v = "nvim";
       c = "clear";
 
       # scripts

@@ -1,4 +1,5 @@
-{ config, pkgs, ... }: let
+{ config, pkgs, ... }:
+let
   yazi-plugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";
     repo = "plugins";
@@ -22,15 +23,26 @@ in
         owner = "saumyajyoti";
         repo = "omp.yazi";
         rev = "main";
-	hash = "sha256-MvItTUorB0rWg7L3KXUsF3+1KE+wm38C1yAGSfpQ5gg=";
+        hash = "sha256-MvItTUorB0rWg7L3KXUsF3+1KE+wm38C1yAGSfpQ5gg=";
       };
     };
 
     initLua = ''
-        require("full-border"):setup()
-	require("no-status"):setup()
-	require("omp"):setup({ config = "${config.xdg.configHome}/oh-my-posh/config.json" })
+      require("full-border"):setup()
+      require("no-status"):setup()
+      require("omp"):setup({ config = "${config.xdg.configHome}/oh-my-posh/config.json" })
     '';
   };
-}
 
+  programs.zsh.initContent = ''
+    # Yazi file manager with directory change
+    function e() {
+      local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+      yazi "$@" --cwd-file="$tmp"
+      if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+      fi
+      rm -f -- "$tmp"
+    }
+  '';
+}
