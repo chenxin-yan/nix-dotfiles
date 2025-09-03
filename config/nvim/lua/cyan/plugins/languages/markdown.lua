@@ -81,6 +81,7 @@ return {
     opts = {
       servers = {
         marksman = {},
+        harper_ls = {},
       },
     },
   },
