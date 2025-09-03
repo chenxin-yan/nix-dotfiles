@@ -29,9 +29,9 @@
           config.allowUnfree = true;
         };
         modules = [
-          ./hosts/linux/home.nix
           catppuccin.homeModules.catppuccin
-          ./modules/shared
+          ./hosts/linux/home.nix
+          ./profiles/full.nix
         ];
       };
 
@@ -47,9 +47,9 @@
               useUserPackages = true;
               users.yanchenxin = {
                 imports = [
-                  ./hosts/darwin/home.nix
                   catppuccin.homeModules.catppuccin
-                  ./modules/shared
+                  ./hosts/darwin/home.nix
+                  ./profiles/full.nix
                   ./modules/darwin
                 ];
               };

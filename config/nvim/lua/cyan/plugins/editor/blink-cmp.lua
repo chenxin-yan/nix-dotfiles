@@ -229,7 +229,7 @@ return {
             max_items = 10,
           },
           path = {
-            score_offset = 80,
+            score_offset = 85,
           },
           snippets = {
             score_offset = 70,
