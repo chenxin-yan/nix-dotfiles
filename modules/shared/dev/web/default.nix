@@ -2,6 +2,8 @@
 {
   home.packages = with pkgs; [
     curlie
+    awscli2
+    aws-sam-cli
 
     # editor
     prettierd
