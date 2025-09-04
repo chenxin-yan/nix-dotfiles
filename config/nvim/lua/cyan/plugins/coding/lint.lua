@@ -16,7 +16,8 @@ return { -- Linting
   },
   config = function(_, opts)
     local lint = require 'lint'
-    lint.linters_by_ft = vim.tbl_deep_extend('force', lint.linters_by_ft, opts.linters_by_ft)
+    -- Clear all default linters and only use explicitly configured ones
+    lint.linters_by_ft = opts.linters_by_ft or {}
 
     -- Extend existing linters with custom configurations
     for name, config in pairs(opts.linters) do

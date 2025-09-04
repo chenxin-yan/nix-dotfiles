@@ -100,6 +100,13 @@ in
     };
   };
 
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    silent = true;
+    nix-direnv.enable = true;
+  };
+
   programs.bat = {
     enable = true;
   }; # better cat
