@@ -9,6 +9,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixgl = {
+      url = "github:nix-community/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -19,6 +23,7 @@
       nixpkgs,
       catppuccin,
       home-manager,
+      nixgl,
       nix-darwin,
       ...
     }:
@@ -27,6 +32,9 @@
         pkgs = import nixpkgs {
           system = "aarch64-linux";
           config.allowUnfree = true;
+        };
+        extraSpecialArgs = {
+          inherit nixgl;
         };
         modules = [
           catppuccin.homeModules.catppuccin

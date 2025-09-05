@@ -1,9 +1,15 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   wayland = {
     windowManager.hyprland = {
       enable = true;
+      package = config.lib.nixGL.wrap pkgs.hyprland;
       settings = {
         # For 4K Monitors (3840x2160)
         monitor = ",preferred,auto,2";
