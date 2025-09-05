@@ -28,7 +28,7 @@
       default-root-container-layout = "accordion";
       default-root-container-orientation = "auto";
       on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
-      automatically-unhide-macos-hidden-apps = true;
+      automatically-unhide-macos-hidden-apps = false;
 
       key-mapping.preset = "qwerty";
       gaps = {

@@ -15,5 +15,7 @@
     ../modules/shared/dev/python
     ../modules/shared/dev/typescript
     ../modules/shared/dev/web
+
+    ../modules/shared/app/ghostty
   ];
 }
