@@ -30,6 +30,7 @@
       bash
       tlrc
       rainfrog
+      tokei
     ];
 
     home.sessionVariables = {

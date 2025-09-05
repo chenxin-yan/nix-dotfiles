@@ -1,8 +1,5 @@
 { config, pkgs, ... }:
 
-let
-  scriptsDir = "${config.home.homeDirectory}/.local/bin/scripts";
-in
 {
   home.shell.enableZshIntegration = true;
 
@@ -10,12 +7,7 @@ in
     eza # better ls
     fd # better find
     ripgrep # better grep
-    tokei # code counter
   ];
-
-  home.file = {
-    ".local/bin/scripts".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/scripts";
-  };
 
   programs.zsh = {
     enable = true;
@@ -81,23 +73,6 @@ in
       cat = "bat";
 
       c = "clear";
-
-      # scripts
-      ns = "${scriptsDir}/nix/sync.sh";
-      nu = "${scriptsDir}/nix/update.sh";
-
-      cdv = "cd $DEV_PATH";
-      dvc = "${scriptsDir}/dev/clone.sh";
-      dvrm = "${scriptsDir}/dev/remove.sh";
-      scu = "${scriptsDir}/dev/cleanup.sh";
-      se = "${scriptsDir}/dev/attach.sh";
-
-      obs = "${scriptsDir}/obsidian/search.sh";
-      obg = "${scriptsDir}/obsidian/grep.sh";
-      obc = "${scriptsDir}/obsidian/new_note.sh";
-
-      fzg = "${scriptsDir}/utils/rg_with_fzf.sh";
-      dirinit = "${scriptsDir}/dev/dirinit.sh";
     };
   };
 
@@ -251,4 +226,7 @@ in
     };
   };
 
+  imports = [
+    ./scripting.nix
+  ];
 }
