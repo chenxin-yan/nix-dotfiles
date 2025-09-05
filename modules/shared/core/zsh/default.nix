@@ -153,6 +153,7 @@ in
         os = "#ACB0BE";
         pink = "#F5C2E7";
         yellow = "#f9e2af";
+        green = "#a6e3a1";
       };
 
       secondary_prompt = {
@@ -203,6 +204,12 @@ in
                 tag_icon = " ";
               };
             }
+            {
+              type = "nix-shell";
+              template = "󱄅 {{ .Type }}";
+              foreground = "p:blue";
+              style = "plain";
+            }
           ];
         }
         {
@@ -210,21 +217,15 @@ in
           overflow = "hidden";
           segments = [
             {
+              type = "project";
+              template = " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }} {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} ";
+              foreground = "p:green";
+              style = "plain";
+            }
+            {
               template = "{{ .FormattedMs }}";
               foreground = "p:yellow";
               type = "executiontime";
-              style = "plain";
-            }
-            {
-              type = "nix-shell";
-              template = " 󱄅 {{ .Type }}";
-              foreground = "p:blue";
-              style = "plain";
-            }
-            {
-              type = "project";
-              template = " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }} {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} ";
-              foreground = "p:blue";
               style = "plain";
             }
           ];
