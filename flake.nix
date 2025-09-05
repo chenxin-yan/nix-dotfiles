@@ -32,6 +32,7 @@
           catppuccin.homeModules.catppuccin
           ./hosts/linux/home.nix
           ./profiles/full.nix
+          ./modules/linux
         ];
       };
 
