@@ -56,13 +56,13 @@
           alt-k = "focus up";
           alt-l = "focus right";
 
-          alt-ctrl-h = "move left";
-          alt-ctrl-j = "move down";
-          alt-ctrl-k = "move up";
-          alt-ctrl-l = "move right";
+          alt-shift-h = "move left";
+          alt-shift-j = "move down";
+          alt-shift-k = "move up";
+          alt-shift-l = "move right";
 
-          alt-ctrl-minus = "resize smart -50";
-          alt-ctrl-equal = "resize smart +50";
+          alt-shift-minus = "resize smart -50";
+          alt-shift-equal = "resize smart +50";
 
           ctrl-backtick = "workspace 0";
           ctrl-1 = "workspace 1";
@@ -72,19 +72,19 @@
           ctrl-5 = "workspace 5";
           ctrl-6 = "workspace 6";
 
-          alt-ctrl-backtick = "move-node-to-workspace 0";
-          alt-ctrl-1 = "move-node-to-workspace 1";
-          alt-ctrl-2 = "move-node-to-workspace 2";
-          alt-ctrl-3 = "move-node-to-workspace 3";
-          alt-ctrl-4 = "move-node-to-workspace 4";
-          alt-ctrl-5 = "move-node-to-workspace 5";
-          alt-ctrl-6 = "move-node-to-workspace 6";
+          ctrl-shift-backtick = "move-node-to-workspace 0";
+          ctrl-shift-1 = "move-node-to-workspace 1";
+          ctrl-shift-2 = "move-node-to-workspace 2";
+          ctrl-shift-3 = "move-node-to-workspace 3";
+          ctrl-shift-4 = "move-node-to-workspace 4";
+          ctrl-shift-5 = "move-node-to-workspace 5";
+          ctrl-shift-6 = "move-node-to-workspace 6";
 
           alt-tab = "workspace-back-and-forth";
 
           alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
 
-          alt-ctrl-semicolon = "mode service";
+          alt-shift-semicolon = "mode service";
         };
         service.binding = {
           esc = [
@@ -103,19 +103,19 @@
             "close-all-windows-but-current"
             "mode main"
           ];
-          alt-ctrl-h = [
+          alt-shift-h = [
             "join-with left"
             "mode main"
           ];
-          alt-ctrl-j = [
+          alt-shift-j = [
             "join-with down"
             "mode main"
           ];
-          alt-ctrl-k = [
+          alt-shift-k = [
             "join-with up"
             "mode main"
           ];
-          alt-ctrl-l = [
+          alt-shift-l = [
             "join-with right"
             "mode main"
           ];
