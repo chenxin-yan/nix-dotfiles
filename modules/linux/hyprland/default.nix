@@ -5,29 +5,26 @@
   ...
 }:
 
+let
+  monitorType = "4k";
+in
 {
   wayland = {
     windowManager.hyprland = {
       enable = true;
       package = config.lib.nixGL.wrap pkgs.hyprland;
-      settings = {
-        # For 4K Monitors (3840x2160)
-        monitor = ",preferred,auto,2";
-
-        # For 1440p Monitors (2560x1440)
-        # monitor = ",preferred,auto,1";
-
-        # For 1080p Monitors (1920x1080)
-        # monitor = ",preferred,auto,1";
-      };
+      settings = lib.mkMerge [
+        (import ./config/env.nix)
+        (import ./config/monitor.nix { inherit monitorType; })
+        (import ./config/appearance.nix)
+        (import ./config/input.nix)
+        (import ./config/keybindings.nix)
+        (import ./config/windowrules.nix)
+      ];
     };
   };
 
   home.sessionVariables = {
-    # For 4K Monitors
-    GDK_SCALE = "2";
-
-    # For 1440p or 1080p Monitors
-    # GDK_SCALE = "1";
+    GDK_SCALE = if monitorType == "4k" then "2" else "1";
   };
 }
