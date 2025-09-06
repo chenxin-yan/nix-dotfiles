@@ -41,6 +41,18 @@
       bindkey '^n' history-search-forward
       bindkey '^y' autosuggest-accept
 
+      # Double ESC to prepend sudo to last command
+      sudo-command-line() {
+        if [[ -z $BUFFER ]]; then
+          BUFFER="sudo $(fc -ln -1)"
+        else
+          BUFFER="sudo $BUFFER"
+        fi
+        zle end-of-line
+      }
+      zle -N sudo-command-line
+      bindkey '\e\e' sudo-command-line
+
       # FZF custom completion functions
       # Use fd for path completion
       _fzf_compgen_path() {
