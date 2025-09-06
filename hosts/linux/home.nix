@@ -10,8 +10,11 @@
   home.username = "chenxinyan";
   home.homeDirectory = "/home/chenxinyan";
 
-  nix.settings = {
-    experimental-features = "nix-command flakes";
+  nix = {
+    package = pkgs.nix;
+    settings = {
+      experimental-features = "nix-command flakes";
+    };
   };
 
   nixGL = {
