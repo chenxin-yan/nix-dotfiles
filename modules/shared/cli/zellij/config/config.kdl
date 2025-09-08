@@ -83,12 +83,6 @@ keybinds clear-defaults=true {
         bind "Alt I" { MoveTab "left"; }
         bind "Alt O" { MoveTab "right"; }
     }
-    shared_except "scroll" {
-        bind "Ctrl h" { MessagePlugin { name "nvim_nav_left"; payload "8"; }; }
-        bind "Ctrl j" { MessagePlugin { name "nvim_nav_down"; payload "10"; }; }
-        bind "Ctrl k" { MessagePlugin { name "nvim_nav_up"; payload "11"; }; }
-        bind "Ctrl l" { MessagePlugin { name "nvim_nav_right"; payload "12"; }; }
-    }
     shared_except "locked" "renametab" "renamepane" {
         bind "Ctrl s" { SwitchToMode "locked"; }
         bind "Ctrl q" { Quit; }
@@ -108,6 +102,10 @@ keybinds clear-defaults=true {
         bind "7" { GoToTab 7; SwitchToMode "locked"; }
         bind "8" { GoToTab 8; SwitchToMode "locked"; }
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
+        bind "h" { MoveFocus "left"; }
+        bind "j" { MoveFocus "down"; }
+        bind "k" { MoveFocus "up"; }
+        bind "l" { MoveFocus "right"; }
     }
     shared_except "locked" "entersearch" {
         bind "enter" { SwitchToMode "locked"; }
@@ -166,11 +164,9 @@ plugins {
     compact-bar location="zellij:compact-bar"
     session-manager location="zellij:session-manager"
     plugin-manager location="zellij:plugin-manager"
-    nvim-nav location="https://github.com/sharph/zellij-nvim-nav-plugin/releases/download/v1.0.0/zellij-nvim-nav-plugin.wasm"
 }
 
 load_plugins {
-  nvim-nav
 }
 
 default_mode "locked"
