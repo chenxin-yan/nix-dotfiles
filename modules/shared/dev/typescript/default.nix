@@ -9,5 +9,6 @@
     # editor
     vtsls
     nodePackages."@astrojs/language-server"
+    vscode-js-debug
   ];
 }

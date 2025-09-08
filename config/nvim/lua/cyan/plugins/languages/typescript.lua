@@ -135,12 +135,12 @@ return {
     },
     keys = {
       {
-        '<leader>tvW',
+        '<leader>tVW',
         "<cmd>lua require('neotest').run.run({ vim.fn.expand('%'), vitestCommand = 'npx vitest' })<cr>",
         desc = 'Vitest: Run Watch File',
       },
       {
-        '<leader>tvw',
+        '<leader>tVw',
         "<cmd>lua require('neotest').run.run({ vitestCommand = 'npx vitest' })<cr>",
         desc = 'Vitest: Run Watch',
       },
@@ -151,5 +151,40 @@ return {
         ['neotest-bun'] = {},
       },
     },
+  },
+  {
+    'mfussenegger/nvim-dap',
+    config = function()
+      require('dap').adapters['pwa-node'] = {
+        type = 'server',
+        host = 'localhost',
+        port = '${port}',
+        executable = {
+          command = 'js-debug',
+          args = { '${port}' },
+        },
+      }
+
+      local js_filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' }
+
+      for _, language in ipairs(js_filetypes) do
+        require('dap').configurations[language] = {
+          {
+            type = 'pwa-node',
+            request = 'launch',
+            name = 'Launch file',
+            program = '${file}',
+            cwd = '${workspaceFolder}',
+          },
+          {
+            type = 'pwa-node',
+            request = 'attach',
+            name = 'Attach',
+            processId = require('dap.utils').pick_process,
+            cwd = '${workspaceFolder}',
+          },
+        }
+      end
+    end,
   },
 }
