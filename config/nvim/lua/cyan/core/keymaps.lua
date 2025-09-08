@@ -62,4 +62,4 @@ vim.keymap.set('n', '<C-w>', '<cmd>bprev<cr>', { desc = 'Goto previous buffer' }
 vim.keymap.set('n', '<C-e>', '<cmd>bnext<cr>', { desc = 'Goto next buffer' })
 
 -- select pasted text
-vim.keymap.set('n', 'gp', '`[v`]', { desc = 'Select Pasted Text' })
+vim.keymap.set('n', 'gP', '`[v`]', { desc = 'Select Pasted Text' })
