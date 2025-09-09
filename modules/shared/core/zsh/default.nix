@@ -3,12 +3,6 @@
 {
   home.shell.enableZshIntegration = true;
 
-  home.packages = with pkgs; [
-    eza # better ls
-    fd # better find
-    ripgrep # better grep
-  ];
-
   programs.zsh = {
     enable = true;
     defaultKeymap = "viins";
@@ -94,6 +88,15 @@
     silent = true;
     nix-direnv.enable = true;
   };
+
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.ripgrep.enable = true;
+
+  programs.fd.enable = true;
 
   programs.bat = {
     enable = true;

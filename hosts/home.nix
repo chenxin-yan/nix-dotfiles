@@ -31,6 +31,7 @@
       tlrc
       rainfrog
       tokei
+      bootdev-cli
     ];
 
     home.sessionVariables = {
