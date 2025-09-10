@@ -12,9 +12,9 @@
 
     userSettings = {
       after-login-command = [ ];
-      after-startup-command = [
-        "exec-and-forget ${lib.getExe' pkgs.sketchybar "sketchybar"}"
-      ];
+      # after-startup-command = [
+      #   "exec-and-forget ${lib.getExe' pkgs.sketchybar "sketchybar"}"
+      # ];
       exec-on-workspace-change = [
         (lib.getExe' pkgs.bash "bash")
         "-c"
@@ -64,21 +64,21 @@
           alt-shift-minus = "resize smart -50";
           alt-shift-equal = "resize smart +50";
 
-          ctrl-backtick = "workspace 0";
-          ctrl-1 = "workspace 1";
-          ctrl-2 = "workspace 2";
-          ctrl-3 = "workspace 3";
-          ctrl-4 = "workspace 4";
-          ctrl-5 = "workspace 5";
-          ctrl-6 = "workspace 6";
+          alt-backtick = "workspace 0";
+          alt-1 = "workspace 1";
+          alt-2 = "workspace 2";
+          alt-3 = "workspace 3";
+          alt-4 = "workspace 4";
+          alt-5 = "workspace 5";
+          alt-6 = "workspace 6";
 
-          ctrl-shift-backtick = "move-node-to-workspace 0";
-          ctrl-shift-1 = "move-node-to-workspace 1";
-          ctrl-shift-2 = "move-node-to-workspace 2";
-          ctrl-shift-3 = "move-node-to-workspace 3";
-          ctrl-shift-4 = "move-node-to-workspace 4";
-          ctrl-shift-5 = "move-node-to-workspace 5";
-          ctrl-shift-6 = "move-node-to-workspace 6";
+          alt-shift-backtick = "move-node-to-workspace 0";
+          alt-shift-1 = "move-node-to-workspace 1";
+          alt-shift-2 = "move-node-to-workspace 2";
+          alt-shift-3 = "move-node-to-workspace 3";
+          alt-shift-4 = "move-node-to-workspace 4";
+          alt-shift-5 = "move-node-to-workspace 5";
+          alt-shift-6 = "move-node-to-workspace 6";
 
           alt-tab = "workspace-back-and-forth";
 

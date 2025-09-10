@@ -8,7 +8,9 @@
 {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
-  environment.systemPackages = [ ];
+  environment.systemPackages = [
+    pkgs.kanata
+  ];
 
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";
@@ -37,4 +39,20 @@
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.sketchybar-app-font
   ];
+
+  # Kanata system daemon
+  launchd.daemons.kanata = {
+    serviceConfig = {
+      ProgramArguments = [
+        "/usr/bin/sudo"
+        "${pkgs.kanata}/bin/kanata"
+        "--cfg"
+        "/Users/${config.system.primaryUser}/.config/kanata/kanata.kbd"
+      ];
+      KeepAlive = true;
+      RunAtLoad = true;
+      StandardOutPath = "/Users/${config.system.primaryUser}/Library/Logs/kanata.log";
+      StandardErrorPath = "/Users/${config.system.primaryUser}/Library/Logs/kanata.error.log";
+    };
+  };
 }
