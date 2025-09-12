@@ -1,9 +1,5 @@
 (defcfg
   process-unmapped-keys yes
-  macos-dev-names-include (
-    "Apple Internal Keyboard / Trackpad"
-    "MX MCHNCL M"
-  )
 )
 
 (defsrc
@@ -21,16 +17,16 @@
 )
 
 (defalias
-  a (tap-hold $tap-time $hold-time a lmet)
-  s (tap-hold $tap-time $hold-time s lsft)
+  a (tap-hold $tap-time $hold-time a lsft)
+  s (tap-hold $tap-time $hold-time s lmet)
   d (tap-hold $tap-time $hold-time d lalt)
   f (tap-hold $tap-time $hold-time f lctl)
   g (tap-hold $tap-time $hold-time g (multi lctl lsft lalt lmet))
   h (tap-hold $tap-time $hold-time h (multi lctl lsft lalt lmet))
   j (tap-hold $tap-time $hold-time j rctl)
   k (tap-hold $tap-time $hold-time k ralt)
-  l (tap-hold $tap-time $hold-time l rsft)
-  ; (tap-hold $tap-time $hold-time ; rmet)
+  l (tap-hold $tap-time $hold-time l rmet)
+  ; (tap-hold $tap-time $hold-time ; rsft)
   fnl (tap-hold $tap-time $hold-time fn (layer-toggle fn))
   caps (tap-hold $tap-time $hold-time esc (layer-while-held numbers))
 )

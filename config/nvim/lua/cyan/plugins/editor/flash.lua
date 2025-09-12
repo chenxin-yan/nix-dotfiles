@@ -22,7 +22,7 @@ return {
       desc = 'Flash Treesitter',
     },
     {
-      '<c-g>',
+      '<c-s>',
       mode = { 'c' },
       function()
         require('flash').toggle()
@@ -93,4 +93,3 @@ return {
     },
   },
 }
-
