@@ -13,20 +13,21 @@
 
 (defvar
   tap-time 150
-  hold-time 180
+  hold-time 170
+  hold-time-slow 180
 )
 
 (defalias
-  a (tap-hold $tap-time $hold-time a lsft)
-  s (tap-hold $tap-time $hold-time s lmet)
+  a (tap-hold $tap-time $hold-time-slow a lmet)
+  s (tap-hold $tap-time $hold-time-slow s lsft)
   d (tap-hold $tap-time $hold-time d lalt)
   f (tap-hold $tap-time $hold-time f lctl)
   g (tap-hold $tap-time $hold-time g (multi lctl lsft lalt lmet))
   h (tap-hold $tap-time $hold-time h (multi lctl lsft lalt lmet))
   j (tap-hold $tap-time $hold-time j rctl)
   k (tap-hold $tap-time $hold-time k ralt)
-  l (tap-hold $tap-time $hold-time l rmet)
-  ; (tap-hold $tap-time $hold-time ; rsft)
+  l (tap-hold $tap-time $hold-time-slow l rmet)
+  ; (tap-hold $tap-time $hold-time-slow ; rsft)
   fnl (tap-hold $tap-time $hold-time fn (layer-toggle fn))
   caps (tap-hold $tap-time $hold-time esc (layer-while-held numbers))
 )
@@ -53,7 +54,7 @@
   _   _   _   _   _   _   _   _   _   _   _   _
   (multi lalt grv) (multi lalt 1) (multi lalt 2) (multi lalt 3) (multi lalt 4) (multi lalt 5) (multi lalt 6) (multi lalt 7) (multi lalt 8) (multi lalt 9) (multi lalt 0)
   grv  1    2    3    4    5    6    7    8    9    0
-  _ _ _ _ _ _ left down up right _
+  _ _ (multi lctl s) _ _ _ left down up right _
   (multi lctl c)
   _
 )
