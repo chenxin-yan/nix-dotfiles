@@ -44,13 +44,13 @@
   launchd.daemons.kanata = {
     serviceConfig = {
       ProgramArguments = [
-        "/usr/bin/sudo"
         "${pkgs.kanata}/bin/kanata"
         "--cfg"
         "/Users/${config.system.primaryUser}/.config/kanata/kanata.kbd"
       ];
       KeepAlive = true;
       RunAtLoad = true;
+      UserName = "root";
       StandardOutPath = "/Users/${config.system.primaryUser}/Library/Logs/kanata.log";
       StandardErrorPath = "/Users/${config.system.primaryUser}/Library/Logs/kanata.error.log";
     };
