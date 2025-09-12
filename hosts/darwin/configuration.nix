@@ -46,7 +46,7 @@
       ProgramArguments = [
         "${pkgs.kanata}/bin/kanata"
         "--cfg"
-        "/Users/${config.system.primaryUser}/.config/kanata/kanata.kbd"
+        "${../../config/kanata/kanata.kbd}"
       ];
       KeepAlive = true;
       RunAtLoad = true;
