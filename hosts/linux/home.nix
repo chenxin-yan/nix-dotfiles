@@ -26,6 +26,7 @@
 
   home.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
+    ghostty
   ];
 
   home.file = {
