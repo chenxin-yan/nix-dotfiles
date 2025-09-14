@@ -7,7 +7,7 @@
   grv  1    2    3    4    5    6    7    8    9    0
   tab  q    w    e    r    t    y    u    i    o    p
   caps a s d f g h j k l ;
-  c
+  c v
   fn
 )
 
@@ -19,24 +19,24 @@
 
 (defalias
   hyper (multi lctl lsft lalt lmet)
+  a (tap-hold $tap-time $hold-time-slow a @hyper)
   s (tap-hold $tap-time $hold-time-slow s lsft)
   d (tap-hold $tap-time $hold-time d lalt)
   f (tap-hold $tap-time $hold-time f lctl)
-  g (tap-hold $tap-time $hold-time g @hyper)
-  h (tap-hold $tap-time $hold-time h @hyper)
   j (tap-hold $tap-time $hold-time j rctl)
   k (tap-hold $tap-time $hold-time k ralt)
   l (tap-hold $tap-time $hold-time-slow l rsft)
+  ; (tap-hold $tap-time $hold-time-slow ; @hyper)
   fnl (tap-hold $tap-time $hold-time fn (layer-toggle fn))
-  caps (tap-hold $tap-time $hold-time esc (layer-while-held numbers))
+  caps (tap-hold $tap-time 120 esc (layer-while-held numbers))
 )
 
 (deflayer base
   brdn  brup  _    _    _    _   prev  pp  next  mute  vold  volu
   grv   1    2    3    4    5    6    7    8    9    0
   tab   q    w    e    r    t    y    u    i    o    p
-  @caps a @s @d @f @g @h @j @k @l ;
-  c
+  @caps @a @s @d @f g h @j @k @l @;
+  c v
   @fnl
 )
 
@@ -45,7 +45,7 @@
   _ _ _ _ _ _ _ _ _ _ _
   _ _ _ _ _ _ _ _ _ _ _ 
   @caps _ _ _ _ _ _ _ _ _ _
-  _
+  _ _
   fn
 )
 
@@ -53,7 +53,7 @@
   _   _   _   _   _   _   _   _   _   _   _   _
   (multi lalt grv) (multi lalt 1) (multi lalt 2) (multi lalt 3) (multi lalt 4) (multi lalt 5) (multi lalt 6) (multi lalt 7) (multi lalt 8) (multi lalt 9) (multi lalt 0)
   grv  1    2    3    4    5    6    7    8    9    0
-  _ _ (multi lctl s) _ _ _ left down up right _
-  (multi lctl c)
+  _ (multi lctl a) (multi lctl s) _ _ _ left down up right _
+  (multi lctl c) (multi lctl v)
   _
 )
