@@ -19,7 +19,6 @@
 
 (defalias
   hyper (multi lctl lsft lalt lmet)
-  a (tap-hold $tap-time $hold-time-slow a lmet)
   s (tap-hold $tap-time $hold-time-slow s lsft)
   d (tap-hold $tap-time $hold-time d lalt)
   f (tap-hold $tap-time $hold-time f lctl)
@@ -28,7 +27,6 @@
   j (tap-hold $tap-time $hold-time j rctl)
   k (tap-hold $tap-time $hold-time k ralt)
   l (tap-hold $tap-time $hold-time-slow l rsft)
-  ; (tap-hold $tap-time $hold-time-slow ; rmet)
   fnl (tap-hold $tap-time $hold-time fn (layer-toggle fn))
   caps (tap-hold $tap-time $hold-time esc (layer-while-held numbers))
 )
@@ -37,7 +35,7 @@
   brdn  brup  _    _    _    _   prev  pp  next  mute  vold  volu
   grv   1    2    3    4    5    6    7    8    9    0
   tab   q    w    e    r    t    y    u    i    o    p
-  @caps @a @s @d @f @g @h @j @k @l @;
+  @caps a @s @d @f @g @h @j @k @l ;
   c
   @fnl
 )
