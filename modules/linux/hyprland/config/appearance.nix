@@ -42,5 +42,4 @@
     disable_splash_rendering = true;
     vrr = 0;
   };
-
 }

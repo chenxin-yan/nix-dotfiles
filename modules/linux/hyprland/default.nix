@@ -5,26 +5,34 @@
   ...
 }:
 
-let
-  monitorType = "4k";
-in
 {
   wayland = {
     windowManager.hyprland = {
       enable = true;
       package = config.lib.nixGL.wrap pkgs.hyprland;
       settings = lib.mkMerge [
+        {
+          "$menu" = "rofi -show drun";
+          "$terminal" = "ghostty";
+        }
         (import ./config/env.nix)
-        (import ./config/monitor.nix { inherit monitorType; })
+        (import ./config/monitor.nix)
         (import ./config/appearance.nix)
         (import ./config/input.nix)
         (import ./config/keybindings.nix)
         (import ./config/windowrules.nix)
+        {
+          "exec-once" = "waybar";
+        }
       ];
     };
   };
 
   home.sessionVariables = {
-    GDK_SCALE = if monitorType == "4k" then "2" else "1";
+    GDK_SCALE = "2";
+  };
+
+  programs.rofi = {
+    enable = true;
   };
 }
