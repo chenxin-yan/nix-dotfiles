@@ -9,7 +9,6 @@
   wayland = {
     windowManager.hyprland = {
       enable = true;
-      package = config.lib.nixGL.wrap pkgs.hyprland;
       settings = lib.mkMerge [
         {
           "$menu" = "rofi -show drun";

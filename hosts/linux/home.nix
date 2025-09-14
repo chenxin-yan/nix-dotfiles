@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  nixgl,
   ...
 }:
 
@@ -15,11 +14,6 @@
     settings = {
       experimental-features = "nix-command flakes";
     };
-  };
-
-  nixGL = {
-    packages = nixgl.packages;
-    defaultWrapper = "mesa"; # choose from nixGL options depending on GPU
   };
 
   imports = [ ../home.nix ];
