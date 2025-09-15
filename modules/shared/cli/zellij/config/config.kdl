@@ -91,6 +91,10 @@ keybinds clear-defaults=true {
         bind "Ctrl 7" { GoToTab 7; }
         bind "Ctrl 8" { GoToTab 8; }
         bind "Ctrl 9" { GoToTab 9; }
+        bind "Ctrl H" { MoveFocus "left"; }
+        bind "Ctrl J" { MoveFocus "down"; }
+        bind "Ctrl K" { MoveFocus "up"; }
+        bind "Ctrl L" { MoveFocus "right"; }
     }
     shared_except "locked" "renametab" "renamepane" {
         bind "Ctrl s" { SwitchToMode "locked"; }
@@ -111,10 +115,6 @@ keybinds clear-defaults=true {
         bind "7" { GoToTab 7; SwitchToMode "locked"; }
         bind "8" { GoToTab 8; SwitchToMode "locked"; }
         bind "9" { GoToTab 9; SwitchToMode "locked"; }
-        bind "h" { MoveFocus "left"; }
-        bind "j" { MoveFocus "down"; }
-        bind "k" { MoveFocus "up"; }
-        bind "l" { MoveFocus "right"; }
     }
     shared_except "locked" "entersearch" {
         bind "enter" { SwitchToMode "locked"; }

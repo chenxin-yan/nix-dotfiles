@@ -13,5 +13,4 @@ map('s', "<cmd>lua require('kulala').run()<cr>", 'Send the request')
 map('S', "<cmd>lua require('kulala').show_stats()<cr>", 'Show stats')
 map('t', "<cmd>lua require('kulala').toggle_view()<cr>", 'Toggle headers/body')
 
-require('which-key').add { '<leader>r', group = 'Rest', buffer = 0 , icon = "󰒲 "}
-
+require('which-key').add { '<leader>r', group = 'Rest', buffer = 0, icon = '󰒲 ' }
