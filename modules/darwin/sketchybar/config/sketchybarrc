@@ -37,7 +37,6 @@ DEF_PROPS=(
   label.color=$WHITE
   label.padding_left=$PADDING
   label.padding_right=10
-  background.color=$BG_PRI_COLR
   background.padding_right=$PADDING
   background.padding_left=$PADDING
   background.height=22

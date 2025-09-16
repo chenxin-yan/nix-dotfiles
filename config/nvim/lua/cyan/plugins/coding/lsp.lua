@@ -4,7 +4,7 @@ return {
     keys = {
       {
         '<leader>rn',
-        "<cmd>lua require('live-rename').rename({ insert = true, cursorpos = -1 })<cr>",
+        "<cmd>lua require('live-rename').rename()<cr>",
         desc = 'Rename',
       },
     },

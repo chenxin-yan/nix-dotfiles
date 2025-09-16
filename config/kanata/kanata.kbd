@@ -13,7 +13,7 @@
 
 (defvar
   tap-time 150
-  hold-time 165
+  hold-time 170
   hold-time-slow 180
 )
 

@@ -7,7 +7,7 @@ adjust-underline-position = 4
 mouse-hide-while-typing = true
 
 # Theme
-theme = catppuccin-mocha
+theme = Catppuccin Mocha
 cursor-invert-fg-bg = true
 background-opacity = 0.98
 background-blur = 30
