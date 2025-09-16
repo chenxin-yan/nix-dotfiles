@@ -16,6 +16,7 @@
     ../modules/shared/dev/typescript
     ../modules/shared/dev/web
     ../modules/shared/dev/bash
+    ../modules/shared/dev/java
 
     ../modules/shared/app/ghostty
   ];

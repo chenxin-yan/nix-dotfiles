@@ -35,22 +35,10 @@ return {
       servers = {},
     },
     config = function(_, opts)
-      -- require('java').setup {
-      --   jdk = { auto_install = false },
-      -- }
-
       for server_name, config in pairs(opts.servers) do
         vim.lsp.config(server_name, config)
         vim.lsp.enable(server_name)
       end
-
-      -- vim.lsp.config('jdtls', {
-      --   handlers = {
-      --     ['$/progress'] = function(_, result, ctx) end,
-      --   },
-      -- })
-      --
-      -- vim.lsp.enable 'jdtls'
     end,
   },
   {
