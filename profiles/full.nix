@@ -17,6 +17,7 @@
     ../modules/shared/dev/web
     ../modules/shared/dev/bash
     ../modules/shared/dev/java
+    ../modules/shared/dev/go
 
     ../modules/shared/app/ghostty
   ];
