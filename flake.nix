@@ -39,7 +39,7 @@
         modules = [
           catppuccin.homeModules.catppuccin
           ./hosts/linux/home.nix
-          ./profiles/full.nix
+          ./profiles
           ./modules/linux
         ];
       };
@@ -58,7 +58,7 @@
                 imports = [
                   catppuccin.homeModules.catppuccin
                   ./hosts/darwin/home.nix
-                  ./profiles/full.nix
+                  ./profiles
                   ./modules/darwin
                 ];
               };
