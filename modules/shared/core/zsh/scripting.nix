@@ -28,6 +28,8 @@ in
 
       fzg = "${scriptsDir}/utils/rg_with_fzf.sh";
       dirinit = "${scriptsDir}/dev/dirinit.sh";
+
+      md2pdf = "${scriptsDir}/utils/md2pdf.sh";
     };
   };
 }

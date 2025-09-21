@@ -9,6 +9,7 @@
     ../modules/shared/cli/podman
     ../modules/shared/cli/yazi
     ../modules/shared/cli/zellij
+    ../modules/shared/cli/pandoc
 
     ../modules/shared/dev/lua
     ../modules/shared/dev/markdown
@@ -19,6 +20,7 @@
     ../modules/shared/dev/bash
     ../modules/shared/dev/java
     ../modules/shared/dev/go
+    ../modules/shared/dev/latex
 
     ../modules/shared/app/ghostty
   ];
