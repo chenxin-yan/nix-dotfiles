@@ -41,9 +41,9 @@
   launchd.daemons.kanata = {
     serviceConfig = {
       ProgramArguments = [
-        "${pkgs.kanata}/bin/kanata"
+        "/run/current-system/sw/bin/kanata"
         "--cfg"
-        "${../../config/kanata/kanata.kbd}"
+        "/Users/${config.system.primaryUser}/.config/kanata/kanata.kbd"
       ];
       KeepAlive = true;
       RunAtLoad = true;

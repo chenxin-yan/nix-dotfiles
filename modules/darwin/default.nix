@@ -4,5 +4,6 @@
   imports = [
     ./aerospace
     ./sketchybar
+    ./kanata
   ];
 }
