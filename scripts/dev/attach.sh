@@ -2,11 +2,18 @@
 
 # Ensure directories exist
 mkdir -p "$DEV_PATH"
+mkdir -p "$PROJECTS_PATH"
 
-# Use fd to select a top-level directory in DEV_PATH only
+# Use fd to select a top-level directory in both DEV_PATH and PROJECTS_PATH
 SELECTED_DIR=$(
-  fd --type d -L --max-depth 1 . "$DEV_PATH" \
-  | fzf --prompt="Select a project to open: "
+  {
+    if [[ -n "$DEV_PATH" && -d "$DEV_PATH" ]]; then
+      fd --type d -L --max-depth 1 . "$DEV_PATH"
+    fi
+    if [[ -n "$PROJECTS_PATH" && -d "$PROJECTS_PATH" ]]; then
+      fd --type d -L --max-depth 1 . "$PROJECTS_PATH"
+    fi
+  } | sort -u | fzf --prompt="Select a project to open: "
 )
 
 # Check if a directory was actually selected

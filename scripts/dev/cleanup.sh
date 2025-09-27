@@ -13,11 +13,12 @@ zellij list-sessions --no-formatting | while read -r session_info; do
   # Convert session name back to directory name (replace '_' with '.')
   dir_name=$(echo "$session_name" | tr '_' '.')
   
-  # Check if corresponding directory exists in DEV_DIR
+  # Check if corresponding directory exists in either DEV_PATH or PROJECTS_PATH
   DEV_FULL_PATH="$DEV_PATH/$dir_name"
+  PROJECTS_FULL_PATH="$PROJECTS_PATH/$dir_name"
   
-  if [ ! -d "$DEV_FULL_PATH" ] && [ ! -L "$DEV_FULL_PATH" ]; then
-    echo "Killing zellij session: $session_name (Folder does not exist)"
+  if [ ! -d "$DEV_FULL_PATH" ] && [ ! -L "$DEV_FULL_PATH" ] && [ ! -d "$PROJECTS_FULL_PATH" ] && [ ! -L "$PROJECTS_FULL_PATH" ]; then
+    echo "Killing zellij session: $session_name (Folder does not exist in DEV_PATH or PROJECTS_PATH)"
     zellij delete-session "$session_name" --force
   fi
 done

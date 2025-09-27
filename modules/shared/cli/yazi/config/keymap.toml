@@ -209,6 +209,10 @@ keymap = [
   ], run = "cd ~/.config", desc = "Go ~/.config" },
   { on = [
     "g",
+    "p",
+  ], run = "cd $PROJECTS_PATH", desc = "Go projects dir" },
+  { on = [
+    "g",
     "C",
   ], run = "cd ~/dotfiles", desc = "Go ~/dotfiles" },
   { on = [
@@ -251,8 +255,10 @@ keymap = [
   { on = "T", run = "tasks:show", desc = "Show task manager" },
 
   # Help
-  { on = "~", run = "help", desc = "Open help" },
-  { on = "<F1>", run = "help", desc = "Open help" },
+  { on = [
+    "g",
+    "?",
+  ], run = "help", desc = "Open help" },
 ]
 
 
