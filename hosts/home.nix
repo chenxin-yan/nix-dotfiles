@@ -41,6 +41,7 @@
       DEV_PATH = "${config.home.homeDirectory}/dev";
       OBSIDIAN_VAULT_PATH = "${config.home.homeDirectory}/Ideaverse";
       PROJECTS_PATH = "${config.home.homeDirectory}/Projects";
+      AREAS_PATH = "${config.home.homeDirectory}/Areas";
     };
 
     # Let Home Manager install and manage itself.

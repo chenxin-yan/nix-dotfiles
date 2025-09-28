@@ -210,7 +210,11 @@ keymap = [
   { on = [
     "g",
     "p",
-  ], run = "cd $PROJECTS_PATH", desc = "Go projects dir" },
+  ], run = "cd $PROJECTS_PATH", desc = "Go to projects dir" },
+  { on = [
+    "g",
+    "a",
+  ], run = "cd $AREAS_PATH", desc = "Go to Areas dir" },
   { on = [
     "g",
     "C",
