@@ -10,6 +10,7 @@
     ../modules/shared/cli/yazi
     ../modules/shared/cli/zellij
     ../modules/shared/cli/pandoc
+    ../modules/shared/cli/atuin
 
     ../modules/shared/dev/lua
     ../modules/shared/dev/markdown
