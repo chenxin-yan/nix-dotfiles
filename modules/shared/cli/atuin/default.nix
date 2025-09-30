@@ -7,6 +7,8 @@
     daemon.enable = true;
     settings = {
       enter_accept = true;
+      style = "compact";
+      invert = true;
       history_filter = [
         "^c$"
         "^G$"
