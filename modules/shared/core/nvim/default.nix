@@ -6,6 +6,7 @@
 {
   home.packages = with pkgs; [
     neovim
+    tree-sitter
     imagemagick_light
   ];
 

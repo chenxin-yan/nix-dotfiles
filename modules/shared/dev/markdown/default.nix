@@ -2,6 +2,8 @@
 
 {
   home.packages = with pkgs; [
+    mermaid-cli
+
     markdownlint-cli2
     prettierd
     marksman
