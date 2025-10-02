@@ -1,16 +1,17 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
-    opts = {
-      ensure_installed = {
+    opts = function(_, opts)
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, {
         'xml',
         'html',
         'css',
         'json5',
         'yaml',
         'toml',
-      },
-    },
+      })
+    end,
   },
 
   { -- emmet integration

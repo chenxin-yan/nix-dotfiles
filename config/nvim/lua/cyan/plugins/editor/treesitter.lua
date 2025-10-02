@@ -10,8 +10,9 @@ return {
     build = ':TSUpdate',
     dependencies = { 'nvim-treesitter/nvim-treesitter-context', 'nvim-treesitter/nvim-treesitter-textobjects' },
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    opts = {
-      ensure_installed = {
+    opts = function(_, opts)
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, {
         'bash',
         'diff',
         'lua',
@@ -28,76 +29,73 @@ return {
         'git_rebase',
         'gitignore',
         'gitattributes',
-      },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
-      indent = { enable = true, disable = { 'ruby' } },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = '<c-;>',
-          node_incremental = '<c-;>',
-          scope_incremental = false,
-          node_decremental = '<c-,>',
-        },
-      },
-      textobjects = {
-        swap = {
+      })
+      return {
+        ensure_installed = opts.ensure_installed,
+        auto_install = true,
+        highlight = {
           enable = true,
-          swap_next = {
-            ['<leader>c]'] = { query = '@parameter.inner', desc = 'Swap [N]ext argument' },
-            ['<leader>c}'] = { query = '@function.outer', desc = 'Swap [N]ext function' },
-          },
-          swap_previous = {
-            ['<leader>c['] = { query = '@parameter.inner', desc = 'Swap [P]revious argument' },
-            ['<leader>c{'] = { query = '@function.outer', desc = 'Swap [N]ext funtion' },
-          },
+          additional_vim_regex_highlighting = { 'ruby' },
         },
-        move = {
+        indent = { enable = true, disable = { 'ruby' } },
+        incremental_selection = {
           enable = true,
-          disable = { 'markdown' },
-          goto_next_start = {
-            [']f'] = { query = '@function.outer', desc = 'Next function/method start' },
-            [']a'] = { query = '@parameter.outer', desc = 'Next argument' },
-          },
-          goto_next_end = {},
-          goto_previous_start = {
-            ['[f'] = { query = '@function.outer', desc = 'Previous function/method start' },
-            ['[a'] = { query = '@parameter.outer', desc = 'Previous argument' },
-          },
-          goto_previous_end = {
-            ['[F'] = { query = '@function.outer', desc = 'Previous function/method end' },
-          },
-          goto_next = {
-            [']o'] = { query = { '@block.outer', '@conditional.outer', '@loop.outer' }, desc = 'Next code block' },
-          },
-          goto_previous = {
-            ['[o'] = { query = { '@block.outer', '@conditional.outer', '@loop.outer' }, desc = 'Previous code block' },
+          keymaps = {
+            init_selection = '<c-;>',
+            node_incremental = '<c-;>',
+            scope_incremental = false,
+            node_decremental = '<c-,>',
           },
         },
-        lsp_interop = {
-          enable = true,
-          floating_preview_opts = {
-            border = 'rounded',
+        textobjects = {
+          swap = {
+            enable = true,
+            swap_next = {
+              ['<leader>c]'] = { query = '@parameter.inner', desc = 'Swap [N]ext argument' },
+              ['<leader>c}'] = { query = '@function.outer', desc = 'Swap [N]ext function' },
+            },
+            swap_previous = {
+              ['<leader>c['] = { query = '@parameter.inner', desc = 'Swap [P]revious argument' },
+              ['<leader>c{'] = { query = '@function.outer', desc = 'Swap [N]ext funtion' },
+            },
           },
-          peek_definition_code = {
-            ['<leader>cp'] = '@function.outer',
-            ['<leader>cP'] = '@class.outer',
+          move = {
+            enable = true,
+            disable = { 'markdown' },
+            goto_next_start = {
+              [']f'] = { query = '@function.outer', desc = 'Next function/method start' },
+              [']a'] = { query = '@parameter.outer', desc = 'Next argument' },
+            },
+            goto_next_end = {},
+            goto_previous_start = {
+              ['[f'] = { query = '@function.outer', desc = 'Previous function/method start' },
+              ['[a'] = { query = '@parameter.outer', desc = 'Previous argument' },
+            },
+            goto_previous_end = {
+              ['[F'] = { query = '@function.outer', desc = 'Previous function/method end' },
+            },
+            goto_next = {
+              [']o'] = { query = { '@block.outer', '@conditional.outer', '@loop.outer' }, desc = 'Next code block' },
+            },
+            goto_previous = {
+              ['[o'] = { query = { '@block.outer', '@conditional.outer', '@loop.outer' }, desc = 'Previous code block' },
+            },
+          },
+          lsp_interop = {
+            enable = true,
+            floating_preview_opts = {
+              border = 'rounded',
+            },
+            peek_definition_code = {
+              ['<leader>cp'] = '@function.outer',
+              ['<leader>cP'] = '@class.outer',
+            },
           },
         },
-      },
-      additional_vim_regex_highlighting = false,
-    },
+        additional_vim_regex_highlighting = false,
+      }
+    end,
     config = function(_, opts)
-      -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-
       ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup(opts)
 
