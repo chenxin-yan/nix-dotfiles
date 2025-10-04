@@ -77,7 +77,7 @@ return {
           },
         },
         config = function()
-          require('dap-python').setup('debugpy-adapter')
+          require('dap-python').setup 'debugpy-adapter'
         end,
       },
     },
