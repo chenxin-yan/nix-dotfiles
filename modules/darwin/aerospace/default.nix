@@ -11,6 +11,7 @@
     };
 
     userSettings = {
+      start-at-login = true;
       after-login-command = [ ];
       # after-startup-command = [
       #   "exec-and-forget ${lib.getExe' pkgs.sketchybar "sketchybar"}"

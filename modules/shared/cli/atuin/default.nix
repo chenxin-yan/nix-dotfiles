@@ -3,7 +3,7 @@
 {
   programs.atuin = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false;
     daemon.enable = true;
     settings = {
       enter_accept = true;
@@ -18,6 +18,11 @@
         "^ns"
       ];
     };
+  };
 
+  programs.zsh = {
+    initContent = ''
+      eval "$(atuin init zsh --disable-up-arrow)"
+    '';
   };
 }

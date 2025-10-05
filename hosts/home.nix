@@ -31,6 +31,7 @@
       tlrc
       rainfrog
       tokei
+      pastel
 
       bootdev-cli
     ];

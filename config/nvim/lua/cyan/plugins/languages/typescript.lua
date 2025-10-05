@@ -154,16 +154,13 @@ return {
     },
   },
   {
-    'mfussenegger/nvim-dap',
+    'mxsdev/nvim-dap-vscode-js',
+    dependencies = { 'mfussenegger/nvim-dap' },
+    ft = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' },
     config = function()
-      require('dap').adapters['pwa-node'] = {
-        type = 'server',
-        host = 'localhost',
-        port = '${port}',
-        executable = {
-          command = 'js-debug',
-          args = { '${port}' },
-        },
+      require('dap-vscode-js').setup {
+        debugger_cmd = { 'js-debug' },
+        adapters = { 'pwa-node' },
       }
 
       local js_filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' }
