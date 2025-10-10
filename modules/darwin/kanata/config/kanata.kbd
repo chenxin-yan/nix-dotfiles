@@ -1,5 +1,8 @@
 (defcfg
   process-unmapped-keys yes
+  macos-dev-names-exclude (
+    "Voyager"
+  )
 )
 
 (defsrc
