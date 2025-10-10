@@ -1,5 +1,8 @@
 (defcfg
   process-unmapped-keys yes
+  macos-dev-names-exclude (
+    "Voyager"
+  )
 )
 
 (defsrc
@@ -19,16 +22,16 @@
 
 (defalias
   hyper (multi lctl lsft lalt lmet)
-  a (tap-hold $tap-time $hold-time-slow a lmet)
+  a (tap-hold $tap-time $hold-time-slow a @hyper)
   s (tap-hold $tap-time $hold-time-slow s lsft)
   d (tap-hold $tap-time $hold-time-slow d lalt)
   f (tap-hold $tap-time $hold-time f lctl)
-  g (tap-hold $tap-time $hold-time g @hyper)
-  h (tap-hold $tap-time $hold-time h @hyper)
+  g (tap-hold $tap-time $hold-time g lmet)
+  h (tap-hold $tap-time $hold-time h rmet)
   j (tap-hold $tap-time $hold-time j rctl)
   k (tap-hold $tap-time $hold-time-slow k ralt)
   l (tap-hold $tap-time $hold-time-slow l rsft)
-  ; (tap-hold $tap-time $hold-time-slow ; rmet)
+  ; (tap-hold $tap-time $hold-time-slow ; @hyper)
   fnl (tap-hold $tap-time $hold-time fn (layer-toggle fn))
   caps (tap-hold $tap-time 130 esc (layer-while-held numbers))
 )
