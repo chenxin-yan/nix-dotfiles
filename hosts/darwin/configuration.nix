@@ -52,4 +52,11 @@
       StandardErrorPath = "/Users/${config.system.primaryUser}/Library/Logs/kanata.error.log";
     };
   };
+
+  homebrew = {
+    enable = true;
+    casks = [
+      "ghostty"
+    ];
+  };
 }
