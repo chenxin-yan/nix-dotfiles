@@ -59,7 +59,7 @@ return {
             { icon = ' ', key = 'f', desc = 'Find File', action = '<cmd>FzfLua files<cr>' },
             { icon = ' ', key = 'g', desc = 'Find Text', action = '<cmd>FzfLua live_grep<cr>' },
             { icon = ' ', key = 'r', desc = 'Recent Files', action = '<cmd>FzfLua oldfiles<cr>' },
-            { icon = ' ', key = 'b', desc = 'Browse Github Repo', action = '<cmd>!gh browse<cr>' },
+            { icon = ' ', key = 'b', desc = 'Browse Github Repo', action = '<cmd>lua Snacks.gitbrowse()<cr>' },
             { icon = '󰒲 ', key = 'u', desc = 'Update plugins', action = '<cmd>Lazy update<cr>' },
             { icon = ' ', key = 'q', desc = 'Quit NVIM', action = '<cmd>qa<cr>' },
           },
