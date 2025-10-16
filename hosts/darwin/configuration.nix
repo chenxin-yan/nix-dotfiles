@@ -57,6 +57,9 @@
     enable = true;
     casks = [
       "ghostty"
+      "karabiner-elements"
     ];
   };
+
+  services.sketchybar.enable = true;
 }

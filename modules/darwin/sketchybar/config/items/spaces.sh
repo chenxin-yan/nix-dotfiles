@@ -28,7 +28,7 @@ do
              --subscribe space.$sid aerospace_workspace_change \
              --set space.$sid "${SPACE[@]}" \
                   script="$PLUGIN_DIR/space.sh $sid" \
-                  click_script="aerospace workspace $sid" \
+                  click_script="/etc/profiles/per-user/yanchenxin/bin/aerospace workspace $sid" \
              --set space.$sid icon=${SPACE_ICONS[i]}
 done
 
