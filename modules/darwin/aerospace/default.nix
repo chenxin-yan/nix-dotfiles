@@ -6,16 +6,16 @@
 
     # Enable launchd service management
     launchd = {
-      enable = true;
+      enable = false;
       keepAlive = true;
     };
 
     userSettings = {
       start-at-login = true;
       after-login-command = [ ];
-      # after-startup-command = [
-      #   "exec-and-forget ${lib.getExe' pkgs.sketchybar "sketchybar"}"
-      # ];
+      after-startup-command = [
+        "exec-and-forget ${lib.getExe' pkgs.sketchybar "sketchybar"}"
+      ];
       exec-on-workspace-change = [
         (lib.getExe' pkgs.bash "bash")
         "-c"

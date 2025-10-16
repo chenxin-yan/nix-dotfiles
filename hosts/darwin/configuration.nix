@@ -57,8 +57,10 @@
     enable = true;
     casks = [
       "ghostty"
+      "iina"
       "karabiner-elements"
     ];
+    onActivation.cleanup = "zap";
   };
 
   services.sketchybar.enable = true;
