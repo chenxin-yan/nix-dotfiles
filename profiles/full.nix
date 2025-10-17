@@ -5,7 +5,6 @@
     ../modules/shared/core
 
     ../modules/shared/cli/opencode
-    ../modules/shared/cli/codex
     ../modules/shared/cli/podman
     ../modules/shared/cli/yazi
     ../modules/shared/cli/zellij
