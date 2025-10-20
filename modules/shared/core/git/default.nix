@@ -4,10 +4,20 @@
   programs.git = {
     enable = true;
 
-    userName = "Chenxin Yan";
-    userEmail = "yanchenxin2004@gmail.com";
+    settings = {
+      user = {
+        name = "Chenxin Yan";
+        email = "yanchenxin2004@gmail.com";
+      };
 
-    extraConfig = {
+      alias = {
+        co = "checkout";
+        br = "branch";
+        st = "status -sb";
+        lg = "log --oneline --graph --decorate";
+        amend = "commit --amend --no-edit";
+      };
+
       init.defaultBranch = "main";
       pull.rebase = true;
       rebase.autosquash = true;
@@ -16,17 +26,11 @@
       color.ui = true;
       core.editor = "nvim";
     };
+  };
 
-    delta.enable = true;
-
-    # Aliases
-    aliases = {
-      co = "checkout";
-      br = "branch";
-      st = "status -sb";
-      lg = "log --oneline --graph --decorate";
-      amend = "commit --amend --no-edit";
-    };
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
   };
 
   programs.gh = {

@@ -22,6 +22,8 @@
         "${lib.getExe' pkgs.sketchybar "sketchybar"} --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE"
       ];
 
+      on-focus-changed = [ "move-mouse window-lazy-center" ];
+
       enable-normalization-flatten-containers = true;
       enable-normalization-opposite-orientation-for-nested-containers = true;
 
