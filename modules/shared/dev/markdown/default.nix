@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     mermaid-cli
+    glow
 
     markdownlint-cli2
     prettierd

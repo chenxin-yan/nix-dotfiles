@@ -71,9 +71,9 @@ return {
       -- catppuccin integration
       local sign = vim.fn.sign_define
 
-      sign('DapBreakpoint', { text = '●', texthl = 'DapBreakpoint', linehl = '', numhl = '' })
-      sign('DapBreakpointCondition', { text = '●', texthl = 'DapBreakpointCondition', linehl = '', numhl = '' })
-      sign('DapLogPoint', { text = '◆', texthl = 'DapLogPoint', linehl = '', numhl = '' })
+      sign('DapBreakpoint', { text = '◆', texthl = 'DapBreakpoint', linehl = '', numhl = '' })
+      sign('DapBreakpointCondition', { text = '◆', texthl = 'DapBreakpointCondition', linehl = '', numhl = '' })
+      sign('DapLogPoint', { text = '➤', texthl = 'DapLogPoint', linehl = '', numhl = '' })
 
       -- setup dap config by VsCode launch.json file
       local vscode = require 'dap.ext.vscode'

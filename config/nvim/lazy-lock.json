@@ -68,7 +68,7 @@
   "refactoring.nvim": { "branch": "master", "commit": "6784b54587e6d8a6b9ea199318512170ffb9e418" },
   "render-markdown.nvim": { "branch": "main", "commit": "475d3ad8cae486b0df6fc6050cf5b5ea1de42db8" },
   "schemastore.nvim": { "branch": "main", "commit": "960a5cf992c033170499ccc7003df59734ed40a8" },
-  "snacks.nvim": { "branch": "main", "commit": "16b9fdaf6a699b14e20612e18401391b7df43f92" },
+  "snacks.nvim": { "branch": "main", "commit": "0760abd2936550e5c9ec9fb0eb18d68a5ef178bb" },
   "supermaven-nvim": { "branch": "main", "commit": "07d20fce48a5629686aefb0a7cd4b25e33947d50" },
   "todo-comments.nvim": { "branch": "main", "commit": "19d461ddd543e938eb22505fb03fa878800270b6" },
   "trouble.nvim": { "branch": "main", "commit": "c098362fe603d3922095e7db595961e020bdf2d0" },
@@ -76,5 +76,5 @@
   "tsc.nvim": { "branch": "main", "commit": "8c1b4ec6a48d038a79ced8674cb15e7db6dd8ef0" },
   "vim-wakatime": { "branch": "master", "commit": "d7973b157a632d1edeff01818f18d67e584eeaff" },
   "which-key.nvim": { "branch": "main", "commit": "b4177e3eaf15fe5eb8357ebac2286d488be1ed00" },
-  "yazi.nvim": { "branch": "main", "commit": "a584c0f35f98e1ef3d51b05bbe563d675c1de77f" }
+  "yazi.nvim": { "branch": "main", "commit": "b0ebdcf51b41196f9581f0c7a7f1ce896686a8bb" }
 }
