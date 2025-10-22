@@ -5,6 +5,7 @@
     nodejs_22
     bun
     pnpm
+    ni
 
     # editor
     vtsls
