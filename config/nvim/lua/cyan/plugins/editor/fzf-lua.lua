@@ -50,6 +50,11 @@ return {
     }
   end,
   keys = {
+    {
+      '<leader>s=',
+      '<cmd>FzfLua resume<cr>',
+      desc = 'Resume',
+    },
     -- files
     {
       '<leader>sf',
@@ -58,7 +63,7 @@ return {
     },
     {
       '<leader><leader>',
-      '<cmd>FzfLua buffers sort_mru=true sort_lastused=true<cr>',
+      '<cmd>FzfLua buffers sort_lastused=true<cr>',
       desc = 'Open Buffers',
     },
     {

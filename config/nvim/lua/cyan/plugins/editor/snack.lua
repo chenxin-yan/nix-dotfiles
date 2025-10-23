@@ -83,7 +83,7 @@ return {
           desc = 'Git Browse',
         },
         {
-          '<leader>G',
+          '<c-g>',
           function()
             Snacks.lazygit { cwd = Snacks.git.get_root() }
           end,
