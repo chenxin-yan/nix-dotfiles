@@ -19,7 +19,7 @@ in
 
   programs.yazi = {
     enable = true;
-    enableZshIntegration = false;
+    enableZshIntegration = true;
     plugins = {
       full-border = "${yazi-plugins}/full-border.yazi";
       no-status = "${yazi-plugins}/no-status.yazi";
@@ -49,14 +49,14 @@ in
   };
 
   programs.zsh.initContent = ''
-    # Yazi file manager with directory change
-    function e() {
-      local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-      yazi "$@" --cwd-file="$tmp"
-      if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
-      fi
-      rm -f -- "$tmp"
+    yazi-widget() {
+      yy
+      for precmd_func in $precmd_functions; do
+        $precmd_func
+      done
+      zle reset-prompt
     }
+    zle -N yazi-widget
+    bindkey '^e' yazi-widget
   '';
 }

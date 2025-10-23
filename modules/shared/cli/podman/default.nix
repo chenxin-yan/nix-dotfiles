@@ -13,7 +13,6 @@ in
   home.packages = with pkgs; [
     podman
     podman-compose
-    lazydocker
     dive
 
     # editor
@@ -21,6 +20,8 @@ in
     docker-compose-language-service
     hadolint
   ];
+
+  programs.lazydocker.enable = true;
 
   # Linux-specific Podman service configuration
   services.podman = lib.mkIf isLinux {

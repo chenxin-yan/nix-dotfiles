@@ -32,6 +32,8 @@
       rainfrog
       tokei
       pastel
+      hyperfine
+      croc
 
       bootdev-cli
     ];

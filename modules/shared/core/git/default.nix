@@ -62,8 +62,27 @@
   programs.zsh = {
     shellAliases = {
       g = "git";
-      G = "lazygit";
     };
   };
 
+  programs.zsh.initContent = ''
+    lg() {
+      export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
+      lazygit "$@"
+      if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
+        cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
+        rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
+      fi
+    }
+
+    lazygit-widget() {
+      lg
+      for precmd_func in $precmd_functions; do
+        $precmd_func
+      done
+      zle reset-prompt
+    }
+    zle -N lazygit-widget
+    bindkey '^g' lazygit-widget
+  '';
 }

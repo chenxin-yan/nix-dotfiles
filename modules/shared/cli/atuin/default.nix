@@ -11,8 +11,6 @@
       invert = true;
       history_filter = [
         "^c$"
-        "^G$"
-        "^e$"
         "^v$"
         "^cd"
         "^ns"
