@@ -19,19 +19,7 @@
           ];
           "enabled" = true;
         };
-        convex = {
-          "type" = "local";
-          "command" = [
-            "npx"
-            "-y"
-            "convex@latest"
-            "mcp"
-            "start"
-          ];
-          "enabled" = true;
-        };
       };
-
     };
   };
 
