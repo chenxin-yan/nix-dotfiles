@@ -60,6 +60,14 @@
   programs.lazygit = {
     enable = true;
     enableZshIntegration = true;
+    settings = {
+      keybinding = {
+        universal = {
+          quit = "Q";
+          quitWithoutChangingDirectory = "q";
+        };
+      };
+    };
   };
 
   programs.zsh = {
