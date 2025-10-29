@@ -23,12 +23,11 @@
     };
   };
 
-  home.file = {
-    ".config/opencode" = {
-      source = ./config;
-      recursive = true;
-    };
+  xdg.configFile."opencode" = {
+    source = ./config;
+    recursive = true;
   };
+
   programs.zsh = {
     shellAliases = {
       oc = "opencode";
