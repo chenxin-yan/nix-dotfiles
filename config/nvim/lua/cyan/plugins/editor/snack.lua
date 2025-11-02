@@ -14,8 +14,9 @@ return {
       words = { enabled = true },
       indent = {
         enabled = true,
-        scope = { enabled = false },
+        scope = { enabled = true },
       },
+      scope = { enabled = true },
       terminal = {
         win = {
           style = 'minimal',
