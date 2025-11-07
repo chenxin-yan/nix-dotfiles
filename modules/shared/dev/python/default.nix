@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     python313
+    uv
 
     # editor
     ruff
