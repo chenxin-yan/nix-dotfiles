@@ -82,6 +82,7 @@ return {
     'saghen/blink.cmp',
     dependencies = {
       'rafamadriz/friendly-snippets',
+      'Kaiser-Yang/blink-cmp-avante',
       {
         'supermaven-inc/supermaven-nvim',
         event = 'InsertEnter',
@@ -219,6 +220,7 @@ return {
           'buffer',
           'supermaven',
           'git',
+          'avante',
         },
         per_filetype = {
           lua = { inherit_defaults = true, 'lazydev' },
@@ -310,6 +312,12 @@ return {
                 },
               },
             },
+          },
+          avante = {
+            module = 'blink-cmp-avante',
+            score_offset = 100,
+            name = 'Avante',
+            opts = {},
           },
         },
       },

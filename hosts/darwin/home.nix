@@ -5,7 +5,6 @@
   imports = [ ../home.nix ];
 
   home.packages = with pkgs; [
-    rendercv
   ];
 
   programs.ssh = {

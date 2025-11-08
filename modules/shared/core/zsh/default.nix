@@ -28,6 +28,8 @@
       zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
     '';
     initContent = ''
+      source ~/.env
+
       # Vi mode keybindings
       bindkey -M vicmd 'H' beginning-of-line
       bindkey -M vicmd 'L' end-of-line
