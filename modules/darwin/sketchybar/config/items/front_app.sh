@@ -2,7 +2,7 @@
 
 FRONT_APP=(
   label.font="$FONT:ExtraBold:14.0"
-  icon.font="sketchybar-app-font:Regular:16.0" \
+  icon.font="sketchybar-app-font:Regular:16.0"
   icon.color=$BG_PRI_COLR
   label.color=$BG_PRI_COLR
   background.color=$LAVENDER
