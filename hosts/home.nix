@@ -36,6 +36,7 @@
       croc
 
       bootdev-cli
+      cloudflared
     ];
 
     home.sessionVariables = {
