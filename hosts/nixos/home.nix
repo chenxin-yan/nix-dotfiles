@@ -6,15 +6,8 @@
 
 {
 
-  home.username = "chenxinyan";
-  home.homeDirectory = "/home/chenxinyan";
-
-  nix = {
-    package = pkgs.nix;
-    settings = {
-      experimental-features = "nix-command flakes";
-    };
-  };
+  home.username = "cyan";
+  home.homeDirectory = "/home/cyan";
 
   imports = [ ../home.nix ];
 
@@ -22,9 +15,6 @@
     nerd-fonts.jetbrains-mono
     ghostty
   ];
-
-  home.file = {
-  };
 
   fonts.fontconfig.enable = true;
 
