@@ -1,51 +1,16 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Function to print colored output
-print_status() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-# Function to detect platform
 detect_platform() {
-    local os arch
-    
     case "$(uname -s)" in
         Darwin*)
             echo "darwin"
             ;;
         Linux*)
-            case "$(uname -m)" in
-                x86_64|amd64)
-                    echo "linux-x86_64"
-                    ;;
-                aarch64|arm64)
-                    echo "linux-arm64"
-                    ;;
-                *)
-                    echo "unknown"
-                    ;;
-            esac
+            if [ -f /etc/os-release ] && grep -q "^ID=nixos" /etc/os-release; then
+                echo "nixos"
+            else
+                echo "unknown"
+            fi
             ;;
         *)
             echo "unknown"
@@ -67,18 +32,18 @@ check_dependencies() {
                 missing_deps+=("nix-darwin")
             fi
             ;;
-        linux-*)
+        nixos)
             if ! command -v nix &> /dev/null; then
                 missing_deps+=("nix")
             fi
-            if ! command -v home-manager &> /dev/null; then
-                missing_deps+=("home-manager")
+            if ! command -v nixos-rebuild &> /dev/null; then
+                missing_deps+=("nixos-rebuild")
             fi
             ;;
     esac
 
     if [ ${#missing_deps[@]} -gt 0 ]; then
-        print_error "Missing dependencies: ${missing_deps[*]}"
+        gum log --level error "Missing dependencies: ${missing_deps[*]}"
         return 1
     fi
 
@@ -90,21 +55,27 @@ run_switch() {
     local platform=$1
     local dotfiles_path=$2
     
-    print_status "Switching configuration for $platform..."
+    # Prompt for sudo password if needed
+    if ! sudo -n true 2>/dev/null; then
+        gum log --level info "Administrative privileges required"
+        gum input --password --placeholder "Enter sudo password" | sudo -S true 2>/dev/null
+        if [ $? -ne 0 ]; then
+            gum log --level error "Authentication failed"
+            return 1
+        fi
+    fi
     
     case $platform in
         darwin)
-            sudo darwin-rebuild switch --flake "$dotfiles_path#chenxinyan@darwin"
+            gum spin --spinner dot --title "Switching nix-darwin configuration..." --show-output -- \
+                sudo darwin-rebuild switch --flake "$dotfiles_path#cyan@darwin"
             ;;
-        linux-x86_64)
-            print_error "Unsupported platform: $platform"
-            return 1
-            ;;
-        linux-arm64)
-            home-manager switch --flake "$dotfiles_path#chenxinyan@linux-arm64"
+        nixos)
+            gum spin --spinner dot --title "Switching NixOS configuration..." --show-output -- \
+                sudo nixos-rebuild switch --flake "$dotfiles_path#cyan@nixos"
             ;;
         *)
-            print_error "Unsupported platform: $platform"
+            gum log --level error "Unsupported platform: $platform"
             return 1
             ;;
     esac
@@ -116,37 +87,40 @@ main() {
     local dotfiles_path="${DOTFILES_PATH:-}"
     
     if [ -z "$dotfiles_path" ]; then
-        print_error "DOTFILES_PATH environment variable is not set"
+        gum log --level error "DOTFILES_PATH environment variable is not set"
         exit 1
     fi
     
-    print_status "Nix configuration Sync"
-    echo
+    # Display header
+    gum style \
+        --border double \
+        --align center --width 50 --margin "1 2" --padding "1 4" \
+        "Nix Configuration Sync"
     
     # Detect platform
     local platform
     platform=$(detect_platform)
     
-    print_status "Detected platform: $platform"
+    gum log --level info "Detected platform: $platform"
     
     if [ "$platform" = "unknown" ]; then
-        print_error "Unsupported platform detected"
+        gum log --level error "Unsupported platform detected"
         exit 1
     fi
     
     # Validate and change to dotfiles directory
     if [ ! -d "$dotfiles_path" ]; then
-        print_error "Directory does not exist: $dotfiles_path"
+        gum log --level error "Directory does not exist: $dotfiles_path"
         exit 1
     fi
     
     if [ ! -f "$dotfiles_path/flake.nix" ]; then
-        print_error "flake.nix not found in: $dotfiles_path"
+        gum log --level error "flake.nix not found in: $dotfiles_path"
         exit 1
     fi
     
-    print_status "Using dotfiles path: $dotfiles_path"
-    cd "$dotfiles_path"
+    gum log --level info "Using dotfiles path: $dotfiles_path"
+    cd "$dotfiles_path" || exit 1
     
     # Check dependencies
     if ! check_dependencies "$platform"; then
@@ -156,10 +130,10 @@ main() {
     # Run the switch
     if run_switch "$platform" "$dotfiles_path"; then
         echo
-        print_success "Configuration switch completed successfully!"
+        gum log --level info "✓ Configuration switch completed successfully!"
     else
         echo
-        print_error "Configuration switch failed!"
+        gum log --level error "Configuration switch failed!"
         exit 1
     fi
 }

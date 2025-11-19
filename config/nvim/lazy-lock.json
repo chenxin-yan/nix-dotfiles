@@ -78,5 +78,5 @@
   "tsc.nvim": { "branch": "main", "commit": "e4773833726beec2e8a8e11f0b21613b5472b97b" },
   "vim-wakatime": { "branch": "master", "commit": "d7973b157a632d1edeff01818f18d67e584eeaff" },
   "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" },
-  "yazi.nvim": { "branch": "main", "commit": "56a8c4de40cf2d40bcab93ff45e24beff81332e6" }
+  "yazi.nvim": { "branch": "main", "commit": "0fc745c17154056f7252aca1498ab5b40c2d92a7" }
 }
