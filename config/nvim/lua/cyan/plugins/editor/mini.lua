@@ -68,8 +68,8 @@ return {
         mappings = {
           left = '<',
           right = '>',
-          down = 'J',
-          up = 'K',
+          down = '<C-n>',
+          up = '<C-p>',
 
           line_left = '<',
           line_right = '>',
