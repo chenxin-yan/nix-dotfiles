@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  nixgl,
   ...
 }:
 
@@ -17,15 +16,11 @@
     };
   };
 
-  nixGL = {
-    packages = nixgl.packages;
-    defaultWrapper = "mesa"; # choose from nixGL options depending on GPU
-  };
-
   imports = [ ../home.nix ];
 
   home.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
+    ghostty
   ];
 
   home.file = {
