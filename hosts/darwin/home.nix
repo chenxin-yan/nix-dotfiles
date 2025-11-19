@@ -1,8 +1,13 @@
 { config, pkgs, ... }:
 
 {
+  home.username = "yanchenxin";
+  home.homeDirectory = "/Users/yanchenxin";
 
-  imports = [ ../home.nix ];
+  imports = [
+    ../home.nix
+    ../../modules
+  ];
 
   home.packages = with pkgs; [
   ];

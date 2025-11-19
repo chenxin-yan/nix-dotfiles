@@ -27,7 +27,6 @@
     home.stateVersion = "25.05";
 
     home.packages = with pkgs; [
-      bash
       tlrc
       rainfrog
       tokei
@@ -50,12 +49,6 @@
 
     # Let Home Manager install and manage itself.
     programs.home-manager.enable = true;
-
-    nix.gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 7d";
-    };
 
     programs.btop = {
       enable = true;

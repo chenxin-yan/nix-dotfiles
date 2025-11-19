@@ -5,18 +5,13 @@
 }:
 
 {
-
   home.username = "cyan";
   home.homeDirectory = "/home/cyan";
 
-  imports = [ ../home.nix ];
-
-  home.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-    ghostty
+  imports = [
+    ../home.nix
+    ../../modules
   ];
-
-  fonts.fontconfig.enable = true;
 
   programs.ssh = {
     enable = true;
@@ -28,6 +23,4 @@
       };
     };
   };
-
-  services.ssh-agent.enable = true;
 }

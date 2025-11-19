@@ -1,9 +1,0 @@
-{ ... }:
-
-{
-  imports = [
-    ./aerospace
-    ./sketchybar
-    ./kanata
-  ];
-}

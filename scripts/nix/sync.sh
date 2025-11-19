@@ -54,6 +54,7 @@ check_dependencies() {
 run_switch() {
     local platform=$1
     local dotfiles_path=$2
+    local switch_exit_code=0
     
     # Prompt for sudo password if needed
     if ! sudo -n true 2>/dev/null; then
@@ -67,18 +68,22 @@ run_switch() {
     
     case $platform in
         darwin)
-            gum spin --spinner dot --title "Switching nix-darwin configuration..." --show-output -- \
-                sudo darwin-rebuild switch --flake "$dotfiles_path#cyan@darwin"
+            gum log --level info "Switching nix-darwin configuration..."
+            sudo darwin-rebuild switch --flake "$dotfiles_path#yanchenxin@darwin"
+            switch_exit_code=$?
             ;;
         nixos)
-            gum spin --spinner dot --title "Switching NixOS configuration..." --show-output -- \
-                sudo nixos-rebuild switch --flake "$dotfiles_path#cyan@nixos"
+            gum log --level info "Switching NixOS configuration..."
+            sudo nixos-rebuild switch --flake "$dotfiles_path#cyan@nixos"
+            switch_exit_code=$?
             ;;
         *)
             gum log --level error "Unsupported platform: $platform"
             return 1
             ;;
     esac
+    
+    return $switch_exit_code
 }
 
 # Main function
@@ -133,7 +138,7 @@ main() {
         gum log --level info "✓ Configuration switch completed successfully!"
     else
         echo
-        gum log --level error "Configuration switch failed!"
+        gum log --level error "Configuration switch failed! Check the output above for details."
         exit 1
     fi
 }

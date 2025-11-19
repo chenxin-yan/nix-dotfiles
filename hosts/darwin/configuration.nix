@@ -15,6 +15,19 @@
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";
 
+  # Automatic garbage collection
+  nix.gc = {
+    automatic = true;
+    interval = [ { Weekday = 7; } ]; # Sunday (any time)
+    options = "--delete-older-than 7d";
+  };
+
+  # Automatic Nix store optimization
+  nix.optimise = {
+    automatic = true;
+    interval = [ { Weekday = 7; } ]; # Sunday (any time)
+  };
+
   # Set Git commit hash for darwin-version.
   system.configurationRevision = config.rev or config.dirtyRev or null;
 
@@ -31,6 +44,7 @@
 
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
+  nixpkgs.config.allowUnfree = true;
 
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono

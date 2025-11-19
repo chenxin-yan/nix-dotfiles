@@ -35,22 +35,30 @@
       ...
     }:
     {
-      homeConfigurations."chenxinyan@linux-arm64" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-linux";
-          config.allowUnfree = true;
-        };
-        extraSpecialArgs = {
-        };
+      nixosConfigurations."cyan@nixos" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
         modules = [
           catppuccin.homeModules.catppuccin
-          ./hosts/linux/home.nix
-          ./profiles
-          ./modules/linux
+          ./hosts/nixos/configurations.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.cyan = {
+                imports = [
+                  ./hosts/nixos/home.nix
+                  catppuccin.homeModules.catppuccin
+                ];
+              };
+              extraSpecialArgs = { inherit inputs; };
+            };
+          }
         ];
+        specialArgs = { inherit inputs; };
       };
 
-      darwinConfigurations."chenxinyan@darwin" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."yanchenxin@darwin" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
           nix-homebrew.darwinModules.nix-homebrew
@@ -84,18 +92,16 @@
           ./hosts/darwin/configuration.nix
           home-manager.darwinModules.home-manager
           {
-            nixpkgs.config.allowUnfree = true;
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
               users.yanchenxin = {
                 imports = [
-                  catppuccin.homeModules.catppuccin
                   ./hosts/darwin/home.nix
-                  ./profiles
-                  ./modules/darwin
+                  catppuccin.homeModules.catppuccin
                 ];
               };
+              extraSpecialArgs = { inherit inputs; };
             };
           }
         ];
