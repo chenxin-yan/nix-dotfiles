@@ -89,7 +89,7 @@
               homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
             }
           )
-          ./hosts/darwin/configuration.nix
+          ./hosts/darwin/configurations.nix
           home-manager.darwinModules.home-manager
           {
             home-manager = {
