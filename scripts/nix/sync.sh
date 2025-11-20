@@ -100,7 +100,7 @@ main() {
     gum style \
         --border double \
         --align center --width 50 --margin "1 2" --padding "1 4" \
-        "Nix Configuration Sync"
+        "Nix Configuration Switch"
     
     # Detect platform
     local platform

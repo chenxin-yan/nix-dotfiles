@@ -8,6 +8,20 @@ in
     gum
   ];
 
+  # Gum catppuccin color scheme environment variables
+  home.sessionVariables = {
+    GUM_STYLE_FOREGROUND = "255";
+    GUM_STYLE_BACKGROUND = "234";
+    GUM_STYLE_BORDER_FOREGROUND = "139";
+    GUM_STYLE_BORDER_BACKGROUND = "234";
+    GUM_INPUT_CURSOR_FOREGROUND = "86";
+    GUM_INPUT_PROMPT_FOREGROUND = "139";
+    GUM_CHOOSE_CURSOR_FOREGROUND = "86";
+    GUM_CHOOSE_SELECTED_FOREGROUND = "142";
+    GUM_CHOOSE_HEADER_FOREGROUND = "139";
+    GUM_TABLE_BORDER_FOREGROUND = "139";
+  };
+
   home.file = {
     ".local/bin/scripts".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/scripts";
   };
