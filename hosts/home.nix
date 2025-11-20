@@ -30,9 +30,8 @@
       tlrc
       rainfrog
       tokei
-      pastel
       hyperfine
-      croc
+      devenv
 
       bootdev-cli
       cloudflared
