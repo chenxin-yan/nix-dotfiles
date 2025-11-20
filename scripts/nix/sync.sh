@@ -28,16 +28,16 @@ check_dependencies() {
             if ! command -v nix &> /dev/null; then
                 missing_deps+=("nix")
             fi
-            if ! command -v darwin-rebuild &> /dev/null; then
-                missing_deps+=("nix-darwin")
+            if ! command -v nh &> /dev/null; then
+                missing_deps+=("nh")
             fi
             ;;
         nixos)
             if ! command -v nix &> /dev/null; then
                 missing_deps+=("nix")
             fi
-            if ! command -v nixos-rebuild &> /dev/null; then
-                missing_deps+=("nixos-rebuild")
+            if ! command -v nh &> /dev/null; then
+                missing_deps+=("nh")
             fi
             ;;
     esac
@@ -69,12 +69,12 @@ run_switch() {
     case $platform in
         darwin)
             gum log --level info "Switching nix-darwin configuration..."
-            sudo darwin-rebuild switch --flake "$dotfiles_path#yanchenxin@darwin"
+            nh darwin switch --hostname yanchenxin@darwin
             switch_exit_code=$?
             ;;
         nixos)
             gum log --level info "Switching NixOS configuration..."
-            sudo nixos-rebuild switch --flake "$dotfiles_path#cyan@nixos"
+            nh os switch --hostname cyan@nixos
             switch_exit_code=$?
             ;;
         *)
