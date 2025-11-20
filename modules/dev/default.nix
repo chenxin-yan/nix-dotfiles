@@ -12,6 +12,7 @@
     ./python
     ./typescript
     ./web
+    ./c
   ];
 
   config = {
@@ -25,5 +26,6 @@
     dev.python.enable = lib.mkDefault true;
     dev.typescript.enable = lib.mkDefault true;
     dev.web.enable = lib.mkDefault true;
+    dev.c.enable = lib.mkDefault true;
   };
 }
