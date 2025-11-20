@@ -37,9 +37,11 @@
 
   system.primaryUser = "yanchenxin";
 
+  programs.zsh.enable = true;
   users.users.${config.system.primaryUser} = {
     name = "${config.system.primaryUser}";
     home = "/Users/${config.system.primaryUser}";
+    shell = pkgs.zsh;
   };
 
   # The platform the configuration will be used on.
@@ -78,4 +80,5 @@
   };
 
   services.sketchybar.enable = true;
+
 }
