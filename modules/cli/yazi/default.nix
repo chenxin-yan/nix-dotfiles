@@ -60,7 +60,13 @@ in
 
     programs.zsh.initContent = ''
       yazi-widget() {
-        yy
+        local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
+        zle -I  # Prepare the terminal for external command
+        yazi --cwd-file="$tmp" < $TTY
+        if cwd="$(<"$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+          builtin cd -- "$cwd"
+        fi
+        rm -f -- "$tmp"
         for precmd_func in $precmd_functions; do
           $precmd_func
         done
