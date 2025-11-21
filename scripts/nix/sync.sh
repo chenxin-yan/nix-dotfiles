@@ -56,16 +56,6 @@ run_switch() {
     local dotfiles_path=$2
     local switch_exit_code=0
     
-    # Prompt for sudo password if needed
-    if ! sudo -n true 2>/dev/null; then
-        gum log --level info "Administrative privileges required"
-        gum input --password --placeholder "Enter sudo password" | sudo -S true 2>/dev/null
-        if [ $? -ne 0 ]; then
-            gum log --level error "Authentication failed"
-            return 1
-        fi
-    fi
-    
     case $platform in
         darwin)
             gum log --level info "Switching nix-darwin configuration..."
