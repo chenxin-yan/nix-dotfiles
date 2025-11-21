@@ -13,6 +13,13 @@
     ../../modules
   ];
 
+  # Keychain for SSH key management across sessions
+  programs.keychain = {
+    enable = true;
+    enableZshIntegration = true;
+    keys = [ "id_ed25519" ];
+  };
+
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
