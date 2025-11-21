@@ -25,9 +25,6 @@
           (import ./config/input.nix)
           (import ./config/keybindings.nix)
           (import ./config/windowrules.nix)
-          {
-            "exec-once" = "waybar";
-          }
         ];
       };
     };
@@ -38,6 +35,11 @@
 
     programs.rofi = {
       enable = true;
+    };
+
+    programs.waybar = {
+      enable = true;
+      systemd.enable = true;
     };
   };
 }
