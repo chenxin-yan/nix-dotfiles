@@ -3,7 +3,7 @@
     gaps_in = 5;
     gaps_out = 5;
 
-    border_size = 2;
+    border_size = 1;
 
     resize_on_border = true;
 
@@ -36,6 +36,7 @@
     pseudotile = true;
     preserve_split = true;
   };
+
   misc = {
     force_default_wallpaper = 0;
     disable_hyprland_logo = true;

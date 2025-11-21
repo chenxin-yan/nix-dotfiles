@@ -1,5 +1,6 @@
 {
   "$mainMod" = "ALT";
+  "$mod" = "SUPER";
 
   bind = [
     # Move focus
@@ -8,8 +9,14 @@
     "$mainMod, k, movefocus, u"
     "$mainMod, j, movefocus, d"
 
+    # Move windows
+    "$mainMod SHIFT, h, movewindow, l"
+    "$mainMod SHIFT, l, movewindow, r"
+    "$mainMod SHIFT, k, movewindow, u"
+    "$mainMod SHIFT, j, movewindow, d"
+
     # Switch workspaces
-    "$mainMod, ~, togglespecialworkspace, magic"
+    "$mainMod, grave, togglespecialworkspace, magic"
     "$mainMod, 1, workspace, 1"
     "$mainMod, 2, workspace, 2"
     "$mainMod, 3, workspace, 3"
@@ -22,7 +29,7 @@
     "$mainMod, 9, workspace, 10"
 
     # Move active window to a workspace
-    "$mainMod SHIFT, S, movetoworkspace, special:magic"
+    "$mainMod SHIFT, grave, movetoworkspace, special:magic"
     "$mainMod SHIFT, 1, movetoworkspace, 1"
     "$mainMod SHIFT, 2, movetoworkspace, 2"
     "$mainMod SHIFT, 3, movetoworkspace, 3"
@@ -35,7 +42,10 @@
     "$mainMod SHIFT, 0, movetoworkspace, 10"
 
     # rofi
-    "$mainMod, SPACE, exec, $menu"
+    "$mod, SPACE, exec, $menu"
+
+    # general
+    "$mod, q, killactive"
   ];
 
   bindm = [
@@ -46,9 +56,9 @@
 
   binde = [
     # Resize windows
-    "$mainMod ALT SHIFT, l, resizeactive, 30 0"
-    "$mainMod ALT SHIFT, h, resizeactive, -30 0"
-    "$mainMod ALT SHIFT, k, resizeactive, 0 -30"
-    "$mainMod ALT SHIFT, j, resizeactive, 0 30"
+    "$mainMod $mod SHIFT, l, resizeactive, 30 0"
+    "$mainMod $mod SHIFT, h, resizeactive, -30 0"
+    "$mainMod $mod SHIFT, k, resizeactive, 0 -30"
+    "$mainMod $mod SHIFT, j, resizeactive, 0 30"
   ];
 }

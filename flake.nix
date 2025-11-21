@@ -39,6 +39,7 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/nixos/configuration.nix
+          catppuccin.nixosModules.catppuccin
           home-manager.nixosModules.home-manager
           {
             home-manager = {

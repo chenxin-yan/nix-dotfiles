@@ -65,6 +65,13 @@
 
   programs.zsh.enable = true;
 
+  # catppuccin
+  catppuccin = {
+    enable = true;
+    flavor = "mocha";
+    accent = "lavender";
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.cyan = {
     isNormalUser = true;
@@ -142,6 +149,4 @@
     withUWSM = true;
     xwayland.enable = true;
   };
-
-  programs.waybar.enable = true;
 }
