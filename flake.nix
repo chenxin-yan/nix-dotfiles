@@ -38,7 +38,7 @@
       nixosConfigurations."cyan@nixos" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          ./hosts/nixos/configurations.nix
+          ./hosts/nixos/configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {
@@ -88,7 +88,7 @@
               homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
             }
           )
-          ./hosts/darwin/configurations.nix
+          ./hosts/darwin/configuration.nix
           home-manager.darwinModules.home-manager
           {
             home-manager = {
