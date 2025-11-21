@@ -50,6 +50,12 @@
         bindkey '^n' history-search-forward
         bindkey '^y' autosuggest-accept
 
+        # Remap fzf cd widget from Alt+C to Alt+D
+        bindkey -M viins -r '\ec'  # Remove default Alt+C binding from insert mode
+        bindkey -M vicmd -r '\ec'  # Remove default Alt+C binding from command mode
+        bindkey -M viins '\ed' fzf-cd-widget  # Bind to Alt+D in insert mode
+        bindkey -M vicmd '\ed' fzf-cd-widget  # Bind to Alt+D in command mode
+
         # Double ESC to prepend sudo to last command
         sudo-command-line() {
           if [[ -z $BUFFER ]]; then
