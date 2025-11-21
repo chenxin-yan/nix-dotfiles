@@ -57,6 +57,12 @@
   # Automatic Nix store optimization
   nix.optimise.automatic = true;
 
+  # Required for Home Manager xdg.portal with useUserPackages
+  environment.pathsToLink = [
+    "/share/applications"
+    "/share/xdg-desktop-portal"
+  ];
+
   programs.zsh.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.

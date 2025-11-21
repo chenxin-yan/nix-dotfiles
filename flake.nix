@@ -38,7 +38,6 @@
       nixosConfigurations."cyan@nixos" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          catppuccin.homeModules.catppuccin
           ./hosts/nixos/configurations.nix
           home-manager.nixosModules.home-manager
           {
