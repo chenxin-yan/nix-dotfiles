@@ -136,6 +136,13 @@
     nerd-fonts.jetbrains-mono
   ];
 
+  # Set default fonts system-wide
+  fonts.fontconfig.defaultFonts = {
+    monospace = [ "JetBrainsMono Nerd Font" ];
+    sansSerif = [ "JetBrainsMono Nerd Font" ];
+    serif = [ "JetBrainsMono Nerd Font" ];
+  };
+
   programs.nh = {
     enable = true;
     clean.enable = true;
