@@ -32,6 +32,7 @@
       tokei
       hyperfine
       devenv
+      croc
 
       bootdev-cli
       cloudflared

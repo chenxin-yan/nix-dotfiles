@@ -3,6 +3,5 @@
 {
   imports = [
     ./hyprland
-    ./waybar
   ];
 }
