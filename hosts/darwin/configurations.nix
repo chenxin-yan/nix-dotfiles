@@ -81,4 +81,5 @@
 
   services.sketchybar.enable = true;
 
+  services.tailscale.enable = true;
 }
