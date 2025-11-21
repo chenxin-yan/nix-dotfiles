@@ -9,7 +9,7 @@ let
     owner = "yazi-rs";
     repo = "plugins";
     rev = "main";
-    hash = "sha256-52Zn6OSSsuNNAeqqZidjOvfCSB7qPqUeizYq/gO+UbE=";
+    hash = "sha256-+lirIBXv3EvztE/1b3zHnQ9r5N3VWBCUuH3gZR52fE0=";
   };
 in
 {
@@ -40,13 +40,13 @@ in
           owner = "saumyajyoti";
           repo = "omp.yazi";
           rev = "main";
-          hash = "sha256-MvItTUorB0rWg7L3KXUsF3+1KE+wm38C1yAGSfpQ5gg=";
+          hash = "sha256-gvXC+akaV+WLQyL5cpDJXc59GtkeRxyd0gIThoq0eoU=";
         };
         system-clipboard = pkgs.fetchFromGitHub {
           owner = "orhnk";
           repo = "system-clipboard.yazi";
           rev = "master";
-          hash = "sha256-M7zKUlLcQA3ihpCAZyOkAy/SzLu31eqHGLkCSQPX1dY=";
+          hash = "sha256-8YtYYxNDfQBTyMxn6Q7/BCiTiscpiZFXRuX0riMlRWQ=";
         };
       };
 

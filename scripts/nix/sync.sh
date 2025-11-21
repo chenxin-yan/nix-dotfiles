@@ -69,12 +69,12 @@ run_switch() {
     case $platform in
         darwin)
             gum log --level info "Switching nix-darwin configuration..."
-            nh darwin switch --hostname yanchenxin@darwin
+            nh darwin switch --hostname yanchenxin@darwin "$dotfiles_path"
             switch_exit_code=$?
             ;;
         nixos)
             gum log --level info "Switching NixOS configuration..."
-            nh os switch --hostname cyan@nixos
+            nh os switch --hostname cyan@nixos "$dotfiles_path"
             switch_exit_code=$?
             ;;
         *)
