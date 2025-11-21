@@ -216,12 +216,6 @@
                   tag_icon = " ";
                 };
               }
-              {
-                type = "nix-shell";
-                template = "󱄅 {{ .Type }}";
-                foreground = "p:blue";
-                style = "plain";
-              }
             ];
           }
           {
