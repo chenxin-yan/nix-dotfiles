@@ -16,7 +16,7 @@
         enable = true;
         settings = lib.mkMerge [
           {
-            "$menu" = "rofi -show drun";
+            "$menu" = "vicinae toggle";
             "$terminal" = "ghostty";
           }
           (import ./config/env.nix)
@@ -33,13 +33,17 @@
       GDK_SCALE = "2";
     };
 
-    programs.rofi = {
-      enable = true;
-    };
-
     programs.waybar = {
       enable = true;
       systemd.enable = true;
+    };
+
+    programs.vicinae = {
+      enable = true;
+      systemd = {
+        autoStart = true;
+        enable = true;
+      };
     };
   };
 }
