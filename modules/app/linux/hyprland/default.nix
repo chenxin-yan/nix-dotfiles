@@ -29,9 +29,7 @@
       };
     };
 
-    home.sessionVariables = {
-      GDK_SCALE = "2";
-    };
+    home.sessionVariables = { };
 
     programs.waybar = {
       enable = true;
