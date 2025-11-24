@@ -20,6 +20,16 @@
           UseKeychain = "yes";
         };
       };
+
+      "cyan-minipc" = {
+        user = "cyan";
+        identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+      };
+
+      "cyanpi" = {
+        user = "yanchenxin";
+        identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+      };
     };
   };
 
