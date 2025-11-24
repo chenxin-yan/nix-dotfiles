@@ -30,6 +30,29 @@
 
   animations = {
     enabled = true;
+    
+    bezier = [
+      "myBezier, 0.05, 0.9, 0.1, 1.05"
+    ];
+    
+    animation = [
+      # Speed up windows animations
+      "windows, 1, 4, myBezier"
+      "windowsOut, 1, 4, default, popin 80%"
+      
+      # Speed up border color changes
+      "border, 1, 5, default"
+      "borderangle, 1, 4, default"
+      
+      # Speed up fade animations
+      "fade, 1, 4, default"
+      
+      # Disable workspace switching animations
+      "workspaces, 0"
+      
+      # Speed up specialized window animations
+      "specialWorkspace, 1, 4, default, slidevert"
+    ];
   };
 
   dwindle = {

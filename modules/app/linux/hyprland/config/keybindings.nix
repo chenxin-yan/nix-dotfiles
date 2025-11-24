@@ -1,6 +1,7 @@
 {
   "$mainMod" = "ALT";
   "$mod" = "SUPER";
+  "$hyper" = "SUPER SHIFT ALT CTRL";
 
   bind = [
     # Move focus
@@ -26,9 +27,8 @@
     "$mainMod, 7, workspace, 7"
     "$mainMod, 8, workspace, 8"
     "$mainMod, 9, workspace, 9"
-    "$mainMod, 9, workspace, 10"
+    "$mainMod, 0, workspace, 10"
 
-    # Move active window to a workspace
     "$mainMod SHIFT, grave, movetoworkspace, special:magic"
     "$mainMod SHIFT, 1, movetoworkspace, 1"
     "$mainMod SHIFT, 2, movetoworkspace, 2"
@@ -41,11 +41,14 @@
     "$mainMod SHIFT, 9, movetoworkspace, 9"
     "$mainMod SHIFT, 0, movetoworkspace, 10"
 
-    # rofi
+    # Application launcher
     "$mod, SPACE, exec, $menu"
 
-    # general
+    # Close window
     "$mod, q, killactive"
+
+    # Toggle floating
+    "$mainMod SHIFT, f, togglefloating"
   ];
 
   bindm = [
