@@ -35,6 +35,7 @@ in
     # Linux apps only on Linux
     (lib.mkIf isLinux {
       app.linux.hyprland.enable = lib.mkDefault true;
+      app.linux.firefox.enable = lib.mkDefault true;
     })
   ];
 }
