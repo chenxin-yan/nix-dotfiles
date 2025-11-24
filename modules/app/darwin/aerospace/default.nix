@@ -72,10 +72,10 @@
             alt-shift-k = "move up";
             alt-shift-l = "move right";
 
-            alt-cmd-shift-h = "resize width -30";
-            alt-cmd-shift-l = "resize width +30";
-            alt-cmd-shift-k = "resize height -30";
-            alt-cmd-shift-j = "resize height +30";
+            alt-cmd-shift-h = "resize width +30";
+            alt-cmd-shift-l = "resize width -30";
+            alt-cmd-shift-k = "resize height +30";
+            alt-cmd-shift-j = "resize height -30";
 
             alt-backtick = "workspace 0";
             alt-1 = "workspace 1";
