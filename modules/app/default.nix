@@ -23,6 +23,7 @@ in
       # Shared apps are always available
       app.shared.ghostty.enable = lib.mkDefault true;
       app.shared.thunderbird.enable = lib.mkDefault true;
+      app.shared.vesktop.enable = lib.mkDefault true;
     }
 
     # Darwin apps only on macOS

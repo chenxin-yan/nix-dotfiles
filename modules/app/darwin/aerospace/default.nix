@@ -168,7 +168,7 @@
             run = "move-node-to-workspace 4";
           }
           {
-            "if".app-id = "com.hnc.Discord";
+            "if".app-id = "dev.vencord.vesktop";
             run = "move-node-to-workspace 5";
           }
           {

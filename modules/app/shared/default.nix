@@ -4,5 +4,6 @@
   imports = [
     ./ghostty
     ./thunderbird
+    ./vesktop
   ];
 }
