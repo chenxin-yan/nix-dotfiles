@@ -151,9 +151,33 @@
 
   services.tailscale.enable = true;
 
+  # greetd display manager with regreet greeter
+  services.greetd = {
+    enable = true;
+  };
+
+  # regreet configuration
+  programs.regreet = {
+    enable = true;
+    cageArgs = [
+      "-s"
+      "-m"
+      "last"
+    ];
+  };
+
+  # Hyprland with UWSM integration
   programs.hyprland = {
     enable = true;
     withUWSM = true;
     xwayland.enable = true;
+  };
+
+  # XDG Desktop Portal configuration
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-hyprland
+    ];
   };
 }
