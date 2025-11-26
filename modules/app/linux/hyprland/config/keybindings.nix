@@ -42,7 +42,10 @@
     "$mainMod SHIFT, 0, movetoworkspace, 10"
 
     # Application launcher
-    "$mod, SPACE, exec, $menu"
+    "$SUPER, SPACE, exec, $menu"
+
+    # Terminal
+    "$SUPER, RETURN, exec, $terminal"
 
     # Close window
     "$mod, q, killactive"
