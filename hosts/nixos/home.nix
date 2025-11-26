@@ -10,7 +10,7 @@
 
   imports = [
     ../home.nix
-    ../../modules
+    ../../home-modules
   ];
 
   catppuccin.cursors.enable = true;

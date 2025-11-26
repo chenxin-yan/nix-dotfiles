@@ -3,7 +3,7 @@
 {
   imports = [
     ../home.nix
-    ../../modules
+    ../../home-modules
   ];
 
   home.packages = with pkgs; [
