@@ -2,12 +2,12 @@
 
 {
   imports = [
-    ./greetd
+    ./sddm
     ./hyprland
   ];
 
   config = {
-    nixos.greetd.enable = lib.mkDefault true;
+    nixos.sddm.enable = lib.mkDefault true;
     nixos.hyprland.enable = lib.mkDefault true;
   };
 }

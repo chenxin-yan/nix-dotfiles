@@ -110,12 +110,6 @@
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "yes";
 
-  # gnome-keyring for SSH key management with PAM
-  services.gnome.gnome-keyring.enable = true;
-
-  # PAM configuration to unlock gnome-keyring on login
-  security.pam.services.greetd.enableGnomeKeyring = true;
-
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 22 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
