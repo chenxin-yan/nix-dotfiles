@@ -13,10 +13,15 @@
     ../../modules
   ];
 
+  catppuccin.cursors.enable = true;
+
   # gnome-keyring SSH agent integration
   services.gnome-keyring = {
     enable = true;
-    components = [ "secrets" "ssh" ];
+    components = [
+      "secrets"
+      "ssh"
+    ];
   };
 
   programs.ssh = {
