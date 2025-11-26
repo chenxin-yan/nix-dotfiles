@@ -13,11 +13,10 @@
     ../../modules
   ];
 
-  # Keychain for SSH key management across sessions
-  programs.keychain = {
+  # gnome-keyring SSH agent integration
+  services.gnome-keyring = {
     enable = true;
-    enableZshIntegration = true;
-    keys = [ "id_ed25519" ];
+    components = [ "secrets" "ssh" ];
   };
 
   programs.ssh = {
