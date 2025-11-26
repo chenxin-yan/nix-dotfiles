@@ -2,6 +2,7 @@
   "$mainMod" = "ALT";
   "$mod" = "SUPER";
   "$hyper" = "SUPER SHIFT ALT CTRL";
+  "$meh" = "SHIFT ALT CTRL";
 
   bind = [
     # Move focus
@@ -52,6 +53,9 @@
 
     # Toggle floating
     "$mainMod SHIFT, f, togglefloating"
+
+    # Lock screen
+    "$meh, L, exec, hyprlock"
   ];
 
   bindm = [
