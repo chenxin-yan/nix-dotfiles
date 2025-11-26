@@ -1,4 +1,7 @@
 {
+  "$menu" = "vicinae toggle";
+  "$terminal" = "ghostty";
+
   "$mainMod" = "ALT";
   "$mod" = "SUPER";
   "$hyper" = "SUPER SHIFT ALT CTRL";

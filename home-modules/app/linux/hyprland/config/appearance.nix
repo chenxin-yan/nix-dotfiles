@@ -69,12 +69,4 @@
     disable_splash_rendering = true;
     vrr = 0;
   };
-
-  layerrule = [
-    # vicinae blur and transparency
-    "blur, vicinae"
-    "ignorealpha 0, vicinae"
-    # disable fade animation for vicinae
-    "noanim, vicinae"
-  ];
 }
