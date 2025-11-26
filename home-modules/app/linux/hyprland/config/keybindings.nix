@@ -45,20 +45,20 @@
     "$mainMod SHIFT, 9, movetoworkspace, 9"
     "$mainMod SHIFT, 0, movetoworkspace, 10"
 
-    # Application launcher
-    "$mod, SPACE, exec, $menu"
-
-    # Terminal
-    "$hyper, RETURN, exec, $terminal"
-
-    # Close window
-    "$mod, q, killactive"
-
     # Toggle floating
     "$mainMod SHIFT, f, togglefloating"
 
     # Lock screen
     "$meh, L, exec, hyprlock"
+
+    # Application launcher
+    "$mod, SPACE, exec, $menu"
+
+    # Close window
+    "$mod, w, killactive"
+
+    # Quick Open
+    "$hyper, RETURN, exec, $terminal"
   ];
 
   bindm = [
@@ -73,5 +73,12 @@
     "$mainMod $mod SHIFT, h, resizeactive, -30 0"
     "$mainMod $mod SHIFT, k, resizeactive, 0 -30"
     "$mainMod $mod SHIFT, j, resizeactive, 0 30"
+  ];
+
+  bindd = [
+    # Universal clipboard operations
+    "$mod, C, Universal copy, sendshortcut, CTRL, Insert"
+    "$mod, V, Universal paste, sendshortcut, SHIFT, Insert"
+    "$mod, X, Universal cut, sendshortcut, CTRL, X"
   ];
 }
