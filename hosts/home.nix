@@ -36,6 +36,8 @@
 
       bootdev-cli
       cloudflared
+
+      wechat
     ];
 
     home.sessionVariables = {
