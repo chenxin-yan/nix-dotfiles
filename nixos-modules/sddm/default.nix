@@ -12,9 +12,6 @@
 
   config = lib.mkIf config.nixos.sddm.enable {
 
-    # gnome-keyring for SSH key management with PAM
-    services.gnome.gnome-keyring.enable = true;
-
     # SDDM display manager
     services.displayManager = {
       sddm = {
@@ -28,7 +25,5 @@
         };
       };
     };
-
-    security.pam.services.sddm.enableGnomeKeyring = true;
   };
 }
