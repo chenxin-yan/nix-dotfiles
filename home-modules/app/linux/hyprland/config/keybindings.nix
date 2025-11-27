@@ -54,6 +54,8 @@
     # Application launcher
     "$mod, SPACE, exec, $menu"
 
+    "$mod SHIFT, V, exec, vicinae vicinae://extensions/vicinae/clipboard/history"
+
     # Close window
     "$mod, w, killactive"
 
@@ -73,12 +75,5 @@
     "$mainMod $mod SHIFT, h, resizeactive, -30 0"
     "$mainMod $mod SHIFT, k, resizeactive, 0 -30"
     "$mainMod $mod SHIFT, j, resizeactive, 0 30"
-  ];
-
-  bindd = [
-    # Universal clipboard operations
-    "$mod, C, Universal copy, sendshortcut, CTRL, Insert"
-    "$mod, V, Universal paste, sendshortcut, SHIFT, Insert"
-    "$mod, X, Universal cut, sendshortcut, CTRL, X"
   ];
 }
