@@ -28,7 +28,6 @@ in
 
     # Darwin apps only on macOS
     (lib.mkIf isDarwin {
-      app.darwin.aerospace.enable = lib.mkDefault true;
       app.darwin.kanata.enable = lib.mkDefault true;
       app.darwin.sketchybar.enable = lib.mkDefault true;
     })
