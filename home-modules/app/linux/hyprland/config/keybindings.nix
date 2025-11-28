@@ -82,8 +82,8 @@
   ];
   bindd = [
     # Copy / Paste
-    "$mod, C, sendshortcut, CTRL, Insert,"
-    "$mod, V, sendshortcut, SHIFT, Insert,"
-    "$mod, X, sendshortcut, CTRL, X,"
+    "$mod, C, Universal copy, sendshortcut, CTRL, Insert,"
+    "$mod, V, Universal paste, sendshortcut, SHIFT, Insert,"
+    "$mod, X, Universal cut, sendshortcut, CTRL, X,"
   ];
 }
