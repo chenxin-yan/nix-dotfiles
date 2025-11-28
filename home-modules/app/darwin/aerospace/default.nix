@@ -15,11 +15,10 @@
       enable = true;
 
       launchd = {
-        enable = false;
+        enable = true;
       };
 
-      userSettings = {
-        start-at-login = true;
+      settings = {
         after-login-command = [ ];
         # after-startup-command = [
         #   "exec-and-forget ${lib.getExe' pkgs.sketchybar "sketchybar"}"
