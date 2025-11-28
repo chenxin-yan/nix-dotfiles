@@ -25,4 +25,3 @@ copy-on-select = clipboard
 shell-integration-features = cursor,sudo,no-title
 
 keybind = shift+enter=text:\n
-

@@ -1,7 +1,12 @@
 {
   env = [
-    "XCURSOR_SIZE,24"
-    "HYPRCURSOR_SIZE,24"
+    "XCURSOR_SIZE,32"
+    "HYPRCURSOR_SIZE,32"
+
+    # Scaling
+    "GDK_SCALE,2"
+    "GDK_DPI_SCALE,0.75"
+    "QT_SCALE_FACTOR,2"
 
     # QT
     "QT_QPA_PLATFORM,wayland"
