@@ -21,6 +21,11 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -32,6 +37,7 @@
       nix-homebrew,
       homebrew-core,
       homebrew-cask,
+      zen-browser,
       ...
     }:
     {

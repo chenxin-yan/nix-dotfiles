@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 
@@ -38,6 +39,8 @@
       cloudflared
 
       wechat
+    ] ++ lib.optionals pkgs.stdenv.isLinux [
+      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight
     ];
 
     home.sessionVariables = {
