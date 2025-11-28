@@ -28,11 +28,15 @@
         base = {
           matches = [
             {
-              trigger = ":espanso";
-              replace = "Hi there!";
+              trigger = ";gh";
+              replace = "https://github.com/chenxin-yan";
             }
             {
-              trigger = ":date";
+              trigger = ";linkedin";
+              replace = "https://www.linkedin.com/in/chenxin-yan";
+            }
+            {
+              trigger = ";date";
               replace = "{{mydate}}";
               vars = [
                 {
