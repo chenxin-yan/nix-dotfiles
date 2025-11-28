@@ -14,6 +14,10 @@
     "$mainMod, k, movefocus, u"
     "$mainMod, j, movefocus, d"
 
+    # Cycle between recent windows
+    "$mod, TAB, cyclenext"
+    "$mod SHIFT, TAB, cyclenext, prev"
+
     # Move windows
     "$mainMod SHIFT, h, movewindow, l"
     "$mainMod SHIFT, l, movewindow, r"
@@ -75,5 +79,11 @@
     "$mainMod $mod SHIFT, h, resizeactive, -30 0"
     "$mainMod $mod SHIFT, k, resizeactive, 0 -30"
     "$mainMod $mod SHIFT, j, resizeactive, 0 30"
+  ];
+  bindd = [
+    # Copy / Paste
+    "$mod, C, sendshortcut, CTRL, Insert,"
+    "$mod, V, sendshortcut, SHIFT, Insert,"
+    "$mod, X, sendshortcut, CTRL, X,"
   ];
 }
