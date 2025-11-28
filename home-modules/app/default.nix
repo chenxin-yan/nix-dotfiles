@@ -24,6 +24,7 @@ in
       app.shared.ghostty.enable = lib.mkDefault true;
       app.shared.thunderbird.enable = lib.mkDefault true;
       app.shared.vesktop.enable = lib.mkDefault true;
+      app.shared.espanso.enable = lib.mkDefault true;
     }
 
     # Darwin apps only on macOS
