@@ -27,11 +27,6 @@
 
     home.sessionVariables = { };
 
-    programs.waybar = {
-      enable = true;
-      systemd.enable = true;
-    };
-
     programs.vicinae = {
       enable = true;
       systemd = {
