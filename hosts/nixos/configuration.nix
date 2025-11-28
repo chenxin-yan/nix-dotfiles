@@ -81,6 +81,7 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "input"
     ];
     packages = with pkgs; [ ];
     shell = pkgs.zsh;
