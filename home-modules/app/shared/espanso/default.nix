@@ -18,7 +18,7 @@
 
       configs = {
         default = {
-          search_trigger = "off";
+          search_shortcut = "off";
           auto_restart = true;
           undo_backspace = true;
         };
@@ -36,7 +36,7 @@
               replace = "https://www.linkedin.com/in/chenxin-yan";
             }
             {
-              trigger = ";date";
+              trigger = ";td";
               replace = "{{mydate}}";
               vars = [
                 {
@@ -51,6 +51,10 @@
           ];
         };
       };
+    };
+
+    xdg.configFile."espanso/match/sensitive.yml" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles-private}/espanso/sensitive.yml";
     };
   };
 }

@@ -15,6 +15,13 @@
       example = "${config.home.homeDirectory}/dotfiles";
       description = "Location of the dotfiles working copy";
     };
+    dotfiles-private = lib.mkOption {
+      type = lib.types.path;
+      apply = toString;
+      default = "${config.home.homeDirectory}/dotfiles-private";
+      example = "${config.home.homeDirectory}/dotfiles-private";
+      description = "Location of the private dotfiles working copy";
+    };
   };
 
   config = {
@@ -44,6 +51,7 @@
     home.sessionVariables = {
       EDITOR = "nvim";
       DOTFILES_PATH = config.dotfiles;
+      DOTFILES_PRIVATE_PATH = config.dotfiles-private;
       DEV_PATH = "${config.home.homeDirectory}/dev";
       OBSIDIAN_VAULT_PATH = "${config.home.homeDirectory}/Ideaverse";
       PROJECTS_PATH = "${config.home.homeDirectory}/Projects";
