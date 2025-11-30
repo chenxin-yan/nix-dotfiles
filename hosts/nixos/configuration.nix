@@ -127,6 +127,8 @@
   # Installing fonts
   fonts.packages = with pkgs; [
     noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
     noto-fonts-color-emoji
     nerd-fonts.jetbrains-mono
   ];
@@ -135,9 +137,19 @@
   fonts.enableDefaultPackages = true;
   fonts.enableGhostscriptFonts = true;
   fonts.fontconfig.defaultFonts = {
-    serif = [ "Noto Serif" ];
-    sansSerif = [ "Noto Sans" ];
-    monospace = [ "JetBrainsMono Nerd Font" ];
+    serif = [
+      "Noto Serif"
+      "Noto Serif CJK SC"
+    ];
+    sansSerif = [
+      "Noto Sans"
+      "Noto Sans CJK SC"
+    ];
+    monospace = [
+      "JetBrainsMono Nerd Font"
+      "Noto Sans Mono CJK SC"
+    ];
+    emoji = [ "Noto Color Emoji" ];
   };
 
   programs.nh = {
