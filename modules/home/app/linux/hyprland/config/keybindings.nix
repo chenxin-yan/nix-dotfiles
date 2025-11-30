@@ -14,9 +14,8 @@
     "$mainMod, k, movefocus, u"
     "$mainMod, j, movefocus, d"
 
-    # Cycle between recent windows
-    "$mod, TAB, cyclenext"
-    "$mod SHIFT, TAB, cyclenext, prev"
+    "$mod, TAB, focusurgentorlast"
+    "$mod SHIFT, TAB, focusurgentorlast"
 
     # Move windows
     "$mainMod SHIFT, h, movewindow, l"
@@ -90,11 +89,5 @@
     # Undo / Redo
     "$mod, Z, Universal undo, sendshortcut, CTRL, Z,"
     "$mod SHIFT, Z, Universal redo, sendshortcut, CTRL, Y,"
-
-    # Find
-    "$mod, F, Universal find, sendshortcut, CTRL, F,"
-
-    # Save
-    "$mod, S, Universal save, sendshortcut, CTRL, S,"
   ];
 }
