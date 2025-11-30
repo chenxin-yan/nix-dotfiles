@@ -10,7 +10,7 @@
 
   imports = [
     ../home.nix
-    ../../home-modules
+    ../../modules/home
   ];
 
   home.packages = with pkgs; [

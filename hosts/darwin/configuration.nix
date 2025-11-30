@@ -8,7 +8,7 @@
 {
 
   imports = [
-    ../../darwin-modules
+    ../../modules/darwin
   ];
 
   # List packages installed in system profile. To search by name, run:

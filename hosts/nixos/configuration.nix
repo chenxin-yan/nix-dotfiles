@@ -6,10 +6,8 @@
 
 {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    # NixOS system modules
-    ../../nixos-modules
+    ../../modules/nixos
   ];
 
   # Bootloader.
