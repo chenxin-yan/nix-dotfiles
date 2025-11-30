@@ -134,9 +134,9 @@
 
   # Set default fonts system-wide
   fonts.fontconfig.defaultFonts = {
+    serif = [ "Noto Serif" ];
+    sansSerif = [ "Noto Sans" ];
     monospace = [ "JetBrainsMono Nerd Font" ];
-    sansSerif = [ "JetBrainsMono Nerd Font" ];
-    serif = [ "JetBrainsMono Nerd Font" ];
   };
 
   programs.nh = {
@@ -155,4 +155,6 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+
+  programs.bash.enable = true;
 }

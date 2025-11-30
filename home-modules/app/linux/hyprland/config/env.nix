@@ -5,7 +5,6 @@
 
     # Scaling
     "GDK_SCALE,2"
-    "GDK_DPI_SCALE,0.75"
     "QT_SCALE_FACTOR,2"
 
     # QT

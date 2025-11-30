@@ -13,6 +13,10 @@
     ../../home-modules
   ];
 
+  home.packages = with pkgs; [
+    chromium
+  ];
+
   catppuccin.cursors.enable = true;
 
   services.ssh-agent.enable = true;

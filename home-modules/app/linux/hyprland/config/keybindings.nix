@@ -61,7 +61,7 @@
     "$mod SHIFT, V, exec, vicinae vicinae://extensions/vicinae/clipboard/history"
 
     # Close window
-    "$mod, w, killactive"
+    "$mod, q, killactive"
 
     # Quick Open
     "$hyper, RETURN, exec, $terminal"
@@ -81,9 +81,20 @@
     "$mainMod $mod SHIFT, j, resizeactive, 0 30"
   ];
   bindd = [
-    # Copy / Paste
+    # Copy / Paste / Select
     "$mod, C, Universal copy, sendshortcut, CTRL, Insert,"
     "$mod, V, Universal paste, sendshortcut, SHIFT, Insert,"
     "$mod, X, Universal cut, sendshortcut, CTRL, X,"
+    "$mod, A, Universal select all, sendshortcut, CTRL, A,"
+
+    # Undo / Redo
+    "$mod, Z, Universal undo, sendshortcut, CTRL, Z,"
+    "$mod SHIFT, Z, Universal redo, sendshortcut, CTRL, Y,"
+
+    # Find
+    "$mod, F, Universal find, sendshortcut, CTRL, F,"
+
+    # Save
+    "$mod, S, Universal save, sendshortcut, CTRL, S,"
   ];
 }
