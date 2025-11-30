@@ -16,7 +16,7 @@
       bun
       pnpm
       ni
-      # turbo
+      turbo
 
       # editor
       vtsls
