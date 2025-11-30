@@ -25,6 +25,7 @@ in
       app.shared.thunderbird.enable = lib.mkDefault true;
       app.shared.vesktop.enable = lib.mkDefault true;
       app.shared.espanso.enable = lib.mkDefault true;
+      app.shared.zen-browser.enable = lib.mkDefault true;
     }
 
     # Darwin apps only on macOS

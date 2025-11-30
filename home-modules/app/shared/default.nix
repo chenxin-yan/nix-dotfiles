@@ -6,5 +6,6 @@
     ./ghostty
     ./thunderbird
     ./vesktop
+    ./zen-browser
   ];
 }
