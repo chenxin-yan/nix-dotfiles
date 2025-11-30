@@ -25,3 +25,20 @@ copy-on-select = clipboard
 shell-integration-features = cursor,sudo,no-title
 
 keybind = shift+enter=text:\n
+keybind = super+w=close_surface
+keybind = super+t=new_tab
+
+# Tab navigation
+keybind = ctrl+alt+h=previous_tab
+keybind = ctrl+alt+l=next_tab
+
+# Jump to specific tabs
+keybind = super+1=goto_tab:1
+keybind = super+2=goto_tab:2
+keybind = super+3=goto_tab:3
+keybind = super+4=goto_tab:4
+keybind = super+5=goto_tab:5
+keybind = super+6=goto_tab:6
+keybind = super+7=goto_tab:7
+keybind = super+8=goto_tab:8
+keybind = super+9=goto_tab:9
