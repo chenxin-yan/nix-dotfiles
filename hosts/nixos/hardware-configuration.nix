@@ -58,4 +58,6 @@
 
   hardware.logitech.wireless.enable = true;
   hardware.logitech.wireless.enableGraphical = true;
+
+  hardware.keyboard.zsa.enable = true;
 }

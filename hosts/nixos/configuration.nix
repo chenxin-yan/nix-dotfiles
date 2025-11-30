@@ -80,6 +80,7 @@
       "networkmanager"
       "wheel"
       "input"
+      "plugdev"
     ];
     packages = with pkgs; [ ];
     shell = pkgs.zsh;
@@ -131,6 +132,8 @@
   ];
 
   # Set default fonts system-wide
+  fonts.enableDefaultPackages = true;
+  fonts.enableGhostscriptFonts = true;
   fonts.fontconfig.defaultFonts = {
     serif = [ "Noto Serif" ];
     sansSerif = [ "Noto Sans" ];

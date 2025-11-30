@@ -15,6 +15,7 @@
 
   home.packages = with pkgs; [
     chromium
+    keymapp
   ];
 
   catppuccin.cursors.enable = true;
