@@ -22,7 +22,6 @@ in
     {
       # Shared apps are always available
       app.shared.ghostty.enable = lib.mkDefault true;
-      app.shared.thunderbird.enable = lib.mkDefault true;
       app.shared.vesktop.enable = lib.mkDefault true;
       app.shared.espanso.enable = lib.mkDefault true;
       app.shared.zen-browser.enable = lib.mkDefault true;
@@ -38,6 +37,7 @@ in
     (lib.mkIf isLinux {
       app.linux.hyprland.enable = lib.mkDefault true;
       app.linux.waybar.enable = lib.mkDefault true;
+      app.linux.thunderbird.enable = lib.mkDefault true;
     })
   ];
 }

@@ -7,10 +7,10 @@
 
 {
   options = {
-    app.shared.thunderbird.enable = lib.mkEnableOption "enables Thunderbird email client";
+    app.linux.thunderbird.enable = lib.mkEnableOption "enables Thunderbird email client";
   };
 
-  config = lib.mkIf config.app.shared.thunderbird.enable {
+  config = lib.mkIf config.app.linux.thunderbird.enable {
     programs.thunderbird = {
       enable = true;
 
