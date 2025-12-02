@@ -1,60 +1,45 @@
 #!/bin/bash
 
-# Check if the first argument is provided
 if [ -z "$1" ]; then
-  echo "Usage: $0 <github_repo_url>"
+  echo "Usage: $0 <repo_url|owner/repo>"
   exit 1
 fi
 
-# Get the repository URL from the first argument
-REPO_URL=$1
-
-# Check if the project directory exists, if not, create it
-if [ ! -d "$DEV_PATH" ]; then
-  mkdir -p "$DEV_PATH"
-fi
-
-# Get the repository name from the URL
-REPO_NAME=$(basename -s .git "$REPO_URL")
-
-# Prompt the user for bare repository clone
-read -p "Do you want to clone as a bare repository? [y/N]: " CLONE_BARE
-if [ "$CLONE_BARE" == "y" ]; then
-  # Clone the repository as bare into the project directory
-  cd "$DEV_PATH"
-  git clone --bare "$REPO_URL"
-
-  # Check if the clone was successful
-  if [ $? -eq 0 ]; then
-    echo "Bare repository cloned successfully into $DEV_PATH"
-    
-    # Change to the bare repository directory
-    cd "$DEV_PATH/$REPO_NAME.git"
-    
-    # Try to add main worktree first, fallback to master
-    if git worktree add main; then
-      echo "Added 'main' worktree successfully"
-    elif git worktree add master; then
-      echo "Added 'master' worktree successfully"
-    else
-      echo "Warning: Could not add 'main' or 'master' worktree"
-    fi
+parse_git_url() {
+  local url="$1"
+  
+  if [[ "$url" =~ ^git@([^:]+):([^/]+)/(.+)(\.git)?$ ]]; then
+    HOST="${BASH_REMATCH[1]}"
+    OWNER="${BASH_REMATCH[2]}"
+    REPO="${BASH_REMATCH[3]}"
+    REPO="${REPO%.git}"
+    REPO_URL="$url"
+  elif [[ "$url" =~ ^https?://([^/]+)/([^/]+)/(.+)$ ]]; then
+    HOST="${BASH_REMATCH[1]}"
+    OWNER="${BASH_REMATCH[2]}"
+    REPO="${BASH_REMATCH[3]}"
+    REPO="${REPO%.git}"
+    REPO_URL="$url"
+  elif [[ "$url" =~ ^([^/]+)/([^/]+)$ ]]; then
+    HOST="github.com"
+    OWNER="${BASH_REMATCH[1]}"
+    REPO="${BASH_REMATCH[2]}"
+    REPO_URL="https://github.com/$OWNER/$REPO.git"
   else
-    echo "Failed to clone the bare repository"
+    echo "Invalid URL format"
     exit 1
   fi
-else
-  # Clone the repository normally into the project directory
-  cd "$DEV_PATH"
-  git clone "$REPO_URL"
+}
 
-  # Check if the clone was successful
-  if [ $? -eq 0 ]; then
-    echo "Repository cloned successfully into $DEV_PATH"
-  else
-    echo "Failed to clone the repository"
-    exit 1
-  fi
+parse_git_url "$1"
+
+REPO_DIR="$DEV_PATH/$HOST/$OWNER/$REPO"
+
+if [ -d "$REPO_DIR" ]; then
+  echo "Repository already exists: $REPO_DIR"
+  exit 1
 fi
+
+git clone "$REPO_URL" "$REPO_DIR"
 
 

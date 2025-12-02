@@ -1,24 +1,30 @@
 #!/bin/bash
 
-# Get all active zellij sessions without formatting
-zellij list-sessions --no-formatting | while read -r session_info; do
-  # Extract just the session name from the output and strip ANSI color codes
-  session_name=$(echo "$session_info" | awk '{print $1}')
+session_exists() {
+  local session="$1"
   
-  # Skip if session_name is empty or "ACTIVE"/"DETECTED" header
-  if [[ -z "$session_name" || "$session_name" == "ACTIVE" || "$session_name" == "DETECTED" ]]; then
-    continue
+  if [[ "$session" == local-* ]]; then
+    local name="${session#local-}"
+    [[ -d "$DEV_PATH/local/$name" ]] && return 0
+  elif [[ "$session" =~ ^([^-]+)-(.+)$ ]]; then
+    local owner="${BASH_REMATCH[1]}"
+    local repo="${BASH_REMATCH[2]}"
+    for host_dir in "$DEV_PATH"/*; do
+      [[ -d "$host_dir/$owner/$repo" ]] && return 0
+    done
+  else
+    [[ -d "$PROJECTS_PATH/$session" ]] && return 0
   fi
   
-  # Convert session name back to directory name (replace '_' with '.')
-  dir_name=$(echo "$session_name" | tr '_' '.')
+  return 1
+}
+
+zellij list-sessions --no-formatting 2>/dev/null | while read -r line; do
+  session=$(echo "$line" | awk '{print $1}')
+  [[ -z "$session" || "$session" == "ACTIVE" || "$session" == "DETECTED" ]] && continue
   
-  # Check if corresponding directory exists in either DEV_PATH or PROJECTS_PATH
-  DEV_FULL_PATH="$DEV_PATH/$dir_name"
-  PROJECTS_FULL_PATH="$PROJECTS_PATH/$dir_name"
-  
-  if [ ! -d "$DEV_FULL_PATH" ] && [ ! -L "$DEV_FULL_PATH" ] && [ ! -d "$PROJECTS_FULL_PATH" ] && [ ! -L "$PROJECTS_FULL_PATH" ]; then
-    echo "Killing zellij session: $session_name (Folder does not exist in DEV_PATH or PROJECTS_PATH)"
-    zellij delete-session "$session_name" --force
+  if ! session_exists "$session"; then
+    echo "Killing: $session"
+    zellij delete-session "$session" --force
   fi
 done

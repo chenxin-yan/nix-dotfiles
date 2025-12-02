@@ -32,9 +32,9 @@ in
 
       cdv = "cd $DEV_PATH";
       dvc = "${scriptsDir}/dev/clone.sh";
-      dvrm = "${scriptsDir}/dev/remove.sh";
       scu = "${scriptsDir}/dev/cleanup.sh";
       se = "${scriptsDir}/dev/attach.sh";
+      wt = "${scriptsDir}/dev/worktree.sh";
 
       obs = "${scriptsDir}/obsidian/search.sh";
       obg = "${scriptsDir}/obsidian/grep.sh";
