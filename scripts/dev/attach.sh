@@ -12,7 +12,7 @@ get_session_name() {
     rel="${dir#"$DEV_PATH"/}"
     owner=$(echo "$rel" | cut -d'/' -f2)
     repo=$(echo "$rel" | cut -d'/' -f3)
-    echo "${owner}-${repo}"
+    echo "${owner}:${repo}"
   else
     basename "$dir"
   fi

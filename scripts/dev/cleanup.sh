@@ -3,10 +3,10 @@
 session_exists() {
   local session="$1"
   
-  if [[ "$session" == local-* ]]; then
-    local name="${session#local-}"
+  if [[ "$session" == local:* ]]; then
+    local name="${session#local:}"
     [[ -d "$DEV_PATH/local/$name" ]] && return 0
-  elif [[ "$session" =~ ^([^-]+)-(.+)$ ]]; then
+  elif [[ "$session" =~ ^([^:]+):(.+)$ ]]; then
     local owner="${BASH_REMATCH[1]}"
     local repo="${BASH_REMATCH[2]}"
     for host_dir in "$DEV_PATH"/*; do
