@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 session_exists() {
   local session="$1"

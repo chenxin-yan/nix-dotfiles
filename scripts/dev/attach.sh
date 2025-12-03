@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 mkdir -p "$DEV_PATH"
 mkdir -p "$PROJECTS_PATH"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Use fd to select a file
 SELECTED_FILE=$(fd --type f . "$OBSIDIAN_VAULT_PATH" | fzf)
