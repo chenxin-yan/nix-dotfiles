@@ -4,8 +4,8 @@
     "HYPRCURSOR_SIZE,24"
 
     # Scaling
-    "GDK_SCALE,2"
-    "QT_SCALE_FACTOR,2"
+    "GDK_DPI_SCALE,1"
+    "QT_FONT_DPI,96"
 
     # QT
     "QT_QPA_PLATFORM,wayland"

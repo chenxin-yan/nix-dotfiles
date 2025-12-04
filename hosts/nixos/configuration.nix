@@ -57,6 +57,10 @@
   # Automatic Nix store optimization
   nix.optimise.automatic = true;
 
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+  ];
+
   # Required for Home Manager xdg.portal with useUserPackages
   environment.pathsToLink = [
     "/share/applications"
