@@ -32,7 +32,6 @@
         DisableFirefoxStudies = true;
         DisablePocket = true;
         DisableTelemetry = true;
-        DontCheckDefaultBrowser = true;
         NoDefaultBookmarks = true;
         OfferToSaveLogins = false;
         EnableTrackingProtection = {
