@@ -38,4 +38,5 @@
     clean.enable = false;
     clean.extraArgs = "--keep-since 4d --keep 3";
   };
+  app.shared.zen-browser.enable = false;
 }
