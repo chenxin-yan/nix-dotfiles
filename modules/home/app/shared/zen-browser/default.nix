@@ -8,7 +8,7 @@
 
 {
   imports = [
-    inputs.zen-browser.homeModules.twilight-official
+    inputs.zen-browser.homeModules.beta
   ];
 
   options = {
