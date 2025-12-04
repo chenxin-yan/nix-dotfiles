@@ -24,7 +24,7 @@ parse_git_url() {
     HOST="github.com"
     OWNER="${BASH_REMATCH[1]}"
     REPO="${BASH_REMATCH[2]}"
-    REPO_URL="https://github.com/$OWNER/$REPO.git"
+    REPO_URL="git@github.com:$OWNER/$REPO.git"
   else
     echo "Invalid URL format"
     exit 1
