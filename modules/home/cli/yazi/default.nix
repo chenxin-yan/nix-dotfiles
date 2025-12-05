@@ -48,6 +48,12 @@ in
           rev = "master";
           hash = "sha256-8YtYYxNDfQBTyMxn6Q7/BCiTiscpiZFXRuX0riMlRWQ=";
         };
+        compress = pkgs.fetchFromGitHub {
+          owner = "KKV9";
+          repo = "compress.yazi";
+          rev = "main";
+          hash = "sha256-qAuMD4YojLfVaywurk5uHLywRRF77U2F7ql+gR8B/lo=";
+        };
       };
 
       initLua = ''
