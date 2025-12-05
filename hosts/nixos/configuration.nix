@@ -80,6 +80,7 @@
   users.users.cyan = {
     isNormalUser = true;
     description = "Chenxin Yan";
+    uid = 1000;
     extraGroups = [
       "networkmanager"
       "wheel"
