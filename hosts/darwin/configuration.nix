@@ -47,6 +47,7 @@
     name = "${config.system.primaryUser}";
     home = "/Users/${config.system.primaryUser}";
     shell = pkgs.zsh;
+    uid = 501;
   };
 
   # The platform the configuration will be used on.
