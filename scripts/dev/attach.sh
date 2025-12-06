@@ -6,7 +6,7 @@ mkdir -p "$PROJECTS_PATH"
 get_session_name() {
   local dir="$1"
   if [[ "$dir" == "$DEV_PATH/local/"* ]]; then
-    echo "local-$(basename "$dir")"
+    echo "local:$(basename "$dir")"
   elif [[ "$dir" == "$DEV_PATH"/* ]]; then
     local rel owner repo
     rel="${dir#"$DEV_PATH"/}"
