@@ -49,7 +49,6 @@
     ];
 
     home.sessionVariables = {
-      EDITOR = "nvim";
       DOTFILES_PATH = config.dotfiles;
       DOTFILES_PRIVATE_PATH = config.dotfiles-private;
       DEV_PATH = "${config.home.homeDirectory}/dev";
