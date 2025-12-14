@@ -36,7 +36,7 @@
               replace = "https://www.linkedin.com/in/chenxin-yan";
             }
             {
-              trigger = ";td";
+              trigger = ";date";
               replace = "{{mydate}}";
               vars = [
                 {

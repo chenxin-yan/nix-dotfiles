@@ -26,8 +26,8 @@ template=$(gum choose \
 
 # Set pandoc options based on template selection
 case "$template" in
-    "Academic Defaults"*)
-        pandoc_args="--defaults=academic-defaults.yaml"
+    "Academic"*)
+        pandoc_args="--defaults=academic"
         ;;
     "Eisvogel LaTeX"*)
         pandoc_args="--template=eisvogel.latex --pdf-engine=tectonic"
@@ -55,8 +55,14 @@ fi
 # Run pandoc conversion with spinner
 gum style --bold "Converting..."
 
+# Create a temporary file to capture error output
+error_log=$(mktemp)
+
 if gum spin --spinner dot --title "Processing document..." -- \
-    bash -c "pandoc \"$markdown_file\" $pandoc_args -o \"$output_file\""; then
+    bash -c "pandoc \"$markdown_file\" $pandoc_args -o \"$output_file\" 2>\"$error_log\""; then
+    
+    # Clean up error log if successful
+    rm -f "$error_log"
     
     gum style \
         --border normal \
@@ -78,7 +84,16 @@ else
     gum style \
         --border normal \
         --align center --width 50 --margin "1 0" --padding "1 2" \
-        "❌ Conversion failed!" \
-        "Check pandoc output above for details."
+        "❌ Conversion failed!"
+    
+    # Display the error output
+    if [ -s "$error_log" ]; then
+        echo ""
+        gum style --bold --foreground 196 "Error details:"
+        cat "$error_log"
+    fi
+    
+    # Clean up error log
+    rm -f "$error_log"
     exit 1
 fi

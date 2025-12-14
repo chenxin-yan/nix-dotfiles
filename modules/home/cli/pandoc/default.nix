@@ -11,22 +11,25 @@ let
     hash = "sha256-Yor6InuzWEXWzK06LBxksDfiqFfi1WK+s1j4pvByFog=";
   };
 
-  academicDefaults = pkgs.writeText "academic-defaults.yaml" ''
-    cite-method: biblatex
-    embed-resources: true
-    file-scope: false
-    from: markdown
-    highlight-style: pygments
-    reference-location: block
-    resource-path: []
-    standalone: true
-    top-level-division: default
-    verbosity: ERROR
-    pdf-engine: tectonic
-    to: pdf
-    variables:
-      geometry: margin=1in
-  '';
+  academicDefaults = pkgs.writeText "academic.yaml" (
+    builtins.toJSON {
+      cite-method = "biblatex";
+      embed-resources = true;
+      file-scope = false;
+      from = "markdown";
+      highlight-style = "pygments";
+      reference-location = "block";
+      resource-path = [ ];
+      standalone = true;
+      top-level-division = "default";
+      verbosity = "ERROR";
+      pdf-engine = "tectonic";
+      to = "pdf";
+      variables = {
+        geometry = "margin=1in";
+      };
+    }
+  );
 in
 
 {
@@ -36,7 +39,7 @@ in
 
   config = lib.mkIf config.cli.pandoc.enable {
     home.packages = with pkgs; [
-
+      tectonic
     ];
 
     programs.pandoc = {
@@ -44,8 +47,9 @@ in
       templates = {
         "eisvogel.latex" = "${eisvogelTemplate}/eisvogel.latex";
         "eisvogel.beamer" = "${eisvogelTemplate}/eisvogel.beamer";
-        "academic-defaults.yaml" = academicDefaults;
       };
     };
+
+    xdg.dataFile."pandoc/defaults/academic.yaml".source = academicDefaults;
   };
 }
