@@ -136,6 +136,7 @@
     noto-fonts-cjk-serif
     noto-fonts-color-emoji
     nerd-fonts.jetbrains-mono
+    geist-font
   ];
 
   # Set default fonts system-wide

@@ -57,6 +57,7 @@
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.sketchybar-app-font
+    pkgs.geist-font
   ];
 
   homebrew = {
