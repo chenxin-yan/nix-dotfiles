@@ -46,6 +46,7 @@
       cloudflared
 
       wechat
+      logseq
     ];
 
     home.sessionVariables = {
