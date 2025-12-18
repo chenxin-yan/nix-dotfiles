@@ -13,17 +13,18 @@
     home.packages = with pkgs; [
       tree-sitter
       imagemagick_light
+      neovim
     ];
-
-    programs.neovim = {
-      enable = true;
-      defaultEditor = true;
-    };
 
     xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/config/nvim";
 
     programs.zsh.shellAliases = {
       v = "nvim";
+    };
+
+    home.sessionVariables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
     };
   };
 }
