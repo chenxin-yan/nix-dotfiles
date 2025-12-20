@@ -25,6 +25,12 @@
       config = {
         news.version = "3.4.2";
 
+        report.next.columns = "id,start.age,depends.indicator,priority,project,tags,recur.indicator,scheduled.countdown,due,until.remaining,description,urgency";
+        report.next.labels = "ID,Active,D,P,Project,Tags,R,Sch,Due,Until,Description,Urg";
+
+        # Urgency coefficients
+        urgency.user.tag.someday.coefficient = "-10.0";
+
         # Catppuccin Mocha theme
         # Based on https://github.com/catppuccin/catppuccin
         color = {
