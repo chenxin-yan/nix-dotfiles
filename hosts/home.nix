@@ -47,6 +47,7 @@
 
       wechat
       logseq
+      neomutt
     ];
 
     home.sessionVariables = {
