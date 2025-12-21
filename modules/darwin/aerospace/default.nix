@@ -158,6 +158,10 @@
             run = "move-node-to-workspace 4";
           }
           {
+            "if".app-id = "com.electron.logseq";
+            run = "move-node-to-workspace 4";
+          }
+          {
             "if".app-id = "md.obsidian";
             run = "move-node-to-workspace 4";
           }
