@@ -27,60 +27,30 @@
 
         report.next.columns = "id,start.age,depends.indicator,priority,project,tags,recur.indicator,scheduled.countdown,due,until.remaining,description,urgency";
         report.next.labels = "ID,Active,D,P,Project,Tags,R,Sch,Due,Until,Description,Urg";
+        report.next.filter = "status:pending -WAITING -someday limit:page";
+
+        # Custom inbox report for tasks without a project
+        report.inbox.description = "Tasks without a project";
+        report.inbox.columns = "id,start.age,priority,tags,due,description";
+        report.inbox.labels = "ID,Active,P,Tags,Due,Description";
+        report.inbox.filter = "status:pending project: tags:";
+
+        # Custom ddl report for tasks due within 2 weeks
+        report.ddl.description = "Tasks due within 2 weeks";
+        report.ddl.columns = "id,start.age,priority,project,tags,due.relative,description,urgency";
+        report.ddl.labels = "ID,Active,P,Project,Tags,Due,Description,Urg";
+        report.ddl.filter = "status:pending due.before:2weeks";
+        report.ddl.sort = "due+";
+
+        # Custom today report for tasks due/scheduled today or before, or tagged as next
+        report.today.description = "Tasks for today";
+        report.today.columns = "id,start.age,priority,project,tags,due.relative,scheduled.relative,description,urgency";
+        report.today.labels = "ID,Active,P,Project,Tags,Due,Scheduled,Description,Urg";
+        report.today.filter = "status:pending ( due.before:tomorrow or scheduled.before:tomorrow or +next )";
+        report.today.sort = "urgency-";
 
         # Urgency coefficients
         urgency.user.tag.someday.coefficient = "-10.0";
-
-        # Catppuccin Mocha theme
-        # Based on https://github.com/catppuccin/catppuccin
-        color = {
-          # General UI colors
-          header = "color116"; # Text (cdd6f4)
-          footnote = "color116"; # Text
-          warning = "color229"; # Yellow (f9e2af)
-          error = "color210"; # Red (f38ba8)
-          debug = "color159"; # Sky (89dceb)
-
-          # Task colors
-          "due.today" = "color210"; # Red
-          due = "color229"; # Yellow
-          active = "color117"; # Blue (89b4fa)
-          scheduled = "color159"; # Sky
-          "tag.next" = "color180"; # Lavender (b4befe)
-          blocked = "color243"; # Overlay0 (6c7086)
-          blocking = "color210"; # Red
-          overdue = "color210"; # Red
-
-          # Priority colors
-          "uda.priority.H" = "color210"; # Red
-          "uda.priority.M" = "color229"; # Yellow
-          "uda.priority.L" = "color116"; # Text
-
-          # Project colors
-          "project.none" = "";
-
-          # Tag colors
-          "tag.none" = "";
-          tagged = "color180"; # Lavender
-
-          # Completed/deleted tasks
-          completed = "color150"; # Green (a6e3a1)
-          deleted = "color243"; # Overlay0
-
-          # Recurring tasks
-          recurring = "color117"; # Blue
-
-          # Calendar
-          "calendar.due.today" = "color210 on color235"; # Red on Base
-          "calendar.due" = "color229 on color235"; # Yellow on Base
-          "calendar.overdue" = "color210 on color235"; # Red on Base
-          "calendar.weekend" = "color243 on color234"; # Overlay0 on Mantle
-          "calendar.holiday" = "color180 on color234"; # Lavender on Mantle
-          "calendar.today" = "color117 on color235"; # Blue on Base
-
-          # Alternating task colors
-          "alternate" = "on color234"; # Mantle (181825)
-        };
       };
     };
 
@@ -88,6 +58,7 @@
       shellAliases = {
         t = "task";
         tw = "taskwarrior-tui";
+        ti = "taskwarrior-tui --report inbox";
       };
     };
   };
