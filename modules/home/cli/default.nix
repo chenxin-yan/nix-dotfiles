@@ -7,7 +7,6 @@
     ./podman
     ./yazi
     ./zellij
-    ./taskwarrior
   ];
 
   config = {
@@ -16,6 +15,5 @@
     cli.podman.enable = lib.mkDefault true;
     cli.yazi.enable = lib.mkDefault true;
     cli.zellij.enable = lib.mkDefault true;
-    cli.taskwarrior.enable = lib.mkDefault true;
   };
 }
