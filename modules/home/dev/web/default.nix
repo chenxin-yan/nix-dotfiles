@@ -15,7 +15,6 @@
       awscli2
 
       # editor
-      prettierd
       vscode-langservers-extracted
       tailwindcss-language-server
       emmet-language-server
