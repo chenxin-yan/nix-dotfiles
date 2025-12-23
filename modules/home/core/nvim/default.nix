@@ -14,6 +14,8 @@
       tree-sitter
       imagemagick_light
       neovim
+      copilot-language-server
+      github-copilot-cli
     ];
 
     xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/config/nvim";

@@ -20,8 +20,9 @@ session_exists() {
 }
 
 zellij list-sessions --no-formatting 2>/dev/null | while read -r line; do
-  session=$(echo "$line" | awk '{print $1}')
-  [[ -z "$session" || "$session" == "ACTIVE" || "$session" == "DETECTED" ]] && continue
+  # Extract session name (everything before " [Created")
+  session="${line%% \[Created*}"
+  [[ -z "$session" ]] && continue
   
   if ! session_exists "$session"; then
     echo "Killing: $session"
