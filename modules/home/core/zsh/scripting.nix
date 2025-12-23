@@ -36,10 +36,6 @@ in
       se = "${scriptsDir}/dev/attach.sh";
       wt = "${scriptsDir}/dev/worktree.sh";
 
-      obs = "${scriptsDir}/obsidian/search.sh";
-      obg = "${scriptsDir}/obsidian/grep.sh";
-      obc = "${scriptsDir}/obsidian/new_note.sh";
-
       fzg = "${scriptsDir}/utils/rg_with_fzf.sh";
 
       md2pdf = "${scriptsDir}/utils/md2pdf.sh";
