@@ -56,6 +56,7 @@
       DEV_PATH = "${config.home.homeDirectory}/dev";
       PROJECTS_PATH = "${config.home.homeDirectory}/Projects";
       AREAS_PATH = "${config.home.homeDirectory}/Areas";
+      NOTES_PATH = "${config.home.homeDirectory}/notes/pages";
     };
 
     # Let Home Manager install and manage itself.

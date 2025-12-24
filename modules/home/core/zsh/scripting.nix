@@ -39,6 +39,8 @@ in
       fzg = "${scriptsDir}/utils/rg_with_fzf.sh";
 
       md2pdf = "${scriptsDir}/utils/md2pdf.sh";
+
+      notes = "${scriptsDir}/notes/search.sh";
     };
   };
 }
