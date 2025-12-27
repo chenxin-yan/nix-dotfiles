@@ -39,7 +39,7 @@
               "macbook"
               "nixos"
             ];
-            ignorePerms = false;
+            ignorePerms = true;
           };
           "notes" = {
             path = "~/notes";
@@ -47,7 +47,7 @@
               "macbook"
               "nixos"
             ];
-            ignorePerms = false;
+            ignorePerms = true;
           };
         };
       };
