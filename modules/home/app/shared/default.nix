@@ -7,5 +7,6 @@
     ./vesktop
     ./zen-browser
     ./neomutt
+    ./todoist
   ];
 }

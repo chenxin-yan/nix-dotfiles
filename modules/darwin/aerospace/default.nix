@@ -146,10 +146,6 @@
             run = "move-node-to-workspace 2";
           }
           {
-            "if".app-id = "com.omnigroup.OmniFocus4";
-            run = "move-node-to-workspace 3";
-          }
-          {
             "if".app-id = "com.flexibits.fantastical2.mac";
             run = "move-node-to-workspace 3";
           }
