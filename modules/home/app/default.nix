@@ -39,7 +39,6 @@ in
     (lib.mkIf isLinux {
       app.linux.hyprland.enable = lib.mkDefault true;
       app.linux.waybar.enable = lib.mkDefault true;
-      app.linux.thunderbird.enable = lib.mkDefault true;
     })
   ];
 }

@@ -1,3 +1,3 @@
 {
-  monitor = ",preferred,auto,1.5";
+  monitor = ",preferred,auto,2";
 }

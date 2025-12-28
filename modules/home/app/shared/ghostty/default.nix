@@ -21,6 +21,12 @@
 
     home.file = {
       ".config/ghostty/config".source = ./config/config;
+    }
+    // lib.optionalAttrs pkgs.stdenv.isLinux {
+      # Linux-specific: reduce font size to compensate for 2x Wayland scaling
+      ".config/ghostty/config-linux".text = ''
+        font-size = 12
+      '';
     };
   };
 }
