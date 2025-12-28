@@ -13,6 +13,7 @@
     ./typescript
     ./web
     ./c
+    ./sql
   ];
 
   config = {
@@ -27,5 +28,6 @@
     dev.typescript.enable = lib.mkDefault true;
     dev.web.enable = lib.mkDefault true;
     dev.c.enable = lib.mkDefault true;
+    dev.sql.enable = lib.mkDefault true;
   };
 }
