@@ -19,6 +19,7 @@
   ];
 
   catppuccin.cursors.enable = true;
+  home.pointerCursor.size = 16;
 
   services.ssh-agent.enable = true;
 

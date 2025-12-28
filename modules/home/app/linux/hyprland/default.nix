@@ -24,15 +24,7 @@
       };
     };
 
-    home.sessionVariables = {
-      # Toolkit backends
-      GDK_BACKEND = "wayland,x11,*";
-      SDL_VIDEODRIVER = "wayland";
-      CLUTTER_BACKEND = "wayland";
-
-      # Cursor size
-      XCURSOR_SIZE = "24";
-    };
+    home.sessionVariables = { };
 
     programs.vicinae = {
       enable = true;

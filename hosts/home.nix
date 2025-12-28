@@ -48,6 +48,8 @@
       wechat
       logseq
       neomutt
+
+      lazyssh
     ];
 
     home.sessionVariables = {
