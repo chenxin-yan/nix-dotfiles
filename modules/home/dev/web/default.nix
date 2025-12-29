@@ -13,6 +13,7 @@
     home.packages = with pkgs; [
       curlie
       awscli2
+      doppler
 
       # editor
       vscode-langservers-extracted

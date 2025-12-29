@@ -11,6 +11,12 @@
     ../../modules/darwin
   ];
 
+  # Fix macOS locale issue (BCP 47 format incompatible with Unix tools)
+  environment.variables = {
+    LANG = "en_US.UTF-8";
+    LC_ALL = "en_US.UTF-8";
+  };
+
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
