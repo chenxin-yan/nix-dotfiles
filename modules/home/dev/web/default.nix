@@ -14,6 +14,7 @@
       curlie
       awscli2
       doppler
+      jless
 
       # editor
       vscode-langservers-extracted
