@@ -9,7 +9,7 @@ let
     owner = "yazi-rs";
     repo = "plugins";
     rev = "main";
-    hash = "sha256-+lirIBXv3EvztE/1b3zHnQ9r5N3VWBCUuH3gZR52fE0=";
+    hash = "sha256-5dMAJ6W/L66XuH4CCwRRFpKSLy0ZDFIABAYleFX0AsQ=";
   };
 in
 {
@@ -52,7 +52,7 @@ in
           owner = "KKV9";
           repo = "compress.yazi";
           rev = "main";
-          hash = "sha256-qAuMD4YojLfVaywurk5uHLywRRF77U2F7ql+gR8B/lo=";
+          hash = "sha256-teyZP1ij/T92fJx8gf9Z8/ddzcNknNC6KijaYeAzPz8=";
         };
       };
 
