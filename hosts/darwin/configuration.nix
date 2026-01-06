@@ -68,6 +68,9 @@
 
   homebrew = {
     enable = true;
+    brews = [
+      "mole"
+    ];
     casks = [
       "ghostty"
       "iina"
