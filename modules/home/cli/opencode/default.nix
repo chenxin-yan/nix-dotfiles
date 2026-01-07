@@ -14,7 +14,6 @@
     programs.opencode = {
       enable = true;
       settings = {
-        theme = "catppuccin";
         permission = {
           edit = "ask";
           bash = "ask";
