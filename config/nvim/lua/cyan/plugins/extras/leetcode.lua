@@ -7,5 +7,5 @@ return {
     'nvim-tree/nvim-web-devicons',
   },
   lazy = 'leet' ~= vim.fn.argv()[1],
-  opts = { arg = 'leet', lang = 'java' },
+  opts = { arg = 'leet', lang = 'python3' },
 }
