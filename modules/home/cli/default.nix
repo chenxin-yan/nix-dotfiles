@@ -8,6 +8,7 @@
     ./syncthing
     ./yazi
     ./zellij
+    ./jj
   ];
 
   config = {
@@ -17,5 +18,6 @@
     cli.syncthing.enable = lib.mkDefault true;
     cli.yazi.enable = lib.mkDefault true;
     cli.zellij.enable = lib.mkDefault true;
+    cli.jj.enable = lib.mkDefault true;
   };
 }
