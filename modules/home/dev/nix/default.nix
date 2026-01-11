@@ -13,7 +13,7 @@
   config = lib.mkIf config.dev.nix.enable {
     home.packages = with pkgs; [
       nil
-      nixfmt-rfc-style
+      nixfmt
       nixfmt-tree
     ];
   };
