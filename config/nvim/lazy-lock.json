@@ -75,8 +75,8 @@
   "todo-comments.nvim": { "branch": "main", "commit": "31e3c38ce9b29781e4422fc0322eb0a21f4e8668" },
   "trouble.nvim": { "branch": "main", "commit": "bd67efe408d4816e25e8491cc5ad4088e708a69a" },
   "ts-comments.nvim": { "branch": "main", "commit": "123a9fb12e7229342f807ec9e6de478b1102b041" },
-  "tsc.nvim": { "branch": "main", "commit": "eecf551d69bf683603c77bd31a031873261d0147" },
+  "tsc.nvim": { "branch": "main", "commit": "eef9e2a14726c0fd6886acc47cd914c1b3b0f9f0" },
   "vim-wakatime": { "branch": "master", "commit": "d7973b157a632d1edeff01818f18d67e584eeaff" },
   "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" },
-  "yazi.nvim": { "branch": "main", "commit": "94514e28ecbe573388fd264010ee7f3611289d20" }
+  "yazi.nvim": { "branch": "main", "commit": "50218668393afd62ddbbd5016d60ecefe99910e3" }
 }
