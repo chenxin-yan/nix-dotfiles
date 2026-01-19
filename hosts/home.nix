@@ -47,6 +47,7 @@
 
       wechat
       logseq
+      obsidian
       neomutt
 
       lazyssh
