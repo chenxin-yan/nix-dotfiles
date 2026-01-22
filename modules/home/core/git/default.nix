@@ -12,16 +12,6 @@
 
   config = lib.mkIf config.core.git.enable {
 
-    home.packages = with pkgs; [
-      lazyworktree
-    ];
-
-    # lazyworktree configuration
-    xdg.configFile."lazyworktree/config.yaml".text = ''
-      worktree_dir: ${config.devPath}/worktrees
-      theme: catppuccin-mocha
-    '';
-
     programs.git = {
       enable = true;
 
@@ -94,7 +84,6 @@
     programs.zsh = {
       shellAliases = {
         g = "git";
-        lw = "lazyworktree";
       };
     };
 

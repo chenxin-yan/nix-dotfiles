@@ -11,12 +11,9 @@
   };
 
   config = lib.mkIf config.cli.zellij.enable {
-    programs.zellij = {
-      enable = true;
-      # enableZshIntegration = true;
-      # attachExistingSession = true;
-      # exitShellOnExit = true;
-    };
+    home.packages = with pkgs; [
+      zellij
+    ];
 
     xdg.configFile."zellij" = {
       source = ./config;
