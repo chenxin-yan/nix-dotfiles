@@ -1,5 +1,25 @@
 return {
   {
+    'chenxin-yan/footnote.nvim',
+    ft = 'markdown',
+    opts = {
+      keys = {
+        n = {
+          new_footnote = '<leader>cfn',
+          organize_footnotes = '<leader>cfo',
+          next_footnote = ']f',
+          prev_footnote = '[f',
+        },
+        i = {
+          new_footnote = '<C-f>',
+        },
+      },
+
+      organize_on_save = false,
+      organize_on_new = false,
+    },
+  },
+  {
     'nvim-treesitter/nvim-treesitter',
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed or {}

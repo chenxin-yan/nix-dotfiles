@@ -48,7 +48,6 @@
 
     home.packages = with pkgs; [
       tlrc
-      rainfrog
       tokei
       hyperfine
       devenv
@@ -58,7 +57,6 @@
       cloudflared
 
       wechat
-      logseq
       obsidian
       neomutt
 

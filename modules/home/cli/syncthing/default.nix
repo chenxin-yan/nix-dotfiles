@@ -41,14 +41,6 @@
             ];
             ignorePerms = true;
           };
-          "notes" = {
-            path = "~/notes";
-            devices = [
-              "macbook"
-              "nixos"
-            ];
-            ignorePerms = true;
-          };
         };
       };
     };
@@ -58,9 +50,6 @@
       "dev/.stignore".text = ''
         .DS_Store
         node_modules
-      '';
-      "notes/.stignore".text = ''
-        .DS_Store
       '';
     };
   };
