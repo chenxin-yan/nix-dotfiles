@@ -52,6 +52,7 @@
       hyperfine
       devenv
       croc
+      just
 
       bootdev-cli
       cloudflared
