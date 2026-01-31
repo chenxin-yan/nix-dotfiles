@@ -13,7 +13,6 @@
   config = lib.mkIf config.dev.python.enable {
     home.packages = with pkgs; [
       sqlit-tui
-      rainfrog
 
       # editor
       sqlfluff
