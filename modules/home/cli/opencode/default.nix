@@ -22,15 +22,15 @@
           edit = "ask";
           bash = "ask";
         };
+        plugin = [ "nia-opencode@latest" ];
         mcp = {
-          context7 = {
-            "type" = "local";
-            "command" = [
-              "npx"
-              "-y"
-              "@upstash/context7-mcp"
-            ];
-            "enabled" = true;
+          nia = {
+            type = "remote";
+            url = "https://apigcp.trynia.ai/mcp";
+            headers = {
+              Authorization = "Bearer {env:NIA_API_KEY}";
+            };
+            enabled = true;
           };
         };
       };
