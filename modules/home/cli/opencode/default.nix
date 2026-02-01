@@ -22,7 +22,17 @@
           edit = "ask";
           bash = "ask";
         };
-        plugin = [ "nia-opencode@latest" ];
+        plugin = [
+          "nia-opencode@latest"
+        ];
+        mode = {
+          build = {
+            prompt = "You are Claude Code, Anthropic's official CLI for Claude.";
+          };
+          plan = {
+            prompt = "You are Claude Code, Anthropic's official CLI for Claude.";
+          };
+        };
         mcp = {
           nia = {
             type = "remote";
