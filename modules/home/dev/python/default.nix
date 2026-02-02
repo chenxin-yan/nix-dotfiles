@@ -23,7 +23,6 @@
 
     programs.uv.enable = true;
 
-    # Add ~/.local/bin to PATH for uv tool executables
     home.sessionPath = [ "$HOME/.local/bin" ];
   };
 }

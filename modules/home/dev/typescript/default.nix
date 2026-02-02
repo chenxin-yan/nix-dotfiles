@@ -13,7 +13,6 @@
   config = lib.mkIf config.dev.typescript.enable {
     home.packages = with pkgs; [
       nodejs_22
-      bun
       pnpm
       ni
       turbo
@@ -23,5 +22,8 @@
       nodePackages."@astrojs/language-server"
       vscode-js-debug
     ];
+
+    programs.bun.enable = true;
+    home.sessionPath = [ "$HOME/.bun/bin" ];
   };
 }
