@@ -1,6 +1,7 @@
 ---
 description: Expert research agent for Nia's knowledge tools. Use for discovering repos/docs, deep technical research, remote codebase exploration, and cross-agent knowledge handoffs.
 mode: subagent
+model: anthropic/claude-haiku-4-5
 tools:
   write: false
   edit: false
