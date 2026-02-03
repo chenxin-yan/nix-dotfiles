@@ -4,24 +4,17 @@ return {
   {
     'folke/lazydev.nvim',
     ft = 'lua',
+    cmd = 'LazyDev',
     opts = {
       library = {
         -- Load luvit types when the `vim.uv` word is found
-        { path = 'luvit-meta/library', words = { 'vim%.uv' } },
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
       },
     },
   },
   { 'Bilal2453/luvit-meta', lazy = true },
-  {
-    'nvim-treesitter/nvim-treesitter',
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { 'lua', 'luadoc' })
-    end,
-  },
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
-    event = 'VeryLazy',
     opts = {
       servers = {
         lua_ls = { -- Lua lsp
@@ -29,6 +22,9 @@ return {
             Lua = {
               workspace = {
                 checkThirdParty = false,
+                -- TODO: a workaround from https://github.com/folke/lazydev.nvim/issues/136
+                -- might be able to remove in the future
+                library = vim.api.nvim_get_runtime_file('', true),
               },
               codeLens = {
                 enable = true,
