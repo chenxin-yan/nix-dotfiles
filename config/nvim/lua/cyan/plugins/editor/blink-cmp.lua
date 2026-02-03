@@ -60,11 +60,7 @@ local function pr_or_issue_configure_score_offset(items)
 end
 
 return {
-  {
-    'saghen/blink.compat',
-    lazy = true,
-    opts = {},
-  },
+
   {
     'chrisgrieser/nvim-scissors',
     event = { 'BufReadPre', 'BufNewFile' },
@@ -83,19 +79,28 @@ return {
     dependencies = {
       'rafamadriz/friendly-snippets',
       'Kaiser-Yang/blink-cmp-avante',
+      'fang2hou/blink-copilot',
       {
-        'supermaven-inc/supermaven-nvim',
+        'zbirenbaum/copilot.lua',
+        cmd = 'Copilot',
+        build = ':Copilot auth',
         event = 'InsertEnter',
-        cmd = {
-          'SupermavenUseFree',
-          'SupermavenUsePro',
-        },
         opts = {
-          keymaps = {
-            accept_suggestion = nil, -- handled by nvim-cmp / blink.cmp
+          suggestion = {
+            enabled = false, -- disable inline suggestions, handled by blink.cmp
+            auto_trigger = true,
+            hide_during_completion = true,
+            keymap = {
+              accept = false, -- handled by blink.cmp
+              next = '<M-]>',
+              prev = '<M-[>',
+            },
           },
-          disable_inline_completion = true,
-          ignore_filetypes = { 'bigfile', 'snacks_input', 'snacks_notif' },
+          panel = { enabled = false },
+          filetypes = {
+            markdown = true,
+            help = true,
+          },
         },
       },
       {
@@ -121,7 +126,7 @@ return {
         },
         ['<C-a>'] = {
           function(cmp)
-            cmp.show { providers = { 'supermaven' } }
+            cmp.show { providers = { 'copilot' } }
           end,
         },
         ['<C-i>'] = { 'show', 'show_documentation', 'hide_documentation' },
@@ -218,7 +223,7 @@ return {
           'path',
           'snippets',
           'buffer',
-          'supermaven',
+          'copilot',
           'git',
           'avante',
         },
@@ -242,10 +247,10 @@ return {
             module = 'lazydev.integrations.blink',
             score_offset = 100,
           },
-          supermaven = {
-            name = 'supermaven',
-            module = 'blink.compat.source',
-            score_offset = -30,
+          copilot = {
+            name = 'copilot',
+            module = 'blink-copilot',
+            score_offset = 100,
             async = true,
           },
           git = {
