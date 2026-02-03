@@ -25,7 +25,6 @@ in
       app.shared.vesktop.enable = lib.mkDefault true;
       app.shared.espanso.enable = lib.mkDefault true;
       app.shared.zen-browser.enable = lib.mkDefault true;
-      app.shared.neomutt.enable = lib.mkDefault true;
       app.shared.todoist.enable = lib.mkDefault true;
     }
 

@@ -12,7 +12,6 @@
 
   config = lib.mkIf config.cli.opencode.enable {
     home.packages = with pkgs; [
-      claude-code
     ];
 
     programs.opencode = {

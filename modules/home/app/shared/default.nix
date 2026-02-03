@@ -6,7 +6,6 @@
     ./ghostty
     ./vesktop
     ./zen-browser
-    ./neomutt
     ./todoist
   ];
 }
