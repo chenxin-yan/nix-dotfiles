@@ -15,11 +15,28 @@ return {
     },
     {
       'S',
-      mode = { 'n', 'o', 'x' },
+      mode = { 'n', 'x', 'o' },
       function()
-        require('flash').treesitter()
+        require('flash').jump {
+          search = { mode = 'search', max_length = 0 },
+          label = { after = { 0, 0 } },
+          pattern = '^',
+        }
       end,
-      desc = 'Flash Treesitter',
+      desc = 'Flash to a line',
+    },
+    {
+      '<c-;>',
+      mode = { 'n', 'x', 'o' },
+      function()
+        require('flash').treesitter {
+          actions = {
+            ['<c-;>'] = 'next',
+            ['<c-,>'] = 'prev',
+          },
+        }
+      end,
+      desc = 'Treesitter Incremental Selection',
     },
     {
       '<c-g>',
@@ -44,18 +61,6 @@ return {
         require('flash').treesitter_search()
       end,
       desc = 'Treesitter Search',
-    },
-    {
-      'gl',
-      mode = { 'n', 'x', 'o' },
-      function()
-        require('flash').jump {
-          search = { mode = 'search', max_length = 0 },
-          label = { after = { 0, 0 } },
-          pattern = '^',
-        }
-      end,
-      desc = 'Flash to a line',
     },
     {
       '<leader>*',

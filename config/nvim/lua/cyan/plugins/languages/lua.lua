@@ -13,6 +13,10 @@ return {
     },
   },
   { 'Bilal2453/luvit-meta', lazy = true },
+  {
+    'nvim-treesitter/nvim-treesitter',
+    opts = { ensure_installed = { 'lua', 'luadoc', 'luap' } },
+  },
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     opts = {
