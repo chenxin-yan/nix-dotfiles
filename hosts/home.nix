@@ -15,13 +15,6 @@
       example = "${config.home.homeDirectory}/dotfiles";
       description = "Location of the dotfiles working copy";
     };
-    dotfiles-private = lib.mkOption {
-      type = lib.types.path;
-      apply = toString;
-      default = "${config.home.homeDirectory}/dotfiles-private";
-      example = "${config.home.homeDirectory}/dotfiles-private";
-      description = "Location of the private dotfiles working copy";
-    };
     devPath = lib.mkOption {
       type = lib.types.path;
       apply = toString;
@@ -59,14 +52,11 @@
 
       wechat
       obsidian
-      neomutt
-
       lazyssh
     ];
 
     home.sessionVariables = {
       DOTFILES_PATH = config.dotfiles;
-      DOTFILES_PRIVATE_PATH = config.dotfiles-private;
       DEV_PATH = config.devPath;
       PROJECTS_PATH = config.projectsPath;
       AREAS_PATH = "${config.home.homeDirectory}/Areas";

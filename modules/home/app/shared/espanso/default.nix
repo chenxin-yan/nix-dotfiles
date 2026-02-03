@@ -48,13 +48,27 @@
                 }
               ];
             }
+            # Email addresses
+            {
+              trigger = ";cy2";
+              replace = "cy2558@nyu.edu";
+            }
+            {
+              trigger = ";yanc";
+              replace = "yanchenxin2004@gmail.com";
+            }
+            {
+              trigger = ";cxy";
+              replace = "cxyan04@gmail.com";
+            }
+            # ID
+            {
+              trigger = ";N1";
+              replace = "N19351358";
+            }
           ];
         };
       };
-    };
-
-    xdg.configFile."espanso/match/sensitive.yml" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles-private}/espanso/sensitive.yml";
     };
   };
 }
