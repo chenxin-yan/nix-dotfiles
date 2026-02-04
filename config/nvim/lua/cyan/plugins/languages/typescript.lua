@@ -9,7 +9,7 @@ return {
   },
   {
     'nvim-treesitter/nvim-treesitter',
-    opts = { ensure_installed = { 'javascript', 'typescript', 'astro', 'json5' } },
+    opts = { ensure_installed = { 'javascript', 'typescript', 'tsx', 'astro', 'json5', 'jsdoc' } },
   },
 
   { 'b0o/schemastore.nvim', lazy = true, version = false },
