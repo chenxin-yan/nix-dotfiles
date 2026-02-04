@@ -60,6 +60,28 @@
   nixpkgs.hostPlatform = "aarch64-darwin";
   nixpkgs.config.allowUnfree = true;
 
+  # TODO: Overlay to fix vesktop build failure on Darwin. Remove when fixed
+  # See: https://github.com/NixOS/nixpkgs/issues/484618
+  nixpkgs.overlays = [
+    (final: prev: {
+      vesktop = prev.vesktop.overrideAttrs (old: {
+        buildPhase = ''
+          runHook preBuild
+
+          pnpm build
+          pnpm exec electron-builder \
+            --dir \
+            -c.asarUnpack="**/*.node" \
+            -c.electronDist=${if prev.stdenv.hostPlatform.isDarwin then "." else "electron-dist"} \
+            -c.electronVersion=${prev.electron.version} \
+            -c.mac.identity=null
+
+          runHook postBuild
+        '';
+      });
+    })
+  ];
+
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
     pkgs.sketchybar-app-font
