@@ -1,7 +1,7 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
-    opts = { ensure_installed = { 'xml', 'html', 'css', 'json5', 'yaml', 'toml' } },
+    opts = { ensure_installed = { 'xml', 'html', 'css', 'json', 'json5', 'jsonc', 'yaml', 'toml' } },
   },
 
   { -- emmet integration
@@ -87,6 +87,14 @@ return {
       opts.formatters = vim.tbl_extend('force', opts.formatters or {}, {
         biome = {
           require_cwd = true,
+          -- Use 'biome check' instead of 'biome format' to include organize imports
+          args = {
+            'check',
+            '--write',
+            '--stdin-file-path',
+            '$FILENAME',
+          },
+          stdin = true,
         },
       })
 
