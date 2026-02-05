@@ -196,7 +196,18 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {
-          { 'filetype', icon_only = true, padding = { left = 2, right = 0 } },
+          {
+            function()
+              local folder = vim.fn.fnamemodify(vim.fn.expand '%:p:h', ':t')
+              if folder ~= '' then
+                return folder .. ' >'
+              end
+              return ''
+            end,
+            padding = { left = 2, right = 0 },
+            color = { fg = colors.subtext },
+          },
+          { 'filetype', icon_only = true, padding = { right = 0 }, separator = '' },
           {
             'filename',
             symbols = {
@@ -206,7 +217,23 @@ return {
               newfile = '',
             },
             padding = { left = 0 },
+            separator = '',
             color = { fg = colors.text },
+          },
+          {
+            function()
+              local navic_ok, navic = pcall(require, 'nvim-navic')
+              if navic_ok and navic.is_available() then
+                local location = navic.get_location()
+                if location and location ~= '' then
+                  return '>'
+                end
+              end
+              return ''
+            end,
+            padding = { left = 1, right = 0 },
+            separator = '',
+            color = { fg = colors.subtext },
           },
           { 'navic', color_correction = 'dynamic' },
         },
@@ -219,6 +246,18 @@ return {
         lualine_b = {},
         lualine_c = {
           { 'filetype', icon_only = true, padding = { left = 2, right = 0 } },
+          {
+            function()
+              local parent = vim.fn.fnamemodify(vim.fn.expand '%:p:h', ':t')
+              if parent ~= '' then
+                return parent .. '/'
+              end
+              return ''
+            end,
+            padding = { left = 0, right = 0 },
+            separator = '',
+            color = { fg = colors.subtext },
+          },
           {
             'filename',
             symbols = {
