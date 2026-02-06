@@ -28,8 +28,6 @@ in
 
   programs.zsh = {
     shellAliases = {
-      ns = "${scriptsDir}/nix/sync.sh";
-
       cdv = "cd $DEV_PATH";
       dvc = "${scriptsDir}/dev/clone.sh";
       scu = "${scriptsDir}/dev/cleanup.sh";
