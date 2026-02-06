@@ -63,7 +63,10 @@ return {
           end
 
           -- Enable highlighting
-          vim.treesitter.start(buf, lang)
+          local start_ok = pcall(vim.treesitter.start, buf, lang)
+          if not start_ok then
+            return
+          end
 
           -- Enable indentation (skip ruby)
           if ft ~= 'ruby' then
