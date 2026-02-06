@@ -4,182 +4,21 @@ description: Create or refine SPEC.md technical specifications for Ralph AI codi
 license: MIT
 metadata:
   author: chenxin-yan
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # SPEC Creation Helper
 
-Create or refine `SPEC.md` files for use with Ralph - an AI coding agent orchestration system.
+Create or refine `SPEC.md` for Ralph — an AI coding agent that reads `SPEC.md` at the start of every iteration to understand what it's building.
 
-## When to Apply
+## Core Principles
 
-Reference this skill when:
+- **SPEC.md captures what and why.** High-level goals, scope, and architectural decisions. Not implementation steps — those belong in `prd.json`.
+- **Codebase is source of truth.** The agent reads code for implementation details. SPEC.md should not duplicate what the code already shows.
+- **Keep it stable.** A good spec rarely changes. If you're constantly updating it, you're putting implementation details in the wrong place.
+- **Universal scope.** SPEC.md describes the project as it should be — not tied to "v1" or a single milestone. Use `prd.json` for phased work.
 
-- Starting a new project and need to define requirements
-- Converting user ideas into structured specifications
-- Reviewing or improving existing SPEC.md files
-- User asks to "create spec", "write specification", or "define requirements"
-- Planning architecture before implementation
-
-## Context
-
-Ralph is a methodology for running AI coding agents in a continuous loop. The agent reads `SPEC.md` at the start of every iteration to understand what it's building. A well-written spec is critical because:
-
-- It provides the "why" behind the project
-- It guides technical decisions when the agent faces ambiguity
-- It prevents scope creep by defining boundaries
-- It ensures consistency across multiple agent sessions
-
-## SPEC.md Quality Checklist
-
-| Section         | Required    | Purpose                         |
-| --------------- | ----------- | ------------------------------- |
-| Overview        | Yes         | What, why, and who              |
-| Features        | Yes         | Concrete, testable requirements |
-| Technical Stack | Yes         | Eliminate technology guesswork  |
-| Architecture    | Recommended | System structure guidance       |
-| Constraints     | Recommended | Non-functional requirements     |
-
-## What Makes a Good SPEC.md
-
-### 1. Overview
-
-- **What**: Clear, concise description of what you're building
-- **Why**: The problem it solves or value it provides
-- **Who**: Target users or audience
-
-A vague overview leads to vague implementations. Be specific.
-
-### 2. Features
-
-- List concrete features, not aspirations
-- Each feature should be implementable and testable
-- Avoid feature creep - if it's not essential for now, put it in "Out of Scope"
-
-### 3. Technical Stack
-
-Explicit technology decisions eliminate guesswork:
-
-- **Language**: Be specific (e.g., "TypeScript 5.x with strict mode")
-- **Framework**: Include version preferences if relevant
-- **Database**: Specify the database AND how it will be accessed (ORM, raw SQL, etc.)
-- **Infrastructure**: Docker, cloud provider, deployment target
-- **Key Libraries**: Authentication, validation, testing frameworks
-
-### 4. Architecture
-
-Help the agent understand the system structure:
-
-- High-level architecture diagram or description
-- Directory structure (what goes where)
-- Key architectural patterns (MVC, Clean Architecture, etc.)
-- How components communicate
-
-### 5. Requirements
-
-Non-functional requirements that guide implementation:
-
-- **Performance**: Response time targets, throughput requirements
-- **Security**: Authentication method, authorization rules, data protection
-- **Compatibility**: Node version, browser support, OS requirements
-- **Code Quality**: Testing requirements, linting rules, type safety
-
-### 6. References
-
-Link to relevant resources:
-
-- Design mockups or wireframes
-- API documentation for external services
-- Similar projects for inspiration
-- Technical documentation
-
-## Common Mistakes to Avoid
-
-### Vague Features
-
-```markdown
-// BAD - Not actionable
-
-- Good user experience
-- Fast performance
-- Modern design
-
-// GOOD - Specific and testable
-
-- User can reset password via email link
-- API responses under 200ms for 95th percentile
-- Responsive layout supporting mobile (375px) to desktop (1440px)
-```
-
-### Missing Technical Decisions
-
-```markdown
-// BAD - Agent will guess
-
-## Technical Stack
-
-- Some backend framework
-- A database
-
-// GOOD - No ambiguity
-
-## Technical Stack
-
-- **Language**: TypeScript 5.x with strict mode
-- **Framework**: Next.js 14 with App Router
-- **Database**: PostgreSQL 15 with Prisma ORM
-```
-
-### No Boundaries
-
-A spec without "Out of Scope" invites scope creep. The agent may:
-
-- Add features you didn't ask for
-- Over-engineer simple solutions
-- Spend time on edge cases that don't matter yet
-
-Always define what the project will NOT do.
-
-## How to Use This Skill
-
-### If the user has an existing SPEC.md
-
-1. Read the file and analyze its completeness
-2. Identify missing or weak sections
-3. Ask clarifying questions to fill gaps
-4. Suggest specific improvements
-5. Help refine until the spec is comprehensive
-
-### If starting from scratch
-
-Guide the user through these questions:
-
-1. **Project Vision**
-   - What are you building in one sentence?
-   - What problem does it solve?
-   - Who will use it?
-
-2. **Scope**
-   - What are the must-have features for v1?
-   - What can wait for later versions?
-
-3. **Technical Decisions**
-   - What language/framework do you want to use? Why?
-   - What database fits your needs?
-   - Any specific libraries or tools you want to use?
-
-4. **Architecture**
-   - Is this a monolith, microservices, or serverless?
-   - What's the expected directory structure?
-
-5. **Constraints**
-   - Any performance requirements?
-   - Security considerations?
-   - Compatibility requirements?
-
-## Output Format
-
-Generate a complete `SPEC.md` following this template structure:
+## Output Template
 
 ```markdown
 # Project Name
@@ -188,49 +27,145 @@ Generate a complete `SPEC.md` following this template structure:
 
 ## Overview
 
-[2-3 paragraphs explaining what you're building, the problem it solves, and who it's for]
+[2-3 paragraphs: what you're building, the problem it solves, and who it's for]
 
-## Features
+## Scope
 
-- Feature 1
-- Feature 2
-- Feature 3
+### Included
+- [High-level capability 1]
+- [High-level capability 2]
+
+### Excluded
+- [What this project will NOT do]
 
 ## Technical Stack
 
-- **Language**: [e.g., TypeScript 5.x]
+- **Language**: [e.g., TypeScript 5.x with strict mode]
 - **Framework**: [e.g., Next.js 14 with App Router]
-- **Database**: [e.g., PostgreSQL with Prisma ORM]
+- **Database**: [e.g., PostgreSQL 15 with Prisma ORM]
 - **Authentication**: [e.g., NextAuth.js with JWT]
-- **Testing**: [e.g., Vitest for unit tests, Playwright for E2E]
+- **Testing**: [e.g., Vitest + Playwright]
 - **Other**: [Any other key technologies]
 
 ## Architecture
 
-[Describe the architecture of the project]
+[High-level patterns, system structure, how major components communicate]
 
-## Requirements
+## Constraints
 
-- [e.g., API response time < 200ms for 95th percentile]
-- [e.g., All endpoints require authentication except /api/auth/*]
-- [e.g., Passwords hashed with bcrypt, minimum 12 rounds]
-- [e.g., Node.js 18+, modern browsers only]
-- [e.g., 80% test coverage minimum]
 - [e.g., All code must pass TypeScript strict mode]
+- [e.g., API responses must stay under 200ms p95]
+- [e.g., Node.js 18+ required]
 
 ## References
 
-- [Link to design mockups]
-- [Link to external API docs]
-- [Link to similar projects]
+- [Links to design mockups, external API docs, or prior art]
 ```
+
+## Section Rules
+
+### 1. Overview — what, why, who
+
+Clearly state what the project is, the problem it solves, and the target users. Vagueness here cascades everywhere.
+
+```
+GOOD: "A REST API for managing inventory in small retail stores,
+      reducing manual stock counting by 80%."
+BAD:  "A cool app for managing stuff."
+```
+
+### 2. Scope — high-level capabilities, not implementation tasks
+
+List what the project does and doesn't do. Think capabilities, not user stories or acceptance criteria — those belong in `prd.json`.
+
+```
+GOOD (spec):
+- User authentication and role-based access control
+- Real-time inventory tracking across multiple locations
+
+BAD (belongs in prd.json):
+- User can reset password via email link with 24h expiry token
+- POST /api/auth/register returns 201 with JWT
+```
+
+Always include an **Excluded** section. Without boundaries, the agent will over-build.
+
+### 3. Technical Stack — eliminate all guesswork
+
+Every major technology choice must be explicit. If the agent has to guess, it will guess wrong.
+
+```
+GOOD:
+- **Language**: TypeScript 5.x with strict mode
+- **Framework**: Next.js 14 with App Router
+- **Database**: PostgreSQL 15 with Prisma ORM
+
+BAD:
+- Some backend framework
+- A database
+```
+
+Include: language, framework, database + access method, infrastructure, key libraries.
+
+### 4. Architecture — decisions, not file trees
+
+Describe the high-level patterns and how components interact. Do NOT document directory structure or file-level organization — the codebase shows that.
+
+```
+GOOD: "Monolithic Express app with layered architecture:
+      routes → controllers → services → repositories.
+      All business logic lives in the service layer."
+
+BAD:  "src/routes/ contains route files, src/controllers/
+      contains controller files, src/services/ ..."
+```
+
+Optional for simple projects.
+
+### 5. Constraints — guiding principles, not exact targets
+
+Capture non-functional requirements that guide the agent's decisions. Keep them directional — exact thresholds and metrics belong in `prd.json` task notes.
+
+Categories: performance, security, compatibility, code quality.
+
+### 6. References — link external context
+
+Links to design mockups, API docs, similar projects. Optional — omit if none exist.
+
+## Workflows
+
+| User Intent                                              | Workflow       |
+| -------------------------------------------------------- | -------------- |
+| "Create spec", "define requirements", "plan the project" | **Create**     |
+| "Review spec", "improve spec", "update spec"             | **Refine**     |
+| Unclear                                                  | Ask the user   |
+
+### Create
+
+1. **Gather requirements** — ask the user:
+   - What are you building? What problem does it solve? Who uses it?
+   - What's in scope? What's explicitly out?
+   - What language/framework/database? Key libraries?
+   - High-level architecture (monolith, microservices, serverless)?
+   - Any hard constraints (performance, security, compatibility)?
+2. **Draft the spec** following the output template and section rules.
+3. **Present for feedback** — ask about missing scope, unclear decisions, or tech stack changes.
+4. **Refine and output** the final `SPEC.md`.
+
+### Refine
+
+1. **Read existing `SPEC.md`** and evaluate against section rules.
+2. **Identify gaps** — missing sections, vague scope, unspecified tech, no boundaries, implementation details that should move to `prd.json`.
+3. **Ask clarifying questions** to fill gaps.
+4. **Output the refined `SPEC.md`**.
 
 ## Validation Checklist
 
-Before finalizing, ensure the spec:
-
-- [ ] Has a clear, specific project overview
-- [ ] Lists concrete, implementable features
-- [ ] Specifies all major technology choices
-- [ ] Defines data models with field types
-- [ ] States requirements
+- [ ] Overview clearly states what, why, and who
+- [ ] Scope lists high-level capabilities (not implementation tasks)
+- [ ] Excluded section defines explicit boundaries
+- [ ] All major technology choices specified
+- [ ] Architecture describes patterns, not file structure
+- [ ] Constraints are directional, not over-specified
+- [ ] No implementation details that belong in `prd.json`
+- [ ] Stable — won't need updating as code evolves

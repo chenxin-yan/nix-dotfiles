@@ -4,400 +4,143 @@ description: Create and manage prd.json task lists for Ralph AI coding agent. Us
 license: MIT
 metadata:
   author: chenxin-yan
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # PRD/Task Creation Helper
 
-Create and manage `prd.json` task lists for use with Ralph - an AI coding agent orchestration system.
+Create and manage `prd.json` task lists for Ralph — an AI coding agent that loops through tasks: reads `prd.json`, picks ONE task, completes it, marks `passed: true`, repeats until done.
 
-## When to Apply
+Task quality directly determines agent performance. Follow the rules below strictly.
 
-Reference this skill when:
-
-- User asks to create, add, update, or manage tasks for Ralph
-- Starting a new Ralph project and need to create initial tasks
-- Adding a single task or a few tasks incrementally
-- Breaking down features into implementable tasks
-- Converting a SPEC.md into actionable task items
-- Reviewing or refining existing prd.json files
-- User asks to "create PRD", "create tasks", "add task", or "plan implementation"
-
-## Context
-
-Ralph runs an AI coding agent in a loop, where each iteration:
-
-1. Agent reads `prd.json` and selects ONE task to work on
-2. Agent completes the task and verifies it works
-3. Agent marks the task as `passed: true`
-4. Loop continues until all tasks are complete
-
-The quality of your task breakdown directly impacts how well the agent performs. Tasks that are too large, too vague, or poorly ordered will cause the agent to struggle or produce inconsistent results.
-
-## Task Guidelines Summary
-
-| Aspect       | Good                       | Bad                          |
-| ------------ | -------------------------- | ---------------------------- |
-| Size         | Completable in 1-2 hours   | Takes a full day             |
-| Subtasks     | Specific, actionable steps | Vague instructions           |
-| Verification | Includes test/check steps  | No way to verify             |
-| Scope        | Clear boundaries           | Overlapping with other tasks |
-
-## What Makes Good Tasks
-
-### Task Granularity
-
-**The #1 rule: Each task must be completable in a single agent session.**
-
-Guidelines:
-
-- If a human developer could complete it in 1-2 hours, it's probably the right size
-- If it would take a full day, break it down further
-- If it takes 15 minutes, consider combining with related work
-
-Examples of good granularity:
-
-- "Set up project with TypeScript and configure ESLint"
-- "Create User model with authentication fields"
-- "Implement POST /api/auth/register endpoint"
-- "Add form validation to login page"
-
-Examples of tasks that are TOO LARGE:
-
-- "Build the authentication system" (should be 4-6 tasks)
-- "Create the entire API" (should be broken down by resource/feature)
-- "Set up the frontend" (too vague, too broad)
-
-### Subtasks
-
-Subtasks are the step-by-step implementation guide. They must be:
-
-**Specific and Actionable**
-
-```json
-// GOOD - Agent knows exactly what to do
-"subtasks": [
-  "Create src/models/user.ts with User interface",
-  "Define fields: id (UUID), email (string), passwordHash (string), createdAt (Date)",
-  "Add Zod schema for validation",
-  "Export UserCreate and UserResponse types",
-  "Write unit tests for validation schema"
-]
-
-// BAD - Too vague, agent will guess
-"subtasks": [
-  "Create user model",
-  "Add fields",
-  "Add validation",
-  "Write tests"
-]
-```
-
-**Include Verification Steps**
-
-Every task should end with verification:
-
-```json
-"subtasks": [
-  "... implementation steps ...",
-  "Run npm test to verify all tests pass",
-  "Run npm run typecheck to ensure no type errors",
-  "Manually test the endpoint with curl or API client"
-]
-```
-
-### Notes Field
-
-The `notes` field provides context that helps the agent make good decisions:
-
-```json
-"notes": "Use bcrypt for password hashing (already installed). Follow the error response format defined in src/lib/errors.ts. The User model should match the schema in SPEC.md."
-```
-
-Good things to include in notes:
-
-- References to decisions in SPEC.md
-- Constraints or requirements
-- Related files to look at
-- Gotchas or edge cases to handle
-- Dependencies on previous tasks (as context, not blockers)
-
-### Task Ordering
-
-Ralph has NO explicit priority or dependency fields. The agent infers what to work on based on:
-
-- Task descriptions and context
-- Current state of the codebase
-- Logical ordering in the task list
-
-**Best practices for ordering:**
-
-1. **Setup tasks first**: Project initialization, configuration, base structure
-2. **Core models/types next**: Data structures that other features depend on
-3. **Core features**: Main functionality of the application
-4. **Integrations**: External services, third-party APIs
-5. **Polish**: Error handling improvements, edge cases, optimizations
-6. **Testing**: Integration tests, E2E tests (if not done per-feature)
-
-## Anti-patterns to Avoid
-
-### 1. Tasks Too Large
-
-```json
-// BAD
-{
-  "description": "Implement user authentication with registration, login, logout, and password reset",
-  "subtasks": ["Build auth system"],
-  "notes": "",
-  "passed": false
-}
-
-// GOOD - Break into multiple tasks
-// Task 1: Set up auth infrastructure
-// Task 2: Implement registration
-// Task 3: Implement login/logout
-// Task 4: Implement password reset
-```
-
-### 2. Vague Subtasks
-
-```json
-// BAD
-"subtasks": ["Set up database", "Create models", "Add routes"]
-
-// GOOD
-"subtasks": [
-  "Install Prisma and initialize with PostgreSQL provider",
-  "Create prisma/schema.prisma with User model",
-  "Run prisma migrate dev to create tables",
-  "Generate Prisma client",
-  "Create src/lib/db.ts with singleton client instance"
-]
-```
-
-### 3. Missing Verification
-
-```json
-// BAD - No way to know if it works
-"subtasks": [
-  "Create login endpoint",
-  "Add password checking"
-]
-
-// GOOD - Includes verification
-"subtasks": [
-  "Create POST /api/auth/login endpoint",
-  "Validate request body with Zod schema",
-  "Query user by email and verify password with bcrypt",
-  "Return JWT token on success, 401 on failure",
-  "Write tests for success and failure cases",
-  "Run npm test to verify tests pass"
-]
-```
-
-### 4. Overlapping Scope
-
-```json
-// BAD - These tasks overlap
-{
-  "description": "Create User model",
-  "subtasks": ["Define User schema", "Add validation", "Create API routes"]
-},
-{
-  "description": "Build user API",
-  "subtasks": ["Create routes for users", "Add validation"]  // Overlap!
-}
-
-// GOOD - Clear boundaries
-{
-  "description": "Create User model and validation schemas",
-  "subtasks": ["Define User schema", "Add Zod validation", "Export types"]
-},
-{
-  "description": "Implement User CRUD API endpoints",
-  "subtasks": ["Create GET /api/users", "Create POST /api/users", "..."]
-}
-```
-
-## How to Use This Skill
-
-This skill supports two main workflows:
-
-1. **Full PRD Creation**: Creating a complete task list from a spec or project description
-2. **Incremental Task Management**: Adding tasks one by one as the user requests them
-
-### Workflow Selection
-
-**Follow what the user asks you to do.** Determine the workflow based on the user's request:
-
-- If user asks to "create PRD", "create all tasks", "plan the project", or "break down [feature/spec]" → Use **Full PRD Creation**
-- If user asks to "add a task", "create a task for X", or describes a single feature to add → Use **Incremental Task Management**
-- If unclear, ask the user which approach they prefer
-
----
-
-## Workflow A: Full PRD Creation
-
-Use this workflow when creating a complete task list from scratch.
-
-### Step A1: Get the Project Spec
-
-First, you need to understand what you're building. Follow this decision tree:
-
-1. **Check for `SPEC.md`**: If it exists in the project root, read it and proceed to Step A2.
-
-2. **If no SPEC.md exists**, check if the user provided a description or requirements in their message:
-   - If yes, use that as your project understanding and proceed to Step A2.
-
-3. **If no SPEC.md AND no user description**, explore the codebase first:
-   - Skim the directory structure to understand project organization
-   - Look at `package.json`, `pyproject.toml`, `Cargo.toml`, or similar manifests for dependencies and project type
-   - Read key entry files (e.g., `src/index.ts`, `main.py`, `app.ts`, `README.md`)
-   - Check for existing routes, models, components, or other structural patterns
-   - Look at any existing tests to understand intended behavior
-
-   **If the codebase has sufficient code** (meaningful implementation, not just boilerplate):
-   - Summarize what you've learned about the project: its purpose, tech stack, current features, and apparent architecture
-   - Present this understanding to the user and ask them to confirm or clarify
-   - Ask what additional features or tasks they want to accomplish
-
-   **If the codebase is empty or only has minimal boilerplate**:
-   - Ask the user to describe their project so you can help create tasks
-   - Offer to help them create a SPEC.md first if they'd like structured planning
-
-### Step A2: Analyze the Spec
-
-From the spec, identify:
-
-1. **Setup requirements**: Project initialization, tooling, configuration
-2. **Core data models**: Entities that need to be created
-3. **Features**: Functionality to implement (break large features into tasks)
-4. **API endpoints**: If building an API, each resource may be 1-3 tasks
-5. **Frontend components**: If applicable, group by page or feature
-6. **Integrations**: External services to connect
-7. **Testing requirements**: Unit tests, integration tests, E2E tests
-
-### Step A3: Propose Task Breakdown
-
-Create a task list following this process:
-
-1. Start with project setup/initialization
-2. Add data model/schema tasks
-3. Break each feature into appropriately-sized tasks
-4. Add integration tasks
-5. Include verification/testing tasks
-6. Review for proper ordering
-
-### Step A4: Get User Feedback
-
-Present the proposed task list and ask:
-
-- Does this ordering make sense?
-- Are any tasks too large or too small?
-- Did I miss any features from the spec?
-- Any tasks that should be combined or split?
-
-### Step A5: Refine and Output
-
-Incorporate feedback and generate the final `prd.json`.
-
----
-
-## Workflow B: Incremental Task Management
-
-Use this workflow when adding tasks one at a time based on user requests.
-
-### Step B1: Understand the Request
-
-Listen to what the user wants to accomplish. They might say:
-
-- "Add a task to implement user authentication"
-- "Create a task for setting up the database"
-- "I need a task that adds dark mode support"
-
-### Step B2: Check Existing Context
-
-1. **Read existing `prd.json`** if it exists to understand:
-   - What tasks already exist (avoid duplicates or overlaps)
-   - The current state of the project (which tasks are passed)
-   - The style and granularity used in existing tasks
-
-2. **Briefly explore the codebase** if needed to understand:
-   - Tech stack and patterns in use
-   - Where the new feature should integrate
-   - Any relevant existing code to reference in notes
-
-### Step B3: Create the Task
-
-Based on the user's request, create a single well-formed task:
-
-1. Write a clear `description` that captures the end goal
-2. Break down into specific, actionable `subtasks`
-3. Include verification steps
-4. Add helpful `notes` with context, constraints, or references
-5. Set `passed` to `false`
-
-### Step B4: Present and Confirm
-
-Show the proposed task to the user:
-
-```json
-{
-  "description": "...",
-  "subtasks": [...],
-  "notes": "...",
-  "passed": false
-}
-```
-
-Ask if they want to:
-
-- Modify anything about the task
-- Add it to `prd.json`
-- Create additional related tasks
-
-### Step B5: Add to prd.json
-
-Once confirmed:
-
-- If `prd.json` exists, append the new task to the `tasks` array
-- If `prd.json` doesn't exist, create it with the new task
-- Consider placement: ask the user where it should go, or place it logically based on dependencies
-
-### Incremental Mode Tips
-
-- **Keep context between requests**: If the user is adding multiple tasks in a session, remember what was already added
-- **Suggest related tasks**: If you notice the user's task implies other work, offer to create those tasks too
-- **Respect user's pace**: Don't push for a complete PRD if the user wants to work incrementally
-- **Handle modifications**: If the user wants to edit an existing task, help them update it
-
-## Output Format
-
-Generate valid JSON following this schema:
+## Output Schema
 
 ```json
 {
   "tasks": [
     {
-      "description": "End goal - what should be achieved when this task is complete",
+      "description": "Clear end-goal of the task",
       "subtasks": ["Specific step 1", "Specific step 2", "Verification step"],
-      "notes": "Context, constraints, and helpful tips for the agent",
+      "notes": "Context, constraints, references, or tips",
       "passed": false
     }
   ]
 }
 ```
 
-**Field descriptions:**
+- `description`: What should be achieved when done. Clear and specific.
+- `subtasks`: Ordered, actionable implementation steps.
+- `notes`: Context and constraints for the agent. Can be empty string.
+- `passed`: Always `false` for new tasks.
 
-- `description` (string): The end goal of the task. Should be clear and specific.
-- `subtasks` (string[]): Ordered list of specific, actionable implementation steps.
-- `notes` (string): Context, constraints, references, or tips. Can be empty string.
-- `passed` (boolean): Always `false` for new tasks. Agent sets to `true` when complete.
+## Task Rules
 
-## Example Tasks
+### 1. Right-sized tasks
 
-### Example 1: Project Setup
+Each task must be completable in a single agent session (~1-2 hours of human work).
+
+```
+GOOD: "Implement POST /api/auth/register endpoint"
+BAD:  "Build the authentication system" → split into 4-6 tasks
+```
+
+If it would take a full day, break it down. If it takes 15 minutes, combine with related work.
+
+### 2. Specific, actionable subtasks
+
+```json
+// GOOD
+"subtasks": [
+  "Create src/models/user.ts with User interface",
+  "Define fields: id (UUID), email (string), passwordHash (string), createdAt (Date)",
+  "Add Zod schema for validation",
+  "Export UserCreate and UserResponse types"
+]
+
+// BAD
+"subtasks": ["Create user model", "Add fields", "Add validation"]
+```
+
+### 3. Every task MUST end with verification + code quality checks
+
+The final subtasks of every task must include:
+
+1. **Tests**: Run the project's test suite
+2. **Type checking**: Run the type check script (e.g., `npm run typecheck`, `npx tsc --noEmit`)
+3. **Linting/Formatting**: Run the linter/formatter (e.g., `npm run lint`, `npm run format:check`)
+
+Check `package.json` scripts or equivalent config to determine the correct commands.
+
+```json
+"subtasks": [
+  "... implementation steps ...",
+  "Write tests for success and failure cases",
+  "Run npm test to verify all tests pass",
+  "Run npm run typecheck to ensure no type errors",
+  "Run npm run lint to ensure code quality"
+]
+```
+
+> If the project lacks these tools, the setup task should configure them. All subsequent tasks must include these checks.
+
+### 4. No overlapping scope
+
+Each task must have clear boundaries. No two tasks should modify the same files or implement the same logic.
+
+```json
+// BAD — overlapping
+{ "description": "Create User model", "subtasks": ["Define schema", "Add validation", "Create API routes"] },
+{ "description": "Build user API", "subtasks": ["Create routes for users", "Add validation"] }
+
+// GOOD — clear boundaries
+{ "description": "Create User model and validation schemas", "subtasks": ["Define schema", "Add Zod validation", "Export types"] },
+{ "description": "Implement User CRUD API endpoints", "subtasks": ["Create GET /api/users", "Create POST /api/users"] }
+```
+
+### 5. Useful notes
+
+Include in `notes`: references to SPEC.md decisions, constraints, related files, gotchas, edge cases, and context about previous tasks.
+
+### 6. Logical ordering
+
+Ralph infers task order from the list position. Order tasks as:
+
+1. Setup/configuration
+2. Core models/types
+3. Core features
+4. Integrations
+5. Polish and edge cases
+6. Integration/E2E tests
+
+## Workflows
+
+Determine workflow from the user's request:
+
+| User Intent                                             | Workflow              |
+| ------------------------------------------------------- | --------------------- |
+| "Create PRD", "plan the project", "break down the spec" | **Full PRD Creation** |
+| "Add a task", "create a task for X"                     | **Incremental**       |
+| Unclear                                                 | Ask the user          |
+
+### Full PRD Creation
+
+1. **Get context**: Read `SPEC.md` if it exists. Otherwise, use the user's description. If neither exists, explore the codebase (directory structure, manifests, entry files, tests) and summarize your understanding to the user for confirmation.
+2. **Analyze**: Identify setup requirements, data models, features, API endpoints, frontend components, integrations, and testing needs.
+3. **Propose tasks**: Create the ordered task list following all rules above.
+4. **Get feedback**: Present the list and ask about ordering, sizing, missing features, and tasks to combine/split.
+5. **Refine and output**: Incorporate feedback and generate `prd.json`.
+
+### Incremental Task Management
+
+1. **Read existing `prd.json`** to avoid duplicates and match existing style.
+2. **Explore codebase** briefly if needed for context.
+3. **Create one well-formed task** following all rules above.
+4. **Present to user** for confirmation.
+5. **Append to `prd.json`** (or create it if it doesn't exist), placing logically based on dependencies.
+
+## Examples
+
+### Project Setup
 
 ```json
 {
@@ -410,34 +153,35 @@ Generate valid JSON following this schema:
     "Install and configure Prettier with ESLint integration",
     "Add scripts to package.json: build, typecheck, lint, format",
     "Create src/index.ts with a simple console.log to verify setup",
-    "Run npm run build and npm run typecheck to verify configuration"
+    "Run npm run build && npm run typecheck to verify configuration",
+    "Run npm run lint && npm run format:check to verify code quality tooling"
   ],
   "notes": "Use ESM modules (type: module in package.json). Target Node.js 18+.",
   "passed": false
 }
 ```
 
-### Example 2: Data Model
+### Data Model
 
 ```json
 {
   "description": "Create User model with Prisma schema and TypeScript types",
   "subtasks": [
-    "Add User model to prisma/schema.prisma with fields: id, email, passwordHash, name, createdAt, updatedAt",
-    "Set id as UUID with @default(uuid())",
-    "Add unique constraint on email",
+    "Add User model to prisma/schema.prisma with fields: id (UUID), email, passwordHash, name, createdAt, updatedAt",
+    "Add unique constraint on email, set id default to uuid()",
     "Run npx prisma migrate dev --name add-user-model",
     "Create src/types/user.ts with User, UserCreate, and UserResponse types",
-    "Create src/lib/validation/user.ts with Zod schemas",
+    "Create src/lib/validation/user.ts with Zod schemas for each type",
     "Run npx prisma generate to update client",
-    "Run npm run typecheck to verify types"
+    "Run npm run typecheck to ensure no type errors",
+    "Run npm run lint to ensure code quality"
   ],
   "notes": "Ensure passwordHash is never included in UserResponse type. Email should be lowercase and trimmed.",
   "passed": false
 }
 ```
 
-### Example 3: API Endpoint
+### API Endpoint
 
 ```json
 {
@@ -454,7 +198,9 @@ Generate valid JSON following this schema:
     "Test: successful registration returns 201",
     "Test: duplicate email returns 409",
     "Test: invalid email format returns 400",
-    "Run npm test to verify all tests pass"
+    "Run npm test to verify all tests pass",
+    "Run npm run typecheck to ensure no type errors",
+    "Run npm run lint to ensure code quality"
   ],
   "notes": "Follow error response format in src/lib/errors.ts. Use the db client from src/lib/db.ts.",
   "passed": false
@@ -463,27 +209,12 @@ Generate valid JSON following this schema:
 
 ## Validation Checklist
 
-Before finalizing any task (whether single or full PRD), verify:
+Before finalizing, verify every task meets:
 
-- [ ] Every task can be completed in a single agent session
-- [ ] Subtasks are specific and actionable (not vague)
-- [ ] Each task includes verification/testing steps
-- [ ] Tasks are ordered logically (setup -> models -> features -> polish)
-- [ ] No overlapping scope between tasks
-- [ ] Notes provide helpful context where needed
-- [ ] The JSON is valid and follows the schema
-
-## Summary: Following User Intent
-
-**Always follow what the user prompts you to do:**
-
-| User Says                                                    | Action                               |
-| ------------------------------------------------------------ | ------------------------------------ |
-| "Create PRD", "Plan the project", "Break down the spec"      | Full PRD Creation (Workflow A)       |
-| "Add a task", "Create a task for X", "I need a task that..." | Incremental Task (Workflow B)        |
-| "Add these tasks: X, Y, Z"                                   | Multiple incremental tasks           |
-| "Update task X", "Modify the task for..."                    | Edit existing task in prd.json       |
-| "What tasks do I have?"                                      | Read and summarize prd.json          |
-| Unclear request                                              | Ask the user to clarify their intent |
-
-The key principle: **This skill helps you manage tasks for Ralph. Adapt to what the user needs rather than forcing a specific workflow.**
+- [ ] Completable in a single agent session
+- [ ] Subtasks are specific and actionable
+- [ ] Ends with test + type check + lint/format subtasks
+- [ ] No overlapping scope with other tasks
+- [ ] Logically ordered (setup → models → features → polish)
+- [ ] Notes provide helpful context
+- [ ] Valid JSON following the schema
