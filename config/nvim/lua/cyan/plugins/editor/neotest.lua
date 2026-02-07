@@ -17,63 +17,63 @@ return {
   },
   keys = {
     {
-      '<leader>tt',
+      '<leader>nt',
       function()
         require('neotest').run.run(vim.fn.expand '%')
       end,
       desc = 'Run File (Neotest)',
     },
     {
-      '<leader>tT',
+      '<leader>nT',
       function()
         require('neotest').run.run(vim.uv.cwd())
       end,
       desc = 'Run All Test Files (Neotest)',
     },
     {
-      '<leader>tr',
+      '<leader>nr',
       function()
         require('neotest').run.run()
       end,
       desc = 'Run Nearest (Neotest)',
     },
     {
-      '<leader>tl',
+      '<leader>nl',
       function()
         require('neotest').run.run_last()
       end,
       desc = 'Run Last (Neotest)',
     },
     {
-      '<leader>ts',
+      '<leader>ns',
       function()
         require('neotest').summary.toggle()
       end,
       desc = 'Toggle Summary (Neotest)',
     },
     {
-      '<leader>to',
+      '<leader>no',
       function()
         require('neotest').output.open { enter = true, auto_close = true }
       end,
       desc = 'Show Output (Neotest)',
     },
     {
-      '<leader>tO',
+      '<leader>nO',
       function()
         require('neotest').output_panel.toggle()
       end,
       desc = 'Toggle Output Panel (Neotest)',
     },
     {
-      '<leader>tS',
+      '<leader>nS',
       function()
         require('neotest').run.stop()
       end,
       desc = 'Stop (Neotest)',
     },
     {
-      '<leader>tw',
+      '<leader>nw',
       function()
         require('neotest').watch.toggle(vim.fn.expand '%')
       end,

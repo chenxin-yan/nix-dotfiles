@@ -63,7 +63,7 @@ return {
       { "<leader>ds", function() require("dap").session() end, desc = "Session" },
       { "<leader>dt", function() require("dap").terminate() end, desc = "Terminate" },
       { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
-      { "<leader>td", function() require('neotest').run.run { strategy = 'dap' } end, desc = 'Neotest: [D]ebug Nearest',},
+      { "<leader>nd", function() require('neotest').run.run { strategy = 'dap' } end, desc = 'Neotest: [D]ebug Nearest',},
     },
     config = function()
       vim.api.nvim_set_hl(0, 'DapStoppedLine', { default = true, link = 'Visual' })

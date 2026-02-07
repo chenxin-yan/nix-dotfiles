@@ -128,12 +128,12 @@ return {
     },
     keys = {
       {
-        '<leader>tVW',
+        '<leader>nVW',
         "<cmd>lua require('neotest').run.run({ vim.fn.expand('%'), vitestCommand = 'npx vitest' })<cr>",
         desc = 'Vitest: Run Watch File',
       },
       {
-        '<leader>tVw',
+        '<leader>nVw',
         "<cmd>lua require('neotest').run.run({ vitestCommand = 'npx vitest' })<cr>",
         desc = 'Vitest: Run Watch',
       },

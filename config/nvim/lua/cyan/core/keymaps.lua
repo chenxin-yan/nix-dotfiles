@@ -43,10 +43,11 @@ vim.keymap.set('n', '<leader>_', '<cmd>horizontal split<cr>', { desc = 'Horizont
 vim.keymap.set('n', '<leader>|', '<cmd>vertical split<cr>', { desc = 'Vertical Split' })
 
 -- Tab operations
-vim.keymap.set('n', '<leader><C-t>', '<cmd>tabnew<cr>', { desc = 'Create new tab' })
-vim.keymap.set('n', '<leader><C-w>', '<cmd>tabc<cr>', { desc = 'Close current tab' })
-vim.keymap.set('n', '<C-}>', '<cmd>tabn<cr>', { desc = '[N]ext tab' })
-vim.keymap.set('n', '<C-{>', '<cmd>tabp<cr>', { desc = '[P]revious tab' })
+vim.keymap.set('n', '<leader>tn', '<cmd>tabnew<cr>', { desc = 'New tab' })
+vim.keymap.set('n', '<leader>tw', '<cmd>tabc<cr>', { desc = 'Close tab' })
+vim.keymap.set('n', '<leader>tl', '<cmd>tabn<cr>', { desc = 'Next tab' })
+vim.keymap.set('n', '<leader>th', '<cmd>tabp<cr>', { desc = 'Previous tab' })
+vim.keymap.set('n', '<leader>tt', '<cmd>tablast<cr>', { desc = 'Last tab' })
 
 -- replace $ and ^ with H and L
 vim.keymap.set({ 'n', 'x' }, 'H', '^')
@@ -56,9 +57,8 @@ vim.keymap.set({ 'n', 'x' }, 'L', '$')
 vim.keymap.set('n', '<leader><C-a>', 'gg<s-v>G', { desc = 'Select all' })
 
 -- switch between buffers
-vim.keymap.set('n', '<leader><Tab>', '<cmd>b#<cr>', { desc = 'Goto previously opened buffer' })
-vim.keymap.set('n', '<C-[>', '<cmd>bprev<cr>', { desc = 'Goto previous buffer' })
-vim.keymap.set('n', '<C-]>', '<cmd>bnext<cr>', { desc = 'Goto next buffer' })
+vim.keymap.set('n', '[b', '<cmd>bprev<cr>', { desc = 'Previous buffer' })
+vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer' })
 
 -- select pasted text
 vim.keymap.set('n', 'gP', '`[v`]', { desc = 'Select Pasted Text' })
