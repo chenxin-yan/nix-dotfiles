@@ -5,6 +5,14 @@
   ...
 }:
 
+let
+  anthropicSkills = pkgs.fetchFromGitHub {
+    owner = "anthropics";
+    repo = "skills";
+    rev = "1ed29a03dc852d30fa6ef2ca53a67dc2c2c2c563";
+    hash = "sha256-9FGubcwHcGBJcKl02aJ+YsTMiwDOdgU/FHALjARG51c=";
+  };
+in
 {
   options = {
     cli.opencode.enable = lib.mkEnableOption "enables opencode CLI tool";
@@ -47,6 +55,11 @@
 
     xdg.configFile."opencode" = {
       source = ./config;
+      recursive = true;
+    };
+
+    xdg.configFile."opencode/skills/frontend-design" = {
+      source = "${anthropicSkills}/skills/frontend-design";
       recursive = true;
     };
 
