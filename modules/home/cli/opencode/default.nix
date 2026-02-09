@@ -12,6 +12,13 @@ let
     rev = "1ed29a03dc852d30fa6ef2ca53a67dc2c2c2c563";
     hash = "sha256-9FGubcwHcGBJcKl02aJ+YsTMiwDOdgU/FHALjARG51c=";
   };
+
+  niaSkill = pkgs.fetchFromGitHub {
+    owner = "nozomio-labs";
+    repo = "nia-skill";
+    rev = "ec0064441421838bf696cf529a056be4256be0e3";
+    hash = "sha256-qZUgQOzojqCKzJ0SbC/azPC8fOEHIk8+mzZ9L4bf58Y=";
+  };
 in
 {
   options = {
@@ -30,7 +37,6 @@ in
           bash = "ask";
         };
         plugin = [
-          "nia-opencode@latest"
         ];
         agent = {
           explore = {
@@ -46,14 +52,6 @@ in
           };
         };
         mcp = {
-          nia = {
-            type = "remote";
-            url = "https://apigcp.trynia.ai/mcp";
-            headers = {
-              Authorization = "Bearer {env:NIA_API_KEY}";
-            };
-            enabled = true;
-          };
         };
       };
     };
@@ -65,6 +63,11 @@ in
 
     xdg.configFile."opencode/skills/frontend-design" = {
       source = "${anthropicSkills}/skills/frontend-design";
+      recursive = true;
+    };
+
+    xdg.configFile."opencode/skills/nia" = {
+      source = "${niaSkill}";
       recursive = true;
     };
 
