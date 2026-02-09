@@ -2,16 +2,18 @@
 
 {
   imports = [
+    ./jj
+    ./mise
     ./opencode
     ./pandoc
     ./podman
     ./syncthing
     ./yazi
     ./zellij
-    ./jj
   ];
 
   config = {
+    cli.mise.enable = lib.mkDefault true;
     cli.opencode.enable = lib.mkDefault true;
     cli.pandoc.enable = lib.mkDefault true;
     cli.podman.enable = lib.mkDefault true;
