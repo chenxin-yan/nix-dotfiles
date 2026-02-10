@@ -16,7 +16,7 @@
   "flash.nvim": { "branch": "main", "commit": "fcea7ff883235d9024dc41e638f164a450c14ca2" },
   "footnote.nvim": { "branch": "main", "commit": "2b42bbcc2dab52aa6202a9a500a46c2350db6518" },
   "friendly-snippets": { "branch": "main", "commit": "6cd7280adead7f586db6fccbd15d2cac7e2188b9" },
-  "fzf-lua": { "branch": "main", "commit": "9de53c3fce885512f982420ee6082d75613ee891" },
+  "fzf-lua": { "branch": "main", "commit": "fb8c50ba62a0daa433b7ac2b78834f318322b879" },
   "gitgraph.nvim": { "branch": "main", "commit": "c16daa7d7dd597caf9085644c009cfa80b75db8e" },
   "gitsigns.nvim": { "branch": "main", "commit": "1ce96a464fdbc24208e24c117e2021794259005d" },
   "glance.nvim": { "branch": "master", "commit": "bf86d8b79dce808e65fdb6e9269d0b4ed6d2eefc" },
@@ -70,7 +70,7 @@
   "rainbow-delimiters.nvim": { "branch": "master", "commit": "d6b802552cbe7d643a3b6b31f419c248d1f1e220" },
   "refactoring.nvim": { "branch": "master", "commit": "6784b54587e6d8a6b9ea199318512170ffb9e418" },
   "render-markdown.nvim": { "branch": "main", "commit": "48b4175dbca8439d30c1f52231cbe5a712c8f9d9" },
-  "schemastore.nvim": { "branch": "main", "commit": "ff73799fc8df725d51eada87a113581ba4d3717b" },
+  "schemastore.nvim": { "branch": "main", "commit": "b850ab25279ba04ada90e8b696ef5d0624af103d" },
   "sidekick.nvim": { "branch": "main", "commit": "c2bdf8cfcd87a6be5f8b84322c1b5052e78e302e" },
   "snacks.nvim": { "branch": "main", "commit": "fe7cfe9800a182274d0f868a74b7263b8c0c020b" },
   "todo-comments.nvim": { "branch": "main", "commit": "31e3c38ce9b29781e4422fc0322eb0a21f4e8668" },
@@ -79,5 +79,5 @@
   "tsc.nvim": { "branch": "main", "commit": "e083bcf1e54bc3af7df92b33235efb334e8c782c" },
   "vim-wakatime": { "branch": "master", "commit": "d7973b157a632d1edeff01818f18d67e584eeaff" },
   "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" },
-  "yazi.nvim": { "branch": "main", "commit": "fac5ebc2fdc7ce856849b47beca06e6f7d2b1800" }
+  "yazi.nvim": { "branch": "main", "commit": "2c7951bf48e60e5b3434b7e0fe48f7ba965c3a25" }
 }
