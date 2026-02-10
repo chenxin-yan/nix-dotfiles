@@ -27,6 +27,7 @@ in
 
   config = lib.mkIf config.cli.opencode.enable {
     home.packages = with pkgs; [
+      opencode-desktop
     ];
 
     programs.opencode = {
