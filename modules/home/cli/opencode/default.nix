@@ -35,7 +35,16 @@ in
       settings = {
         permission = {
           edit = "ask";
-          bash = "ask";
+          bash = {
+            "*" = "ask";
+            "git *" = "allow";
+            "git push *" = "deny";
+            "cd *" = "allow";
+            "npm *" = "allow";
+            "bun *" = "allow";
+            "pnpm *" = "allow";
+            "grep *" = "allow";
+          };
         };
         plugin = [
         ];
