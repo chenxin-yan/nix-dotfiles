@@ -40,6 +40,7 @@ in
             "git *" = "allow";
             "git push *" = "deny";
             "cd *" = "allow";
+            "ls *" = "allow";
             "npm *" = "allow";
             "bun *" = "allow";
             "pnpm *" = "allow";
