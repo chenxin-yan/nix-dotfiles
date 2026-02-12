@@ -41,6 +41,7 @@ in
             "git push *" = "deny";
             "cd *" = "allow";
             "ls *" = "allow";
+            "find *" = "allow";
             "npm *" = "allow";
             "bun *" = "allow";
             "pnpm *" = "allow";
