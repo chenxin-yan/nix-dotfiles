@@ -51,6 +51,8 @@ in
             "find *" = "allow";
             "head *" = "allow";
             "tail *" = "allow";
+            "echo *" = "allow";
+            "cat *" = "allow";
             "npm *" = "allow";
             "bun *" = "allow";
             "pnpm *" = "allow";
