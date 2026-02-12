@@ -42,6 +42,8 @@ in
             "cd *" = "allow";
             "ls *" = "allow";
             "find *" = "allow";
+            "head *" = "allow";
+            "tail *" = "allow";
             "npm *" = "allow";
             "bun *" = "allow";
             "pnpm *" = "allow";
