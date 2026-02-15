@@ -16,6 +16,8 @@
       doppler
       jless
 
+      wget
+
       # editor
       vscode-langservers-extracted
       tailwindcss-language-server

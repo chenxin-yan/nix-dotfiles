@@ -122,8 +122,8 @@ return {
         theme = custom_catppuccin,
         globalstatus = vim.o.laststatus == 3,
         disabled_filetypes = {
-          statusline = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard' },
-          winbar = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard' },
+          statusline = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard', 'sidekick_terminal' },
+          winbar = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard', 'sidekick_terminal' },
         },
         component_separators = ' ',
         section_separators = { left = '', right = '' },
