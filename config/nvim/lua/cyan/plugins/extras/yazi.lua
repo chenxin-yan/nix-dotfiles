@@ -24,6 +24,7 @@ return {
       replace_in_directory = '<c-r>',
       grep_in_directory = '<c-g>',
       change_working_directory = '`',
+      open_and_pick_window = '<c-p>',
     },
     integrations = {
       --- What should be done when the user wants to grep in a directory

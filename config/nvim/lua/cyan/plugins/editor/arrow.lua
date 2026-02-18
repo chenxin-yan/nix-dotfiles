@@ -13,8 +13,8 @@ return {
       toggle = 's',
       open_vertical = '|',
       open_horizontal = '_',
-      next_item = 'k',
-      prev_item = 'j',
+      next_item = 'j',
+      prev_item = 'k',
     },
   },
 }

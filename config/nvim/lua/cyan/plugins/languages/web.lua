@@ -1,7 +1,7 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
-    opts = { ensure_installed = { 'xml', 'html', 'css', 'json', 'json5', 'jsonc', 'yaml', 'toml' } },
+    opts = { ensure_installed = { 'xml', 'html', 'css', 'json', 'json5', 'yaml', 'toml' } },
   },
 
   { -- emmet integration
