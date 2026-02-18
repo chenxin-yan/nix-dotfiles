@@ -1,7 +1,7 @@
 return {
   {
     'chenxin-yan/footnote.nvim',
-    ft = 'markdown',
+    ft = { 'markdown', 'markdown.mdx' },
     opts = {
       keys = {
         n = {
@@ -25,13 +25,13 @@ return {
   },
   {
     'antonk52/markdowny.nvim',
-    ft = 'markdown',
+    ft = { 'markdown', 'markdown.mdx' },
     config = true,
   },
   {
     'iamcco/markdown-preview.nvim',
     cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
-    ft = { 'markdown' },
+    ft = { 'markdown', 'markdown.mdx' },
     build = function(plugin)
       if vim.fn.executable 'npx' then
         vim.cmd('!cd ' .. plugin.dir .. ' && cd app && npx --yes yarn install')
@@ -42,27 +42,34 @@ return {
     end,
     init = function()
       if vim.fn.executable 'npx' then
-        vim.g.mkdp_filetypes = { 'markdown' }
+        vim.g.mkdp_filetypes = { 'markdown', 'markdown.mdx' }
       end
     end,
     keys = {
-      { '<leader>up', ft = 'markdown', '<cmd>MarkdownPreviewToggle<cr>', desc = 'Toggle Markdown [P]review' },
+      { '<leader>up', ft = { 'markdown', 'markdown.mdx' }, '<cmd>MarkdownPreviewToggle<cr>', desc = 'Toggle Markdown [P]review' },
     },
   },
   {
     'MeanderingProgrammer/render-markdown.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+    init = function()
+      vim.filetype.add {
+        extension = {
+          mdx = 'markdown.mdx',
+        },
+      }
+    end,
     keys = {
       {
         '<leader>ur',
         '<cmd>RenderMarkdown toggle<cr>',
         desc = 'Toggle markdown [R]ender',
-        ft = 'markdown',
+        ft = { 'markdown', 'markdown.mdx' },
       },
     },
-    ft = { 'markdown' },
+    ft = { 'markdown', 'markdown.mdx' },
     opts = {
-      file_types = { 'markdown' },
+      file_types = { 'markdown', 'markdown.mdx' },
       code = {
         sign = false,
         width = 'block',
@@ -87,6 +94,7 @@ return {
       },
       linters_by_ft = {
         markdown = { 'markdownlint-cli2' },
+        ['markdown.mdx'] = { 'markdownlint-cli2' },
       },
     },
   },
@@ -94,7 +102,9 @@ return {
     'neovim/nvim-lspconfig',
     opts = {
       servers = {
-        marksman = {},
+        marksman = {
+          filetypes = { 'markdown', 'markdown.mdx' },
+        },
         harper_ls = {},
       },
     },
@@ -107,6 +117,7 @@ return {
       },
       formatters_by_ft = {
         markdown = { 'prettierd', 'markdownlint-cli2' },
+        ['markdown.mdx'] = { 'prettierd', 'markdownlint-cli2' },
       },
     },
   },
