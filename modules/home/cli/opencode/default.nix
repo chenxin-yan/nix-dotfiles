@@ -34,7 +34,7 @@ in
 
   config = lib.mkIf config.cli.opencode.enable {
     home.packages = with pkgs; [
-      opencode-desktop
+      wakatime-cli
     ];
 
     programs.opencode = {
@@ -60,6 +60,7 @@ in
           };
         };
         plugin = [
+          "opencode-wakatime"
         ];
         agent = {
           explore = {
@@ -86,6 +87,11 @@ in
 
     xdg.configFile."opencode/skills/frontend-design" = {
       source = "${anthropicSkills}/skills/frontend-design";
+      recursive = true;
+    };
+
+    xdg.configFile."opencode/skills/doc-coauthoring" = {
+      source = "${anthropicSkills}/skills/doc-coauthoring";
       recursive = true;
     };
 
