@@ -67,14 +67,6 @@ in
             model = "anthropic/claude-haiku-4-5";
           };
         };
-        mode = {
-          build = {
-            prompt = "You are Claude Code, Anthropic's official CLI for Claude.";
-          };
-          plan = {
-            prompt = "You are Claude Code, Anthropic's official CLI for Claude.";
-          };
-        };
         mcp = {
         };
       };
