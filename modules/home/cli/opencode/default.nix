@@ -19,13 +19,6 @@ let
     rev = "ec0064441421838bf696cf529a056be4256be0e3";
     hash = "sha256-qZUgQOzojqCKzJ0SbC/azPC8fOEHIk8+mzZ9L4bf58Y=";
   };
-
-  ralphStarter = pkgs.fetchFromGitHub {
-    owner = "chenxin-yan";
-    repo = "ralph-starter";
-    rev = "7dce10b045083b8f35a2c2ac43a30cc92aa62b03";
-    hash = "sha256-apUvCX9z975njZcusBrRmAjz4Jn48xCz62dPrGJw53Y=";
-  };
 in
 {
   options = {
@@ -92,20 +85,21 @@ in
       recursive = true;
     };
 
-    xdg.configFile."opencode/skills/create-spec" = {
-      source = "${ralphStarter}/skills/create-spec";
-      recursive = true;
-    };
-
-    xdg.configFile."opencode/skills/create-prd" = {
-      source = "${ralphStarter}/skills/create-prd";
-      recursive = true;
-    };
-
     programs.zsh = {
       shellAliases = {
         oc = "opencode";
       };
+      initContent = ''
+        opencode-widget() {
+          opencode
+          for precmd_func in $precmd_functions; do
+            $precmd_func
+          done
+          zle reset-prompt
+        }
+        zle -N opencode-widget
+        bindkey '^o' opencode-widget
+      '';
     };
   };
 }
