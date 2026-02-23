@@ -178,4 +178,5 @@
   };
 
   services.tailscale.enable = true;
+  services.envfs.enable = true;
 }

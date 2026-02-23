@@ -26,7 +26,9 @@ return {
   {
     'antonk52/markdowny.nvim',
     ft = { 'markdown', 'markdown.mdx' },
-    config = true,
+    config = function()
+      require('markdowny').setup()
+    end,
   },
   {
     'iamcco/markdown-preview.nvim',

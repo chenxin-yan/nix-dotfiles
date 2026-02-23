@@ -3,7 +3,7 @@ description: Stage and commit changes with an appropriate message
 agent: build
 ---
 
-Stage and commit all relevant changes made in this session. $ARGUMENTS
+Stage and commit all relevant changes made in this session.
 
 ## Steps
 
