@@ -50,6 +50,7 @@ in
             "bun *" = "allow";
             "pnpm *" = "allow";
             "grep *" = "allow";
+            "rg *" = "allow";
           };
         };
         plugin = [

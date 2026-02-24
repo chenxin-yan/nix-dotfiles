@@ -50,6 +50,8 @@
       "dev/.stignore".text = ''
         .DS_Store
         node_modules
+        worktrees
+        **/.git/worktrees
       '';
     };
   };

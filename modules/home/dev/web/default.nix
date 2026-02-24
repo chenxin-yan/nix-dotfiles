@@ -14,6 +14,7 @@
       curlie
       awscli2
       doppler
+      infisical
       jless
 
       wget
