@@ -8,8 +8,8 @@ let
   yazi-plugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";
     repo = "plugins";
-    rev = "main";
-    hash = "sha256-0K6qGgbGt8N6HgGNEmn2FDLar6hCPiPBbvOsrTjSubM=";
+    rev = "32ae96c8da930641ee81c32f76b2d7452ba6c8d9";
+    hash = "sha256-hn6oEFCLhACPh8T/qoPVHbX8Npsjd1EDXsZlm9SzIII=";
   };
 in
 {
@@ -39,8 +39,8 @@ in
         omp = pkgs.fetchFromGitHub {
           owner = "saumyajyoti";
           repo = "omp.yazi";
-          rev = "main";
-          hash = "sha256-gvXC+akaV+WLQyL5cpDJXc59GtkeRxyd0gIThoq0eoU=";
+          rev = "32ae96c8da930641ee81c32f76b2d7452ba6c8d9";
+          hash = "sha256-jawTDIMHIu6YYWcKy9TOuk37yiRcHZ+IhZcdNLE/2VU=";
         };
         system-clipboard = pkgs.fetchFromGitHub {
           owner = "orhnk";
@@ -51,7 +51,7 @@ in
         compress = pkgs.fetchFromGitHub {
           owner = "KKV9";
           repo = "compress.yazi";
-          rev = "main";
+          rev = "32ae96c8da930641ee81c32f76b2d7452ba6c8d9";
           hash = "sha256-D/EpcRDIc3toeyjHqi+vGw0v9B22HVvKJua5EVEAc0U=";
         };
       };

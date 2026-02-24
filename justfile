@@ -25,6 +25,10 @@ home:
 update:
     nix flake update
 
+# Update pinned fetchFromGitHub dependencies to latest
+update-pins *ARGS:
+    ./scripts/utils/update-pins.sh {{ARGS}}
+
 # Clean up old generations and garbage collect
 clean:
     nh clean all --optomize

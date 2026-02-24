@@ -16,8 +16,8 @@ let
   niaSkill = pkgs.fetchFromGitHub {
     owner = "nozomio-labs";
     repo = "nia-skill";
-    rev = "ec0064441421838bf696cf529a056be4256be0e3";
-    hash = "sha256-qZUgQOzojqCKzJ0SbC/azPC8fOEHIk8+mzZ9L4bf58Y=";
+    rev = "c2c4fd681e1012a629469318f69fc7355ccb6b66";
+    hash = "sha256-xz7wkkyeLAbVtYlMwaju8gUpTLew6sHn9BqKgKGJ3Xc=";
   };
 in
 {
