@@ -15,7 +15,6 @@
       nodejs_22
       pnpm
       ni
-      turbo
 
       # editor
       vtsls
