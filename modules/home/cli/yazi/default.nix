@@ -8,7 +8,7 @@ let
   yazi-plugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";
     repo = "plugins";
-    rev = "32ae96c8da930641ee81c32f76b2d7452ba6c8d9";
+    rev = "b224ddfb4bb6a9b438ac00ccb607b0eb517207d2";
     hash = "sha256-hn6oEFCLhACPh8T/qoPVHbX8Npsjd1EDXsZlm9SzIII=";
   };
 in
@@ -51,7 +51,7 @@ in
         compress = pkgs.fetchFromGitHub {
           owner = "KKV9";
           repo = "compress.yazi";
-          rev = "32ae96c8da930641ee81c32f76b2d7452ba6c8d9";
+          rev = "cb6e8ec0141915dc319ccd6b904dcd2f03502576";
           hash = "sha256-D/EpcRDIc3toeyjHqi+vGw0v9B22HVvKJua5EVEAc0U=";
         };
       };
