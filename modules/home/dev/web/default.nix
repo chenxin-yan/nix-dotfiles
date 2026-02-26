@@ -16,6 +16,7 @@
       doppler
       infisical
       jless
+      ngrok
 
       wget
 
