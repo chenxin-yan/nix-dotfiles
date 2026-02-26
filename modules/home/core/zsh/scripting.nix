@@ -34,6 +34,7 @@ in
       se = "${scriptsDir}/dev/attach.sh";
       wt = "${scriptsDir}/dev/worktree.sh";
       wtc = "${scriptsDir}/dev/worktree-cleanup.sh";
+      wtrm = "${scriptsDir}/dev/worktree-delete.sh";
       srm = "${scriptsDir}/dev/session-remove.sh";
 
       fzg = "${scriptsDir}/utils/rg_with_fzf.sh";
