@@ -18,17 +18,12 @@ Unstaged changes:
 Staged changes:
 !`git diff --cached`
 
-Last commit diff:
-!`git diff HEAD~1 HEAD`
-
-Recent commits (for context):
-!`git log --oneline -5`
-
 ## Scope
 
-The user may specify a scope via arguments: **$ARGUMENTS**
+The scope that user specified: **$ARGUMENTS**
 
 If arguments are provided, run `git diff $ARGUMENTS` to get the relevant changes and use that as your primary diff to analyze instead of the defaults above. Examples:
+
 - `/sync-docs` — use the unstaged diff shown above
 - `/sync-docs --cached` — staged changes
 - `/sync-docs HEAD~3` — last 3 commits
