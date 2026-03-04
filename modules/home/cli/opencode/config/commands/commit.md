@@ -1,7 +1,7 @@
 ---
 description: Stage and commit changes with an appropriate message
 agent: build
-model: anthropic/claude-haiku-4-5
+model: opencode-go/kimi-k2.5
 subtask: true
 ---
 
