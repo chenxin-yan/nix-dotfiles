@@ -51,6 +51,7 @@ in
             "pnpm *" = "allow";
             "grep *" = "allow";
             "rg *" = "allow";
+            "nia *" = "allow";
           };
         };
         plugin = [
@@ -71,20 +72,15 @@ in
       recursive = true;
     };
 
-    xdg.configFile."opencode/skills/frontend-design" = {
+    home.file.".agents/skills/frontend-design" = {
       source = "${anthropicSkills}/skills/frontend-design";
       recursive = true;
     };
 
-    xdg.configFile."opencode/skills/doc-coauthoring" = {
+    home.file.".agents/skills/doc-coauthoring" = {
       source = "${anthropicSkills}/skills/doc-coauthoring";
       recursive = true;
     };
-
-    # xdg.configFile."opencode/skills/nia" = {
-    #   source = "${niaSkill}";
-    #   recursive = true;
-    # };
 
     programs.zsh = {
       shellAliases = {
