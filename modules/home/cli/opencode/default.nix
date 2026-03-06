@@ -86,17 +86,6 @@ in
       shellAliases = {
         oc = "opencode";
       };
-      initContent = ''
-        opencode-widget() {
-          opencode
-          for precmd_func in $precmd_functions; do
-            $precmd_func
-          done
-          zle reset-prompt
-        }
-        zle -N opencode-widget
-        bindkey '^o' opencode-widget
-      '';
     };
   };
 }

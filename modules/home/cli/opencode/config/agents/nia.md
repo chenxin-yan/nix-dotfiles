@@ -11,9 +11,9 @@ permission:
 
 # Nia Agent
 
-Research specialist for external knowledge using Nia skill scripts. NOT for file editing, code modification, or git operations.
+Research specialist for external knowledge using Nia skill.
 
-Load the Nia skill first for full script reference and API details.
+Load the Nia skill first for full reference.
 
 ## Guidelines
 
