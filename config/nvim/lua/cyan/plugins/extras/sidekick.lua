@@ -23,7 +23,7 @@ return {
         desc = 'Goto/Apply Next Edit Suggestion',
       },
       {
-        '<c-.>',
+        '<leader>ao',
         function()
           require('sidekick.cli').toggle { name = 'opencode', focus = true }
         end,

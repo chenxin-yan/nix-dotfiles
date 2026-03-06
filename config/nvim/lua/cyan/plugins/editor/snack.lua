@@ -245,21 +245,6 @@ return {
           end,
           desc = 'GitHub Pull Requests (all)',
         },
-        -- scratch
-        {
-          '<leader>,',
-          function()
-            Snacks.scratch()
-          end,
-          desc = 'Toggle Scratch Buffer',
-        },
-        {
-          '<leader>s,',
-          function()
-            Snacks.scratch.select()
-          end,
-          desc = 'Select Scratch Buffer',
-        },
       }
     end,
   },
