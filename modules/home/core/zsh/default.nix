@@ -129,11 +129,6 @@
       options = [ "--cmd cd" ];
     }; # better cd
 
-    programs.carapace = {
-      enable = true;
-      enableZshIntegration = true;
-    }; # completion
-
     programs.fzf = {
       enable = true;
       enableZshIntegration = true;

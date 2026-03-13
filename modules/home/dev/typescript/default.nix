@@ -12,7 +12,7 @@
 
   config = lib.mkIf config.dev.typescript.enable {
     home.packages = with pkgs; [
-      nodejs_22
+      nodejs_25
       pnpm
       ni
 

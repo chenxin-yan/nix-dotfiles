@@ -130,6 +130,10 @@
         };
         on-window-detected = [
           {
+            "if".app-id = "com.mitchellh.ghostty";
+            run = "layout tiling";
+          }
+          {
             "if".app-id = "com.apple.mail";
             run = "move-node-to-workspace 0";
           }
