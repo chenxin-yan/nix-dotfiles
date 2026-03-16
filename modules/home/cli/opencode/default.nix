@@ -56,6 +56,7 @@ in
         };
         plugin = [
           "opencode-wakatime"
+          "opencode-debug-helper"
         ];
         agent = {
           explore = {
