@@ -17,6 +17,7 @@
       infisical
       jless
       ngrok
+      nginx
 
       wget
 
