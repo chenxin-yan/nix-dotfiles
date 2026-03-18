@@ -12,13 +12,14 @@
 
   config = lib.mkIf config.dev.typescript.enable {
     home.packages = with pkgs; [
-      nodejs_25
+      nodejs_22
       pnpm
       ni
 
       # editor
       vtsls
       nodePackages."@astrojs/language-server"
+      prisma-language-server
       vscode-js-debug
     ];
 
