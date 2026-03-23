@@ -13,12 +13,6 @@ let
     hash = "sha256-9FGubcwHcGBJcKl02aJ+YsTMiwDOdgU/FHALjARG51c=";
   };
 
-  # niaSkill = pkgs.fetchFromGitHub {
-  #   owner = "nozomio-labs";
-  #   repo = "nia-skill";
-  #   rev = "c2c4fd681e1012a629469318f69fc7355ccb6b66";
-  #   hash = "sha256-xz7wkkyeLAbVtYlMwaju8gUpTLew6sHn9BqKgKGJ3Xc=";
-  # };
 in
 {
   options = {
@@ -28,6 +22,8 @@ in
   config = lib.mkIf config.cli.opencode.enable {
     home.packages = with pkgs; [
       wakatime-cli
+      opencode-desktop
+      claude-code
     ];
 
     programs.opencode = {
@@ -56,11 +52,16 @@ in
         };
         plugin = [
           "opencode-wakatime"
-          "opencode-debug-helper"
+          "opencode-cursor-oauth"
         ];
         agent = {
           explore = {
             model = "opencode-go/kimi-k2.5";
+          };
+        };
+        provider = {
+          cursor = {
+            name = "Cursor";
           };
         };
         mcp = {
