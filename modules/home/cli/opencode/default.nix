@@ -84,6 +84,26 @@ in
       recursive = true;
     };
 
+    home.file.".claude/skills/frontend-design" = {
+      source = "${anthropicSkills}/skills/frontend-design";
+      recursive = true;
+    };
+
+    home.file.".claude/skills/doc-coauthoring" = {
+      source = "${anthropicSkills}/skills/doc-coauthoring";
+      recursive = true;
+    };
+
+    home.file.".claude/skills/prompt-engineering" = {
+      source = ./config/skills/prompt-engineering;
+      recursive = true;
+    };
+
+    home.file.".claude/skills/refine-plan" = {
+      source = ./config/skills/refine-plan;
+      recursive = true;
+    };
+
     programs.zsh = {
       shellAliases = {
         oc = "opencode";
