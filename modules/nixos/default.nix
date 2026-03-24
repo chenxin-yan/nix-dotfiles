@@ -7,6 +7,7 @@
     ./1password
     ./audio
     ./bluetooth
+    ./mosh
   ];
 
   config = {
@@ -15,5 +16,6 @@
     nixos._1password.enable = lib.mkDefault true;
     nixos.audio.enable = lib.mkDefault true;
     nixos.bluetooth.enable = lib.mkDefault true;
+    nixos.mosh.enable = lib.mkDefault true;
   };
 }
