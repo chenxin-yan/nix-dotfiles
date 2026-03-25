@@ -34,7 +34,6 @@ in
           bash = {
             "*" = "ask";
             "git *" = "allow";
-            "git push *" = "deny";
             "cd *" = "allow";
             "ls *" = "allow";
             "find *" = "allow";
