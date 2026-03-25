@@ -48,20 +48,9 @@
       enable = true;
 
       settings = {
-        git_protocol = "https";
+        git_protocol = "ssh";
         aliases = {
           co = "pr checkout";
-        };
-      };
-
-      hosts = {
-        "github.com" = {
-          git_protocol = "ssh";
-          users = {
-            "chenxin-yan" = {
-              user = "chenxin-yan";
-            };
-          };
         };
       };
     };
