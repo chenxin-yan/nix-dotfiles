@@ -93,11 +93,6 @@ in
       recursive = true;
     };
 
-    home.file.".claude/skills/prompt-engineering" = {
-      source = ./config/skills/prompt-engineering;
-      recursive = true;
-    };
-
     home.file.".claude/skills/refine-plan" = {
       source = ./config/skills/refine-plan;
       recursive = true;
