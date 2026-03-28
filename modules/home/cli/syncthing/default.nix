@@ -59,39 +59,39 @@
     # Create .stignore for dev sync exclusions
     home.file = {
       "PARA/.stignore".text = ''
-        .DS_Store
-        .Spotlight-V100
-        .Trashes
-        ._*
+        (?d).DS_Store
+        (?d).Spotlight-V100
+        (?d).Trashes
+        (?d)._*
       '';
       "dev/.stignore".text = ''
-        .DS_Store
-        node_modules
-        worktrees
-        **/.git/worktrees
-        .git
-        __pycache__
-        .pytest_cache
-        .mypy_cache
-        .ruff_cache
-        .tox
-        .venv
-        venv
-        .next
-        .nuxt
-        .svelte-kit
-        .turbo
-        .parcel-cache
-        .vite
-        .cache
-        dist
-        build
-        out
-        coverage
-        .coverage
-        target
-        .gradle
-        .idea
+        (?d).DS_Store
+        (?d)node_modules
+        (?d)worktrees
+        (?d)**/.git/worktrees
+        (?d).git
+        (?d)__pycache__
+        (?d).pytest_cache
+        (?d).mypy_cache
+        (?d).ruff_cache
+        (?d).tox
+        (?d).venv
+        (?d)venv
+        (?d).next
+        (?d).nuxt
+        (?d).svelte-kit
+        (?d).turbo
+        (?d).parcel-cache
+        (?d).vite
+        (?d).cache
+        (?d)dist
+        (?d)build
+        (?d)out
+        (?d)coverage
+        (?d).coverage
+        (?d)target
+        (?d).gradle
+        (?d).idea
       '';
     };
   };
