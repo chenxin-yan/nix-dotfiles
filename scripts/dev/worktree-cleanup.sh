@@ -2,6 +2,8 @@
 
 set -e
 
+source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
+
 # Ensure we're in a git repo
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   echo "Error: Not inside a git repository"
@@ -16,26 +18,6 @@ if [[ -z "$REMOTE_URL" ]]; then
   echo "Error: No 'origin' remote found"
   exit 1
 fi
-
-# Parse git remote URL to extract host/owner/repo
-parse_git_url() {
-  local url="$1"
-
-  if [[ "$url" =~ ^git@([^:]+):([^/]+)/(.+)(\.git)?$ ]]; then
-    HOST="${BASH_REMATCH[1]}"
-    OWNER="${BASH_REMATCH[2]}"
-    REPO="${BASH_REMATCH[3]}"
-  elif [[ "$url" =~ ^https?://([^/]+)/([^/]+)/(.+)$ ]]; then
-    HOST="${BASH_REMATCH[1]}"
-    OWNER="${BASH_REMATCH[2]}"
-    REPO="${BASH_REMATCH[3]}"
-  else
-    echo "Error: Unable to parse remote URL: $url"
-    exit 1
-  fi
-
-  REPO="${REPO%.git}"
-}
 
 parse_git_url "$REMOTE_URL"
 
@@ -78,8 +60,8 @@ for worktree_dir in "$WORKTREE_BASE"/*/; do
     git worktree remove "$worktree_dir" --force 2>/dev/null || rm -rf "$worktree_dir"
 
     # Kill associated zellij session
-    SESSION_NAME="$OWNER:$REPO:$dir_name"
-    if zellij list-sessions --no-formatting 2>/dev/null | grep -q "^$SESSION_NAME "; then
+    SESSION_NAME=$(truncate_session_name "$OWNER:$REPO:$dir_name")
+    if zellij_session_exists "$SESSION_NAME"; then
       echo "  Killing zellij session: $SESSION_NAME"
       zellij delete-session "$SESSION_NAME" --force 2>/dev/null || true
     fi

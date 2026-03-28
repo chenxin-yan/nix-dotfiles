@@ -2,6 +2,8 @@
 
 set -e
 
+source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
+
 # Ensure we're in a git repo
 if ! git rev-parse --is-inside-work-tree &>/dev/null; then
   echo "Error: Not inside a git repository"
@@ -16,26 +18,6 @@ if [[ -z "$REMOTE_URL" ]]; then
   echo "Error: No 'origin' remote found"
   exit 1
 fi
-
-# Parse git remote URL to extract host/owner/repo
-parse_git_url() {
-  local url="$1"
-
-  if [[ "$url" =~ ^git@([^:]+):([^/]+)/(.+)(\.git)?$ ]]; then
-    HOST="${BASH_REMATCH[1]}"
-    OWNER="${BASH_REMATCH[2]}"
-    REPO="${BASH_REMATCH[3]}"
-  elif [[ "$url" =~ ^https?://([^/]+)/([^/]+)/(.+)$ ]]; then
-    HOST="${BASH_REMATCH[1]}"
-    OWNER="${BASH_REMATCH[2]}"
-    REPO="${BASH_REMATCH[3]}"
-  else
-    echo "Error: Unable to parse remote URL: $url"
-    exit 1
-  fi
-
-  REPO="${REPO%.git}"
-}
 
 parse_git_url "$REMOTE_URL"
 
@@ -74,7 +56,7 @@ SAFE_BRANCH="${SELECTED_BRANCH//\//-}"
 
 # Calculate paths
 WORKTREE_PATH="$DEV_PATH/worktrees/$HOST/$OWNER/$REPO/$SAFE_BRANCH"
-SESSION_NAME="$OWNER:$REPO:$SAFE_BRANCH"
+SESSION_NAME=$(truncate_session_name "$OWNER:$REPO:$SAFE_BRANCH")
 
 # Create worktree if it doesn't exist
 if [[ ! -d "$WORKTREE_PATH" ]]; then
@@ -84,9 +66,12 @@ fi
 
 # Attach to zellij session
 if [[ -n "$ZELLIJ" ]]; then
-  # Already inside zellij - create session in background
-  echo "Creating session in background: $SESSION_NAME"
-  (cd "$WORKTREE_PATH" && zellij attach --create-background "$SESSION_NAME")
+  # Create session in background if it doesn't already exist, then switch to it
+  # Clear ZELLIJ env vars to avoid nesting detection in the subshell
+  if ! zellij_session_exists "$SESSION_NAME"; then
+    (cd "$WORKTREE_PATH" && ZELLIJ= ZELLIJ_SESSION_NAME= zellij attach --create-background "$SESSION_NAME")
+  fi
+  zellij action switch-session "$SESSION_NAME"
 else
   # Outside zellij - attach normally
   echo "Attaching to session: $SESSION_NAME"
