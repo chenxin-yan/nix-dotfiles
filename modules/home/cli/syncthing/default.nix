@@ -92,6 +92,11 @@
         (?d)target
         (?d).gradle
         (?d).idea
+        (?d).direnv
+        (?d).wrangler
+        (?d)*.egg-info
+        (?d).eslintcache
+        (?d).output
       '';
     };
   };
