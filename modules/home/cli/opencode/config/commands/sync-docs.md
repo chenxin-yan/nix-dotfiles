@@ -1,7 +1,7 @@
 ---
 description: Find documentation discrepancies from code changes
 agent: build
-model: opencode-go/kimi-k2.5
+model: openai/gpt-5.4-mini
 subtask: true
 ---
 
