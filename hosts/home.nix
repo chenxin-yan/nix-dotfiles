@@ -24,7 +24,7 @@
     projectsPath = lib.mkOption {
       type = lib.types.path;
       apply = toString;
-      default = "${config.home.homeDirectory}/Projects";
+      default = "${config.home.homeDirectory}/PARA/01 Projects";
       description = "Location of project directories";
     };
   };
@@ -59,7 +59,7 @@
       DOTFILES_PATH = config.dotfiles;
       DEV_PATH = config.devPath;
       PROJECTS_PATH = config.projectsPath;
-      AREAS_PATH = "${config.home.homeDirectory}/Areas";
+      AREAS_PATH = "${config.home.homeDirectory}/PARA/02 Areas";
       NOTES_PATH = "${config.home.homeDirectory}/notes";
     };
 
