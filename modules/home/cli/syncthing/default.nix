@@ -45,13 +45,36 @@
       };
     };
 
-    # Create .stignore files to exclude .DS_Store and node_modules
+    # Create .stignore for dev sync exclusions
     home.file = {
       "dev/.stignore".text = ''
         .DS_Store
         node_modules
         worktrees
         **/.git/worktrees
+        .git
+        __pycache__
+        .pytest_cache
+        .mypy_cache
+        .ruff_cache
+        .tox
+        .venv
+        venv
+        .next
+        .nuxt
+        .svelte-kit
+        .turbo
+        .parcel-cache
+        .vite
+        .cache
+        dist
+        build
+        out
+        coverage
+        .coverage
+        target
+        .gradle
+        .idea
       '';
     };
   };
