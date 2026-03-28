@@ -30,6 +30,9 @@
           "nixos" = {
             id = "A7ARLLU-2SID46Y-XVXR2KS-UX4H5RY-OGWNAUK-ZHPQN5E-SG5DPEH-G76JUAH";
           };
+          "raspberry-pi" = {
+            id = "6IKQFQ3-YQWC5MP-V7BOK6A-UP65HUU-DQWZRK5-LYAG3XP-7EEICGF-J624PAT";
+          };
         };
 
         folders = {
@@ -41,12 +44,26 @@
             ];
             ignorePerms = true;
           };
+          "PARA" = {
+            path = "~/PARA";
+            devices = [
+              "macbook"
+              "raspberry-pi"
+            ];
+            ignorePerms = true;
+          };
         };
       };
     };
 
     # Create .stignore for dev sync exclusions
     home.file = {
+      "PARA/.stignore".text = ''
+        .DS_Store
+        .Spotlight-V100
+        .Trashes
+        ._*
+      '';
       "dev/.stignore".text = ''
         .DS_Store
         node_modules
