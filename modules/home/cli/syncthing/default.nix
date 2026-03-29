@@ -41,6 +41,7 @@
             devices = [
               "macbook"
               "nixos"
+              "raspberry-pi"
             ];
             ignorePerms = true;
           };
