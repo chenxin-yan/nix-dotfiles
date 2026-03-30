@@ -30,6 +30,7 @@ in
     programs.yazi = {
       enable = true;
       enableZshIntegration = true;
+      shellWrapperName = "y";
       plugins = {
         full-border = "${yazi-plugins}/full-border.yazi";
         no-status = "${yazi-plugins}/no-status.yazi";

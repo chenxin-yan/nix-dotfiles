@@ -20,6 +20,7 @@
       nginx
 
       wget
+      mongosh
 
       # editor
       vscode-langservers-extracted
