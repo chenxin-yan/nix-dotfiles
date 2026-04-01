@@ -116,23 +116,26 @@
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "yes";
 
-  # Open ports in the firewall.
-  # 22 = SSH, 22000
-  # Syncthing ports: 8384 for remote access to GUI
-  # 22000 TCP and/or UDP for sync traffic
-  # 21027/UDP for discovery
-  # source: https://docs.syncthing.net/users/firewall.html
-  networking.firewall.allowedTCPPorts = [
-    22
-    8384
-    22000
-  ];
-  networking.firewall.allowedUDPPorts = [
-    22000
-    21027
-  ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  # Firewall
+  # - Trust all Tailscale traffic (no need to open ports for Tailscale-only services)
+  # - Allow Tailscale UDP port for direct peer-to-peer connections (avoids DERP relay)
+  # - Keep SSH open on LAN as emergency fallback
+  # - Syncthing ports open on LAN (localAnnounceEnabled = true)
+  #   8384: GUI, 22000: sync traffic, 21027: discovery
+  #   source: https://docs.syncthing.net/users/firewall.html
+  networking.firewall = {
+    trustedInterfaces = [ "tailscale0" ];
+    allowedTCPPorts = [
+      22
+      8384
+      22000
+    ];
+    allowedUDPPorts = [
+      config.services.tailscale.port
+      22000
+      21027
+    ];
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -177,7 +180,12 @@
     clean.extraArgs = "--keep-since 4d --keep 3";
   };
 
+  # Tailscale VPN
   services.tailscale.enable = true;
+
+  # Use systemd-resolved for DNS (fixes known Tailscale DNS issue on NixOS,
+  # enables MagicDNS). See: https://github.com/tailscale/tailscale/issues/4254
+  services.resolved.enable = true;
   services.envfs.enable = true;
 
   # OpenClaw node host — proxies browser commands from Pi gateway
