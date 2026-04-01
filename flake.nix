@@ -18,6 +18,8 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-openclaw.url = "github:openclaw/nix-openclaw";
   };
 
   outputs =
@@ -28,12 +30,14 @@
       nix-darwin,
       nix-homebrew,
       zen-browser,
+      nix-openclaw,
       ...
     }:
     {
       nixosConfigurations."cyan@nixos" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
+          { nixpkgs.overlays = [ nix-openclaw.overlays.default ]; }
           ./hosts/nixos/configuration.nix
           catppuccin.nixosModules.catppuccin
           home-manager.nixosModules.home-manager

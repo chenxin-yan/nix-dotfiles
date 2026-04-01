@@ -8,6 +8,7 @@
     ./audio
     ./bluetooth
     ./mosh
+    ./openclaw-node
   ];
 
   config = {
