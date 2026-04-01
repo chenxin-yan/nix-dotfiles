@@ -33,8 +33,8 @@ in
       Service = {
         Type = "simple";
         ExecStart = "${pkgs.openclaw}/bin/openclaw node run --host cyanpi.tail181cc6.ts.net --port 443 --tls --display-name \"${cfg.displayName}\"";
-        Restart = "on-failure";
-        RestartSec = "15s";
+        Restart = "always";
+        RestartSec = "5s";
         EnvironmentFile = cfg.tokenFile;
       };
       Install = {
