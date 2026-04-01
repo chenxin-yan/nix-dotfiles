@@ -7,12 +7,6 @@ in
   options.nixos.openclaw-node = {
     enable = lib.mkEnableOption "OpenClaw node host";
 
-    gatewayUrl = lib.mkOption {
-      type = lib.types.str;
-      default = "https://cyanpi.tail181cc6.ts.net";
-      description = "URL of the OpenClaw gateway on the Pi";
-    };
-
     displayName = lib.mkOption {
       type = lib.types.str;
       default = "NixOS Browser Node";
@@ -38,7 +32,7 @@ in
       };
       Service = {
         Type = "simple";
-        ExecStart = "${pkgs.openclaw}/bin/openclaw node run --host ${cfg.gatewayUrl} --display-name \"${cfg.displayName}\"";
+        ExecStart = "${pkgs.openclaw}/bin/openclaw node run --host cyanpi.tail181cc6.ts.net --port 443 --tls --display-name \"${cfg.displayName}\"";
         Restart = "on-failure";
         RestartSec = "15s";
         EnvironmentFile = cfg.tokenFile;
