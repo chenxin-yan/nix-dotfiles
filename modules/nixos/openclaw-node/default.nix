@@ -1,8 +1,12 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.nixos.openclaw-node;
-
   openclawConfig = builtins.toJSON {
     browser = {
       enabled = true;
@@ -18,7 +22,6 @@ let
         allowProfiles = [ "openclaw" ];
       };
     };
-
   };
 in
 {

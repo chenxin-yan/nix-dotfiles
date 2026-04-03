@@ -1,9 +1,9 @@
 {
   layerrule = [
     # vicinae blur and transparency
-    "blur, vicinae"
-    "ignorealpha 0, vicinae"
+    "blur on, match:namespace vicinae"
+    "ignore_alpha 0, match:namespace vicinae"
     # disable fade animation for vicinae
-    "noanim, vicinae"
+    "no_anim on, match:namespace vicinae"
   ];
 }
