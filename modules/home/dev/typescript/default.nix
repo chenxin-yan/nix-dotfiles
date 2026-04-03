@@ -18,7 +18,7 @@
 
       # editor
       vtsls
-      nodePackages."@astrojs/language-server"
+      astro-language-server
       prisma-language-server
       vscode-js-debug
     ];
