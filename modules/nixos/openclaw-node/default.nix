@@ -2,6 +2,31 @@
 
 let
   cfg = config.nixos.openclaw-node;
+
+  openclawConfig = builtins.toJSON {
+    browser = {
+      enabled = true;
+      defaultProfile = "openclaw";
+      headless = false;
+      noSandbox = false;
+      executablePath = "${pkgs.chromium}/bin/chromium";
+    };
+
+    nodeHost = {
+      browserProxy = {
+        enabled = true;
+        allowProfiles = [ "openclaw" ];
+      };
+    };
+
+    plugins = {
+      entries = {
+        browser = {
+          enabled = true;
+        };
+      };
+    };
+  };
 in
 {
   options.nixos.openclaw-node = {
@@ -22,6 +47,8 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ pkgs.openclaw ];
 
+    home-manager.users.cyan.home.file.".openclaw/openclaw.json".text = openclawConfig;
+
     # Systemd user service — runs as the `cyan` user
     # Starts after Tailscale is up so the gateway URL is reachable
     home-manager.users.cyan.systemd.user.services.openclaw-node = {
@@ -36,6 +63,10 @@ in
         Restart = "always";
         RestartSec = "5s";
         EnvironmentFile = cfg.tokenFile;
+        Environment = [
+          "OPENCLAW_STATE_DIR=/home/cyan/.openclaw"
+          "OPENCLAW_CONFIG_PATH=/home/cyan/.openclaw/openclaw.json"
+        ];
       };
       Install = {
         WantedBy = [ "default.target" ];
