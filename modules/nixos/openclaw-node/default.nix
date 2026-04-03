@@ -19,13 +19,6 @@ let
       };
     };
 
-    plugins = {
-      entries = {
-        browser = {
-          enabled = true;
-        };
-      };
-    };
   };
 in
 {
@@ -34,7 +27,7 @@ in
 
     displayName = lib.mkOption {
       type = lib.types.str;
-      default = "NixOS Browser Node";
+      default = "NixOS MiniPC";
       description = "Display name for this node in the gateway";
     };
 
