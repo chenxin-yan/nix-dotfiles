@@ -23,7 +23,6 @@ in
     home.packages = with pkgs; [
       wakatime-cli
       opencode-desktop
-      claude-code
     ];
 
     programs.opencode = {
