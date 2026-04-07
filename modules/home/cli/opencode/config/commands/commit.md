@@ -1,7 +1,7 @@
 ---
 description: Stage and commit changes with an appropriate message
 agent: build
-model: openai/gpt-5.4-mini
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 subtask: true
 ---
 

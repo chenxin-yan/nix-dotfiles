@@ -54,10 +54,25 @@ in
         ];
         agent = {
           explore = {
-            model = "openai/gpt-5.4-mini";
+            model = "minimax-coding-plan/MiniMax-M2.7-highspeed";
+          };
+          general = {
+            model = "minimax-coding-plan/MiniMax-M2.7-highspeed";
           };
         };
         provider = {
+          concentrate = {
+            npm = "@ai-sdk/openai-compatible";
+            name = "Concentrate AI";
+            options = {
+              baseURL = "https://api.concentrate.ai/v1";
+            };
+            models = {
+              kimi-k2-5 = {
+                name = "Kimi K2.5";
+              };
+            };
+          };
           cursor = {
             name = "Cursor";
           };

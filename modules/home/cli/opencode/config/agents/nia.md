@@ -1,7 +1,7 @@
 ---
 description: Expert research agent for Nia's knowledge tools. Use for discovering repos/docs, deep technical research, remote codebase exploration, and cross-agent knowledge handoffs.
 mode: subagent
-model: openai/gpt-5.4-mini
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 tools:
   write: false
   edit: false
