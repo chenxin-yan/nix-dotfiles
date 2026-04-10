@@ -191,8 +191,8 @@
   # OpenClaw node host — proxies browser commands from Pi gateway
   nixos.openclaw-node = {
     enable = true;
-    # Token file must contain: OPENCLAW_GATEWAY_TOKEN=<token>
-    # Create it on the machine: echo 'OPENCLAW_GATEWAY_TOKEN=<token>' > ~/.secrets/openclaw-gateway-token
-    tokenFile = "/home/cyan/.secrets/openclaw-gateway-token";
+    gatewayHost = "cyanpi.tail181cc6.ts.net";
+    gatewayPort = 443;
+    gatewayTls = true;
   };
 }
