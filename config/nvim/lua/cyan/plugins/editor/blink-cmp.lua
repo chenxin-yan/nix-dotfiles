@@ -60,13 +60,11 @@ local function pr_or_issue_configure_score_offset(items)
 end
 
 return {
-
   {
     'chrisgrieser/nvim-scissors',
     event = { 'BufReadPre', 'BufNewFile' },
     opts = {
       snippetDir = vim.fn.stdpath 'config' .. '/snippets',
-      jsonFormatter = 'jq',
     },
     keys = {
 
