@@ -16,6 +16,7 @@
       neovim
       copilot-language-server
       github-copilot-cli
+      lua51Packages.tree-sitter-cli
     ];
 
     xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/config/nvim";
