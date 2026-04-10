@@ -77,8 +77,6 @@ in
             OPENCLAW_BUNDLED_PLUGINS_DIR=${bundledPluginsDir}
           '';
 
-          home.file.".openclaw/openclaw.json".text = openclawConfig;
-
           home.activation.cleanupOpenclawTokenArtifacts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             rm -f "$HOME/.secrets/openclaw-gateway-token"
           '';
