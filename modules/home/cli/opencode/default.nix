@@ -27,6 +27,9 @@ in
 
     programs.opencode = {
       enable = true;
+      tui = {
+        theme = "catppuccin";
+      };
       settings = {
         permission = {
           edit = "ask";

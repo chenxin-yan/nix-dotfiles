@@ -187,12 +187,4 @@
   # enables MagicDNS). See: https://github.com/tailscale/tailscale/issues/4254
   services.resolved.enable = true;
   services.envfs.enable = true;
-
-  # OpenClaw node host — proxies browser commands from Pi gateway
-  nixos.openclaw-node = {
-    enable = true;
-    gatewayHost = "cyanpi.tail181cc6.ts.net";
-    gatewayPort = 443;
-    gatewayTls = true;
-  };
 }
