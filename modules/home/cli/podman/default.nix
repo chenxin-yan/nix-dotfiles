@@ -17,7 +17,7 @@ in
   config = lib.mkIf config.cli.podman.enable {
     home.packages = with pkgs; [
       podman
-      podman-compose
+      docker-compose
       dive
 
       # editor
@@ -50,7 +50,6 @@ in
     programs.zsh = {
       shellAliases = {
         docker = "podman";
-        docker-compose = "podman-compose";
         dk = "lazydocker";
       };
 
