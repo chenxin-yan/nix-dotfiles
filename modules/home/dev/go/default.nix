@@ -15,7 +15,7 @@
       # editor
       gopls
       gofumpt
-      gotools
+      (lib.meta.lowPrio gotools)
       delve
     ];
 

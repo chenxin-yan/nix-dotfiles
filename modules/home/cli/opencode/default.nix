@@ -100,6 +100,11 @@ in
       recursive = true;
     };
 
+    home.file.".agents/skills/refine-plan" = {
+      source = ./config/skills/refine-plan;
+      recursive = true;
+    };
+
     home.file.".claude/skills/frontend-design" = {
       source = "${anthropicSkills}/skills/frontend-design";
       recursive = true;
