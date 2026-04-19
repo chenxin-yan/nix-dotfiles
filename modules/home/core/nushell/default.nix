@@ -10,8 +10,8 @@
   };
 
   config = lib.mkIf config.core.nushell.enable {
-    programs.nushell = {
-      enable = true;
-    };
+    # programs.nushell = {
+    #   enable = true;
+    # };
   };
 }

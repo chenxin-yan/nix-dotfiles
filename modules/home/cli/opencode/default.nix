@@ -53,14 +53,13 @@ in
         };
         plugin = [
           "opencode-wakatime"
-          "opencode-cursor-oauth"
         ];
         agent = {
           explore = {
-            model = "minimax-coding-plan/MiniMax-M2.7-highspeed";
+            model = "anthropic/claude-sonnet-4-5";
           };
           general = {
-            model = "minimax-coding-plan/MiniMax-M2.7-highspeed";
+            model = "anthropic/claude-sonnet-4-5";
           };
         };
         provider = {

@@ -1,7 +1,7 @@
 ---
 description: Stage and commit changes with an appropriate message
 agent: build
-model: minimax-coding-plan/MiniMax-M2.7-highspeed
+model: anthropic/claude-sonnet-4-5
 subtask: true
 ---
 
