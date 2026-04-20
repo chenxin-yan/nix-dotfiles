@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./gcloud
     ./jj
     ./mise
     ./opencode
@@ -13,6 +14,7 @@
   ];
 
   config = {
+    cli.gcloud.enable = lib.mkDefault true;
     cli.mise.enable = lib.mkDefault true;
     cli.opencode.enable = lib.mkDefault true;
     cli.pandoc.enable = lib.mkDefault true;
