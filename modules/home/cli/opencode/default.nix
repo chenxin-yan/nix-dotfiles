@@ -22,7 +22,7 @@ in
   config = lib.mkIf config.cli.opencode.enable {
     home.packages = with pkgs; [
       wakatime-cli
-      opencode-desktop
+      # opencode-desktop
     ];
 
     programs.opencode = {
@@ -56,10 +56,10 @@ in
         ];
         agent = {
           explore = {
-            model = "anthropic/claude-sonnet-4-5";
+            model = "anthropic/claude-sonnet-4-6";
           };
           general = {
-            model = "anthropic/claude-sonnet-4-5";
+            model = "anthropic/claude-sonnet-4-6";
           };
         };
         provider = {
