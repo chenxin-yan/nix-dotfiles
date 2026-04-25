@@ -118,7 +118,7 @@
               model = "openai/gpt-5.4";
             };
             researcher = {
-              model = "anthropic/claude-opus-4-6=7";
+              model = "anthropic/claude-opus-4-7";
             };
             oracle = {
               model = "openai/gpt-5.4";
