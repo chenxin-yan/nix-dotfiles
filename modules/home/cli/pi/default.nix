@@ -92,6 +92,10 @@
             # Side conversation channel — /btw <message> injects a note or
             # question without interrupting the current agent run.
             "npm:pi-btw"
+            # Interactive ask_user tool — agent calls this mid-run to collect
+            # structured input (options, multi-select, freeform) via a split-
+            # pane UI. Equivalent to Claude Code's clarification flow.
+            "npm:pi-ask-user"
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
           # `openai-codex/*` models, which is pi's ChatGPT-OAuth provider –
@@ -246,6 +250,12 @@
       home.activation.installPiBtw = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-btw" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-btw
+        fi
+      '';
+
+      home.activation.installPiAskUser = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-ask-user" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-ask-user
         fi
       '';
 
