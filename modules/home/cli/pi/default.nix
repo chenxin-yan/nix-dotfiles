@@ -149,17 +149,24 @@
           inputs.pi-catppuccin.packages.${pkgs.stdenv.hostPlatform.system}.default
         }/share/pi/themes/catppuccin-mocha.json";
 
-        # Override pi's default keybindings.
-        # - tui.editor.undo: pi defaults to ctrl+- which most terminals don't
-        #   actually send (terminals only encode ctrl+letter; ctrl+- requires
-        #   the Kitty keyboard protocol which not every terminal/session has
-        #   active). ctrl+r is unbound in the editor context (it's only used
-        #   inside the session picker for app.session.rename), so we reuse it.
-        # - app.session.resume: unbound upstream; bind ctrl+b ("browse") to
-        #   open the session picker without typing /resume.
+        # Override pi's default keybindings. Pi's history model is
+        # branch-on-edit (no destructive undo); these bindings make the
+        # branching workflow ergonomic with letter-mnemonic chords.
+        # - app.session.resume: ctrl+b ("browse") opens the session picker
+        #   without typing /resume. (Unbound upstream.)
+        # - app.session.fork: ctrl+f ("fork") branches from the current
+        #   point — the pi equivalent of "undo my last message". This
+        #   shadows tui.editor.cursorRight's ctrl+f chord, but the right
+        #   arrow still works for that.
+        # - app.session.tree: ctrl+t ("tree") opens the session tree
+        #   navigator. ctrl+t was app.thinking.toggle upstream — we move
+        #   that to shift+ctrl+t (capital T = "manage Thinking") so we
+        #   keep both behaviors.
         ".pi/agent/keybindings.json".text = builtins.toJSON {
-          "tui.editor.undo" = "ctrl+r";
           "app.session.resume" = "ctrl+b";
+          "app.session.fork" = "ctrl+f";
+          "app.session.tree" = "ctrl+t";
+          "app.thinking.toggle" = "shift+ctrl+t";
         };
 
         ".pi/agent/AGENTS.md".source = ./config/AGENTS.md;
