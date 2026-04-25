@@ -84,6 +84,43 @@
     # from ~/.agents/skills/ via the agent-skills.io standard, so no
     # additional symlinks are needed here.
 
+    # Set up Tavily web-search/extract/crawl capabilities.
+    #
+    # Three idempotent steps:
+    #   1. Install the tvly CLI (Python tool via uv).
+    #   2. Authenticate by reading the key already stored in openclaw.json
+    #      (single source of truth — no duplication into ~/.env).
+    #   3. Clone official Tavily agent skills into ~/.agents/skills/, the
+    #      agent-skills.io standard directory that pi already auto-discovers
+    #      alongside opencode and Claude Code.
+    home.activation.setupTavily = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      # 1. Install tavily-cli
+      if [ ! -f "$HOME/.local/bin/tvly" ]; then
+        $DRY_RUN_CMD uv tool install tavily-cli --quiet
+      fi
+
+      # 2. Authenticate from openclaw.json (reuse existing key)
+      if [ ! -f "$HOME/.tavily/config.json" ] && [ -f "$HOME/.openclaw/openclaw.json" ]; then
+        _tvly_key=$(jq -r '.plugins.entries.tavily.config.webSearch.apiKey // empty' \
+          "$HOME/.openclaw/openclaw.json" 2>/dev/null)
+        if [ -n "$_tvly_key" ]; then
+          $DRY_RUN_CMD "$HOME/.local/bin/tvly" login --api-key "$_tvly_key"
+        fi
+        unset _tvly_key
+      fi
+
+      # 3. Clone official Tavily agent skills into ~/.agents/skills/
+      if [ ! -d "$HOME/.agents/skills/tavily-search" ]; then
+        $DRY_RUN_CMD mkdir -p "$HOME/.agents/skills"
+        _tvly_tmp=$(mktemp -d)
+        $DRY_RUN_CMD git clone --depth=1 --quiet \
+          https://github.com/tavily-ai/skills.git "$_tvly_tmp"
+        $DRY_RUN_CMD cp -r "$_tvly_tmp/skills/." "$HOME/.agents/skills/"
+        $DRY_RUN_CMD rm -rf "$_tvly_tmp"
+        unset _tvly_tmp
+      fi
+    '';
+
     # Install pi-subagents extension on first home-manager switch.
     # pi install fetches from npm and writes to ~/.pi/agent/extensions/.
     # The directory check makes this idempotent — safe to re-run.
