@@ -69,6 +69,10 @@
             # `~/.pi/agent/pi-subagents`, silently dropping the package even
             # though the npm artifacts exist under ~/.pi/agent/npm/.
             "npm:pi-subagents"
+            # Web search and content fetching (fetch_content, web_search,
+            # code_search). Reads EXA_API_KEY from the environment — no config
+            # file needed. Requires Pi v0.37.3+.
+            "npm:pi-web-access"
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
           # `openai-codex/*` models, which is pi's ChatGPT-OAuth provider –
@@ -174,6 +178,12 @@
       home.activation.installPiSubagents = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-subagents" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-subagents
+        fi
+      '';
+
+      home.activation.installPiWebAccess = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-web-access" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-web-access
         fi
       '';
 
