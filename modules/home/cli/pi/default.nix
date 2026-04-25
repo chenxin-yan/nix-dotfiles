@@ -77,6 +77,21 @@
             # (already managed by opencode-wakatime; no separate config needed).
             # Uses the global wakatime-cli binary from the opencode module.
             "npm:pi-wakatime"
+            # Diff approval viewer — blocks edit/write until approved/rejected
+            # in an interactive split-diff modal. Toggle with /diff-approval.
+            "npm:pi-show-diffs"
+            # Read-only ask mode — blocks edit/write and restricts bash to
+            # a safe read-only allowlist. Toggle with /ask.
+            "npm:pi-ask-mode"
+            # Batch file reads via read_many with adaptive packing and
+            # output-budget awareness. No config needed.
+            "npm:pi-read-many"
+            # Todo list tracking — replicates Copilot's manage_todo_list tool.
+            # Agent auto-uses it for multi-step work; /todos and /todos clear.
+            "npm:pi-manage-todo-list"
+            # Side conversation channel — /btw <message> injects a note or
+            # question without interrupting the current agent run.
+            "npm:pi-btw"
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
           # `openai-codex/*` models, which is pi's ChatGPT-OAuth provider –
@@ -201,6 +216,36 @@
       home.activation.installPiWakatime = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-wakatime" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-wakatime
+        fi
+      '';
+
+      home.activation.installPiShowDiffs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-show-diffs" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-show-diffs
+        fi
+      '';
+
+      home.activation.installPiAskMode = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-ask-mode" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-ask-mode
+        fi
+      '';
+
+      home.activation.installPiReadMany = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-read-many" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-read-many
+        fi
+      '';
+
+      home.activation.installPiManageTodoList = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-manage-todo-list" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-manage-todo-list
+        fi
+      '';
+
+      home.activation.installPiBtw = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-btw" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-btw
         fi
       '';
 
