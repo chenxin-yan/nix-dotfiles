@@ -73,6 +73,10 @@
             # code_search). Reads EXA_API_KEY from the environment — no config
             # file needed. Requires Pi v0.37.3+.
             "npm:pi-web-access"
+            # WakaTime time tracking. Reads api_key from ~/.wakatime.cfg
+            # (already managed by opencode-wakatime; no separate config needed).
+            # Uses the global wakatime-cli binary from the opencode module.
+            "npm:pi-wakatime"
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
           # `openai-codex/*` models, which is pi's ChatGPT-OAuth provider –
@@ -184,6 +188,12 @@
       home.activation.installPiWebAccess = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-web-access" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-web-access
+        fi
+      '';
+
+      home.activation.installPiWakatime = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-wakatime" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-wakatime
         fi
       '';
 
