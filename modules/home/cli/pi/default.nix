@@ -80,6 +80,15 @@
     # from ~/.agents/skills/ via the agent-skills.io standard, so no
     # additional symlinks are needed here.
 
+    # Install pi-subagents extension on first home-manager switch.
+    # pi install fetches from npm and writes to ~/.pi/agent/extensions/.
+    # The directory check makes this idempotent — safe to re-run.
+    home.activation.installPiSubagents = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [ ! -d "$HOME/.pi/agent/extensions/pi-subagents" ]; then
+        $DRY_RUN_CMD pi install npm:pi-subagents
+      fi
+    '';
+
     programs.zsh.shellAliases = {
       p = "pi";
     };
