@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 
@@ -50,10 +51,13 @@
       enableInstallTelemetry = false;
     };
 
-    home.file.".pi/agent/themes" = {
-      source = ./config/themes;
-      recursive = true;
-    };
+    # Catppuccin themes from upstream flake
+    # (github:otahontas/pi-coding-agent-catppuccin). We consume the
+    # package output directly and skip its Home Manager module, because
+    # that module mutates settings.json via an activation hook which
+    # conflicts with our declaratively-managed settings.json symlink.
+    home.file.".pi/agent/themes/catppuccin-mocha.json".source =
+      "${inputs.pi-catppuccin.packages.${pkgs.stdenv.hostPlatform.system}.default}/share/pi/themes/catppuccin-mocha.json";
 
     # Override pi's default keybindings.
     # - tui.editor.undo: pi defaults to ctrl+- which most terminals don't
@@ -85,7 +89,7 @@
     # The directory check makes this idempotent — safe to re-run.
     home.activation.installPiSubagents = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       if [ ! -d "$HOME/.pi/agent/extensions/pi-subagents" ]; then
-        $DRY_RUN_CMD pi install npm:pi-subagents
+        $DRY_RUN_CMD ${pkgs.pi-coding-agent}/bin/pi install npm:pi-subagents
       fi
     '';
 
