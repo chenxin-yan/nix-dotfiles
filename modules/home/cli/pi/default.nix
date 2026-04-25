@@ -44,10 +44,10 @@
 
     home.file.".pi/agent/AGENTS.md".source = ./config/AGENTS.md;
 
-    # home.file.".pi/agent/prompts" = {
-    #   source = ./config/prompts;
-    #   recursive = true;
-    # };
+    home.file.".pi/agent/prompts" = {
+      source = ./config/prompts;
+      recursive = true;
+    };
 
     # NOTE: ~/.agents/skills/{frontend-design,doc-coauthoring,refine-plan}
     # are already managed by the opencode module. Pi auto-discovers skills
