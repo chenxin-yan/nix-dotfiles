@@ -195,6 +195,7 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 | `syncthing`  | File sync across 3 devices                           |
 | `opencode`   | AI coding assistant config                           |
 | `pandoc`     | Document conversion                                  |
+| `pi`         | Pi coding agent (terminal coding harness)            |
 | `podman`     | Rootless containers                                  |
 
 ### App Modules
