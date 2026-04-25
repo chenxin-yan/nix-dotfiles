@@ -96,6 +96,11 @@
             # structured input (options, multi-select, freeform) via a split-
             # pane UI. Equivalent to Claude Code's clarification flow.
             "npm:pi-ask-user"
+            # LSP + linter + formatter feedback after every agent turn.
+            # Auto-discovers typescript-language-server from project node_modules
+            # and uses Biome as default formatter when biome.json is present.
+            # No config file needed. Use /lens-health and /lens-booboo in pi.
+            "npm:pi-lens"
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
           # `openai-codex/*` models, which is pi's ChatGPT-OAuth provider –
@@ -256,6 +261,12 @@
       home.activation.installPiAskUser = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-ask-user" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-ask-user
+        fi
+      '';
+
+      home.activation.installPiLens = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-lens" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-lens
         fi
       '';
 
