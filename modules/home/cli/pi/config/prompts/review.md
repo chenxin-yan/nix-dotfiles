@@ -16,7 +16,7 @@ If the diff is empty or range is invalid, say so and stop.
 
 ## Step 2 — Spawn reviewer subagent
 
-Pass the scope to the `delegate` subagent with this task:
+Pass the scope to the `reviewer` subagent with this task:
 
 > Review the diff at [SCOPE]. Fetch the diff yourself — do not rely on any context passed to you.
 > Read all changed files in full (not just the diff) before forming an opinion.

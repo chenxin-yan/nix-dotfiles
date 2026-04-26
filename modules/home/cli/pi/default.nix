@@ -139,7 +139,7 @@
               model = "anthropic/claude-sonnet-4-6";
             };
             planner = {
-              model = "openai/gpt-5.5";
+              model = "anthropic/claude-opus-4-7";
             };
             worker = {
               model = "anthropic/claude-opus-4-7";
