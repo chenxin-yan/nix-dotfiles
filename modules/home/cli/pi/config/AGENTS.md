@@ -11,6 +11,8 @@
 ## Testing
 
 - **Tests first** – When implementing something that requires tests, always write the tests before writing the implementation code (TDD). Run the tests to confirm they fail for the right reason, then write the implementation to make them pass.
+- **Eval loop** – After every implementation step: run the relevant test file, type-check changed files, and run Biome on changed files. Fix all failures before moving on. Do not proceed to the next step with a failing test, type error, or lint error.
+- **Don't batch fixes** – If a test or type error appears mid-implementation, fix it immediately rather than continuing and cleaning up later.
 
 ## When Stuck
 
