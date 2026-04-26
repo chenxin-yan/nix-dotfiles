@@ -37,7 +37,9 @@ Produce a tight brief from what you now know:
 ## Step 4 — Spawn planner subagent
 
 Pass the complete brief as the task to the `planner` subagent.
-In the clarification TUI: press `w` to set the output file to `PLAN.md`.
+End the task with this instruction:
+
+> Write the final implementation plan to `PLAN.md` in the project root.
 
 The planner will explore the codebase and produce the implementation plan.
 
