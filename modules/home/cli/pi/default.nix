@@ -136,7 +136,7 @@
               model = "anthropic/claude-sonnet-4-6";
             };
             planner = {
-              model = "anthropic/claude-opus-4-7";
+              model = "openai/gpt-5.5";
             };
             worker = {
               model = "anthropic/claude-opus-4-7";
@@ -257,17 +257,21 @@
         fi
       '';
 
-      home.activation.installPiSubagents = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-subagents" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-subagents
-        fi
-      '';
+      home.activation.installPiSubagents =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-subagents" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-subagents
+            fi
+          '';
 
-      home.activation.installPiWebAccess = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-web-access" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-web-access
-        fi
-      '';
+      home.activation.installPiWebAccess =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-web-access" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-web-access
+            fi
+          '';
 
       home.activation.installPiWakatime = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-wakatime" ]; then
@@ -275,11 +279,13 @@
         fi
       '';
 
-      home.activation.installPiShowDiffs = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-show-diffs" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-show-diffs
-        fi
-      '';
+      home.activation.installPiShowDiffs =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-show-diffs" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-show-diffs
+            fi
+          '';
 
       home.activation.installPiReadMany = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-read-many" ]; then
@@ -287,11 +293,13 @@
         fi
       '';
 
-      home.activation.installPiManageTodoList = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-manage-todo-list" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-manage-todo-list
-        fi
-      '';
+      home.activation.installPiManageTodoList =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-manage-todo-list" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-manage-todo-list
+            fi
+          '';
 
       home.activation.installPiBtw = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-btw" ]; then
@@ -305,17 +313,21 @@
         fi
       '';
 
-      home.activation.installPiWorktrees = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@zenobius/pi-worktrees" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @zenobius/pi-worktrees
-        fi
-      '';
+      home.activation.installPiWorktrees =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@zenobius/pi-worktrees" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @zenobius/pi-worktrees
+            fi
+          '';
 
-      home.activation.installPiRalphWiggum = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@tmustier/pi-ralph-wiggum" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-ralph-wiggum
-        fi
-      '';
+      home.activation.installPiRalphWiggum =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@tmustier/pi-ralph-wiggum" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-ralph-wiggum
+            fi
+          '';
 
       home.activation.installPiMermaid = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-mermaid" ]; then
