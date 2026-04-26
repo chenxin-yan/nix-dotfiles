@@ -93,11 +93,6 @@
             # structured input (options, multi-select, freeform) via a split-
             # pane UI. Equivalent to Claude Code's clarification flow.
             "npm:pi-ask-user"
-            # LSP + linter + formatter feedback after every agent turn.
-            # Auto-discovers typescript-language-server from project node_modules
-            # and uses Biome as default formatter when biome.json is present.
-            # No config file needed. Use /lens-health and /lens-booboo in pi.
-            "npm:pi-lens"
             # Git worktree management — /worktree create|list|cd|remove|prune.
             # No global config required; /worktree init per project.
             "npm:@zenobius/pi-worktrees"
@@ -236,7 +231,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-lens|pi-mermaid) ;;
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-mermaid) ;;
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -307,12 +302,6 @@
       home.activation.installPiAskUser = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-ask-user" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-ask-user
-        fi
-      '';
-
-      home.activation.installPiLens = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-lens" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-lens
         fi
       '';
 
