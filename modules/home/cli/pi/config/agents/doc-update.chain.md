@@ -2,7 +2,6 @@ name: doc-update
 description: Map documentation gaps from recent changes, then update docs to match implementation
 
 ## context-builder
-output: doc-gaps.md
 
 Analyze recent changes relevant to: {task}
 
@@ -12,10 +11,9 @@ inline comments, type signatures), what is now stale or missing, and what should
 updated. Output a structured gap list with file:line references.
 
 ## worker
-reads: doc-gaps.md
 progress: true
 
-Update documentation based on the gaps in doc-gaps.md.
+Update documentation based on the gaps identified: {previous}
 
 Context: {task}
 

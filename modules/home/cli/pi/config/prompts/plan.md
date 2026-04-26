@@ -34,14 +34,12 @@ Produce a tight brief from what you now know:
 - **Open questions** — anything still ambiguous, with your best guess for each
 - **Relevant context** — key files, existing patterns, related prior work
 
-## Step 4 — Spawn planner subagent
+## Step 4 — Spawn research-then-plan chain
 
-Pass the complete brief as the task to the `planner` subagent.
-End the task with this instruction:
+Pass the complete brief as the task to the `research-then-plan` chain.
 
-> Write the final implementation plan to `PLAN.md` in the project root.
-
-The planner will explore the codebase and produce the implementation plan.
+The chain will: (1) scout the codebase to build a context map, then (2) hand that
+context to the planner, which writes the implementation plan to `PLAN.md`.
 
 ## Step 5 — Present
 

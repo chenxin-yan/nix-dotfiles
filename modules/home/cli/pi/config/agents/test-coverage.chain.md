@@ -2,7 +2,6 @@ name: test-coverage
 description: Map untested code paths then write tests for each gap
 
 ## context-builder
-output: coverage-gaps.md
 
 Scan for untested code paths relevant to: {task}
 
@@ -11,10 +10,9 @@ For each gap output: file path, function/component name, what needs to be tested
 why (edge case, error path, happy path).
 
 ## worker
-reads: coverage-gaps.md
 progress: true
 
-Write tests for the coverage gaps listed in coverage-gaps.md.
+Write tests for the coverage gaps identified in the previous step: {previous}
 
 Context: {task}
 

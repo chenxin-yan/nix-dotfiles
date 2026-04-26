@@ -2,7 +2,6 @@ name: debug-to-fix
 description: Localize a bug, research similar patterns, then propose and implement a fix
 
 ## scout
-output: bug-report.md
 
 Trace and localize this bug: {task}
 
@@ -11,23 +10,21 @@ issue, your root cause hypothesis, and relevant context such as recent changes o
 related code.
 
 ## researcher
-reads: bug-report.md
-output: research-summary.md
 
-Given the bug report in bug-report.md, research similar patterns and known solutions.
+Given this bug report from scout: {previous}
 
-Context: {task}
+Research similar patterns and known solutions for: {task}
 
 Search git log and grep for similar issues in this codebase. Use web search for
-relevant external docs or known library bugs. Output your findings as a research summary.
+relevant external docs or known library bugs. Include the full bug context in your
+output so the next step has everything it needs.
 
 ## worker
-reads: bug-report.md research-summary.md
 progress: true
 
-Propose and implement a fix for the bug in bug-report.md, informed by research-summary.md.
+Based on this bug analysis and research: {previous}
 
-Context: {task}
+Propose and implement a fix for: {task}
 
 Rules:
 - Explain the fix before making changes
