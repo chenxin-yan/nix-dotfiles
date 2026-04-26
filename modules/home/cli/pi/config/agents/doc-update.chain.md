@@ -1,5 +1,7 @@
+---
 name: doc-update
 description: Map documentation gaps from recent changes, then update docs to match implementation
+---
 
 ## context-builder
 

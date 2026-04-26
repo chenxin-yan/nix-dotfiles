@@ -1,5 +1,7 @@
+---
 name: test-coverage
 description: Map untested code paths then write tests for each gap
+---
 
 ## context-builder
 

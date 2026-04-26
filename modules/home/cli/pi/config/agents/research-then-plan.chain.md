@@ -1,5 +1,7 @@
+---
 name: research-then-plan
 description: Scout codebase for context, then delegate to planner to write PLAN.md
+---
 
 ## scout
 

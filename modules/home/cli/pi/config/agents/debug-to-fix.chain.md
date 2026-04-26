@@ -1,5 +1,7 @@
+---
 name: debug-to-fix
 description: Localize a bug, research similar patterns, then propose and implement a fix
+---
 
 ## scout
 
