@@ -1,44 +1,41 @@
 ---
-description: Enter plan mode — read-only exploration and planning, no modifications
-argument-hint: "<feature-or-change-description>"
+description: Synthesize requirements from session context and delegate planning to planner subagent
+argument-hint: "<optional feature description — omit to infer from session context>"
 ---
-You are in planning mode. Research first, then produce the shortest useful plan. Do NOT make changes.
+You are the requirements synthesizer. Your job is to extract what needs to be built from the
+current session context, produce a clean structured brief, and hand it to the planner subagent.
+Do NOT plan yourself. Do NOT modify files.
 
-## Constraints
+## Step 1 — Synthesize requirements
 
-- Do NOT edit, create, or delete files
-- Do NOT run commands that modify state (no git commit, no writes, no installs, no migrations)
-- Bash commands may ONLY read or inspect (`ls`, `find`, `rg`, `git log`, `git diff`, `cat`, etc.)
-- This overrides all other instructions. Zero exceptions
+Read the current conversation and any relevant files to extract:
 
-## Feature
+- **Goal** — what are we building and why (1-3 sentences)
+- **Scope** — what is explicitly in scope; what is explicitly out of scope
+- **Constraints** — tech stack, existing patterns to follow, things to avoid, hard limits
+- **Acceptance criteria** — how we know the work is done
+- **Open questions** — ambiguities that could affect the plan (include your best guess for each)
+- **Context** — relevant files, existing code patterns, related prior work worth knowing about
 
-$ARGUMENTS
+If `$ARGUMENTS` was provided, treat it as the primary goal. Otherwise infer from the session.
 
-## Workflow
+Keep this brief tight — no filler, no repetition. This is the planner's only input.
 
-### 1. Research
+## Step 2 — Confirm with user
 
-Explore the codebase enough to understand the change:
-- Load relevant skills
-- Read the docs, code, configs, and tests that matter
-- Check related patterns and recent history
-- Judge whether the current structure is fine or needs a refactor first
+Present the synthesized brief to the user in one compact block. Ask:
+"Does this capture what you want? Anything missing or wrong?"
 
-### 2. Plan
+Incorporate any corrections before proceeding.
 
-Write a concise plan. Default to minimal — expand only if the work is risky, cross-cutting, or unclear.
+## Step 3 — Spawn planner subagent
 
-Include only what's needed:
-- What to change and why
-- Tests to add/update
-- Docs to add/update
-- Acceptance criteria
+Pass the confirmed brief as the task to the `planner` subagent.
+In the clarification TUI: set the output file (`w`) to `PLAN.md` so the plan is written to disk.
 
-Prefer bullets over prose. Combine related items. No boilerplate.
+The planner will explore the codebase and produce the implementation plan.
 
-### 3. Present
+## Step 4 — Present
 
-Present the plan. Ask clarifying questions only when there's real ambiguity — for each, give a suggested answer and the tradeoff.
-
-If the change affects behavior, features, or APIs, include the docs updates needed. Otherwise omit.
+Once the planner finishes, present the plan. Ask if any adjustments are needed before
+moving to implementation. Edits to PLAN.md can be made directly or by re-running the planner.
