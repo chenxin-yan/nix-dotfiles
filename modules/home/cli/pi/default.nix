@@ -101,6 +101,10 @@
             # Git worktree management — /worktree create|list|cd|remove|prune.
             # No global config required; /worktree init per project.
             "npm:@zenobius/pi-worktrees"
+            # Long-running iterative agent loops with checklist tracking.
+            # Pi sets up .ralph/<name>.md and iterates automatically.
+            # /ralph start|resume|stop|status. --reflect-every N for self-check.
+            "npm:@tmustier/pi-ralph-wiggum"
             # Renders Mermaid fenced blocks as ASCII diagrams in the TUI.
             # Zero config. Use ```mermaid blocks in chat or /pi-mermaid to
             # render the last assistant message.
@@ -247,7 +251,7 @@
               [ -d "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @zenobius/pi-worktrees) ;;
+                @zenobius/pi-worktrees|@tmustier/pi-ralph-wiggum) ;;
                 *)
                   echo "pi-nix: removing stale npm package: $full"
                   $DRY_RUN_CMD rm -rf "$pkg_dir"
@@ -315,6 +319,12 @@
       home.activation.installPiWorktrees = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@zenobius/pi-worktrees" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @zenobius/pi-worktrees
+        fi
+      '';
+
+      home.activation.installPiRalphWiggum = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@tmustier/pi-ralph-wiggum" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-ralph-wiggum
         fi
       '';
 
