@@ -165,6 +165,10 @@
           # change (interactive-mode.js:631). PI_OFFLINE already short-circuits
           # this, but we set the explicit flag for defense-in-depth in case
           # PI_OFFLINE is ever unset.
+          # Default tree filter mode. "user-only" mirrors Ctrl+U so you
+          # see only your own messages in /tree without having to toggle it
+          # every time. Other options: "default", "no-tools", "labeled-only", "all".
+          treeFilterMode = "user-only";
           enableInstallTelemetry = false;
         };
 
