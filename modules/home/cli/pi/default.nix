@@ -96,6 +96,9 @@
             # Git worktree management — /worktree create|list|cd|remove|prune.
             # No global config required; /worktree init per project.
             "npm:@zenobius/pi-worktrees"
+            # Aggregated token/cost usage stats across all sessions.
+            # /usage for table view, /usage --insights for dashboard.
+            "npm:@tmustier/pi-usage-extension"
             # Long-running iterative agent loops with checklist tracking.
             # Pi sets up .ralph/<name>.md and iterates automatically.
             # /ralph start|resume|stop|status. --reflect-every N for self-check.
@@ -246,7 +249,7 @@
               [ -d "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @zenobius/pi-worktrees|@tmustier/pi-ralph-wiggum) ;;
+                @zenobius/pi-worktrees|@tmustier/pi-usage-extension|@tmustier/pi-ralph-wiggum) ;;
                 *)
                   echo "pi-nix: removing stale npm package: $full"
                   $DRY_RUN_CMD rm -rf "$pkg_dir"
@@ -318,6 +321,14 @@
           ''
             if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@zenobius/pi-worktrees" ]; then
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @zenobius/pi-worktrees
+            fi
+          '';
+
+      home.activation.installPiUsageExtension =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@tmustier/pi-usage-extension" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-usage-extension
             fi
           '';
 
