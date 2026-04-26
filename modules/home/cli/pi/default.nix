@@ -51,7 +51,7 @@
           enabledModels = [
             "anthropic/claude-opus-4-7"
             "anthropic/claude-sonnet-4-6"
-            "openai/gpt-5.4"
+            "openai/gpt-5.5"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
@@ -80,9 +80,6 @@
             # Diff approval viewer — blocks edit/write until approved/rejected
             # in an interactive split-diff modal. Toggle with /diff-approval.
             "npm:pi-show-diffs"
-            # Read-only ask mode — blocks edit/write and restricts bash to
-            # a safe read-only allowlist. Toggle with /ask.
-            "npm:pi-ask-mode"
             # Batch file reads via read_many with adaptive packing and
             # output-budget awareness. No config needed.
             "npm:pi-read-many"
@@ -104,11 +101,6 @@
             # Git worktree management — /worktree create|list|cd|remove|prune.
             # No global config required; /worktree init per project.
             "npm:@zenobius/pi-worktrees"
-            # Desktop/sound notifications when a turn finishes over threshold.
-            # macOS-only (osascript + afplay). Config seeded on first install
-            # at ~/.pi/agent/extensions/poly-notify/notify.json — edit to taste.
-            # Toggle with Alt+N or /notify on|off. /notify <seconds> sets threshold.
-            "npm:pi-poly-notify"
             # Renders Mermaid fenced blocks as ASCII diagrams in the TUI.
             # Zero config. Use ```mermaid blocks in chat or /pi-mermaid to
             # render the last assistant message.
@@ -125,7 +117,7 @@
           # runs on a different family than the default model.
           #
           # Mapping (see pi-subagents/README.md → "Builtin agents"):
-          # - openai/gpt-5.4 → reasoning/advisory roles (planner, oracle,
+          # - openai/gpt-5.5 → reasoning/advisory roles (planner, oracle,
           #     oracle-executor) where a non-Claude perspective adds real
           #     signal vs. the default Claude parent model.
           # - anthropic/claude-opus-4-7 → high-stakes code review where Claude
@@ -151,16 +143,16 @@
               model = "anthropic/claude-opus-4-7";
             };
             reviewer = {
-              model = "openai/gpt-5.4";
+              model = "openai/gpt-5.5";
             };
             researcher = {
               model = "anthropic/claude-opus-4-7";
             };
             oracle = {
-              model = "openai/gpt-5.4";
+              model = "openai/gpt-5.5";
             };
             "oracle-executor" = {
-              model = "openai/gpt-5.4";
+              model = "openai/gpt-5.5";
             };
             # `delegate` intentionally has no model override – it inherits the
             # parent's model, which is the whole point of that builtin.
@@ -217,92 +209,112 @@
       #
       # Pi resolves global npm packages from
       # `<npmCommand> root -g`/lib/node_modules/<name>. We can't use
-      # `pi install npm:pi-subagents` here because that command also tries to
-      # mutate settings.json, which is a read-only Nix store symlink under
+      # `pi install npm:...` here because that command also tries to mutate
+      # settings.json, which is a read-only Nix store symlink under
       # home-manager. Instead we install via the same npm wrapper directly,
-      # which writes only to ~/.pi/agent/npm/. The directory check makes this
-      # idempotent.
-      home.activation.installPiSubagents = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      # which writes only to ~/.pi/agent/npm/. The directory check makes
+      # each install hook idempotent.
+      #
+      # Cleanup: cleanupPiPackages runs before all install hooks and removes
+      # any directory in node_modules not present in the declared set below.
+      # Removing a package from the list + `nh os switch` is enough — no
+      # manual `rm` needed.
+      home.activation.cleanupPiPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        node_modules="$HOME/.pi/agent/npm/lib/node_modules"
+        if [ -d "$node_modules" ]; then
+          # Remove undeclared unscoped packages
+          for dir in "$node_modules"/*/; do
+            [ -d "$dir" ] || continue
+            pkg=$(basename "$dir")
+            case "$pkg" in
+              @*) continue ;;
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-lens|pi-mermaid) ;;
+              *)
+                echo "pi-nix: removing stale npm package: $pkg"
+                $DRY_RUN_CMD rm -rf "$dir"
+                ;;
+            esac
+          done
+          # Remove undeclared scoped packages (@scope/name)
+          for scope_dir in "$node_modules"/@*/; do
+            [ -d "$scope_dir" ] || continue
+            scope=$(basename "$scope_dir")
+            for pkg_dir in "$scope_dir"*/; do
+              [ -d "$pkg_dir" ] || continue
+              full="$scope/$(basename "$pkg_dir")"
+              case "$full" in
+                @zenobius/pi-worktrees) ;;
+                *)
+                  echo "pi-nix: removing stale npm package: $full"
+                  $DRY_RUN_CMD rm -rf "$pkg_dir"
+                  ;;
+              esac
+            done
+          done
+        fi
+      '';
+
+      home.activation.installPiSubagents = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-subagents" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-subagents
         fi
       '';
 
-      home.activation.installPiWebAccess = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiWebAccess = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-web-access" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-web-access
         fi
       '';
 
-      home.activation.installPiWakatime = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiWakatime = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-wakatime" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-wakatime
         fi
       '';
 
-      home.activation.installPiShowDiffs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiShowDiffs = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-show-diffs" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-show-diffs
         fi
       '';
 
-      home.activation.installPiAskMode = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-ask-mode" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-ask-mode
-        fi
-      '';
-
-      home.activation.installPiReadMany = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiReadMany = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-read-many" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-read-many
         fi
       '';
 
-      home.activation.installPiManageTodoList = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiManageTodoList = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-manage-todo-list" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-manage-todo-list
         fi
       '';
 
-      home.activation.installPiBtw = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiBtw = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-btw" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-btw
         fi
       '';
 
-      home.activation.installPiAskUser = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiAskUser = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-ask-user" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-ask-user
         fi
       '';
 
-      home.activation.installPiLens = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiLens = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-lens" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-lens
         fi
       '';
 
-      home.activation.installPiWorktrees = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiWorktrees = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@zenobius/pi-worktrees" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @zenobius/pi-worktrees
         fi
       '';
 
-      home.activation.installPiPolyNotify = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-poly-notify" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-poly-notify
-        fi
-        # Seed notify.json from the bundled example on first install.
-        # Kept as a regular file (not a Nix store symlink) so /notify commands
-        # can write back to it.
-        if [ ! -f "$HOME/.pi/agent/extensions/poly-notify/notify.json" ]; then
-          $DRY_RUN_CMD mkdir -p "$HOME/.pi/agent/extensions/poly-notify"
-          $DRY_RUN_CMD cp "$HOME/.pi/agent/npm/lib/node_modules/pi-poly-notify/extensions/poly-notify/notify.json.example" \
-            "$HOME/.pi/agent/extensions/poly-notify/notify.json"
-        fi
-      '';
-
-      home.activation.installPiMermaid = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      home.activation.installPiMermaid = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-mermaid" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-mermaid
         fi
