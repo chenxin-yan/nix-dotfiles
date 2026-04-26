@@ -209,6 +209,14 @@
           source = ./config/prompts;
           recursive = true;
         };
+
+        # Predefined agent chains. Stored alongside agent files so
+        # pi-subagents discovers them at ~/.pi/agent/agents/{name}.chain.md.
+        # Each chain is a multi-step pipeline invoked via /chain in the TUI.
+        ".pi/agent/agents" = {
+          source = ./config/agents;
+          recursive = true;
+        };
       };
 
       # Bootstrap npm artifacts for declarative `packages` entries.
