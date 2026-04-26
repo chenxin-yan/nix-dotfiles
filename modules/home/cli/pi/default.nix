@@ -101,6 +101,18 @@
             # and uses Biome as default formatter when biome.json is present.
             # No config file needed. Use /lens-health and /lens-booboo in pi.
             "npm:pi-lens"
+            # Git worktree management — /worktree create|list|cd|remove|prune.
+            # No global config required; /worktree init per project.
+            "npm:@zenobius/pi-worktrees"
+            # Desktop/sound notifications when a turn finishes over threshold.
+            # macOS-only (osascript + afplay). Config seeded on first install
+            # at ~/.pi/agent/extensions/poly-notify/notify.json — edit to taste.
+            # Toggle with Alt+N or /notify on|off. /notify <seconds> sets threshold.
+            "npm:pi-poly-notify"
+            # Renders Mermaid fenced blocks as ASCII diagrams in the TUI.
+            # Zero config. Use ```mermaid blocks in chat or /pi-mermaid to
+            # render the last assistant message.
+            "npm:pi-mermaid"
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
           # `openai-codex/*` models, which is pi's ChatGPT-OAuth provider –
@@ -267,6 +279,32 @@
       home.activation.installPiLens = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-lens" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-lens
+        fi
+      '';
+
+      home.activation.installPiWorktrees = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@zenobius/pi-worktrees" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @zenobius/pi-worktrees
+        fi
+      '';
+
+      home.activation.installPiPolyNotify = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-poly-notify" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-poly-notify
+        fi
+        # Seed notify.json from the bundled example on first install.
+        # Kept as a regular file (not a Nix store symlink) so /notify commands
+        # can write back to it.
+        if [ ! -f "$HOME/.pi/agent/extensions/poly-notify/notify.json" ]; then
+          $DRY_RUN_CMD mkdir -p "$HOME/.pi/agent/extensions/poly-notify"
+          $DRY_RUN_CMD cp "$HOME/.pi/agent/npm/lib/node_modules/pi-poly-notify/extensions/poly-notify/notify.json.example" \
+            "$HOME/.pi/agent/extensions/poly-notify/notify.json"
+        fi
+      '';
+
+      home.activation.installPiMermaid = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-mermaid" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-mermaid
         fi
       '';
 
