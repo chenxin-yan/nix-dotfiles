@@ -1,5 +1,5 @@
 ---
-description: Review code changes via reviewer subagent (GPT-5.5) + optional oracle adversarial critique
+description: Review code changes via reviewer subagent (GPT-5.5) + oracle adversarial critique in parallel
 argument-hint: "[PR-URL | commit-range | --staged]"
 ---
 Delegate this review to the `reviewer` subagent. Do NOT review the code yourself inline.
@@ -16,7 +16,7 @@ If the diff is empty or range is invalid, say so and stop.
 
 ## Step 2 — Spawn reviewer subagent
 
-Pass the scope to the `reviewer` subagent with this task:
+Pass the scope to the `delegate` subagent with this task:
 
 > Review the diff at [SCOPE]. Fetch the diff yourself — do not rely on any context passed to you.
 > Read all changed files in full (not just the diff) before forming an opinion.
@@ -38,16 +38,16 @@ Pass the scope to the `reviewer` subagent with this task:
 > ## Test coverage (gaps + concrete tests to add)
 > ## Verdict: APPROVE | REQUEST_CHANGES | NEEDS_DISCUSSION
 
-## Step 3 — Oracle (ask first)
+## Step 3 — Spawn oracle in parallel
 
-After reviewer finishes, ask: "Run oracle for adversarial critique? (y/n)"
+Spawn `oracle` at the same time as the reviewer (use parallel execution if possible, otherwise
+immediately after). Task:
 
-If yes, spawn `oracle` with:
-
-> Argue against the changes at [SCOPE]. Be adversarial — find edge cases, question assumptions,
-> identify what the reviewer might have normalized over. What could go wrong in production?
+> Argue against the changes at [SCOPE]. Fetch the diff yourself.
+> Be adversarial — find edge cases, question assumptions, identify what a standard reviewer
+> might normalize over. What could go wrong in production? What is the weakest part of this change?
 
 ## Step 4 — Present
 
-Present reviewer findings. If oracle ran, show its critique separately and call out any conflicts
-or gaps the reviewer missed. Do NOT modify any files. Do NOT post to GitHub unless asked.
+Present reviewer and oracle findings together. Call out any conflicts between them or anything
+the oracle raised that the reviewer missed. Do NOT modify any files. Do NOT post to GitHub unless asked.
