@@ -57,7 +57,7 @@
           enabledModels = [
             "anthropic/claude-opus-4-7"
             "anthropic/claude-sonnet-4-6"
-            "openai/gpt-5.5"
+            "openai/gpt-5.4"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
@@ -131,7 +131,7 @@
           # runs on a different family than the default model.
           #
           # Mapping (see pi-subagents/README.md → "Builtin agents"):
-          # - openai/gpt-5.5 → reasoning/advisory roles (planner, oracle,
+          # - openai/gpt-5.4 → reasoning/advisory roles (planner, oracle,
           #     oracle-executor) where a non-Claude perspective adds real
           #     signal vs. the default Claude parent model.
           # - anthropic/claude-opus-4-7 → high-stakes code review where Claude
@@ -157,16 +157,16 @@
               model = "anthropic/claude-opus-4-7";
             };
             reviewer = {
-              model = "openai/gpt-5.5";
+              model = "openai/gpt-5.4";
             };
             researcher = {
               model = "anthropic/claude-opus-4-7";
             };
             oracle = {
-              model = "openai/gpt-5.5";
+              model = "openai/gpt-5.4";
             };
             "oracle-executor" = {
-              model = "openai/gpt-5.5";
+              model = "openai/gpt-5.4";
             };
             # `delegate` intentionally has no model override – it inherits the
             # parent's model, which is the whole point of that builtin.
@@ -368,13 +368,11 @@
             fi
           '';
 
-      home.activation.installTaskplane =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/taskplane" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g taskplane
-            fi
-          '';
+      home.activation.installTaskplane = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/taskplane" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g taskplane
+        fi
+      '';
 
       # Taskplane ships its CLI under the package's bin/ but pi installs
       # extensions with `npm install -g` into ~/.pi/agent/npm/, which is NOT
@@ -382,14 +380,12 @@
       # standard user-bin convention) so `taskplane` works from any shell —
       # not just zsh — and outside of pi sessions. Idempotent: replaces any
       # stale symlink each activation so the target tracks the npm install.
-      home.activation.linkTaskplaneCli =
-        lib.hm.dag.entryAfter [ "writeBoundary" "installTaskplane" ]
-          ''
-            $DRY_RUN_CMD mkdir -p "$HOME/.local/bin"
-            $DRY_RUN_CMD ln -sfn \
-              "$HOME/.pi/agent/npm/lib/node_modules/taskplane/bin/taskplane.mjs" \
-              "$HOME/.local/bin/taskplane"
-          '';
+      home.activation.linkTaskplaneCli = lib.hm.dag.entryAfter [ "writeBoundary" "installTaskplane" ] ''
+        $DRY_RUN_CMD mkdir -p "$HOME/.local/bin"
+        $DRY_RUN_CMD ln -sfn \
+          "$HOME/.pi/agent/npm/lib/node_modules/taskplane/bin/taskplane.mjs" \
+          "$HOME/.local/bin/taskplane"
+      '';
 
       programs.zsh.shellAliases = {
         p = "pi";
