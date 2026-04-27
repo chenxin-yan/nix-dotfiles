@@ -122,6 +122,21 @@
             # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
             # normal mode; covers motions, operators, visual mode basics.
             "npm:pi-vim"
+            # Add external directories to a session: /add-dir, /dirs,
+            # /remove-dir, /suggest-dirs. Loads each dir's AGENTS.md /
+            # CLAUDE.md / skills into every turn's system prompt and
+            # registers external skills as native /skill:name commands.
+            # Persists across /resume. peerDependency on pi-coding-agent
+            # is `*` so the 0.67.68 pin is fine.
+            "npm:pi-add-dir"
+            # Run interactive CLIs (vim, psql, ssh, dev servers, sub-agent
+            # CLIs) in a TUI overlay with 4 modes: interactive, hands-free,
+            # dispatch, monitor. Commands: /spawn, /attach, /dismiss.
+            # Ships an `interactive-shell` skill auto-registered via
+            # the package's pi.skills field. Runtime dep zigpty ships
+            # prebuilt PTY binaries (macOS arm64/x64 + Linux x64/arm64
+            # supported — no node-gyp on first install).
+            "npm:pi-interactive-shell"
             # taskplane intentionally omitted from global packages — it runs
             # workspace detection on every session_start regardless of use.
             # Load per-project via .pi/AGENTS.md, or globally with:
@@ -262,7 +277,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display|pi-vim|taskplane) ;; # taskplane kept so npm artifact isn't wiped
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display|pi-vim|pi-add-dir|pi-interactive-shell|taskplane) ;; # taskplane kept so npm artifact isn't wiped
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -373,6 +388,22 @@
           ''
             if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-vim" ]; then
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-vim
+            fi
+          '';
+
+      home.activation.installPiAddDir =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-add-dir" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-add-dir
+            fi
+          '';
+
+      home.activation.installPiInteractiveShell =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-interactive-shell" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-interactive-shell
             fi
           '';
 
