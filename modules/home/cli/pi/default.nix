@@ -113,11 +113,10 @@
             # truncation. Collapses read/grep/find/bash output and adds richer
             # diffs — keeps the TUI clean during long agent runs.
             "npm:pi-tool-display"
-            # Multi-agent orchestration — parallel task execution with DAG-based
-            # dependency mapping, wave/lane scheduling, polyrepo support,
-            # cross-model reviews, and a live web dashboard.
-            # /orch, /orch-plan, /orch-status inside pi.
-            "npm:taskplane"
+            # taskplane intentionally omitted from global packages — it runs
+            # workspace detection on every session_start regardless of use.
+            # Load per-project via .pi/AGENTS.md, or globally with:
+            #   pi --package npm:taskplane  (alias: po)
 
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
@@ -254,7 +253,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display|taskplane) ;;
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display|taskplane) ;; # taskplane kept so npm artifact isn't wiped
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -389,6 +388,7 @@
 
       programs.zsh.shellAliases = {
         p = "pi";
+        po = "pi --package npm:taskplane"; # orchestration sessions only
       };
     };
 }
