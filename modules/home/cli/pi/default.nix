@@ -105,6 +105,10 @@
             # Aggregated token/cost usage stats across all sessions.
             # /usage for table view, /usage --insights for dashboard.
             "npm:@tmustier/pi-usage-extension"
+            # Long-running iterative agent loops with checklist tracking.
+            # Pi sets up .ralph/<name>.md and iterates automatically.
+            # /ralph start|resume|stop|status. --reflect-every N for self-check.
+            "npm:@tmustier/pi-ralph-wiggum"
             # Compact tool call rendering, diff visualization, and output
             # truncation. Collapses read/grep/find/bash output and adds richer
             # diffs — keeps the TUI clean during long agent runs.
@@ -273,7 +277,7 @@
               [ -d "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @zenobius/pi-worktrees|@tmustier/pi-usage-extension) ;;
+                @zenobius/pi-worktrees|@tmustier/pi-usage-extension|@tmustier/pi-ralph-wiggum) ;;
                 *)
                   echo "pi-nix: removing stale npm package: $full"
                   $DRY_RUN_CMD rm -rf "$pkg_dir"
@@ -353,6 +357,14 @@
           ''
             if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@tmustier/pi-usage-extension" ]; then
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-usage-extension
+            fi
+          '';
+
+      home.activation.installPiRalphWiggum =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@tmustier/pi-ralph-wiggum" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-ralph-wiggum
             fi
           '';
 
