@@ -113,6 +113,11 @@
             # truncation. Collapses read/grep/find/bash output and adds richer
             # diffs — keeps the TUI clean during long agent runs.
             "npm:pi-tool-display"
+            # Multi-agent orchestration — parallel task execution with DAG-based
+            # dependency mapping, wave/lane scheduling, polyrepo support,
+            # cross-model reviews, and a live web dashboard.
+            # /orch, /orch-plan, /orch-status inside pi.
+            "npm:taskplane"
 
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
@@ -249,7 +254,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display) ;;
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display|taskplane) ;;
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -360,6 +365,14 @@
           ''
             if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-tool-display" ]; then
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-tool-display
+            fi
+          '';
+
+      home.activation.installTaskplane =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/taskplane" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g taskplane
             fi
           '';
 
