@@ -103,10 +103,7 @@
             # Pi sets up .ralph/<name>.md and iterates automatically.
             # /ralph start|resume|stop|status. --reflect-every N for self-check.
             "npm:@tmustier/pi-ralph-wiggum"
-            # Renders Mermaid fenced blocks as ASCII diagrams in the TUI.
-            # Zero config. Use ```mermaid blocks in chat or /pi-mermaid to
-            # render the last assistant message.
-            "npm:pi-mermaid"
+
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
           # `openai-codex/*` models, which is pi's ChatGPT-OAuth provider –
@@ -242,7 +239,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-mermaid) ;;
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user) ;;
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -348,11 +345,7 @@
             fi
           '';
 
-      home.activation.installPiMermaid = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-mermaid" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-mermaid
-        fi
-      '';
+
 
       programs.zsh.shellAliases = {
         p = "pi";

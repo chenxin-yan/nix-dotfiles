@@ -1,7 +1,3 @@
-## Diagrams
-
-- **Use Mermaid for diagrams** – When illustrating architecture, data flow, sequences, or any structured relationships, use fenced ` ```mermaid ` blocks. They render natively as ASCII diagrams in the TUI. Prefer Mermaid over text-based ASCII art or prose descriptions for anything structural.
-
 ## Planning & Communication
 
 - **Keep plans concise** – Plans should be brief and to the point. Bullet fragments and short phrases are preferred over full sentences.
