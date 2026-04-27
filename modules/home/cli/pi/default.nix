@@ -112,7 +112,13 @@
             # Compact tool call rendering, diff visualization, and output
             # truncation. Collapses read/grep/find/bash output and adds richer
             # diffs — keeps the TUI clean during long agent runs.
-            "npm:pi-tool-display"
+            # DISABLED 2026-04-27: pi-tool-display@0.3.4 declares peerDependency
+            # @mariozechner/pi-coding-agent ^0.70.2; current pi pin is 0.67.68.
+            # Loading is harmless interactively (cached install), but orchestrated
+            # workers spawn into fresh /tmp/pi-extensions/npm/<hash> staging dirs
+            # and `pi-npm install pi-tool-display` fails with ERESOLVE there,
+            # crashing every worker with exit 1. Re-enable after bumping pi to >=0.70.2.
+            # "npm:pi-tool-display"
             # taskplane intentionally omitted from global packages — it runs
             # workspace detection on every session_start regardless of use.
             # Load per-project via .pi/AGENTS.md, or globally with:
