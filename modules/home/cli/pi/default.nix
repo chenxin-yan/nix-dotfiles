@@ -405,7 +405,7 @@
         # resolver) returns ~/.pi/agent/npm/lib/node_modules, where the
         # pi-coding-agent symlink above lives.
         p  = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi";
-        po = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi --package npm:taskplane";
+        po = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi -e npm:taskplane";
       };
     };
 }
