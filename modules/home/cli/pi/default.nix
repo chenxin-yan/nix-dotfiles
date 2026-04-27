@@ -96,6 +96,10 @@
             # Pi sets up .ralph/<name>.md and iterates automatically.
             # /ralph start|resume|stop|status. --reflect-every N for self-check.
             "npm:@tmustier/pi-ralph-wiggum"
+            # Compact tool call rendering, diff visualization, and output
+            # truncation. Collapses read/grep/find/bash output and adds richer
+            # diffs — keeps the TUI clean during long agent runs.
+            "npm:pi-tool-display"
 
           ];
           # pi-subagents builtins (scout, planner, worker, …) hardcode
@@ -232,7 +236,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user) ;;
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display) ;;
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -335,6 +339,14 @@
           ''
             if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@tmustier/pi-ralph-wiggum" ]; then
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-ralph-wiggum
+            fi
+          '';
+
+      home.activation.installPiToolDisplay =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-tool-display" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-tool-display
             fi
           '';
 
