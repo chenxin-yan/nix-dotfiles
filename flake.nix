@@ -2,7 +2,7 @@
   description = "chenxinyan dotfiles flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     catppuccin.url = "github:catppuccin/nix";
 
     pi-catppuccin = {

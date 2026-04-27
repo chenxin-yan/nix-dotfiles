@@ -70,8 +70,8 @@ in
               baseURL = "https://api.concentrate.ai/v1";
             };
             models = {
-              kimi-k2-5 = {
-                name = "Kimi K2.5";
+              glm-5 = {
+                name = "GLM-5";
               };
             };
           };

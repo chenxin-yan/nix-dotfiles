@@ -24,13 +24,6 @@
         pi-coding-agent
       ];
 
-      # Pi pulls its own version + package updates from npm on startup
-      # (see interactive-mode.js: checkForNewVersion / checkForPackageUpdates).
-      # Both flows are pointless under Nix - the binary version is pinned to
-      # the Nix store path. PI_OFFLINE disables both checks and saves a
-      # network round-trip per session.
-      home.sessionVariables.PI_OFFLINE = "1";
-
       # Seed global pi settings. Only values that diverge from upstream
       # defaults are listed; everything else is left to pi's defaults.
       #
@@ -344,8 +337,6 @@
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-ralph-wiggum
             fi
           '';
-
-
 
       programs.zsh.shellAliases = {
         p = "pi";
