@@ -1,21 +1,17 @@
 ---
 name: research-then-plan
-description: Scout codebase for context, then delegate to planner to write PLAN.md
+description: Gather codebase + external context, then delegate to planner; planner persists PLAN.md to project root
 ---
 
-## scout
+## context-builder
 
-Scan the codebase for context relevant to: {task}
-
-Output a concise summary covering: relevant files and their purpose, existing patterns
-and conventions, related types and interfaces, and prior work in this area. Be specific
-— include actual file paths and function names.
+Gather codebase context and validate any external APIs, libraries, or framework
+behavior relevant to: {task}
 
 ## planner
-progress: true
+output: false
 
-Create a detailed implementation plan for: {task}
+Plan the implementation for: {task}
 
-Codebase context from scout: {previous}
-
-Write the final implementation plan to PLAN.md in the project root.
+Write the final implementation plan to `PLAN.md` at the project root (your current
+working directory).
