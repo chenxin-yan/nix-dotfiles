@@ -386,9 +386,26 @@
           "$HOME/.local/bin/taskplane"
       '';
 
+      # Symlink the Nix-store pi-coding-agent into the custom npm prefix so
+      # taskplane's resolvePiCliPath() can find @mariozechner/pi-coding-agent/dist/cli.js.
+      # taskplane resolves the Pi CLI via `npm root -g`; under Nix, pi lives in
+      # the Nix store, not in any npm global root, so without this symlink
+      # worker agent spawning fails with "Cannot find Pi CLI entrypoint".
+      home.activation.linkPiForTaskplane =
+        lib.hm.dag.entryAfter [ "writeBoundary" ]
+          ''
+            $DRY_RUN_CMD mkdir -p "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner"
+            $DRY_RUN_CMD ln -sfn \
+              "${pkgs.pi-coding-agent}/lib/node_modules/@mariozechner/pi-coding-agent" \
+              "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner/pi-coding-agent"
+          '';
+
       programs.zsh.shellAliases = {
-        p = "pi";
-        po = "pi --package npm:taskplane"; # orchestration sessions only
+        # NPM_CONFIG_PREFIX ensures `npm root -g` (called by taskplane's path
+        # resolver) returns ~/.pi/agent/npm/lib/node_modules, where the
+        # pi-coding-agent symlink above lives.
+        p  = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi";
+        po = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi --package npm:taskplane";
       };
     };
 }
