@@ -2,6 +2,7 @@
 description: Stage and commit changes following Conventional Commits
 argument-hint: "[scope-or-context-hint]"
 ---
+
 Stage and commit all relevant changes with a well-structured commit message.
 
 ## Steps
@@ -44,31 +45,6 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `Fixes #<n>` or `Closes #<n>` — link to issues
 - `BREAKING CHANGE: <description>` — for breaking API or behavior changes
 - `Co-authored-by: Name <email>` — for co-authors
-
-## Examples
-
-```
-feat(auth): add OAuth2 PKCE flow
-
-Replace implicit grant with PKCE to eliminate token exposure in the
-redirect URL. Required by the updated OAuth2 security BCP (RFC 9700).
-
-Closes #42
-```
-
-```
-fix(api): handle empty body in fetch wrapper
-
-`res.json()` throws on 204 No Content. Guard with a content-type
-check before parsing.
-```
-
-```
-chore(deps): bump elysia to 1.3.0
-
-Picks up the fixed cookie serialization behavior from 1.2.9 and
-drops the now-redundant workaround in middleware/auth.ts.
-```
 
 ## Rules
 

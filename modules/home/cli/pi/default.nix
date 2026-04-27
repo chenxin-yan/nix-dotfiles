@@ -24,6 +24,19 @@
         pi-coding-agent
       ];
 
+      # Disable pi's startup "new version available" toast. The pi binary
+      # itself is pinned by Nix, so the upstream npm-registry version check
+      # at interactive-mode.js:checkForNewVersion() is pure noise and would
+      # nudge us toward `npm i -g` updates that fight the read-only Nix
+      # store. We deliberately do NOT set PI_OFFLINE here: that would also
+      # silence checkForPackageUpdates() for the npm extensions in
+      # `packages` below, and those updates are still useful as a signal
+      # to bump our declarative list. Gate logic:
+      # interactive-mode.js:528 `if (PI_SKIP_VERSION_CHECK || PI_OFFLINE)`.
+      home.sessionVariables = {
+        PI_SKIP_VERSION_CHECK = "1";
+      };
+
       # Seed global pi settings. Only values that diverge from upstream
       # defaults are listed; everything else is left to pi's defaults.
       #
