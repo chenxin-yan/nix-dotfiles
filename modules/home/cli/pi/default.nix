@@ -376,6 +376,21 @@
             fi
           '';
 
+      # Taskplane ships its CLI under the package's bin/ but pi installs
+      # extensions with `npm install -g` into ~/.pi/agent/npm/, which is NOT
+      # on $PATH. Symlink the CLI into ~/.local/bin (already on PATH via the
+      # standard user-bin convention) so `taskplane` works from any shell —
+      # not just zsh — and outside of pi sessions. Idempotent: replaces any
+      # stale symlink each activation so the target tracks the npm install.
+      home.activation.linkTaskplaneCli =
+        lib.hm.dag.entryAfter [ "writeBoundary" "installTaskplane" ]
+          ''
+            $DRY_RUN_CMD mkdir -p "$HOME/.local/bin"
+            $DRY_RUN_CMD ln -sfn \
+              "$HOME/.pi/agent/npm/lib/node_modules/taskplane/bin/taskplane.mjs" \
+              "$HOME/.local/bin/taskplane"
+          '';
+
       programs.zsh.shellAliases = {
         p = "pi";
       };
