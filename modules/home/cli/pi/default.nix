@@ -57,7 +57,7 @@
           enabledModels = [
             "anthropic/claude-opus-4-7"
             "anthropic/claude-sonnet-4-6"
-            "openai/gpt-5.4"
+            "openai/gpt-5.5"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
@@ -154,7 +154,7 @@
           # runs on a different family than the default model.
           #
           # Mapping (see pi-subagents/README.md → "Builtin agents"):
-          # - openai/gpt-5.4 → reasoning/advisory roles (planner, oracle,
+          # - openai/gpt-5.5 → reasoning/advisory roles (planner, oracle,
           #     oracle-executor) where a non-Claude perspective adds real
           #     signal vs. the default Claude parent model.
           # - anthropic/claude-opus-4-7 → high-stakes code review where Claude
@@ -180,16 +180,16 @@
               model = "anthropic/claude-opus-4-7";
             };
             reviewer = {
-              model = "openai/gpt-5.4";
+              model = "openai/gpt-5.5";
             };
             researcher = {
               model = "anthropic/claude-opus-4-7";
             };
             oracle = {
-              model = "openai/gpt-5.4";
+              model = "openai/gpt-5.5";
             };
             "oracle-executor" = {
-              model = "openai/gpt-5.4";
+              model = "openai/gpt-5.5";
             };
             # `delegate` intentionally has no model override – it inherits the
             # parent's model, which is the whole point of that builtin.
