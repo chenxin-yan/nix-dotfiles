@@ -8,6 +8,17 @@
 - **No unverified imports** – Never write code referencing an import, type, or API you haven't confirmed exists in the codebase or documentation.
 - **Cite your source** – Before writing any code, state which subagent you ran and what it told you. If no subagent was needed, briefly say why.
 
+## Subagent Handoff Files
+
+Some builtin subagents emit scratch files by default: `context.md` (`scout`, `context-builder`), `plan.md` (`planner`), `research.md` (`researcher`), and `progress.md` when chain/parallel progress tracking is on. Single and parallel runs resolve relative paths against the runtime `cwd` (usually the repo root). Chain runs route relative paths to a temp `chainDir` by default (`$TMPDIR/pi-subagents-*/chain-runs/<runId>/`, auto-cleaned after 24h). `async` and `context: "fork"` don't change file placement.
+
+Pick the pattern:
+
+- **Need step-to-step file handoff?** → use `subagent({ chain: [...] })`. Files land in the temp `chainDir`.
+- **Need only returned text from a single call?** → pass `output: false`.
+- **Need only returned text from a parallel run?** → set `output: false` and `progress: false` on each task (the top-level single schema has no `progress` knob).
+- **Need a scratch file on disk?** → use an absolute temp path, e.g. `output: "/tmp/<slug>/context.md"`.
+
 ## Planning & Communication
 
 - **Keep plans concise** – Plans should be brief and to the point. Bullet fragments and short phrases are preferred over full sentences.
