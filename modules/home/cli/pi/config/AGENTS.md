@@ -1,18 +1,22 @@
+## Context & Research
+
+- **Scout first** – Before any non-trivial codebase task, run the `scout` subagent to map relevant files and flows. Read its output before touching code.
+- **Research external unknowns** – Before using any external API or library you cannot verify locally, run the `researcher` subagent. Never assume signatures, field names, or behavior.
+- **Parallel when both apply** – If the task involves both unfamiliar code and an external dependency, run `scout` and `researcher` in parallel.
+- **context-builder for large scope** – For multi-file refactors or major features, use `context-builder` instead of `scout` for a thorough structured handoff.
+- **No hallucination** – Never invent API behavior, field names, or error codes. If you cannot cite a concrete file path, line, or doc URL, delegate to `scout` or `researcher` before proceeding.
+- **No unverified imports** – Never write code referencing an import, type, or API you haven't confirmed exists in the codebase or documentation.
+- **Cite your source** – Before writing any code, state which subagent you ran and what it told you. If no subagent was needed, briefly say why.
+
 ## Planning & Communication
 
 - **Keep plans concise** – Plans should be brief and to the point. Bullet fragments and short phrases are preferred over full sentences.
-
-## Documentations & Context Search
-
-- **No hallucination** – Never invent or assume API behavior, field names, or error codes. If documentation is unavailable, explicitly state this and request clarification from the user.
-- **Verify before implementation** – Always confirm API signatures and contract details from authoritative sources before writing code.
-- **Document mismatches** – If expected behavior differs from documented behavior, flag it clearly.
+- **Flag mismatches** – If expected behavior differs from documented or observed behavior, call it out explicitly.
 
 ## Testing
 
 - **Tests first** – When implementing something that requires tests, always write the tests before writing the implementation code (TDD). Run the tests to confirm they fail for the right reason, then write the implementation to make them pass.
 - **Eval loop** – After every implementation step: run the relevant test file, type-check changed files, and run Biome on changed files. Fix all failures before moving on. Do not proceed to the next step with a failing test, type error, or lint error.
-- **Don't batch fixes** – If a test or type error appears mid-implementation, fix it immediately rather than continuing and cleaning up later.
 
 ## When Stuck
 
