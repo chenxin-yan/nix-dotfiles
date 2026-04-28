@@ -137,6 +137,14 @@
             # prebuilt PTY binaries (macOS arm64/x64 + Linux x64/arm64
             # supported — no node-gyp on first install).
             "npm:pi-interactive-shell"
+            # Two-pane browser workspace: /studio opens an Editor + Preview
+            # window (Markdown/LaTeX/Mermaid/code) backed by a local-only
+            # 127.0.0.1 server with tokenized URLs. Adds critique workflow,
+            # response history browsing, annotations, comments rail, and
+            # PDF export via /studio-pdf. PDF export needs `pandoc` (+
+            # MacTeX/TeX Live for LaTeX, `mmdc` for Mermaid in PDFs) on
+            # PATH — not declared here; install ad-hoc if/when needed.
+            "npm:pi-studio"
             # taskplane intentionally omitted from global packages — it runs
             # workspace detection on every session_start regardless of use.
             # Load per-project via .pi/AGENTS.md, or globally with:
@@ -277,7 +285,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display|pi-vim|pi-add-dir|pi-interactive-shell|taskplane) ;; # taskplane kept so npm artifact isn't wiped
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display|pi-vim|pi-add-dir|pi-interactive-shell|pi-studio|taskplane) ;; # taskplane kept so npm artifact isn't wiped
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -404,6 +412,14 @@
           ''
             if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-interactive-shell" ]; then
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-interactive-shell
+            fi
+          '';
+
+      home.activation.installPiStudio =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-studio" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-studio
             fi
           '';
 
