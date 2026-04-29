@@ -109,16 +109,6 @@
             # Pi sets up .ralph/<name>.md and iterates automatically.
             # /ralph start|resume|stop|status. --reflect-every N for self-check.
             "npm:@tmustier/pi-ralph-wiggum"
-            # Compact tool call rendering, diff visualization, and output
-            # truncation. Collapses read/grep/find/bash output and adds richer
-            # diffs — keeps the TUI clean during long agent runs.
-            # DISABLED 2026-04-27: pi-tool-display@0.3.4 declares peerDependency
-            # @mariozechner/pi-coding-agent ^0.70.2; current pi pin is 0.67.68.
-            # Loading is harmless interactively (cached install), but orchestrated
-            # workers spawn into fresh /tmp/pi-extensions/npm/<hash> staging dirs
-            # and `pi-npm install pi-tool-display` fails with ERESOLVE there,
-            # crashing every worker with exit 1. Re-enable after bumping pi to >=0.70.2.
-            # "npm:pi-tool-display"
             # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
             # normal mode; covers motions, operators, visual mode basics.
             "npm:pi-vim"
@@ -285,7 +275,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-tool-display|pi-vim|pi-add-dir|pi-interactive-shell|pi-studio|taskplane) ;; # taskplane kept so npm artifact isn't wiped
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-vim|pi-add-dir|pi-interactive-shell|pi-studio|taskplane) ;; # taskplane kept so npm artifact isn't wiped
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -420,14 +410,6 @@
           ''
             if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-studio" ]; then
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-studio
-            fi
-          '';
-
-      home.activation.installPiToolDisplay =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-tool-display" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-tool-display
             fi
           '';
 
