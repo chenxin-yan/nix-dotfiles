@@ -23,3 +23,12 @@
 - **Ask, don't guess** – If the right approach is unclear, ask a clarifying question with a suggested answer and the tradeoff. Never make speculative changes to unrelated files.
 - **Cap retries** – If the same test or type error persists after 2 attempts, stop and explain what you tried before asking for input.
 - **No silent assumptions** – If a dependency, API, or behavior is undocumented or ambiguous, say so explicitly rather than assuming.
+
+## Subagent Output Files
+
+- **Mental model** – inline = immediate reasoning; files = durable state; session artifacts = forensics.
+- **Foreground chain steps** – leave defaults. Relative handoff files land in the internal chain dir, not cwd.
+- **Single, parallel, or async chain calls** – handoff files land in **cwd**. You must choose:
+  - **Default (omit `output`)** when the user asked for a written artifact, the file will be reused across turns, the output is large enough to warrant separate inspection, or the file _is_ the deliverable.
+  - **`output: false`** when the orchestrator will summarize inline, the work is exploratory or advisory, or nobody needs to read the file afterward.
+- **Tiebreaker** – if there is no clear file consumer, use `output: false`. The session artifact remains for forensics, not as a handoff channel.
