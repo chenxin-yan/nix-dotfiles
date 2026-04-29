@@ -99,6 +99,21 @@ in
       recursive = true;
     };
 
+    home.file.".agents/skills/skill-creator" = {
+      source = "${anthropicSkills}/skills/skill-creator";
+      recursive = true;
+    };
+
+    home.file.".agents/skills/webapp-testing" = {
+      source = "${anthropicSkills}/skills/webapp-testing";
+      recursive = true;
+    };
+
+    home.file.".agents/skills/pdf" = {
+      source = "${anthropicSkills}/skills/pdf";
+      recursive = true;
+    };
+
     home.file.".agents/skills/refine-plan" = {
       source = ./config/skills/refine-plan;
       recursive = true;
@@ -111,6 +126,21 @@ in
 
     home.file.".claude/skills/doc-coauthoring" = {
       source = "${anthropicSkills}/skills/doc-coauthoring";
+      recursive = true;
+    };
+
+    home.file.".claude/skills/skill-creator" = {
+      source = "${anthropicSkills}/skills/skill-creator";
+      recursive = true;
+    };
+
+    home.file.".claude/skills/webapp-testing" = {
+      source = "${anthropicSkills}/skills/webapp-testing";
+      recursive = true;
+    };
+
+    home.file.".claude/skills/pdf" = {
+      source = "${anthropicSkills}/skills/pdf";
       recursive = true;
     };
 
