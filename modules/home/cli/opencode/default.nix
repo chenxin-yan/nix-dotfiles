@@ -114,8 +114,25 @@ in
       recursive = true;
     };
 
-    home.file.".agents/skills/refine-plan" = {
-      source = ./config/skills/refine-plan;
+    # Matt Pocock skills (https://github.com/mattpocock/skills)
+    # `grill-me` replaces the previous local `refine-plan` skill.
+    home.file.".agents/skills/grill-me" = {
+      source = ./config/skills/grill-me;
+      recursive = true;
+    };
+
+    home.file.".agents/skills/grill-with-docs" = {
+      source = ./config/skills/grill-with-docs;
+      recursive = true;
+    };
+
+    home.file.".agents/skills/improve-codebase-architecture" = {
+      source = ./config/skills/improve-codebase-architecture;
+      recursive = true;
+    };
+
+    home.file.".agents/skills/zoom-out" = {
+      source = ./config/skills/zoom-out;
       recursive = true;
     };
 
@@ -144,8 +161,23 @@ in
       recursive = true;
     };
 
-    home.file.".claude/skills/refine-plan" = {
-      source = ./config/skills/refine-plan;
+    home.file.".claude/skills/grill-me" = {
+      source = ./config/skills/grill-me;
+      recursive = true;
+    };
+
+    home.file.".claude/skills/grill-with-docs" = {
+      source = ./config/skills/grill-with-docs;
+      recursive = true;
+    };
+
+    home.file.".claude/skills/improve-codebase-architecture" = {
+      source = ./config/skills/improve-codebase-architecture;
+      recursive = true;
+    };
+
+    home.file.".claude/skills/zoom-out" = {
+      source = ./config/skills/zoom-out;
       recursive = true;
     };
 

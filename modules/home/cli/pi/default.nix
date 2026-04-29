@@ -46,9 +46,10 @@
       # preferred over globs because they avoid pulling in dated variants
       # (e.g. claude-sonnet-4-6-20250929) and unrelated families.
       #
-      # NOTE: ~/.agents/skills/{frontend-design,doc-coauthoring,refine-plan}
-      # are already managed by the opencode module. Pi auto-discovers skills
-      # from ~/.agents/skills/ via the agent-skills.io standard.
+      # NOTE: ~/.agents/skills/{frontend-design,doc-coauthoring,grill-me,
+      # grill-with-docs,improve-codebase-architecture,zoom-out} are managed
+      # by the opencode module. Pi auto-discovers skills from
+      # ~/.agents/skills/ via the agent-skills.io standard.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
@@ -275,7 +276,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-vim|pi-add-dir|pi-interactive-shell|pi-studio|taskplane) ;; # taskplane kept so npm artifact isn't wiped
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-vim|pi-add-dir|pi-interactive-shell|pi-studio|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -410,6 +411,33 @@
           ''
             if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-studio" ]; then
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-studio
+            fi
+          '';
+
+      # Glimpse: native WebView micro-UI used by pi-web-access to render the
+      # search curator inside an OS-level overlay window attached to pi,
+      # instead of launching the system browser. Without it, web_search →
+      # `openInBrowser()` (pi-web-access/index.ts:295) shells out to `open
+      # <url>` and your default browser steals focus.
+      #
+      # NOT a pi extension — it has no pi manifest, so it deliberately does
+      # NOT go in the `packages` list above. pi-web-access discovers it via
+      # `createRequire("glimpseui")` (index.ts:316) which succeeds because
+      # both packages live under the same ~/.pi/agent/npm/lib/node_modules/
+      # tree. The fallback path uses `npm root -g`, which our piNpm wrapper
+      # also redirects to that prefix.
+      #
+      # The npm `postinstall` (glimpseui/scripts/postinstall.mjs) compiles
+      # the Swift backend (src/glimpse, ~190KB arm64 Mach-O) using the
+      # system swiftc from Xcode Command Line Tools. If swiftc is missing,
+      # the install succeeds but writes a `.glimpse-build-skipped` marker
+      # and the WebView won't launch — install Xcode CLT and re-run
+      # `nh darwin switch` to retry.
+      home.activation.installGlimpseUi =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/glimpseui" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g glimpseui
             fi
           '';
 
