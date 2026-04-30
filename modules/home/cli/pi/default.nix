@@ -177,21 +177,29 @@
           # runs on a different family than the default model.
           #
           # Mapping (see pi-subagents/README.md → "Builtin agents"):
-          # - openai/gpt-5.5 → reasoning/advisory roles (planner, oracle,
-          #     oracle-executor) where a non-Claude perspective adds real
-          #     signal vs. the default Claude parent model.
-          # - anthropic/claude-opus-4-7 → high-stakes code review where Claude
-          #     is reliably strong at edits + critique.
-          # - anthropic/claude-sonnet-4-6 → throughput roles (scout,
-          #     context-builder, worker) where latency/cost matter more than
-          #     reasoning depth.
+          # - openai/gpt-5.5 → reasoning/advisory roles (oracle,
+          #     oracle-executor, reviewer) where a non-Claude perspective
+          #     adds real signal vs. the default Claude parent model.
+          # - anthropic/claude-opus-4-7 → high-stakes roles (planner, worker,
+          #     researcher) where Claude is reliably strong at edits,
+          #     planning, and synthesis.
+          # - anthropic/claude-sonnet-4-6 → handoff-writing role
+          #     (context-builder) where output quality matters because it
+          #     feeds planner/worker, but Opus is overkill.
+          # - anthropic/claude-haiku-4-5 → pure throughput role (scout) doing
+          #     grep/find/read/summarize. ~3x cheaper + ~2x faster than
+          #     Sonnet, and Anthropic positions Haiku 4.5 at Sonnet-4 coding
+          #     parity — fine for recon whose output is consumed by a
+          #     stronger downstream agent. NOT used for context-builder
+          #     (handoff synthesis) or worker (actual edits) where the
+          #     ~4-point SWE-bench gap to Sonnet would surface as bad output.
           #
           # `fallbackModels` is consulted only on provider/auth/quota/timeout
           # errors (per pi-subagents README), so cross-provider fallbacks are
           # safe – they don't fire on "bad output".
           subagents.agentOverrides = {
             scout = {
-              model = "anthropic/claude-sonnet-4-6";
+              model = "anthropic/claude-haiku-4-5";
             };
             "context-builder" = {
               model = "anthropic/claude-sonnet-4-6";
@@ -406,21 +414,17 @@
             fi
           '';
 
-      home.activation.installPiVim =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-vim" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-vim
-            fi
-          '';
+      home.activation.installPiVim = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-vim" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-vim
+        fi
+      '';
 
-      home.activation.installPiAddDir =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-add-dir" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-add-dir
-            fi
-          '';
+      home.activation.installPiAddDir = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-add-dir" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-add-dir
+        fi
+      '';
 
       home.activation.installPiInteractiveShell =
         lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
@@ -430,21 +434,17 @@
             fi
           '';
 
-      home.activation.installPiStudio =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-studio" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-studio
-            fi
-          '';
+      home.activation.installPiStudio = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-studio" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-studio
+        fi
+      '';
 
-      home.activation.installPiLens =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-lens" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-lens
-            fi
-          '';
+      home.activation.installPiLens = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-lens" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-lens
+        fi
+      '';
 
       # Glimpse: native WebView micro-UI used by pi-web-access to render the
       # search curator inside an OS-level overlay window attached to pi,
@@ -465,13 +465,11 @@
       # the install succeeds but writes a `.glimpse-build-skipped` marker
       # and the WebView won't launch — install Xcode CLT and re-run
       # `nh darwin switch` to retry.
-      home.activation.installGlimpseUi =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/glimpseui" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g glimpseui
-            fi
-          '';
+      home.activation.installGlimpseUi = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/glimpseui" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g glimpseui
+        fi
+      '';
 
       home.activation.installTaskplane = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/taskplane" ]; then
@@ -497,20 +495,18 @@
       # taskplane resolves the Pi CLI via `npm root -g`; under Nix, pi lives in
       # the Nix store, not in any npm global root, so without this symlink
       # worker agent spawning fails with "Cannot find Pi CLI entrypoint".
-      home.activation.linkPiForTaskplane =
-        lib.hm.dag.entryAfter [ "writeBoundary" ]
-          ''
-            $DRY_RUN_CMD mkdir -p "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner"
-            $DRY_RUN_CMD ln -sfn \
-              "${pkgs.pi-coding-agent}/lib/node_modules/@mariozechner/pi-coding-agent" \
-              "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner/pi-coding-agent"
-          '';
+      home.activation.linkPiForTaskplane = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD mkdir -p "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner"
+        $DRY_RUN_CMD ln -sfn \
+          "${pkgs.pi-coding-agent}/lib/node_modules/@mariozechner/pi-coding-agent" \
+          "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner/pi-coding-agent"
+      '';
 
       programs.zsh.shellAliases = {
         # NPM_CONFIG_PREFIX ensures `npm root -g` (called by taskplane's path
         # resolver) returns ~/.pi/agent/npm/lib/node_modules, where the
         # pi-coding-agent symlink above lives.
-        p  = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi";
+        p = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi";
         po = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi -e npm:taskplane";
       };
     };
