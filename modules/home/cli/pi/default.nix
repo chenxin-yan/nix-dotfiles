@@ -43,9 +43,37 @@
         # ever gets a `.pi-lens/` directory.
         #
         # Source-of-truth: pi-lens `clients/file-utils.ts` →
-        # `getProjectDataDir(cwd)`. NOTE: this env var is documented only
-        # in the source-code docstring, not the README — re-verify on
-        # pi-lens upgrades in case the contract changes.
+        # `getProjectDataDir(cwd)`, added in upstream commit 869f57d
+        # (2026-04-29) which closed apmantza/pi-lens#35. Wired through
+        # cache-manager, fix-worklog, project-index, metrics-history,
+        # install-choices, and the elixir-check runner.
+        #
+        # ACTIVATION CAVEAT: as of writing this is in CHANGELOG
+        # `[Unreleased]` and lands in v3.8.34. The currently-pinned
+        # release is v3.8.33, where this env var is silently ignored
+        # — cwd pollution still happens until the next pi-lens upgrade.
+        # `.pi-lens/` is in `programs.git.ignores` (see
+        # modules/home/core/git/default.nix) as belt-and-suspenders so
+        # the leaked directories don't show up in `git status` in the
+        # meantime. Once v3.8.34+ is the pinned version everywhere AND
+        # the rule-cache.ts hardcode below is fixed upstream, the
+        # `programs.git.ignores` entry can be removed; this env var
+        # alone will be sufficient.
+        #
+        # KNOWN GAP: `clients/cache/rule-cache.ts` hardcodes
+        # `path.join(rootDir, ".pi-lens", "cache")` and does NOT route
+        # through `getProjectDataDir`, so tree-sitter rule caches still
+        # leak into `<cwd>/.pi-lens/cache/` even when this env var is
+        # set. Tracked as a follow-up; trivial 5-line patch upstream.
+        #
+        # OTHER CAVEATS:
+        # - macOS GUI launches (Spotlight/Raycast) don't inherit
+        #   `home.sessionVariables`. Launch pi from a terminal, or add
+        #   a `launchctl setenv PILENS_DATA_DIR …` activation if needed.
+        # - The slug regex strips `[^A-Za-z0-9-]`, so paths like
+        #   `~/code/foo.bar` and `~/code/foobar` collide on the same
+        #   slug. Watch for cross-project turn-state contamination if
+        #   you have similarly-named repos.
         #
         # Tool binaries (shellcheck, shfmt, rust-analyzer, …) already live
         # in `~/.pi-lens/bin/` globally and don't need redirection.
