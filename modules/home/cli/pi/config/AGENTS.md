@@ -13,10 +13,15 @@
 - **Keep plans concise** – Plans should be brief and to the point. Bullet fragments and short phrases are preferred over full sentences.
 - **Flag mismatches** – If expected behavior differs from documented or observed behavior, call it out explicitly.
 
-## Testing
+## Verification (hard gate)
 
-- **Tests first** – When implementing something that requires tests, always write the tests before writing the implementation code (TDD). Run the tests to confirm they fail for the right reason, then write the implementation to make them pass.
-- **Eval loop** – After every implementation step: run the relevant test file, type-check changed files, and run Biome on changed files. Fix all failures before moving on. Do not proceed to the next step with a failing test, type error, or lint error.
+No auto-lint or post-edit LSP feedback runs in this setup — you are the verification loop.
+
+- **TDD** – Write tests first, confirm they fail for the right reason, then implement.
+- **Eval loop** – After every change, for each touched file: typecheck → lint → format → run the relevant test. Fix all failures before moving on. Do not declare success while anything is red.
+- **Use the repo's commands** – Read `package.json` / `pyproject.toml` / `Cargo.toml` / `flake.nix` / `Makefile` / `justfile` to find the project's actual scripts (e.g. `pnpm typecheck`, `just test`). Fall back to ecosystem defaults (`tsc`, `mypy`, `cargo check`, `nix flake check`, …) only when no script exists.
+- **Show your work** – Never claim a change is done without naming the commands you ran and their exit status. If a tool is unavailable, say so before skipping it.
+- **Read failures, don't guess** – On error, run the failing command and read the full output before proposing a fix.
 
 ## When Stuck
 

@@ -35,49 +35,6 @@
       # interactive-mode.js:528 `if (PI_SKIP_VERSION_CHECK || PI_OFFLINE)`.
       home.sessionVariables = {
         PI_SKIP_VERSION_CHECK = "1";
-        # Redirect pi-lens per-project state (scanner caches +
-        # turn-state.json) out of user repos and into a single global
-        # location. By default pi-lens writes `<cwd>/.pi-lens/`; setting
-        # this env var reroutes every project to
-        # `<PILENS_DATA_DIR>/<sanitized-cwd-slug>/` instead, so no repo
-        # ever gets a `.pi-lens/` directory.
-        #
-        # Source-of-truth: pi-lens `clients/file-utils.ts` →
-        # `getProjectDataDir(cwd)`, added in upstream commit 869f57d
-        # (2026-04-29) which closed apmantza/pi-lens#35. Wired through
-        # cache-manager, fix-worklog, project-index, metrics-history,
-        # install-choices, and the elixir-check runner.
-        #
-        # ACTIVATION CAVEAT: as of writing this is in CHANGELOG
-        # `[Unreleased]` and lands in v3.8.34. The currently-pinned
-        # release is v3.8.33, where this env var is silently ignored
-        # — cwd pollution still happens until the next pi-lens upgrade.
-        # `.pi-lens/` is in `programs.git.ignores` (see
-        # modules/home/core/git/default.nix) as belt-and-suspenders so
-        # the leaked directories don't show up in `git status` in the
-        # meantime. Once v3.8.34+ is the pinned version everywhere AND
-        # the rule-cache.ts hardcode below is fixed upstream, the
-        # `programs.git.ignores` entry can be removed; this env var
-        # alone will be sufficient.
-        #
-        # KNOWN GAP: `clients/cache/rule-cache.ts` hardcodes
-        # `path.join(rootDir, ".pi-lens", "cache")` and does NOT route
-        # through `getProjectDataDir`, so tree-sitter rule caches still
-        # leak into `<cwd>/.pi-lens/cache/` even when this env var is
-        # set. Tracked as a follow-up; trivial 5-line patch upstream.
-        #
-        # OTHER CAVEATS:
-        # - macOS GUI launches (Spotlight/Raycast) don't inherit
-        #   `home.sessionVariables`. Launch pi from a terminal, or add
-        #   a `launchctl setenv PILENS_DATA_DIR …` activation if needed.
-        # - The slug regex strips `[^A-Za-z0-9-]`, so paths like
-        #   `~/code/foo.bar` and `~/code/foobar` collide on the same
-        #   slug. Watch for cross-project turn-state contamination if
-        #   you have similarly-named repos.
-        #
-        # Tool binaries (shellcheck, shfmt, rust-analyzer, …) already live
-        # in `~/.pi-lens/bin/` globally and don't need redirection.
-        PILENS_DATA_DIR = "${config.home.homeDirectory}/.pi/pi-lens/projects";
       };
 
       # Seed global pi settings. Only values that diverge from upstream
@@ -179,15 +136,6 @@
             # MacTeX/TeX Live for LaTeX, `mmdc` for Mermaid in PDFs) on
             # PATH — not declared here; install ad-hoc if/when needed.
             "npm:pi-studio"
-            # Real-time inline code feedback: secrets scan, 26 formatters,
-            # 6 autofixers, 37 LSPs, tree-sitter + ast-grep structural
-            # rules, fact-rules (complexity, fan-out), turn-end cascade
-            # diagnostics, read-before-edit guard. Adds slash commands
-            # /lens-booboo, /lens-health, /lens-tools, /lens-tdi,
-            # /lens-allow-edit. By default writes `<cwd>/.pi-lens/` for
-            # per-project caches + turn-state — neutralized above by the
-            # PILENS_DATA_DIR sessionVariable.
-            "npm:pi-lens"
             # taskplane intentionally omitted from global packages — it runs
             # workspace detection on every session_start regardless of use.
             # Load per-project via .pi/AGENTS.md, or globally with:
@@ -336,7 +284,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-vim|pi-add-dir|pi-interactive-shell|pi-studio|pi-lens|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-vim|pi-add-dir|pi-interactive-shell|pi-studio|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -465,12 +413,6 @@
       home.activation.installPiStudio = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-studio" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-studio
-        fi
-      '';
-
-      home.activation.installPiLens = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-lens" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-lens
         fi
       '';
 

@@ -15,21 +15,6 @@
     programs.git = {
       enable = true;
 
-      # Global gitignore (written to ~/.config/git/ignore;
-      # core.excludesFile is set automatically by home-manager).
-      #
-      # `.pi-lens/` — belt-and-suspenders for the pi-lens cwd-pollution
-      # problem. The real fix is `PILENS_DATA_DIR`, set in
-      # modules/home/cli/pi/default.nix; this entry just keeps any stray
-      # `.pi-lens/` directory out of `git status` for cases where the env
-      # var didn't apply (pi-lens releases predating v3.8.34, GUI launches
-      # on macOS that bypass home.sessionVariables, the rule-cache.ts gap
-      # that still hardcodes `<cwd>/.pi-lens/cache/` on master, etc.).
-      # Safe to keep indefinitely.
-      ignores = [
-        ".pi-lens/"
-      ];
-
       settings = {
         user = {
           name = "Chenxin Yan";
