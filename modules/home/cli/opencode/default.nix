@@ -13,6 +13,13 @@ let
     hash = "sha256-9FGubcwHcGBJcKl02aJ+YsTMiwDOdgU/FHALjARG51c=";
   };
 
+  mattpocockSkills = pkgs.fetchFromGitHub {
+    owner = "mattpocock";
+    repo = "skills";
+    rev = "b843cb5ea74b1fe5e58a0fc23cddef9e66076fb8";
+    hash = "sha256-qOhU5bBnT6kI8c7i0r0IyecrgLJNNPlmQtAb6qWM73Q=";
+  };
+
 in
 {
   options = {
@@ -117,67 +124,27 @@ in
     # Matt Pocock skills (https://github.com/mattpocock/skills)
     # `grill-me` replaces the previous local `refine-plan` skill.
     home.file.".agents/skills/grill-me" = {
-      source = ./config/skills/grill-me;
+      source = "${mattpocockSkills}/skills/productivity/grill-me";
+      recursive = true;
+    };
+
+    home.file.".agents/skills/diagnose" = {
+      source = "${mattpocockSkills}/skills/engineering/diagnose";
       recursive = true;
     };
 
     home.file.".agents/skills/grill-with-docs" = {
-      source = ./config/skills/grill-with-docs;
+      source = "${mattpocockSkills}/skills/engineering/grill-with-docs";
       recursive = true;
     };
 
     home.file.".agents/skills/improve-codebase-architecture" = {
-      source = ./config/skills/improve-codebase-architecture;
+      source = "${mattpocockSkills}/skills/engineering/improve-codebase-architecture";
       recursive = true;
     };
 
     home.file.".agents/skills/zoom-out" = {
-      source = ./config/skills/zoom-out;
-      recursive = true;
-    };
-
-    home.file.".claude/skills/frontend-design" = {
-      source = "${anthropicSkills}/skills/frontend-design";
-      recursive = true;
-    };
-
-    home.file.".claude/skills/doc-coauthoring" = {
-      source = "${anthropicSkills}/skills/doc-coauthoring";
-      recursive = true;
-    };
-
-    home.file.".claude/skills/skill-creator" = {
-      source = "${anthropicSkills}/skills/skill-creator";
-      recursive = true;
-    };
-
-    home.file.".claude/skills/webapp-testing" = {
-      source = "${anthropicSkills}/skills/webapp-testing";
-      recursive = true;
-    };
-
-    home.file.".claude/skills/pdf" = {
-      source = "${anthropicSkills}/skills/pdf";
-      recursive = true;
-    };
-
-    home.file.".claude/skills/grill-me" = {
-      source = ./config/skills/grill-me;
-      recursive = true;
-    };
-
-    home.file.".claude/skills/grill-with-docs" = {
-      source = ./config/skills/grill-with-docs;
-      recursive = true;
-    };
-
-    home.file.".claude/skills/improve-codebase-architecture" = {
-      source = ./config/skills/improve-codebase-architecture;
-      recursive = true;
-    };
-
-    home.file.".claude/skills/zoom-out" = {
-      source = ./config/skills/zoom-out;
+      source = "${mattpocockSkills}/skills/engineering/zoom-out";
       recursive = true;
     };
 
