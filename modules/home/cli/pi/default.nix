@@ -93,16 +93,27 @@
             # Todo list tracking — replicates Copilot's manage_todo_list tool.
             # Agent auto-uses it for multi-step work; /todos and /todos clear.
             "npm:pi-manage-todo-list"
-            # Side conversation channel — /btw <message> injects a note or
-            # question without interrupting the current agent run.
-            "npm:pi-btw"
-            # Interactive ask_user tool — agent calls this mid-run to collect
-            # structured input (options, multi-select, freeform) via a split-
-            # pane UI. Equivalent to Claude Code's clarification flow.
-            "npm:pi-ask-user"
-            # Git worktree management — /worktree create|list|cd|remove|prune.
-            # No global config required; /worktree init per project.
-            "npm:@zenobius/pi-worktrees"
+            # Side conversation channel — /btw <question> opens a panel
+            # at the bottom of the terminal, where a tool-less clone of the
+            # primary model answers using a read-only snapshot of the main
+            # transcript. Side answers never pollute the main session.
+            # Replaces the simpler `pi-btw` (same /btw command, less UX).
+            "npm:@juicesharp/rpiv-btw"
+            # Structured clarifying-question tool — agent calls
+            # `ask_user_question` mid-run to present a tabbed dialog with
+            # single/multi-select questions, side-by-side option previews,
+            # per-option notes, and a Submit-tab review step.
+            # Replaces the simpler `pi-ask-user` (different tool name:
+            # `ask_user_question` vs `ask_user`). Optional companion
+            # `@juicesharp/rpiv-i18n` adds /languages locale switcher; not
+            # installed because LANG=en here makes it a no-op.
+            "npm:@juicesharp/rpiv-ask-user-question"
+            # Background process manager — Pi can start dev servers, test
+            # watchers, builds, log tails via the `process` tool and keep
+            # the conversation going. /ps panel, /ps:logs, /ps:pin,
+            # /ps:dock, /ps:settings. Supports logWatches for runtime
+            # alerts on stdout/stderr regex matches.
+            "npm:@aliou/pi-processes"
             # Aggregated token/cost usage stats across all sessions.
             # /usage for table view, /usage --insights for dashboard.
             "npm:@tmustier/pi-usage-extension"
@@ -113,13 +124,6 @@
             # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
             # normal mode; covers motions, operators, visual mode basics.
             "npm:pi-vim"
-            # Add external directories to a session: /add-dir, /dirs,
-            # /remove-dir, /suggest-dirs. Loads each dir's AGENTS.md /
-            # CLAUDE.md / skills into every turn's system prompt and
-            # registers external skills as native /skill:name commands.
-            # Persists across /resume. peerDependency on pi-coding-agent
-            # is `*` so the 0.67.68 pin is fine.
-            "npm:pi-add-dir"
             # Run interactive CLIs (vim, psql, ssh, dev servers, sub-agent
             # CLIs) in a TUI overlay with 4 modes: interactive, hands-free,
             # dispatch, monitor. Commands: /spawn, /attach, /dismiss.
@@ -284,7 +288,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-btw|pi-ask-user|pi-vim|pi-add-dir|pi-interactive-shell|pi-studio|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-vim|pi-interactive-shell|pi-studio|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -299,7 +303,7 @@
               [ -d "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @zenobius/pi-worktrees|@tmustier/pi-usage-extension|@tmustier/pi-ralph-wiggum) ;;
+                @tmustier/pi-usage-extension|@tmustier/pi-ralph-wiggum|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@aliou/pi-processes) ;;
                 *)
                   echo "pi-nix: removing stale npm package: $full"
                   $DRY_RUN_CMD rm -rf "$pkg_dir"
@@ -354,23 +358,25 @@
             fi
           '';
 
-      home.activation.installPiBtw = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-btw" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-btw
+      home.activation.installRpivBtw = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-btw" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-btw
         fi
       '';
 
-      home.activation.installPiAskUser = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-ask-user" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-ask-user
-        fi
-      '';
-
-      home.activation.installPiWorktrees =
+      home.activation.installRpivAskUserQuestion =
         lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
           ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@zenobius/pi-worktrees" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @zenobius/pi-worktrees
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-ask-user-question" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-ask-user-question
+            fi
+          '';
+
+      home.activation.installPiProcesses =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@aliou/pi-processes" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @aliou/pi-processes
             fi
           '';
 
@@ -393,12 +399,6 @@
       home.activation.installPiVim = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-vim" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-vim
-        fi
-      '';
-
-      home.activation.installPiAddDir = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-add-dir" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-add-dir
         fi
       '';
 
