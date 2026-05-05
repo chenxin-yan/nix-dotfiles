@@ -90,9 +90,16 @@
             # Batch file reads via read_many with adaptive packing and
             # output-budget awareness. No config needed.
             "npm:pi-read-many"
-            # Todo list tracking — replicates Copilot's manage_todo_list tool.
-            # Agent auto-uses it for multi-step work; /todos and /todos clear.
-            "npm:pi-manage-todo-list"
+            # Todo list tracking with live overlay above the editor. Tasks
+            # survive /reload and conversation compaction (replayed from the
+            # branch, not disk). Provides the `todo` tool, `/todos` slash
+            # command, and `blockedBy` dependency tracking with cycle
+            # detection. Replaces the simpler `pi-manage-todo-list`
+            # (different tool name: `todo` vs `manage_todo_list`; same
+            # /todos command, so they cannot coexist). Optional companion
+            # `@juicesharp/rpiv-i18n` localizes overlay chrome; not
+            # installed because LANG=en here makes it a no-op.
+            "npm:@juicesharp/rpiv-todo"
             # Side conversation channel — /btw <question> opens a panel
             # at the bottom of the terminal, where a tool-less clone of the
             # primary model answers using a read-only snapshot of the main
@@ -288,7 +295,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-manage-todo-list|pi-vim|pi-interactive-shell|pi-studio|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
               *)
                 echo "pi-nix: removing stale npm package: $pkg"
                 $DRY_RUN_CMD rm -rf "$dir"
@@ -303,7 +310,7 @@
               [ -d "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@tmustier/pi-ralph-wiggum|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@aliou/pi-processes) ;;
+                @tmustier/pi-usage-extension|@tmustier/pi-ralph-wiggum|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes) ;;
                 *)
                   echo "pi-nix: removing stale npm package: $full"
                   $DRY_RUN_CMD rm -rf "$pkg_dir"
@@ -350,11 +357,11 @@
         fi
       '';
 
-      home.activation.installPiManageTodoList =
+      home.activation.installRpivTodo =
         lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
           ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-manage-todo-list" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-manage-todo-list
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-todo" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-todo
             fi
           '';
 
