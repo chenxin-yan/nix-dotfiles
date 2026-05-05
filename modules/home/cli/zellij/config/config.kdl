@@ -186,18 +186,6 @@ default_mode "locked"
 show_startup_tips false
 attach_to_session true
 
-// Disable Kitty Keyboard Protocol forwarding.
-//
-// Yazi (via crossterm 0.28+) probes for the protocol on startup; Ghostty 1.x
-// advertises full support, but zellij in the middle only implements level 1
-// of the protocol and has known bugs that garble the CSI-u byte stream
-// (zellij issues #4333, #5017, #3789). Symptom: a single `j`/`k` keypress
-// inside zellij triggers yazi's `r` (rename) or `;` (shell) bindings because
-// the half-stripped escape sequence falls through to leftover ASCII bytes.
-// Setting this to `false` makes zellij refuse the protocol so yazi/helix/etc.
-// fall back to clean legacy key handling. Same fix used to resolve helix#14392.
-support_kitty_keyboard_protocol false
-
 theme "catppuccin-mocha"
 simplified_ui true
 pane_frames false
