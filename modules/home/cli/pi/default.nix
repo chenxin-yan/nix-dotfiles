@@ -261,6 +261,17 @@
           "app.thinking.toggle" = "shift+ctrl+t";
         };
 
+        # TPS + TTFT footer chip. Tracks message_start/message_update/
+        # message_end to display time-to-first-token and live tokens/sec
+        # for the active assistant turn (with the authoritative
+        # `usage.output` value swapped in at message_end). See the file's
+        # header comment for measurement details. Renders via
+        # ctx.ui.setStatus("tps", ...), so it slots next to the existing
+        # extension status chips in the footer without claiming a widget
+        # row above the editor.
+        ".pi/agent/extensions/tps.ts".source =
+          ./config/extensions/tps.ts;
+
         ".pi/agent/AGENTS.md".source = ./config/AGENTS.md;
 
         ".pi/agent/prompts" = {
