@@ -50,6 +50,11 @@
       # grill-with-docs,improve-codebase-architecture,zoom-out} are managed
       # by the opencode module. Pi auto-discovers skills from
       # ~/.agents/skills/ via the agent-skills.io standard.
+      #
+      # Locally-authored skills owned by this module live under
+      # ./config/skills/<name>/SKILL.md and are symlinked into
+      # ~/.agents/skills/<name> below so both pi and opencode pick them up.
+      # Currently: commit.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
@@ -260,6 +265,15 @@
 
         ".pi/agent/prompts" = {
           source = ./config/prompts;
+          recursive = true;
+        };
+
+        # Locally-authored skill, linked into the shared ~/.agents/skills/
+        # tree (same location opencode uses) so it's discoverable by every
+        # agent harness that follows the agent-skills.io convention rather
+        # than just pi. The source of truth is ./config/skills/commit/.
+        ".agents/skills/commit" = {
+          source = ./config/skills/commit;
           recursive = true;
         };
 
