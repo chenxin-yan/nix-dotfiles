@@ -220,6 +220,15 @@
           # Custom theme name (matches `name` field inside the JSON file).
           # Pi auto-discovers theme files from ~/.pi/agent/themes/.
           theme = "catppuccin-mocha";
+          # Suppress the built-in logo + keybinding-hints block and the
+          # "loaded resources" listing at session start
+          # (interactive-mode.js:409, :979). The header container itself is
+          # untouched, so the custom-header.ts extension below still renders
+          # via setHeader. Net effect: clean startup with our pi mascot,
+          # without the wall of keybinding hints. `pi --verbose` overrides
+          # this on demand; `/builtin-header` restores upstream header for
+          # the current session.
+          quietStartup = true;
           # Disable install telemetry. Pi otherwise sends a single GET to
           # https://pi.dev/install?version=X on the first run after a version
           # change (interactive-mode.js:631). PI_OFFLINE already short-circuits
@@ -260,6 +269,14 @@
           "app.session.tree" = "ctrl+t";
           "app.thinking.toggle" = "shift+ctrl+t";
         };
+
+        # Custom startup header. Replaces pi's built-in logo + keybinding
+        # hints with a theme-aware pi-mascot banner via
+        # ctx.ui.setHeader() on session_start. See the file's header
+        # comment for the upstream reference and gotchas. Pairs with
+        # `quietStartup = true;` above to give a minimal startup.
+        ".pi/agent/extensions/custom-header.ts".source =
+          ./config/extensions/custom-header.ts;
 
         # TPS + TTFT footer chip. Tracks message_start/message_update/
         # message_end to display time-to-first-token and live tokens/sec
