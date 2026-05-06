@@ -30,10 +30,6 @@
       enableJujutsuIntegration = true;
     };
 
-    programs.jjui = {
-      enable = true;
-    };
-
     programs.zsh = {
       shellAliases = {
         j = "jj";
