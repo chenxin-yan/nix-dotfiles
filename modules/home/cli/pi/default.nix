@@ -273,6 +273,26 @@
         #   anything else in pi, so it gives undo a chord that actually
         #   works today. Keep ctrl+- in the list so it lights up
         #   automatically once the upstream cause is fixed.
+        # - app.message.followUp: keep upstream's alt+enter and add
+        #   alt+j. Inside zellij, pressing alt+enter inserts a newline
+        #   instead of queueing a follow-up. Mechanism: pi probes the
+        #   Kitty keyboard protocol on startup; zellij forwards the probe
+        #   to ghostty and forwards ghostty's positive reply back to pi,
+        #   so pi sets _kittyProtocolActive = true. But zellij itself
+        #   does NOT translate keys into Kitty CSI-u — keys arrive in
+        #   legacy xterm form. Alt+enter then arrives as \x1b\r, which
+        #   pi-tui (keys.ts:1266) maps to "shift+enter" because in real
+        #   Kitty terminals \x1b\r is the conventional shift+enter
+        #   encoding (alt+enter would arrive as CSI-u \x1b[13;3u). That
+        #   matches tui.input.newLine and the editor inserts a newline.
+        #   Same shape of bug as the reverted 295420d (zellij forwards a
+        #   protocol response it can't honor for keys); pi has no env
+        #   var to skip the kitty probe. alt+j survives both legacy
+        #   (\x1bj inside zellij) and Kitty CSI-u (\x1b[106;3u in raw
+        #   ghostty), and isn't claimed by anything else in pi or by
+        #   zellij in its default locked mode. Keep alt+enter so the
+        #   binding works in raw ghostty and lights up automatically
+        #   once zellij fixes its kitty forwarding (zellij#4333, #5017).
         ".pi/agent/keybindings.json".text = builtins.toJSON {
           "app.session.resume" = "ctrl+b";
           "app.session.fork" = "ctrl+f";
@@ -281,6 +301,10 @@
           "tui.editor.undo" = [
             "ctrl+-"
             "alt+z"
+          ];
+          "app.message.followUp" = [
+            "alt+enter"
+            "alt+j"
           ];
         };
 
