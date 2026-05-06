@@ -259,20 +259,6 @@
         #   navigator. ctrl+t was app.thinking.toggle upstream — we move
         #   that to shift+ctrl+t (capital T = "manage Thinking") so we
         #   keep both behaviors.
-        # - tui.editor.undo: keep upstream's ctrl+- and add alt+z. The
-        #   ctrl+- chord doesn't survive this Mac's input stack — pressing
-        #   physical Ctrl+- arrives at the terminal as alt+- (modifier
-        #   bitmask 2 instead of 4), both inside zellij and in raw
-        #   ghostty. Reproduced via /tmp/key-debug.mjs: Ctrl+a round-trips
-        #   correctly (\x1b[97;5u, modifier 5 = ctrl), but Ctrl+- arrives
-        #   as \x1b[45;3u (modifier 3 = alt) outside zellij and as \x1b-
-        #   inside zellij. Root cause is somewhere in the Mac/keyboard
-        #   layer (Karabiner / Accessibility zoom / firmware), not in pi —
-        #   pi-tui parses both forms exactly to spec. Alt+z passes
-        #   through unmolested in both environments and isn't bound by
-        #   anything else in pi, so it gives undo a chord that actually
-        #   works today. Keep ctrl+- in the list so it lights up
-        #   automatically once the upstream cause is fixed.
         # - app.message.followUp: keep upstream's alt+enter and add
         #   alt+j. Inside zellij, pressing alt+enter inserts a newline
         #   instead of queueing a follow-up. Mechanism: pi probes the
@@ -298,10 +284,6 @@
           "app.session.fork" = "ctrl+f";
           "app.session.tree" = "ctrl+t";
           "app.thinking.toggle" = "shift+ctrl+t";
-          "tui.editor.undo" = [
-            "ctrl+-"
-            "alt+z"
-          ];
           "app.message.followUp" = [
             "alt+enter"
             "alt+j"
