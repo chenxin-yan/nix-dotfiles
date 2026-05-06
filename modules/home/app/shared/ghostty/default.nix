@@ -11,13 +11,13 @@
   };
 
   config = lib.mkIf config.app.shared.ghostty.enable {
-    # FIXME: currently ghostty package is broken upsteam for darwin.
-    home.packages = pkgs.lib.optionals pkgs.stdenv.isLinux (
-      with pkgs;
-      [
-        ghostty
-      ]
-    );
+    # On Darwin the source build of `ghostty` is unsupported (needs Swift 6 +
+    # xcodebuild, which the Nix Darwin stdenv doesn't provide). Use
+    # `ghostty-bin`, which fetches the official signed Ghostty.dmg and
+    # installs Ghostty.app into ~/Applications/Home Manager Apps via
+    # home-manager's targets.darwin.linkApps default.
+    home.packages =
+      if pkgs.stdenv.isDarwin then [ pkgs.ghostty-bin ] else [ pkgs.ghostty ];
 
     home.file = {
       ".config/ghostty/config".source = ./config/config;

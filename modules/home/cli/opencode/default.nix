@@ -9,15 +9,15 @@ let
   anthropicSkills = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
-    rev = "1ed29a03dc852d30fa6ef2ca53a67dc2c2c2c563";
-    hash = "sha256-9FGubcwHcGBJcKl02aJ+YsTMiwDOdgU/FHALjARG51c=";
+    rev = "d230a6dd6eb1a0dbee9fec55e2f00a96e28dff81";
+    hash = "sha256-6GyoLtVWna20TrLg7Y2R6wCWD6C4GbDtIB0jbl5VESY=";
   };
 
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "b843cb5ea74b1fe5e58a0fc23cddef9e66076fb8";
-    hash = "sha256-qOhU5bBnT6kI8c7i0r0IyecrgLJNNPlmQtAb6qWM73Q=";
+    rev = "b27a1a46f80419030e28404ffc8eefb995ea28a5";
+    hash = "sha256-y7j1gScBl/dkmUTjw8xqaiHCwNTQdD43GIxumACiGwo=";
   };
 
 in

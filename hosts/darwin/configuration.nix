@@ -72,8 +72,6 @@
       "mole"
     ];
     casks = [
-      "ghostty"
-      "iina"
       "todoist-app"
     ];
     onActivation.cleanup = "zap";

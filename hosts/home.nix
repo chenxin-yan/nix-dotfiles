@@ -52,7 +52,6 @@
 
       wechat
       obsidian
-      lazyssh
     ];
 
     home.sessionVariables = {

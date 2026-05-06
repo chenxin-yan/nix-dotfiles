@@ -33,6 +33,7 @@ in
     (lib.mkIf isDarwin {
       app.darwin.kanata.enable = lib.mkDefault true;
       app.darwin.sketchybar.enable = lib.mkDefault true;
+      app.darwin.iina.enable = lib.mkDefault true;
     })
 
     # Linux apps only on Linux
