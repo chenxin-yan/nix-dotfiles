@@ -49,6 +49,7 @@
 
       bootdev-cli
       cloudflared
+      vhs
 
       wechat
       obsidian
