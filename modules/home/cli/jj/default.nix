@@ -67,9 +67,6 @@
             fg = "#f38ba8";
             italic = true;
           }; # red
-          "description" = {
-            fg = "#cdd6f4";
-          }; # text
           "node" = {
             fg = "#f5c2e7";
             bold = true;
