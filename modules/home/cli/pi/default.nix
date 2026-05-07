@@ -295,8 +295,7 @@
         # ctx.ui.setHeader() on session_start. See the file's header
         # comment for the upstream reference and gotchas. Pairs with
         # `quietStartup = true;` above to give a minimal startup.
-        ".pi/agent/extensions/custom-header.ts".source =
-          ./config/extensions/custom-header.ts;
+        ".pi/agent/extensions/custom-header.ts".source = ./config/extensions/custom-header.ts;
 
         # TPS + TTFT footer chip. Tracks message_start/message_update/
         # message_end to display time-to-first-token and live tokens/sec
@@ -306,8 +305,7 @@
         # ctx.ui.setStatus("tps", ...), so it slots next to the existing
         # extension status chips in the footer without claiming a widget
         # row above the editor.
-        ".pi/agent/extensions/tps.ts".source =
-          ./config/extensions/tps.ts;
+        ".pi/agent/extensions/tps.ts".source = ./config/extensions/tps.ts;
 
         ".pi/agent/AGENTS.md".source = ./config/AGENTS.md;
 
@@ -419,13 +417,11 @@
         fi
       '';
 
-      home.activation.installRpivTodo =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-todo" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-todo
-            fi
-          '';
+      home.activation.installRpivTodo = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-todo" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-todo
+        fi
+      '';
 
       home.activation.installRpivBtw = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-btw" ]; then
