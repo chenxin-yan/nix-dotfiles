@@ -172,6 +172,16 @@
       shellAliases = {
         j = "jj";
         lj = "lazyjj";
+        jc = "jj commit -m";
+        jd = "jj describe -m";
+        jn = "jj new";
+        jgP = "jj git push";
+        jgp = "jj git fetch";
+        jba = "jj bookmark advance";
+        jbs = "jj bookmark set";
+        jbl = "jj bookmark list";
+        jbd = "jj bookmark delete";
+        je = "jj edit";
       };
     };
   };
