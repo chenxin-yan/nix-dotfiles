@@ -16,6 +16,11 @@
 - Validate untrusted input once at the boundary; trust types inside. No arbitrary defense-in-depth — redundant null checks, layered try/catches, or repeat validation need a specific threat justification per layer.
 - Expected-noisy catches need an inline comment naming the error class and recovery behavior.
 
+## VCS (jj vs git)
+
+- Before any VCS command, detect the workspace: if `.jj/` exists at the repo root (or `jj root` exits 0), it's a jj workspace — use `jj`. Otherwise use git. Colocated jj repos have BOTH `.jj/` and `.git/`; `.jj/` wins.
+- jj has no staging area and no pre-commit hooks. To scope a commit to a subset of files, use `jj commit <paths> -m "msg"` or `jj split` instead of `git add`. Don't rewrite published history (`jj git push --force`, rewriting already-pushed changes with `jj describe`/`jj squash`).
+
 ## Verification (you are the loop — no auto-LSP)
 
 - When changing behavior in a tested repo, prefer writing a failing test first, then implement.
