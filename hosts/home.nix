@@ -50,6 +50,7 @@
       bootdev-cli
       cloudflared
       vhs
+      cursor-cli
 
       wechat
       obsidian
