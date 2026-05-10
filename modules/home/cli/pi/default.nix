@@ -83,7 +83,15 @@
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
           defaultModel = "claude-opus-4-7";
+          # `xhigh` matches Anthropic's new Claude Code default for Opus 4.7
+          # (claude.com/blog/best-practices-for-using-claude-opus-4-7-with-claude-code).
+          # We keep this on the parent because the parent edits code directly
+          # most of the time in this workflow rather than purely orchestrating;
+          # subagents already pin their own thinking levels below.
           defaultThinkingLevel = "high";
+          # Ctrl+P cycle list. Includes haiku-4-5 even though only `scout`
+          # uses it programmatically — keeping it pickable in the TUI makes
+          # ad-hoc cheap recon turns one keystroke away.
           enabledModels = [
             "anthropic/claude-opus-4-7"
             "anthropic/claude-sonnet-4-6"
@@ -179,62 +187,74 @@
             #   pi --package npm:taskplane  (alias: po)
 
           ];
-          # pi-subagents builtins (scout, planner, worker, …) hardcode
-          # `openai-codex/*` models, which is pi's ChatGPT-OAuth provider –
-          # NOT the regular OpenAI API. Override them to providers we actually
-          # have keys for (anthropic + openai).
+          # As of pi-subagents (current), builtins inherit the user's default
+          # model unless overridden — they no longer hardcode `openai-codex/*`.
+          # We still pin per-role models declaratively so a future
+          # pi-subagents update can't silently change cost/quality/latency.
           #
           # Mixing model families is intentional: the value of subagents comes
           # partly from getting a *different perspective* on the same problem.
           # `oracle` in particular exists to disagree with the parent, so it
           # runs on a different family than the default model.
           #
-          # Mapping (see pi-subagents/README.md → "Builtin agents"):
-          # - openai/gpt-5.5 → reasoning/advisory roles (oracle,
-          #     oracle-executor, reviewer) where a non-Claude perspective
-          #     adds real signal vs. the default Claude parent model.
-          # - anthropic/claude-opus-4-7 → high-stakes roles (planner, worker,
-          #     researcher) where Claude is reliably strong at edits,
-          #     planning, and synthesis.
-          # - anthropic/claude-sonnet-4-6 → handoff-writing role
-          #     (context-builder) where output quality matters because it
-          #     feeds planner/worker, but Opus is overkill.
-          # - anthropic/claude-haiku-4-5 → pure throughput role (scout) doing
-          #     grep/find/read/summarize. ~3x cheaper + ~2x faster than
-          #     Sonnet, and Anthropic positions Haiku 4.5 at Sonnet-4 coding
-          #     parity — fine for recon whose output is consumed by a
-          #     stronger downstream agent. NOT used for context-builder
-          #     (handoff synthesis) or worker (actual edits) where the
-          #     ~4-point SWE-bench gap to Sonnet would surface as bad output.
+          # Role → model mapping. Each model is the cheapest tier whose
+          # known strengths match the role's failure cost.
           #
-          # `fallbackModels` is consulted only on provider/auth/quota/timeout
-          # errors (per pi-subagents README), so cross-provider fallbacks are
-          # safe – they don't fire on "bad output".
+          # - opus-4-7  → planner, worker. Edit-quality and tool-orchestration
+          #               leader; lowest hallucination rate of the three.
+          # - gpt-5.5   → oracle, reviewer. Cross-family second opinion;
+          #               strong at long-context retrieval and abstract
+          #               reasoning. Hallucinates more — kept out of any
+          #               role that writes code.
+          # - sonnet-4-6 → researcher, context-builder. 1M context window;
+          #                read-heavy and handoff-synthesis fits.
+          # - haiku-4-5 → scout. Pure recon; output is consumed by a stronger
+          #               downstream agent so model gap doesn't propagate.
+          #
+          # `thinking` is pinned per-role so a future pi-subagents update
+          # can't silently change cost/latency. `fallbackModels` is
+          # intentionally not set here: pi-subagents fallbacks fire only on
+          # provider/auth/quota errors (not bad output), so they're not a
+          # quality escape hatch — adding them would mainly muddy debugging.
+          # Revisit if/when an outage actually bites.
           subagents.agentOverrides = {
             scout = {
               model = "anthropic/claude-haiku-4-5";
             };
+            # context-builder writes the handoff that planner/worker consume;
+            # bad context poisons the whole chain, so spend reasoning here.
             "context-builder" = {
               model = "anthropic/claude-sonnet-4-6";
+              thinking = "high";
             };
             planner = {
               model = "anthropic/claude-opus-4-7";
+              thinking = "high";
             };
             worker = {
               model = "anthropic/claude-opus-4-7";
+              thinking = "high";
             };
             reviewer = {
               model = "openai/gpt-5.5";
+              thinking = "high";
             };
+            # researcher is read-heavy; Sonnet's 1M context does the lifting,
+            # not reasoning depth. Start at medium and let hard research
+            # tasks be explicitly escalated.
             researcher = {
-              model = "anthropic/claude-opus-4-7";
+              model = "anthropic/claude-sonnet-4-6";
+              thinking = "medium";
             };
             oracle = {
               model = "openai/gpt-5.5";
+              thinking = "high";
             };
-            "oracle-executor" = {
-              model = "openai/gpt-5.5";
-            };
+            # `oracle-executor` was consolidated into `worker` upstream in
+            # pi-subagents (see ~/.pi/agent/npm/lib/node_modules/pi-subagents/
+            # CHANGELOG.md and the absence of agents/oracle-executor.md).
+            # No override needed — `worker` carries the role.
+            #
             # `delegate` intentionally has no model override – it inherits the
             # parent's model, which is the whole point of that builtin.
           };
@@ -393,11 +413,14 @@
           recursive = true;
         };
 
-        # Predefined agent chains. Stored alongside agent files so
-        # pi-subagents discovers them at ~/.pi/agent/agents/{name}.chain.md.
-        # Each chain is a multi-step pipeline invoked via /chain in the TUI.
-        ".pi/agent/agents" = {
-          source = ./config/agents;
+        # Predefined chains. pi-subagents discovers user chains from
+        # ~/.pi/agent/chains/**/*.chain.md (see
+        # ~/.pi/agent/npm/lib/node_modules/pi-subagents/src/agents/agents.ts:134).
+        # NOT ~/.pi/agent/agents/ — that's the agent definitions dir, and the
+        # loader at agents.ts:547 explicitly skips *.chain.md files there.
+        # Run via `/run-chain <name> -- <task>` or natural language.
+        ".pi/agent/chains" = {
+          source = ./config/chains;
           recursive = true;
         };
       };

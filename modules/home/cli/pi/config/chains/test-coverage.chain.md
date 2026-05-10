@@ -7,7 +7,9 @@ description: Map untested code paths then write tests for each gap
 
 Map untested code paths relevant to: {task}
 
-If no scope is given, focus on recently changed files (`git log --oneline -20`).
+If no scope is given, focus on recently changed files. Detect VCS first: in jj
+workspaces (`.jj/` exists or `jj root` exits 0) use `jj log -n 20 --no-graph` and
+`jj diff` to find changed paths; otherwise use `git log --oneline -20`.
 
 ## worker
 
