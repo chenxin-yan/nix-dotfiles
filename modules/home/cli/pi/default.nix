@@ -18,10 +18,33 @@
         export NPM_CONFIG_PREFIX="$HOME/.pi/agent/npm"
         exec ${pkgs.nodejs}/bin/npm "$@"
       '';
+
+      # Upstream skill repos consumed via the agent-skills.io convention.
+      # Each `home.file.".agents/skills/<name>"` entry below symlinks one
+      # subdirectory of these snapshots into ~/.agents/skills/, where pi
+      # auto-discovers them. Bumping the rev/hash refreshes every skill
+      # sourced from that repo in lock-step.
+      anthropicSkills = pkgs.fetchFromGitHub {
+        owner = "anthropics";
+        repo = "skills";
+        rev = "d211d437443a7b2496a3dad9575e7dddd724c585";
+        hash = "sha256-5NGI0gojBGoXXus8CPhIrigyWSEYJg8gnCzWYl6PsLA=";
+      };
+
+      mattpocockSkills = pkgs.fetchFromGitHub {
+        owner = "mattpocock";
+        repo = "skills";
+        rev = "70141119e9fe47430b62b93bcf166a73e6580048";
+        hash = "sha256-V7urzcmq2cJDwKP9dLirBAmKuXbVp2Jsyd+3jlzZ5+Y=";
+      };
     in
     lib.mkIf config.cli.pi.enable {
       home.packages = with pkgs; [
         pi-coding-agent
+        # Time-tracking daemon invoked by the npm:pi-wakatime extension
+        # below. Reads ~/.wakatime.cfg for `api_key` (file is hand-managed
+        # outside Nix; predates this dotfiles repo).
+        wakatime-cli
       ];
 
       # Disable pi's startup "new version available" toast. The pi binary
@@ -46,15 +69,16 @@
       # preferred over globs because they avoid pulling in dated variants
       # (e.g. claude-sonnet-4-6-20250929) and unrelated families.
       #
-      # NOTE: ~/.agents/skills/{frontend-design,doc-coauthoring,grill-me,
-      # grill-with-docs,improve-codebase-architecture,zoom-out} are managed
-      # by the opencode module. Pi auto-discovers skills from
-      # ~/.agents/skills/ via the agent-skills.io standard.
+      # Skills layout (~/.agents/skills/<name>) — pi auto-discovers any
+      # SKILL.md under this tree via the agent-skills.io convention.
       #
-      # Locally-authored skills owned by this module live under
-      # ./config/skills/<name>/SKILL.md and are symlinked into
-      # ~/.agents/skills/<name> below so both pi and opencode pick them up.
-      # Currently: commit.
+      # Two sources, both wired up via `home.file` entries below:
+      #   1. Upstream repos (anthropics/skills, mattpocock/skills) pinned
+      #      via the let-bound `anthropicSkills` / `mattpocockSkills`
+      #      fetchers above. Each `home.file` entry points at one
+      #      subdirectory of those snapshots.
+      #   2. Locally-authored skills owned by this module under
+      #      ./config/skills/<name>/SKILL.md. Currently: commit.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
@@ -86,8 +110,9 @@
             # file needed. Requires Pi v0.37.3+.
             "npm:pi-web-access"
             # WakaTime time tracking. Reads api_key from ~/.wakatime.cfg
-            # (already managed by opencode-wakatime; no separate config needed).
-            # Uses the global wakatime-cli binary from the opencode module.
+            # (hand-managed plain file outside Nix — predates this repo;
+            # would need a secrets backend to manage declaratively).
+            # Uses the wakatime-cli binary added to home.packages above.
             "npm:pi-wakatime"
             # Diff approval viewer — blocks edit/write until approved/rejected
             # in an interactive split-diff modal. Toggle with /diff-approval.
@@ -315,11 +340,56 @@
         };
 
         # Locally-authored skill, linked into the shared ~/.agents/skills/
-        # tree (same location opencode uses) so it's discoverable by every
-        # agent harness that follows the agent-skills.io convention rather
-        # than just pi. The source of truth is ./config/skills/commit/.
+        # tree so it's discoverable by every agent harness that follows
+        # the agent-skills.io convention rather than just pi. The source
+        # of truth is ./config/skills/commit/.
         ".agents/skills/commit" = {
           source = ./config/skills/commit;
+          recursive = true;
+        };
+
+        # Anthropic skills (https://github.com/anthropics/skills).
+        ".agents/skills/frontend-design" = {
+          source = "${anthropicSkills}/skills/frontend-design";
+          recursive = true;
+        };
+        ".agents/skills/doc-coauthoring" = {
+          source = "${anthropicSkills}/skills/doc-coauthoring";
+          recursive = true;
+        };
+        ".agents/skills/skill-creator" = {
+          source = "${anthropicSkills}/skills/skill-creator";
+          recursive = true;
+        };
+        ".agents/skills/webapp-testing" = {
+          source = "${anthropicSkills}/skills/webapp-testing";
+          recursive = true;
+        };
+        ".agents/skills/pdf" = {
+          source = "${anthropicSkills}/skills/pdf";
+          recursive = true;
+        };
+
+        # Matt Pocock skills (https://github.com/mattpocock/skills).
+        # `grill-me` replaces an earlier local `refine-plan` skill.
+        ".agents/skills/grill-me" = {
+          source = "${mattpocockSkills}/skills/productivity/grill-me";
+          recursive = true;
+        };
+        ".agents/skills/diagnose" = {
+          source = "${mattpocockSkills}/skills/engineering/diagnose";
+          recursive = true;
+        };
+        ".agents/skills/grill-with-docs" = {
+          source = "${mattpocockSkills}/skills/engineering/grill-with-docs";
+          recursive = true;
+        };
+        ".agents/skills/improve-codebase-architecture" = {
+          source = "${mattpocockSkills}/skills/engineering/improve-codebase-architecture";
+          recursive = true;
+        };
+        ".agents/skills/zoom-out" = {
+          source = "${mattpocockSkills}/skills/engineering/zoom-out";
           recursive = true;
         };
 

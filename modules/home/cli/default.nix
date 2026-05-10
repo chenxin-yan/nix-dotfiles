@@ -5,7 +5,6 @@
     ./gcloud
     ./jj
     ./mise
-    ./opencode
     ./pandoc
     ./pi
     ./podman
@@ -17,7 +16,6 @@
   config = {
     cli.gcloud.enable = lib.mkDefault true;
     cli.mise.enable = lib.mkDefault true;
-    cli.opencode.enable = lib.mkDefault true;
     cli.pandoc.enable = lib.mkDefault true;
     cli.pi.enable = lib.mkDefault true;
     cli.podman.enable = lib.mkDefault true;
