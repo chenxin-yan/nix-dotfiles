@@ -176,6 +176,7 @@
         jd = "jj describe -m";
         jn = "jj new";
         jr = "jj restore";
+        ja = "jj abandon";
         jgP = "jj git push";
         jgp = "jj git fetch";
         jba = "jj bookmark advance";
