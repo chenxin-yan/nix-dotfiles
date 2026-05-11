@@ -78,7 +78,7 @@
       #      fetchers above. Each `home.file` entry points at one
       #      subdirectory of those snapshots.
       #   2. Locally-authored skills owned by this module under
-      #      ./config/skills/<name>/SKILL.md. Currently: commit.
+      #      ./config/skills/<name>/SKILL.md. Currently: commit, to-html.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
@@ -359,12 +359,16 @@
           recursive = true;
         };
 
-        # Locally-authored skill, linked into the shared ~/.agents/skills/
-        # tree so it's discoverable by every agent harness that follows
-        # the agent-skills.io convention rather than just pi. The source
-        # of truth is ./config/skills/commit/.
+        # Locally-authored skills, linked into the shared ~/.agents/skills/
+        # tree so they're discoverable by every agent harness that follows
+        # the agent-skills.io convention rather than just pi. The sources
+        # of truth are ./config/skills/<name>/.
         ".agents/skills/commit" = {
           source = ./config/skills/commit;
+          recursive = true;
+        };
+        ".agents/skills/to-html" = {
+          source = ./config/skills/to-html;
           recursive = true;
         };
 
