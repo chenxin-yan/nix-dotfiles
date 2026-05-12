@@ -443,35 +443,57 @@
       # any directory in node_modules not present in the declared set below.
       # Removing a package from the list + `nh os switch` is enough — no
       # manual `rm` needed.
+      #
+      # Trailing-slash + symlink footgun: globs like `*/` yield paths with a
+      # trailing slash, and `rm -rf foo/` on a symlink-to-dir dereferences the
+      # link and tries to delete the target's contents (not the link). For
+      # entries that point into the read-only Nix store (e.g. bootstrap
+      # symlinks created by `linkPiForTaskplane` or by an old `pi install`),
+      # that surfaces as a flood of "Permission denied" errors and fails the
+      # whole activation. We strip the trailing slash and use `rm` (no `-rf`)
+      # for symlinks so we delete the link itself, never its target.
       home.activation.cleanupPiPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        remove_stale() {
+          # $1: label for log line, $2: path (no trailing slash)
+          local label="$1" path="$2"
+          echo "pi-nix: removing stale npm package: $label"
+          if [ -L "$path" ]; then
+            $DRY_RUN_CMD rm -f "$path"
+          else
+            $DRY_RUN_CMD rm -rf "$path"
+          fi
+        }
+
         node_modules="$HOME/.pi/agent/npm/lib/node_modules"
         if [ -d "$node_modules" ]; then
           # Remove undeclared unscoped packages
           for dir in "$node_modules"/*/; do
-            [ -d "$dir" ] || continue
+            dir="''${dir%/}"
+            [ -e "$dir" ] || continue
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
               pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
-              *)
-                echo "pi-nix: removing stale npm package: $pkg"
-                $DRY_RUN_CMD rm -rf "$dir"
-                ;;
+              *) remove_stale "$pkg" "$dir" ;;
             esac
           done
           # Remove undeclared scoped packages (@scope/name)
           for scope_dir in "$node_modules"/@*/; do
+            scope_dir="''${scope_dir%/}"
             [ -d "$scope_dir" ] || continue
             scope=$(basename "$scope_dir")
-            for pkg_dir in "$scope_dir"*/; do
-              [ -d "$pkg_dir" ] || continue
+            for pkg_dir in "$scope_dir"/*/; do
+              pkg_dir="''${pkg_dir%/}"
+              [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
                 @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes) ;;
-                *)
-                  echo "pi-nix: removing stale npm package: $full"
-                  $DRY_RUN_CMD rm -rf "$pkg_dir"
-                  ;;
+                # Bootstrap symlink into the Nix store, recreated by
+                # `linkPiForTaskplane` below. Keep it so cleanup doesn't
+                # race with the link hook and break taskplane's Pi CLI
+                # resolver between activation phases.
+                @mariozechner/pi-coding-agent) ;;
+                *) remove_stale "$full" "$pkg_dir" ;;
               esac
             done
           done
@@ -619,12 +641,18 @@
       # taskplane resolves the Pi CLI via `npm root -g`; under Nix, pi lives in
       # the Nix store, not in any npm global root, so without this symlink
       # worker agent spawning fails with "Cannot find Pi CLI entrypoint".
-      home.activation.linkPiForTaskplane = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD mkdir -p "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner"
-        $DRY_RUN_CMD ln -sfn \
-          "${pkgs.pi-coding-agent}/lib/node_modules/@mariozechner/pi-coding-agent" \
-          "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner/pi-coding-agent"
-      '';
+      # Must run after cleanupPiPackages: the cleanup loop's allowlist keeps
+      # @mariozechner/pi-coding-agent in place, but the DAG order also needs
+      # to be explicit so a future cleanup-rule change can't silently nuke
+      # the link between hooks.
+      home.activation.linkPiForTaskplane =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            $DRY_RUN_CMD mkdir -p "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner"
+            $DRY_RUN_CMD ln -sfn \
+              "${pkgs.pi-coding-agent}/lib/node_modules/@mariozechner/pi-coding-agent" \
+              "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner/pi-coding-agent"
+          '';
 
       programs.zsh.shellAliases = {
         # NPM_CONFIG_PREFIX ensures `npm root -g` (called by taskplane's path
