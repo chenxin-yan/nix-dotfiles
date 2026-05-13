@@ -173,9 +173,9 @@
         j = "jj";
         lj = "lazyjj";
         jc = "jj commit -m";
-        jd = "jj describe -m";
         jn = "jj new";
-        jr = "jj restore";
+        jr = "jj rebase";
+        jR = "jj restore";
         ja = "jj abandon";
         jgP = "jj git push";
         jgp = "jj git fetch";

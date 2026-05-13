@@ -54,6 +54,7 @@
 
       wechat
       obsidian
+      opencode
     ];
 
     home.sessionVariables = {
