@@ -175,6 +175,7 @@
         jc = "jj commit -m";
         jn = "jj new";
         jr = "jj rebase";
+        js = "jj squash";
         jR = "jj restore";
         ja = "jj abandon";
         jgP = "jj git push";
