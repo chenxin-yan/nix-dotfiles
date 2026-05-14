@@ -119,8 +119,12 @@
 
         # --- UI ---------------------------------------------------------
         # Bare `jj` shows the log instead of help.
+        # `pager`/`diff-formatter` route jj diff output through hunk; the
+        # `:git`-format external diff is what hunk's pager expects.
         ui = {
           default-command = "log";
+          pager = [ "hunk" "pager" ];
+          diff-formatter = ":git";
         };
 
         # --- Templates --------------------------------------------------
@@ -163,15 +167,12 @@
       lazyjj
     ];
 
-    programs.delta = {
-      enable = true;
-      enableJujutsuIntegration = true;
-    };
-
     programs.zsh = {
       shellAliases = {
         j = "jj";
         lj = "lazyjj";
+        jst = "jj st";
+        ju = "jj undo";
         jc = "jj commit -m";
         jn = "jj new";
         jr = "jj rebase";
