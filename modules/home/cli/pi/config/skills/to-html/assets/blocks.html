@@ -1,0 +1,274 @@
+<!doctype html>
+<!--
+  Block cookbook for the `to-html` skill.
+
+  This file is BOTH:
+    1. The reference the skill model reads when composing a page.
+    2. A rendered visual style guide you can open directly in a browser
+       to see what each block looks like.
+
+  Open it with:
+      open assets/blocks.html
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>to-html · block cookbook</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :target { animation: pulse 1.5s ease-out 1; border-radius: 0.5rem; }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgb(251 191 36 / 0.7); }
+      100% { box-shadow: 0 0 0 12px rgb(251 191 36 / 0); }
+    }
+    @media print {
+      details > :not(summary) { display: revert !important; }
+      input[data-filter] { display: none; }
+    }
+  </style>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default",
+    });
+  </script>
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css"
+        media="(prefers-color-scheme: light)" />
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css"
+        media="(prefers-color-scheme: dark)" />
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+  <script>addEventListener("DOMContentLoaded", () => hljs.highlightAll());</script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased font-[ui-sans-serif,system-ui,sans-serif]">
+<main class="mx-auto max-w-5xl px-6 py-10 space-y-10">
+
+  <!-- ============================================================
+       1. HERO — exactly one per page, at the top.
+       ============================================================ -->
+  <section>
+    <p class="text-xs font-mono text-slate-500 mb-2">1 · Hero</p>
+    <header class="border-b border-slate-200 dark:border-slate-800 pb-4">
+      <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        2026-05-13
+      </p>
+      <h1 class="mt-1 text-3xl font-bold tracking-tight">
+        Auth refactor plan
+      </h1>
+      <p class="mt-2 text-slate-600 dark:text-slate-300">
+        Replace cookie-based session auth with stateless JWT, in three phases.
+      </p>
+    </header>
+  </section>
+
+  <!-- ============================================================
+       2. CALLOUT — colored card, 4 variants.
+          info / warn / risk / good. Body: ≤1 sentence OR ≤3-item list.
+       ============================================================ -->
+  <section class="space-y-3">
+    <p class="text-xs font-mono text-slate-500">2 · Callout (info / warn / risk / good)</p>
+
+    <aside class="rounded-lg border-l-4 p-4 bg-sky-50 border-sky-400 text-sky-900
+                  dark:bg-sky-950/40 dark:border-sky-500 dark:text-sky-100">
+      <p class="font-semibold text-sm uppercase tracking-wider">Info</p>
+      <p class="mt-1">Touches every authenticated route; rollback is one feature flag.</p>
+    </aside>
+
+    <aside class="rounded-lg border-l-4 p-4 bg-amber-50 border-amber-400 text-amber-900
+                  dark:bg-amber-950/40 dark:border-amber-500 dark:text-amber-100">
+      <p class="font-semibold text-sm uppercase tracking-wider">Warn</p>
+      <ul class="mt-1 list-disc list-inside space-y-0.5">
+        <li>Session table stays around for 30 days.</li>
+        <li>Mobile clients ship a separate release.</li>
+      </ul>
+    </aside>
+
+    <aside class="rounded-lg border-l-4 p-4 bg-rose-50 border-rose-400 text-rose-900
+                  dark:bg-rose-950/40 dark:border-rose-500 dark:text-rose-100">
+      <p class="font-semibold text-sm uppercase tracking-wider">Risk</p>
+      <p class="mt-1">Token revocation isn't instant — compromised accounts stay valid until expiry.</p>
+    </aside>
+
+    <aside class="rounded-lg border-l-4 p-4 bg-emerald-50 border-emerald-400 text-emerald-900
+                  dark:bg-emerald-950/40 dark:border-emerald-500 dark:text-emerald-100">
+      <p class="font-semibold text-sm uppercase tracking-wider">Good</p>
+      <p class="mt-1">Removes Redis from the hot path. Latency drops ~12ms p50.</p>
+    </aside>
+  </section>
+
+  <!-- ============================================================
+       3. COMPARE — N-column grid, default 2.
+          Use for before/after, A vs B, current vs proposed.
+       ============================================================ -->
+  <section>
+    <p class="text-xs font-mono text-slate-500 mb-2">3 · Compare (2-column)</p>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
+        <p class="text-xs uppercase tracking-wider text-slate-500 mb-2">Before</p>
+        <p class="text-sm">Server-side session lookup on every request via Redis.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
+        <p class="text-xs uppercase tracking-wider text-slate-500 mb-2">After</p>
+        <p class="text-sm">Stateless JWT validation in middleware; no Redis hit.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. DIAGRAM — Mermaid block. Include the Mermaid script.
+       ============================================================ -->
+  <section>
+    <p class="text-xs font-mono text-slate-500 mb-2">4 · Diagram (Mermaid)</p>
+    <figure class="rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 overflow-x-auto">
+      <pre class="mermaid">
+flowchart LR
+    A[Request] --> B{Has JWT?}
+    B -- no --> R[401 Unauthorized]
+    B -- yes --> V[Verify signature]
+    V -- valid --> H[Handler]
+    V -- invalid --> R
+      </pre>
+    </figure>
+  </section>
+
+  <!-- ============================================================
+       5. MATRIX — table with header row; cells may hold pills.
+          Add the filter input ONLY when there are ≥10 rows.
+       ============================================================ -->
+  <section>
+    <p class="text-xs font-mono text-slate-500 mb-2">5 · Matrix (table)</p>
+    <input type="search"
+           data-filter="#matrix-example tbody tr"
+           placeholder="Filter rows…"
+           class="mb-3 w-full md:w-64 rounded-md border border-slate-300 dark:border-slate-700
+                  bg-white dark:bg-slate-900 px-3 py-1.5 text-sm" />
+    <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+      <table id="matrix-example" class="w-full text-sm">
+        <thead class="bg-slate-100 dark:bg-slate-900 text-left">
+          <tr>
+            <th class="px-3 py-2 font-semibold">File</th>
+            <th class="px-3 py-2 font-semibold">Change</th>
+            <th class="px-3 py-2 font-semibold">Risk</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+          <tr>
+            <td class="px-3 py-2 font-mono text-xs">auth/login.ts</td>
+            <td class="px-3 py-2">Replace cookie with JWT issuance.</td>
+            <td class="px-3 py-2">
+              <span class="inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-800
+                           dark:bg-rose-900/40 dark:text-rose-200">high</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-3 py-2 font-mono text-xs">auth/middleware.ts</td>
+            <td class="px-3 py-2">Verify JWT instead of Redis lookup.</td>
+            <td class="px-3 py-2">
+              <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800
+                           dark:bg-amber-900/40 dark:text-amber-200">med</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-3 py-2 font-mono text-xs">auth/logout.ts</td>
+            <td class="px-3 py-2">Add JWT to denylist on logout.</td>
+            <td class="px-3 py-2">
+              <span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800
+                           dark:bg-emerald-900/40 dark:text-emerald-200">low</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6. STEPS — ordered list, optional status pill per step.
+       ============================================================ -->
+  <section id="steps-example">
+    <p class="text-xs font-mono text-slate-500 mb-2">6 · Steps</p>
+    <ol class="space-y-3">
+      <li class="flex items-start gap-3">
+        <span class="flex-none w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-semibold grid place-items-center
+                     dark:bg-slate-200 dark:text-slate-900">1</span>
+        <p class="flex-1 pt-0.5">Issue JWTs from <code class="font-mono text-xs bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">/auth/login</code>, keep cookie path alive.</p>
+        <span class="flex-none inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800
+                     dark:bg-emerald-900/40 dark:text-emerald-200">done</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="flex-none w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-semibold grid place-items-center
+                     dark:bg-slate-200 dark:text-slate-900">2</span>
+        <p class="flex-1 pt-0.5">Add JWT path to middleware behind <code class="font-mono text-xs bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">AUTH_MODE=jwt</code> flag.</p>
+        <span class="flex-none inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800
+                     dark:bg-amber-900/40 dark:text-amber-200">in progress</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="flex-none w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-semibold grid place-items-center
+                     dark:bg-slate-200 dark:text-slate-900">3</span>
+        <p class="flex-1 pt-0.5">Flip default to JWT, remove Redis lookup, see <a class="underline decoration-dotted underline-offset-2" href="#risks-example">Risks</a>.</p>
+        <span class="flex-none inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-700
+                     dark:bg-slate-800 dark:text-slate-300">todo</span>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       7. DETAILS — collapsed appendix. Body follows block rules.
+       ============================================================ -->
+  <section id="risks-example">
+    <p class="text-xs font-mono text-slate-500 mb-2">7 · Details (collapsed appendix)</p>
+    <details class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <summary class="cursor-pointer select-none p-4 font-medium">Raw diff for <code class="font-mono text-xs bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">auth/middleware.ts</code></summary>
+      <div class="px-4 pb-4 space-y-3 text-sm">
+        <p>Three-line change inside the existing handler.</p>
+        <pre class="rounded-md overflow-x-auto"><code class="language-diff">- const session = await redis.get(`sess:${sid}`);
+- if (!session) return res.status(401).end();
++ const claims = jwt.verify(token, JWT_SECRET);
++ req.user = claims.sub;</code></pre>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================
+       INLINE VOCABULARY — used inside blocks above.
+       ============================================================ -->
+  <section class="border-t border-slate-200 dark:border-slate-800 pt-6">
+    <p class="text-xs font-mono text-slate-500 mb-3">Inline vocabulary (used inside blocks)</p>
+    <ul class="space-y-2 text-sm">
+      <li>
+        <span class="text-slate-500 mr-2">pill:</span>
+        <span class="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800 dark:bg-sky-900/40 dark:text-sky-200">info</span>
+        <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">warn</span>
+        <span class="inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-800 dark:bg-rose-900/40 dark:text-rose-200">risk</span>
+        <span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200">good</span>
+        <span class="inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">neutral</span>
+      </li>
+      <li>
+        <span class="text-slate-500 mr-2">code:</span>
+        <code class="font-mono text-xs bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">JWT_SECRET</code>
+      </li>
+      <li>
+        <span class="text-slate-500 mr-2">xref:</span>
+        <a class="underline decoration-dotted underline-offset-2" href="#steps-example">jump to Steps</a>
+        <span class="text-slate-500 text-xs">— click to see the 1.5s amber ring pulse on the target.</span>
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<script>
+  for (const input of document.querySelectorAll("input[data-filter]")) {
+    const targets = document.querySelectorAll(input.dataset.filter);
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      for (const el of targets) {
+        el.hidden = q !== "" && !el.textContent.toLowerCase().includes(q);
+      }
+    });
+  }
+</script>
+</body>
+</html>

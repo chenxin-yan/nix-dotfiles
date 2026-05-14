@@ -1,0 +1,91 @@
+<!doctype html>
+<!-- regen: VERBATIM USER REQUEST GOES HERE; if it contains the sequence "--", replace each with "- -" so the comment stays valid -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><!-- TOPIC TITLE --></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* xref click highlight: 1.5s amber ring pulse on any element jumped-to via #id */
+    :target {
+      animation: to-html-pulse 1.5s ease-out 1;
+      border-radius: 0.5rem;
+    }
+    @keyframes to-html-pulse {
+      0%   { box-shadow: 0 0 0 0 rgb(251 191 36 / 0.7); }
+      100% { box-shadow: 0 0 0 12px rgb(251 191 36 / 0); }
+    }
+    /* Print: expand all <details>, hide filter inputs. Save-as-PDF-friendly. */
+    @media print {
+      details > :not(summary) { display: revert !important; }
+      input[data-filter] { display: none; }
+    }
+  </style>
+
+  <!-- ===================================================================
+       OPTIONAL: keep this block ONLY if the page contains a Diagram block
+       (a <pre class="mermaid"> somewhere in <main>). Otherwise delete it.
+       =================================================================== -->
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default",
+    });
+  </script>
+
+  <!-- ===================================================================
+       OPTIONAL: keep this block ONLY if the page contains a code block
+       with a language class (e.g. <code class="language-ts">). Else delete.
+       =================================================================== -->
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css"
+        media="(prefers-color-scheme: light)" />
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css"
+        media="(prefers-color-scheme: dark)" />
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+  <script>addEventListener("DOMContentLoaded", () => hljs.highlightAll());</script>
+</head>
+
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased
+             font-[ui-sans-serif,system-ui,sans-serif]">
+  <main class="mx-auto max-w-5xl px-6 py-10 space-y-6">
+
+    <!-- HERO (always exactly one, at the top) -->
+    <header class="border-b border-slate-200 dark:border-slate-800 pb-4">
+      <p class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <!-- YYYY-MM-DD -->
+      </p>
+      <h1 class="mt-1 text-3xl font-bold tracking-tight">
+        <!-- TOPIC TITLE -->
+      </h1>
+      <p class="mt-2 text-slate-600 dark:text-slate-300">
+        <!-- ONE-SENTENCE TAKEAWAY -->
+      </p>
+    </header>
+
+    <!-- BLOCKS GO HERE.
+         Pick from the 7 in assets/blocks.html. Drop blocks the topic
+         doesn't need. Two or three blocks make a good page. -->
+
+  </main>
+
+  <!-- ===================================================================
+       OPTIONAL: keep this block ONLY if a Matrix on the page has ≥10 rows
+       and has an <input data-filter="…"> sibling. Otherwise delete it.
+       =================================================================== -->
+  <script>
+    for (const input of document.querySelectorAll("input[data-filter]")) {
+      const targets = document.querySelectorAll(input.dataset.filter);
+      input.addEventListener("input", () => {
+        const q = input.value.trim().toLowerCase();
+        for (const el of targets) {
+          el.hidden = q !== "" && !el.textContent.toLowerCase().includes(q);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
