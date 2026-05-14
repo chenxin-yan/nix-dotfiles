@@ -152,7 +152,6 @@
     programs.zsh = {
       shellAliases = {
         j = "jj";
-        lj = "lazyjj";
         jst = "jj st";
         ju = "jj undo";
         jc = "jj commit -m";
