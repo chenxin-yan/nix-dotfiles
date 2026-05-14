@@ -76,6 +76,11 @@
     programs.zsh = {
       shellAliases = {
         g = "git";
+
+        di = "hunk diff";
+        dib = "hunk diff origin/HEAD...HEAD";
+        dil = "hunk show";
+        diw = "hunk diff --watch";
       };
     };
 
