@@ -181,6 +181,11 @@
             # MacTeX/TeX Live for LaTeX, `mmdc` for Mermaid in PDFs) on
             # PATH — not declared here; install ad-hoc if/when needed.
             "npm:pi-studio"
+            # Code-review slash command — `/simplify` reviews uncommitted (or
+            # staged / branch-diffed / explicitly-listed) changes for
+            # clarity, naming, and redundancy without changing behavior.
+            # See github.com/MattDevy/pi-extensions/tree/main/packages/pi-simplify.
+            "npm:pi-simplify"
           ];
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
@@ -468,7 +473,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|glimpseui) ;; # glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|pi-simplify|glimpseui) ;; # glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
               *) remove_stale "$pkg" "$dir" ;;
             esac
           done
@@ -579,6 +584,12 @@
       home.activation.installPiStudio = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-studio" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-studio
+        fi
+      '';
+
+      home.activation.installPiSimplify = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-simplify" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-simplify
         fi
       '';
 

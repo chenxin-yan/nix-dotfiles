@@ -3,7 +3,7 @@
 - State assumptions before coding. Ask when ambiguous; don't guess silently. Surface tradeoffs and simpler alternatives.
 - Minimum code that solves the problem — no speculative features, no abstractions for single-use code. If a senior engineer would say it's overcomplicated, simplify.
 - Surgical changes — touch only what the request needs. Don't reformat, rename, or refactor adjacent code; match existing style. Mention unrelated issues; don't fix them.
-- Comments earn their place — add for *why* (intent, tradeoffs, gotchas), not *what* (the code shows that). When you delete code, delete its comments too; no tombstones, no "previously did X" notes, no diff narration.
+- Comments earn their place — add for _why_ (intent, tradeoffs, gotchas), not _what_ (the code shows that). When you delete code, delete its comments too; no tombstones, no "previously did X" notes, no diff narration.
 - Fail loud — "done" is wrong if anything was skipped, untested, or assumed. Surface uncertainty instead of hiding it.
 
 ## Delegation (subagent-first)
@@ -33,11 +33,6 @@
 - Prefer narrow, recoverable catches; let unexpected failures propagate.
 - Validate untrusted input once at the boundary; trust types inside. Redundant null checks, layered try/catches, or repeat validation need a specific threat justification per layer.
 - Expected-noisy catches need an inline comment naming the error class and recovery behavior.
-
-## VCS (jj vs git)
-
-- Before any VCS command, detect the workspace: `.jj/` at the repo root (or `jj root` exits 0) → jj. Otherwise git. Colocated repos have both; `.jj/` wins.
-- jj has no staging area and no pre-commit hooks. Scope commits with `jj commit <paths> -m "msg"` or `jj split`, not `git add`. Don't rewrite published history (`jj git push --force`, rewriting already-pushed changes with `jj describe`/`jj squash`).
 
 ## Verification
 
