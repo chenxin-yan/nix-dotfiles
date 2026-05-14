@@ -45,10 +45,6 @@
     programs.hunk = {
       enable = true;
       enableGitIntegration = true;
-      # Hunk has no Catppuccin port (no upstream/community theme, no runtime
-      # theme loader). `midnight` is the closest of the four built-ins to
-      # Catppuccin Mocha — dark blue base with mauve/purple modified-file accent.
-      settings.theme = "midnight";
     };
 
     programs.gh = {
