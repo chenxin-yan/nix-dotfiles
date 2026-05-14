@@ -181,11 +181,6 @@
             # MacTeX/TeX Live for LaTeX, `mmdc` for Mermaid in PDFs) on
             # PATH — not declared here; install ad-hoc if/when needed.
             "npm:pi-studio"
-            # @runfusion/fusion is intentionally omitted from this list — it
-            # is NOT a pi extension. Fusion ships as a standalone Node app
-            # with its own CLI (`fn` / `fusion`) and web dashboard; pi is
-            # one of the model integrations it can drive, not its host.
-            # Installed via the `installFusion` activation hook below.
           ];
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
@@ -487,13 +482,7 @@
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes|@runfusion/fusion) ;;
-                # Fusion declares `@mariozechner/pi-coding-agent` as a direct
-                # dependency, which npm hoists to the top-level node_modules
-                # tree on global install. Keep it in the allowlist so the
-                # cleanup pass doesn't race with `installFusion` and delete
-                # Fusion's hoisted pi dep between activation phases.
-                @mariozechner/pi-coding-agent) ;;
+                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes) ;;
                 *) remove_stale "$full" "$pkg_dir" ;;
               esac
             done
@@ -616,35 +605,6 @@
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/glimpseui" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g glimpseui
         fi
-      '';
-
-      # @runfusion/fusion — standalone multi-node agent orchestrator (NOT a
-      # pi extension; see comment in `packages` above). Installed via the
-      # same pi-npm wrapper used for pi extensions so the npm artifact
-      # lands in the writable ~/.pi/agent/npm prefix instead of the
-      # read-only Nix store. The `linkFusionCli` hook below puts `fn` and
-      # `fusion` on $PATH; outside of those two binaries this package is
-      # not consumed by pi itself.
-      home.activation.installFusion = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@runfusion/fusion" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @runfusion/fusion
-        fi
-      '';
-
-      # Fusion ships two CLI entrypoints (`fn` and `fusion`) under
-      # dist/bin.js — same shape as taskplane's bin layout. npm's global
-      # bin dir (~/.pi/agent/npm/bin/) is intentionally NOT on $PATH so
-      # pi extensions don't leak as shell commands; we symlink Fusion's
-      # entrypoint into ~/.local/bin (already on PATH) under both names.
-      # Idempotent: `ln -sfn` replaces any stale symlink each activation.
-      home.activation.linkFusionCli = lib.hm.dag.entryAfter [ "writeBoundary" "installFusion" ] ''
-        $DRY_RUN_CMD mkdir -p "$HOME/.local/bin"
-        $DRY_RUN_CMD ln -sfn \
-          "$HOME/.pi/agent/npm/lib/node_modules/@runfusion/fusion/dist/bin.js" \
-          "$HOME/.local/bin/fn"
-        $DRY_RUN_CMD ln -sfn \
-          "$HOME/.pi/agent/npm/lib/node_modules/@runfusion/fusion/dist/bin.js" \
-          "$HOME/.local/bin/fusion"
       '';
 
       programs.zsh.shellAliases = {
