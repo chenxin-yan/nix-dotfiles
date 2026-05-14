@@ -107,23 +107,16 @@
           };
         };
 
-        # lazyjj reads its theme from the jj config under `lazyjj.*`.
-        # Only `highlight-color` is themable today; pick a catppuccin
-        # surface color so the selected row is readable on mocha.
-        lazyjj = {
-          highlight-color = "#313244"; # surface0
-
-          # Remap describe save from ctrl+s to ctrl+enter (more editor-like).
-          keybinds.log_tab.save = "ctrl+enter";
-        };
-
         # --- UI ---------------------------------------------------------
         # Bare `jj` shows the log instead of help.
         # `pager`/`diff-formatter` route jj diff output through hunk; the
         # `:git`-format external diff is what hunk's pager expects.
         ui = {
           default-command = "log";
-          pager = [ "hunk" "pager" ];
+          pager = [
+            "hunk"
+            "pager"
+          ];
           diff-formatter = ":git";
         };
 
