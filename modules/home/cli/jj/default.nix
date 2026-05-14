@@ -108,20 +108,8 @@
         };
 
         # --- UI ---------------------------------------------------------
-        # Bare `jj` shows the log graph instead of help.
-        #
-        # `hunk pager` (subcommand, not bare `hunk`) sniffs stdin: if it
-        # looks like a git patch it opens the review UI, otherwise it
-        # falls through to `$HUNK_TEXT_PAGER` / `$PAGER` / `less -R`.
-        # That makes it safe as a global pager: `jj diff` (forced to
-        # `:git` format) opens in hunk, `jj log` etc. just paginate.
-        # https://github.com/modem-dev/hunk#jujutsu-pager-integration
         ui = {
           default-command = "log";
-          pager = [
-            "hunk"
-            "pager"
-          ];
           diff-formatter = ":git";
         };
 
@@ -161,18 +149,14 @@
       };
     };
 
-    home.packages = with pkgs; [
-      lazyjj
-    ];
-
     programs.zsh = {
       shellAliases = {
         j = "jj";
         lj = "lazyjj";
         jst = "jj st";
-        jdi = "jj diff";
         ju = "jj undo";
         jc = "jj commit -m";
+        jcs = "jj split";
         jn = "jj new";
         jr = "jj rebase";
         js = "jj squash";
