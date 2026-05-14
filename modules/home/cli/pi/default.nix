@@ -181,11 +181,11 @@
             # MacTeX/TeX Live for LaTeX, `mmdc` for Mermaid in PDFs) on
             # PATH — not declared here; install ad-hoc if/when needed.
             "npm:pi-studio"
-            # taskplane intentionally omitted from global packages — it runs
-            # workspace detection on every session_start regardless of use.
-            # Load per-project via .pi/AGENTS.md, or globally with:
-            #   pi --package npm:taskplane  (alias: po)
-
+            # @runfusion/fusion is intentionally omitted from this list — it
+            # is NOT a pi extension. Fusion ships as a standalone Node app
+            # with its own CLI (`fn` / `fusion`) and web dashboard; pi is
+            # one of the model integrations it can drive, not its host.
+            # Installed via the `installFusion` activation hook below.
           ];
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
@@ -473,7 +473,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|taskplane|glimpseui) ;; # taskplane kept so npm artifact isn't wiped; glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
+              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|glimpseui) ;; # glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
               *) remove_stale "$pkg" "$dir" ;;
             esac
           done
@@ -487,11 +487,12 @@
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes) ;;
-                # Bootstrap symlink into the Nix store, recreated by
-                # `linkPiForTaskplane` below. Keep it so cleanup doesn't
-                # race with the link hook and break taskplane's Pi CLI
-                # resolver between activation phases.
+                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes|@runfusion/fusion) ;;
+                # Fusion declares `@mariozechner/pi-coding-agent` as a direct
+                # dependency, which npm hoists to the top-level node_modules
+                # tree on global install. Keep it in the allowlist so the
+                # cleanup pass doesn't race with `installFusion` and delete
+                # Fusion's hoisted pi dep between activation phases.
                 @mariozechner/pi-coding-agent) ;;
                 *) remove_stale "$full" "$pkg_dir" ;;
               esac
@@ -617,49 +618,37 @@
         fi
       '';
 
-      home.activation.installTaskplane = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/taskplane" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g taskplane
+      # @runfusion/fusion — standalone multi-node agent orchestrator (NOT a
+      # pi extension; see comment in `packages` above). Installed via the
+      # same pi-npm wrapper used for pi extensions so the npm artifact
+      # lands in the writable ~/.pi/agent/npm prefix instead of the
+      # read-only Nix store. The `linkFusionCli` hook below puts `fn` and
+      # `fusion` on $PATH; outside of those two binaries this package is
+      # not consumed by pi itself.
+      home.activation.installFusion = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@runfusion/fusion" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @runfusion/fusion
         fi
       '';
 
-      # Taskplane ships its CLI under the package's bin/ but pi installs
-      # extensions with `npm install -g` into ~/.pi/agent/npm/, which is NOT
-      # on $PATH. Symlink the CLI into ~/.local/bin (already on PATH via the
-      # standard user-bin convention) so `taskplane` works from any shell —
-      # not just zsh — and outside of pi sessions. Idempotent: replaces any
-      # stale symlink each activation so the target tracks the npm install.
-      home.activation.linkTaskplaneCli = lib.hm.dag.entryAfter [ "writeBoundary" "installTaskplane" ] ''
+      # Fusion ships two CLI entrypoints (`fn` and `fusion`) under
+      # dist/bin.js — same shape as taskplane's bin layout. npm's global
+      # bin dir (~/.pi/agent/npm/bin/) is intentionally NOT on $PATH so
+      # pi extensions don't leak as shell commands; we symlink Fusion's
+      # entrypoint into ~/.local/bin (already on PATH) under both names.
+      # Idempotent: `ln -sfn` replaces any stale symlink each activation.
+      home.activation.linkFusionCli = lib.hm.dag.entryAfter [ "writeBoundary" "installFusion" ] ''
         $DRY_RUN_CMD mkdir -p "$HOME/.local/bin"
         $DRY_RUN_CMD ln -sfn \
-          "$HOME/.pi/agent/npm/lib/node_modules/taskplane/bin/taskplane.mjs" \
-          "$HOME/.local/bin/taskplane"
+          "$HOME/.pi/agent/npm/lib/node_modules/@runfusion/fusion/dist/bin.js" \
+          "$HOME/.local/bin/fn"
+        $DRY_RUN_CMD ln -sfn \
+          "$HOME/.pi/agent/npm/lib/node_modules/@runfusion/fusion/dist/bin.js" \
+          "$HOME/.local/bin/fusion"
       '';
 
-      # Symlink the Nix-store pi-coding-agent into the custom npm prefix so
-      # taskplane's resolvePiCliPath() can find @mariozechner/pi-coding-agent/dist/cli.js.
-      # taskplane resolves the Pi CLI via `npm root -g`; under Nix, pi lives in
-      # the Nix store, not in any npm global root, so without this symlink
-      # worker agent spawning fails with "Cannot find Pi CLI entrypoint".
-      # Must run after cleanupPiPackages: the cleanup loop's allowlist keeps
-      # @mariozechner/pi-coding-agent in place, but the DAG order also needs
-      # to be explicit so a future cleanup-rule change can't silently nuke
-      # the link between hooks.
-      home.activation.linkPiForTaskplane =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            $DRY_RUN_CMD mkdir -p "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner"
-            $DRY_RUN_CMD ln -sfn \
-              "${pkgs.pi-coding-agent}/lib/node_modules/@mariozechner/pi-coding-agent" \
-              "$HOME/.pi/agent/npm/lib/node_modules/@mariozechner/pi-coding-agent"
-          '';
-
       programs.zsh.shellAliases = {
-        # NPM_CONFIG_PREFIX ensures `npm root -g` (called by taskplane's path
-        # resolver) returns ~/.pi/agent/npm/lib/node_modules, where the
-        # pi-coding-agent symlink above lives.
-        p = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi";
-        po = "NPM_CONFIG_PREFIX=$HOME/.pi/agent/npm pi -e npm:taskplane";
+        p = "pi";
       };
     };
 }
