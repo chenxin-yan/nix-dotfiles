@@ -57,8 +57,9 @@ vim.keymap.set({ 'n', 'x' }, 'L', '$')
 vim.keymap.set('n', '<leader><C-a>', 'gg<s-v>G', { desc = 'Select all' })
 
 -- switch between buffers
-vim.keymap.set('n', '[b', '<cmd>bprev<cr>', { desc = 'Previous buffer' })
-vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<c-p>', '<cmd>bprev<cr>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<c-n>', '<cmd>bnext<cr>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<leader><Tab>', '<cmd>b#<cr>', { desc = 'Last opened buffer' })
 
 -- select pasted text
 vim.keymap.set('n', 'gP', '`[v`]', { desc = 'Select Pasted Text' })
