@@ -1,6 +1,6 @@
 return {
   {
-    "nvim-treesitter/nvim-treesitter",
+    "romus204/tree-sitter-manager.nvim",
     opts = {
       ensure_installed = { "http", "graphql" },
     },

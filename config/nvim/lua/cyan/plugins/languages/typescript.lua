@@ -8,7 +8,7 @@ return {
     },
   },
   {
-    'nvim-treesitter/nvim-treesitter',
+    'romus204/tree-sitter-manager.nvim',
     opts = { ensure_installed = { 'javascript', 'typescript', 'tsx', 'astro', 'json5', 'jsdoc', 'prisma' } },
   },
 

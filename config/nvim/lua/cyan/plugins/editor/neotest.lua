@@ -3,7 +3,7 @@ return {
   dependencies = {
     'nvim-neotest/nvim-nio',
     'nvim-lua/plenary.nvim',
-    'nvim-treesitter/nvim-treesitter',
+    'romus204/tree-sitter-manager.nvim',
   },
   opts = {
     adapters = {},

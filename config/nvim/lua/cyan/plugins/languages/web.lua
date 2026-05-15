@@ -12,7 +12,7 @@ local oxfmt_supported = {
 
 return {
   {
-    'nvim-treesitter/nvim-treesitter',
+    'romus204/tree-sitter-manager.nvim',
     opts = { ensure_installed = { 'xml', 'html', 'css', 'json', 'json5', 'yaml', 'toml' } },
   },
 

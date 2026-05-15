@@ -14,7 +14,7 @@ return {
   },
   { 'Bilal2453/luvit-meta', lazy = true },
   {
-    'nvim-treesitter/nvim-treesitter',
+    'romus204/tree-sitter-manager.nvim',
     opts = { ensure_installed = { 'lua', 'luadoc', 'luap' } },
   },
   { -- LSP Configuration & Plugins

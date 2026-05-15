@@ -20,7 +20,7 @@ return {
     },
   },
   {
-    'nvim-treesitter/nvim-treesitter',
+    'romus204/tree-sitter-manager.nvim',
     opts = { ensure_installed = { 'markdown', 'markdown_inline', 'yaml', 'latex' } },
   },
   {
@@ -53,7 +53,7 @@ return {
   },
   {
     'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+    dependencies = { 'echasnovski/mini.nvim' },
     init = function()
       vim.filetype.add {
         extension = {

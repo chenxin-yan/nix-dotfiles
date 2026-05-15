@@ -47,7 +47,7 @@ return {
   },
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'nvim-treesitter/nvim-treesitter',
+    'romus204/tree-sitter-manager.nvim',
   },
   opts = {
     -- prompt for return type
