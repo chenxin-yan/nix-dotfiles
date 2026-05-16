@@ -19,6 +19,11 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
+    homebrew-daytona = {
+      url = "github:daytonaio/homebrew-cli";
+      flake = false;
+    };
+
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -40,6 +45,7 @@
       nix-homebrew,
       zen-browser,
       hunk,
+      homebrew-daytona,
       ...
     }:
     {
@@ -76,6 +82,9 @@
               enableRosetta = false;
               user = "yanchenxin";
               mutableTaps = true;
+              taps = {
+                "daytonaio/homebrew-cli" = homebrew-daytona;
+              };
             };
           }
           ./hosts/darwin/configuration.nix

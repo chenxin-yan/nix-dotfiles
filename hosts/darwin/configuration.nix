@@ -68,8 +68,12 @@
 
   homebrew = {
     enable = true;
+    taps = [
+      "daytonaio/cli"
+    ];
     brews = [
       "mole"
+      "daytonaio/cli/daytona"
     ];
     casks = [
       "todoist-app"
