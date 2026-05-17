@@ -186,6 +186,24 @@
             # clarity, naming, and redundancy without changing behavior.
             # See github.com/MattDevy/pi-extensions/tree/main/packages/pi-simplify.
             "npm:pi-simplify"
+            # Goal mode — `/goal <task>` makes pi keep working on a single
+            # objective until the agent calls the `goal_complete` tool,
+            # the goal is paused/cleared, or an optional token budget is
+            # hit (`/goal --tokens 100k <task>`). Subcommands: pause,
+            # resume, clear, edit. When an agent turn ends without
+            # `goal_complete`, the extension auto-injects a continuation
+            # prompt — same mechanism as Codex's persistence loop.
+            #
+            # Coexists with `@juicesharp/rpiv-todo` above: different
+            # command (/goal vs /todos), different tool (`goal_complete`
+            # vs `todo`). pi-goal sits one level above the todo list — a
+            # single long-running objective; todos break it into steps.
+            #
+            # Goal state is session-scoped (survives /reload, does NOT
+            # carry across new sessions in the same cwd — older
+            # versions kept a global ~/.pi/agent/pi-goal-state.json
+            # which 0.1.19 no longer reads).
+            "npm:@narumitw/pi-goal"
           ];
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
@@ -487,7 +505,7 @@
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes) ;;
+                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes|@narumitw/pi-goal) ;;
                 *) remove_stale "$full" "$pkg_dir" ;;
               esac
             done
@@ -590,6 +608,12 @@
       home.activation.installPiSimplify = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-simplify" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-simplify
+        fi
+      '';
+
+      home.activation.installPiGoal = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@narumitw/pi-goal" ]; then
+          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @narumitw/pi-goal
         fi
       '';
 
