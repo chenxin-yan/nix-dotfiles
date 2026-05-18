@@ -12,23 +12,21 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "github.com" = {
-        addKeysToAgent = "yes";
-        identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
-        extraOptions = {
-          UseKeychain = "yes";
-        };
+        AddKeysToAgent = "yes";
+        IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+        UseKeychain = "yes";
       };
 
       "cyan-minipc" = {
-        user = "cyan";
-        identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+        User = "cyan";
+        IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
       };
 
       "cyanpi" = {
-        user = "yanchenxin";
-        identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+        User = "yanchenxin";
+        IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
       };
     };
   };

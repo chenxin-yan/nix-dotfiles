@@ -255,7 +255,7 @@
             };
             reviewer = {
               model = "openai/gpt-5.5";
-              thinking = "high";
+              thinking = "medium";
             };
             # researcher is read-heavy; Sonnet's 1M context does the lifting,
             # not reasoning depth. Start at medium and let hard research
@@ -266,7 +266,7 @@
             };
             oracle = {
               model = "openai/gpt-5.5";
-              thinking = "high";
+              thinking = "medium";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
             # pi-subagents (see ~/.pi/agent/npm/lib/node_modules/pi-subagents/
