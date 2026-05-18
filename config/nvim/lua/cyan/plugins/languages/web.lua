@@ -1,3 +1,6 @@
+-- astro is intentionally absent: oxfmt does not yet support .astro
+-- (https://github.com/oxc-project/oxc/issues/15665). svelte needs svelte/compiler
+-- installed in the project for oxfmt to work on .svelte files.
 local oxfmt_supported = {
   javascript = true,
   javascriptreact = true,
@@ -7,7 +10,10 @@ local oxfmt_supported = {
   jsonc = true,
   vue = true,
   svelte = true,
-  astro = true,
+  css = true,
+  scss = true,
+  less = true,
+  graphql = true,
 }
 
 local biome_supported = {
@@ -36,7 +42,7 @@ local function has_oxc_config(bufnr)
 end
 
 -- union of filetypes any of our formatters can handle
-local formatted_fts = { 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json', 'jsonc', 'vue', 'svelte', 'astro' }
+local formatted_fts = { 'css', 'scss', 'less', 'graphql', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json', 'jsonc', 'vue', 'svelte', 'astro' }
 
 return {
   {

@@ -28,10 +28,12 @@
 - Replace user-approved superseded code outright. No backward-compat shims unless asked.
 - When two existing patterns contradict, pick one (more recent / better-tested), explain why, flag the other for cleanup. Don't average them.
 
-## Errors (fail fast)
+## Errors & defensiveness (fail fast)
 
+- No defense in depth without a named threat. Every redundant check, fallback, defensive copy, or layered guard must justify a specific failure mode it prevents — "just in case" is not a reason. Trust the types, trust validated input, trust your own code one call away.
 - Prefer narrow, recoverable catches; let unexpected failures propagate.
 - Validate untrusted input once at the boundary; trust types inside. Redundant null checks, layered try/catches, or repeat validation need a specific threat justification per layer.
+- No branches for impossible states. If the type system or a prior check rules it out, don't add an `else` / fallback / assertion to "be safe" — that's dead code pretending to be defensive.
 - Expected-noisy catches need an inline comment naming the error class and recovery behavior.
 
 ## Verification
