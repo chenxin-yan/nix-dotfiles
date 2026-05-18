@@ -1,14 +1,42 @@
 local oxfmt_supported = {
-  'javascript',
-  'javascriptreact',
-  'typescript',
-  'typescriptreact',
-  'json',
-  'jsonc',
-  'vue',
-  'svelte',
-  'astro',
+  javascript = true,
+  javascriptreact = true,
+  typescript = true,
+  typescriptreact = true,
+  json = true,
+  jsonc = true,
+  vue = true,
+  svelte = true,
+  astro = true,
 }
+
+local biome_supported = {
+  css = true,
+  javascript = true,
+  javascriptreact = true,
+  json = true,
+  jsonc = true,
+  typescript = true,
+  typescriptreact = true,
+  vue = true,
+}
+
+-- treat the project as opted into oxc when any of these exist anywhere up the tree
+local oxc_root_markers = {
+  '.oxlintrc.json',
+  '.oxlintrc.jsonc',
+  'oxlint.config.ts',
+  '.oxfmtrc.json',
+  '.oxfmtrc.jsonc',
+  'oxfmt.config.ts',
+}
+
+local function has_oxc_config(bufnr)
+  return vim.fs.root(bufnr, oxc_root_markers) ~= nil
+end
+
+-- union of filetypes any of our formatters can handle
+local formatted_fts = { 'css', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json', 'jsonc', 'vue', 'svelte', 'astro' }
 
 return {
   {
@@ -112,17 +140,6 @@ return {
   },
   {
     'stevearc/conform.nvim',
-    optional = true,
-    opts = function(_, opts)
-      opts.formatters_by_ft = opts.formatters_by_ft or {}
-      for _, ft in ipairs(oxfmt_supported) do
-        opts.formatters_by_ft[ft] = opts.formatters_by_ft[ft] or {}
-        table.insert(opts.formatters_by_ft[ft], 'oxfmt')
-      end
-    end,
-  },
-  {
-    'stevearc/conform.nvim',
     opts = function(_, opts)
       opts.formatters = vim.tbl_extend('force', opts.formatters or {}, {
         biome = {
@@ -138,25 +155,17 @@ return {
         },
       })
 
-      -- setup biome & prettier fallback
-      local biome_supported = {
-        'css',
-        'javascript',
-        'javascriptreact',
-        'json',
-        'jsonc',
-        'typescript',
-        'typescriptreact',
-        'vue',
-      }
-
-      for _, ft in ipairs(biome_supported) do
+      opts.formatters_by_ft = opts.formatters_by_ft or {}
+      -- Per-buffer priority: oxfmt (when project opts into oxc) > biome > prettierd
+      for _, ft in ipairs(formatted_fts) do
         opts.formatters_by_ft[ft] = function(bufnr)
-          if require('conform').get_formatter_info('biome', bufnr).available then
-            return { 'biome' }
-          else
-            return { 'prettierd' }
+          if oxfmt_supported[ft] and has_oxc_config(bufnr) then
+            return { 'oxfmt' }
           end
+          if biome_supported[ft] and require('conform').get_formatter_info('biome', bufnr).available then
+            return { 'biome' }
+          end
+          return { 'prettierd' }
         end
       end
 

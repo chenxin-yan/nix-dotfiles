@@ -28,6 +28,8 @@
       emmet-language-server
       prettierd
       biome
+      oxfmt
+      oxlint
       taplo
       yaml-language-server
     ];
