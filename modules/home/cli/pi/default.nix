@@ -204,6 +204,16 @@
             # versions kept a global ~/.pi/agent/pi-goal-state.json
             # which 0.1.19 no longer reads).
             "npm:@narumitw/pi-goal"
+            # Custom provider that routes model requests through the Cursor
+            # Agent CLI, so any model on your Cursor subscription (Claude,
+            # GPT, Gemini, Grok, Composer, …) is callable from Pi without a
+            # separate API key per provider. Auth lives in ~/.cursor/ and
+            # is managed by `agent login` (or `/cursor-login` inside Pi);
+            # the `cursor-agent` CLI must be on PATH (currently installed
+            # at ~/.local/bin/agent, outside Nix). Select models with
+            # `/model cursor/<id>` — `agent models` lists what your
+            # account can see. See github.com/netandreus/pi-cursor-provider.
+            "npm:@netandreus/pi-cursor-provider"
           ];
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
@@ -505,7 +515,7 @@
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes|@narumitw/pi-goal) ;;
+                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes|@narumitw/pi-goal|@netandreus/pi-cursor-provider) ;;
                 *) remove_stale "$full" "$pkg_dir" ;;
               esac
             done
@@ -616,6 +626,14 @@
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @narumitw/pi-goal
         fi
       '';
+
+      home.activation.installPiCursorProvider =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@netandreus/pi-cursor-provider" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @netandreus/pi-cursor-provider
+            fi
+          '';
 
       # Glimpse: native WebView micro-UI used by pi-web-access to render the
       # search curator inside an OS-level overlay window attached to pi,
