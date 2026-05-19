@@ -59,8 +59,8 @@ dotfiles/
 │   │   ├── core/              # Shell, editor, git
 │   │   ├── cli/               # CLI tools and services
 │   │   ├── app/               # GUI applications
-│   │   │   ├── shared/        # Cross-platform (ghostty, vesktop, espanso, zen-browser)
-│   │   │   ├── darwin/        # macOS-only (kanata, sketchybar)
+│   │   │   ├── shared/        # Cross-platform (ghostty, vesktop, espanso, zen-browser, todoist, telegram)
+│   │   │   ├── darwin/        # macOS-only (iina, kanata, sketchybar)
 │   │   │   └── linux/         # Linux-only (hyprland, waybar)
 │   │   └── dev/               # Language toolchains and LSPs
 │   ├── darwin/                # nix-darwin system modules (1password, aerospace, kanata)
@@ -149,16 +149,16 @@ dotfiles/
 
 ## Usage
 
-| Command              | Description                                     |
-| -------------------- | ----------------------------------------------- |
-| `just switch`        | Rebuild and apply system configuration           |
-| `just home`          | Apply home-manager configuration (standalone)    |
-| `just update`        | Update all flake inputs to latest                |
-| `just update-pins`   | Update pinned fetchFromGitHub dependencies       |
-| `just clean`         | Garbage collect old generations and optimize store |
-| `just fmt`           | Format all Nix files with treefmt                |
-| `just search <pkg>`  | Search nixpkgs for a package                     |
-| `just show <pkg>`    | Show package information                         |
+| Command             | Description                                        |
+| ------------------- | -------------------------------------------------- |
+| `just switch`       | Rebuild and apply system configuration             |
+| `just home`         | Apply home-manager configuration (standalone)      |
+| `just update`       | Update all flake inputs to latest                  |
+| `just update-pins`  | Update pinned fetchFromGitHub dependencies         |
+| `just clean`        | Garbage collect old generations and optimize store |
+| `just fmt`          | Format all Nix files with treefmt                  |
+| `just search <pkg>` | Search nixpkgs for a package                       |
+| `just show <pkg>`   | Show package information                           |
 
 ## Module Architecture
 
@@ -175,28 +175,28 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 
 `modules/home/core/`
 
-| Module     | Purpose                                                                  |
-| ---------- | ------------------------------------------------------------------------ |
-| `zsh`      | Zsh with vi keybindings, oh-my-posh prompt, fzf, direnv, modern CLI tools |
-| `git`      | Git config, delta diffs, GitHub CLI, gh-dash, lazygit                    |
-| `nvim`     | Neovim with out-of-store symlink to `config/nvim/`                       |
-| `nushell`  | Nushell shell                                                            |
+| Module    | Purpose                                                                   |
+| --------- | ------------------------------------------------------------------------- |
+| `zsh`     | Zsh with vi keybindings, oh-my-posh prompt, fzf, direnv, modern CLI tools |
+| `git`     | Git config, delta diffs, GitHub CLI, gh-dash, lazygit                     |
+| `nvim`    | Neovim with out-of-store symlink to `config/nvim/`                        |
+| `nushell` | Nushell shell                                                             |
 
 ### CLI Modules
 
 `modules/home/cli/`
 
-| Module       | Purpose                                             |
-| ------------ | --------------------------------------------------- |
-| `zellij`     | Terminal multiplexer                                 |
-| `yazi`       | Terminal file manager with plugins                   |
-| `jj`         | Jujutsu version control (Git alternative)            |
-| `mise`       | Polyglot runtime/tool version manager                |
-| `syncthing`  | File sync across 3 devices                           |
-| `opencode`   | AI coding assistant config                           |
-| `pandoc`     | Document conversion                                  |
-| `pi`         | Pi coding agent (terminal coding harness)            |
-| `podman`     | Rootless containers                                  |
+| Module      | Purpose                                   |
+| ----------- | ----------------------------------------- |
+| `zellij`    | Terminal multiplexer                      |
+| `yazi`      | Terminal file manager with plugins        |
+| `jj`        | Jujutsu version control (Git alternative) |
+| `mise`      | Polyglot runtime/tool version manager     |
+| `syncthing` | File sync across 3 devices                |
+| `gcloud`    | Google Cloud SDK                          |
+| `pandoc`    | Document conversion                       |
+| `pi`        | Pi coding agent (terminal coding harness) |
+| `podman`    | Rootless containers                       |
 
 ### App Modules
 
@@ -204,67 +204,69 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 
 **Shared** (all platforms):
 
-| Module         | Purpose               |
-| -------------- | --------------------- |
-| `ghostty`      | Terminal emulator      |
-| `vesktop`      | Discord client         |
-| `espanso`      | Text expander          |
-| `zen-browser`  | Privacy-focused browser |
-| `todoist`      | Task management        |
+| Module        | Purpose                 |
+| ------------- | ----------------------- |
+| `ghostty`     | Terminal emulator       |
+| `vesktop`     | Discord client          |
+| `telegram`    | Telegram Desktop        |
+| `espanso`     | Text expander           |
+| `zen-browser` | Privacy-focused browser |
+| `todoist`     | Task management         |
 
 **Darwin only** (macOS):
 
-| Module       | Purpose                              |
-| ------------ | ------------------------------------ |
-| `kanata`     | Keyboard remapping (home-row mods)   |
-| `sketchybar` | Custom status bar with plugins       |
+| Module       | Purpose                            |
+| ------------ | ---------------------------------- |
+| `iina`       | Video player                       |
+| `kanata`     | Keyboard remapping (home-row mods) |
+| `sketchybar` | Custom status bar with plugins     |
 
 **Linux only** (NixOS):
 
-| Module      | Purpose                    |
-| ----------- | -------------------------- |
-| `hyprland`  | Wayland tiling compositor  |
-| `waybar`    | Status bar for Hyprland    |
+| Module     | Purpose                   |
+| ---------- | ------------------------- |
+| `hyprland` | Wayland tiling compositor |
+| `waybar`   | Status bar for Hyprland   |
 
 ### Dev Modules
 
 `modules/home/dev/`
 
-| Module       | Includes                               |
-| ------------ | -------------------------------------- |
+| Module       | Includes                                     |
+| ------------ | -------------------------------------------- |
 | `python`     | Python 3.13, uv, ruff, basedpyright, debugpy |
-| `typescript` | TypeScript/JavaScript tooling          |
-| `go`         | Go toolchain                           |
-| `java`       | Java development tools                 |
-| `lua`        | Lua toolchain                          |
-| `nix`        | Nix language tools, nixfmt             |
-| `c`          | C/C++ development                      |
-| `bash`       | Bash scripting tools                   |
-| `markdown`   | Markdown tools                         |
-| `sql`        | SQL tools                              |
-| `latex`      | LaTeX (tectonic, texlab)               |
-| `web`        | HTML/CSS/Emmet, Astro, Prisma          |
+| `typescript` | TypeScript/JavaScript tooling                |
+| `go`         | Go toolchain                                 |
+| `java`       | Java development tools                       |
+| `lua`        | Lua toolchain                                |
+| `nix`        | Nix language tools, nixfmt                   |
+| `c`          | C/C++ development                            |
+| `bash`       | Bash scripting tools                         |
+| `markdown`   | Markdown tools                               |
+| `sql`        | SQL tools                                    |
+| `latex`      | LaTeX (tectonic, texlab)                     |
+| `web`        | HTML/CSS/Emmet, Astro, Prisma                |
 
 ### System Modules
 
 **nix-darwin** (`modules/darwin/`):
 
-| Module       | Purpose                       |
-| ------------ | ----------------------------- |
-| `1password`  | 1Password integration         |
-| `aerospace`  | Tiling window manager         |
-| `kanata`     | Keyboard remapper daemon      |
+| Module      | Purpose                  |
+| ----------- | ------------------------ |
+| `1password` | 1Password integration    |
+| `aerospace` | Tiling window manager    |
+| `kanata`    | Keyboard remapper daemon |
 
 **NixOS** (`modules/nixos/`):
 
-| Module      | Purpose                  |
-| ----------- | ------------------------ |
-| `sddm`      | Display manager          |
-| `hyprland`  | Wayland compositor       |
-| `1password` | 1Password integration    |
-| `audio`     | Audio system (PipeWire)  |
-| `bluetooth` | Bluetooth support        |
-| `mosh`      | Mobile shell server      |
+| Module      | Purpose                 |
+| ----------- | ----------------------- |
+| `sddm`      | Display manager         |
+| `hyprland`  | Wayland compositor      |
+| `1password` | 1Password integration   |
+| `audio`     | Audio system (PipeWire) |
+| `bluetooth` | Bluetooth support       |
+| `mosh`      | Mobile shell server     |
 
 ## Neovim
 
@@ -311,42 +313,40 @@ Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/f
 </details>
 
 <details>
-<summary><b>UI</b> (6 plugins)</summary>
+<summary><b>UI</b> (5 plugins)</summary>
 
 - **noice.nvim** — Enhanced messages and command line
 - **lualine.nvim** — Status line
 - **rainbow-delimiters.nvim** — Colorful bracket matching
 - **todo-comments.nvim** — TODO/FIXME/NOTE highlighting
 - **nvim-lsp-endhints** — End-of-block type hints
-- **gitgraph.nvim** — ASCII git graph
 
 </details>
 
 <details>
 <summary><b>Languages</b> (12 configs)</summary>
 
-| Language   | LSP Server(s)           | Formatter        |
-| ---------- | ----------------------- | ---------------- |
-| Python     | basedpyright, ruff      | ruff             |
-| TypeScript | vtsls                   | prettier         |
-| Go         | gopls                   | goimports, gofumpt |
-| Java       | jdtls                   | -                |
-| Lua        | lua_ls                  | stylua           |
-| Nix        | nil_ls                  | nixfmt           |
-| C          | clangd                  | clang-format     |
-| Bash       | bashls                  | shfmt            |
-| SQL        | sqls                    | -                |
-| Markdown   | -                       | -                |
-| Web        | emmet_ls, astro         | prettier         |
-| Docker     | dockerls, docker_compose_ls | -            |
+| Language   | LSP Server(s)               | Formatter          |
+| ---------- | --------------------------- | ------------------ |
+| Python     | basedpyright, ruff          | ruff               |
+| TypeScript | vtsls                       | prettier           |
+| Go         | gopls                       | goimports, gofumpt |
+| Java       | jdtls                       | -                  |
+| Lua        | lua_ls                      | stylua             |
+| Nix        | nil_ls                      | nixfmt             |
+| C          | clangd                      | clang-format       |
+| Bash       | bashls                      | shfmt              |
+| SQL        | sqls                        | -                  |
+| Markdown   | -                           | -                  |
+| Web        | emmet_ls, astro             | prettier           |
+| Docker     | dockerls, docker_compose_ls | -                  |
 
 </details>
 
 <details>
-<summary><b>Extras</b> (7 plugins)</summary>
+<summary><b>Extras</b> (6 plugins)</summary>
 
 - **yazi.nvim** — Terminal file manager integration
-- **diffview.nvim** — Enhanced git diff viewer
 - **kulala.nvim** — HTTP client for REST APIs
 - **leetcode.nvim** — LeetCode practice
 - **cord.nvim** — Discord Rich Presence
@@ -361,28 +361,28 @@ Zsh with vi mode (`viins` keymap) and [oh-my-posh](https://ohmyposh.dev/) prompt
 
 ### Modern CLI Replacements
 
-| Traditional | Replacement | Alias/Integration          |
-| ----------- | ----------- | -------------------------- |
-| `ls`        | eza         | `ls`, `ll`, `tree`         |
-| `cat`       | bat         | `cat`                      |
-| `cd`        | zoxide      | `cd` (via `--cmd cd`)      |
-| `find`      | fd          | Used by fzf                |
-| `grep`      | ripgrep     | `rg`                       |
-| `diff`      | delta       | Git integration            |
-| `top`       | btop        | Vim keybindings            |
-| `man`       | tlrc        | Community-maintained tldr  |
+| Traditional | Replacement | Alias/Integration         |
+| ----------- | ----------- | ------------------------- |
+| `ls`        | eza         | `ls`, `ll`, `tree`        |
+| `cat`       | bat         | `cat`                     |
+| `cd`        | zoxide      | `cd` (via `--cmd cd`)     |
+| `find`      | fd          | Used by fzf               |
+| `grep`      | ripgrep     | `rg`                      |
+| `diff`      | hunk        | Git integration           |
+| `top`       | btop        | Vim keybindings           |
+| `man`       | tlrc        | Community-maintained tldr |
 
 ### Key Bindings
 
-| Binding   | Action                        |
-| --------- | ----------------------------- |
-| `Ctrl+P`  | History search backward        |
-| `Ctrl+N`  | History search forward         |
-| `Ctrl+Y`  | Accept autosuggestion          |
-| `Ctrl+G`  | Open lazygit                   |
-| `Alt+D`   | fzf directory picker           |
-| `Esc Esc` | Prepend `sudo` to command      |
-| `H` / `L` | Line start/end (vi cmd mode)  |
+| Binding   | Action                       |
+| --------- | ---------------------------- |
+| `Ctrl+P`  | History search backward      |
+| `Ctrl+N`  | History search forward       |
+| `Ctrl+Y`  | Accept autosuggestion        |
+| `Ctrl+G`  | Open lazygit                 |
+| `Alt+D`   | fzf directory picker         |
+| `Esc Esc` | Prepend `sudo` to command    |
+| `H` / `L` | Line start/end (vi cmd mode) |
 
 ### Per-Project Environments
 
@@ -392,19 +392,19 @@ Zsh with vi mode (`viins` keymap) and [oh-my-posh](https://ohmyposh.dev/) prompt
 
 All scripts live in `scripts/` and are symlinked to `~/.local/bin/scripts`. Shell aliases are defined in `modules/home/core/zsh/scripting.nix`.
 
-| Alias   | Script                     | Purpose                                      |
-| ------- | -------------------------- | -------------------------------------------- |
-| `se`    | `dev/attach.sh`            | Attach to or create a Zellij dev session     |
-| `dvc`   | `dev/clone.sh`             | Clone a repo into organized dev directory    |
-| `scu`   | `dev/cleanup.sh`           | Clean up orphaned Zellij sessions            |
-| `wt`    | `dev/worktree.sh`          | Create/switch git worktrees with Zellij      |
-| `wtc`   | `dev/worktree-cleanup.sh`  | Remove worktrees for deleted remote branches |
-| `wtrm`  | `dev/worktree-delete.sh`   | Interactively delete worktrees               |
-| `srm`   | `dev/session-remove.sh`    | Remove a project with safety checks          |
-| `fzg`   | `utils/rg_with_fzf.sh`    | Ripgrep with fzf preview, opens in Neovim    |
-| `md2pdf`| `utils/md2pdf.sh`          | Interactive markdown to PDF conversion        |
-| `notes` | `notes/search.sh`          | Search and open notes with fzf               |
-| `cdv`   | _(alias)_                  | `cd $DEV_PATH`                               |
+| Alias    | Script                    | Purpose                                      |
+| -------- | ------------------------- | -------------------------------------------- |
+| `se`     | `dev/attach.sh`           | Attach to or create a Zellij dev session     |
+| `dvc`    | `dev/clone.sh`            | Clone a repo into organized dev directory    |
+| `scu`    | `dev/cleanup.sh`          | Clean up orphaned Zellij sessions            |
+| `wt`     | `dev/worktree.sh`         | Create/switch git worktrees with Zellij      |
+| `wtc`    | `dev/worktree-cleanup.sh` | Remove worktrees for deleted remote branches |
+| `wtrm`   | `dev/worktree-delete.sh`  | Interactively delete worktrees               |
+| `srm`    | `dev/session-remove.sh`   | Remove a project with safety checks          |
+| `fzg`    | `utils/rg_with_fzf.sh`    | Ripgrep with fzf preview, opens in Neovim    |
+| `md2pdf` | `utils/md2pdf.sh`         | Interactive markdown to PDF conversion       |
+| `notes`  | `notes/search.sh`         | Search and open notes with fzf               |
+| `cdv`    | _(alias)_                 | `cd $DEV_PATH`                               |
 
 Dev repos are organized as `~/dev/<host>/<owner>/<repo>` (e.g., `~/dev/github.com/user/project`).
 
@@ -433,45 +433,48 @@ Wayland compositor configured in `modules/home/app/linux/hyprland/` and `modules
 
 [Kanata](https://github.com/jtroo/kanata) provides home-row modifiers on macOS (config at `modules/home/app/darwin/kanata/config/kanata.kbd`):
 
-| Key  | Tap  | Hold    |
-| ---- | ---- | ------- |
-| A    | a    | Cmd     |
-| S    | s    | Shift   |
-| D    | d    | Alt     |
-| F    | f    | Ctrl    |
-| G/H  | g/h  | Hyper   |
-| J    | j    | Ctrl    |
-| K    | k    | Alt     |
-| L    | l    | Shift   |
-| ;    | ;    | Cmd     |
-| Caps | Esc  | Super layer |
+| Key  | Tap | Hold        |
+| ---- | --- | ----------- |
+| A    | a   | Cmd         |
+| S    | s   | Shift       |
+| D    | d   | Alt         |
+| F    | f   | Ctrl        |
+| G/H  | g/h | Hyper       |
+| J    | j   | Ctrl        |
+| K    | k   | Alt         |
+| L    | l   | Shift       |
+| ;    | ;   | Cmd         |
+| Caps | Esc | Super layer |
 
 The ZSA Voyager keyboard is excluded from Kanata remapping.
 
 ## Flake Inputs
 
-| Input            | Source                                 | Purpose                         |
-| ---------------- | -------------------------------------- | ------------------------------- |
-| `nixpkgs`        | `nixos-unstable`                       | Package repository              |
-| `home-manager`   | follows nixpkgs                        | User environment management     |
-| `nix-darwin`     | `nix-darwin/nix-darwin/master`         | macOS system configuration      |
-| `nix-homebrew`   | `zhaofengli/nix-homebrew`              | Declarative Homebrew management |
-| `catppuccin`     | `catppuccin/nix`                       | Global theming                  |
-| `zen-browser`    | `0xc000022070/zen-browser-flake`       | Zen Browser for NixOS           |
+| Input              | Source                              | Purpose                                     |
+| ------------------ | ----------------------------------- | ------------------------------------------- |
+| `nixpkgs`          | `nixos-unstable`                    | Package repository                          |
+| `home-manager`     | follows nixpkgs                     | User environment management                 |
+| `nix-darwin`       | `nix-darwin/nix-darwin/master`      | macOS system configuration                  |
+| `nix-homebrew`     | `zhaofengli/nix-homebrew`           | Declarative Homebrew management             |
+| `homebrew-daytona` | `daytonaio/homebrew-cli`            | Daytona tap (used by nix-homebrew)          |
+| `catppuccin`       | `catppuccin/nix`                    | Global theming                              |
+| `pi-catppuccin`    | `otahontas/pi-coding-agent-catppuccin` | Catppuccin theme for the pi coding agent |
+| `zen-browser`      | `0xc000022070/zen-browser-flake`    | Zen Browser for NixOS                       |
+| `hunk`             | `modem-dev/hunk`                    | Diff viewer (Home Manager module)           |
 
 ## Environment Variables
 
 Set in `hosts/home.nix` and available in all shells:
 
-| Variable         | Default                  | Purpose                        |
-| ---------------- | ------------------------ | ------------------------------ |
-| `DOTFILES_PATH`  | `~/dotfiles`             | Location of this repo          |
-| `DEV_PATH`       | `~/dev`                  | Development repositories       |
-| `PROJECTS_PATH`  | `~/PARA/01 Projects`     | Active projects (PARA method)  |
-| `AREAS_PATH`     | `~/PARA/02 Areas`        | Areas of responsibility        |
-| `NOTES_PATH`     | `~/notes`                | Notes directory                |
-| `EDITOR`         | `nvim`                   | Default editor                 |
-| `VISUAL`         | `nvim`                   | Default visual editor          |
+| Variable        | Default              | Purpose                       |
+| --------------- | -------------------- | ----------------------------- |
+| `DOTFILES_PATH` | `~/dotfiles`         | Location of this repo         |
+| `DEV_PATH`      | `~/dev`              | Development repositories      |
+| `PROJECTS_PATH` | `~/PARA/01 Projects` | Active projects (PARA method) |
+| `AREAS_PATH`    | `~/PARA/02 Areas`    | Areas of responsibility       |
+| `NOTES_PATH`    | `~/notes`            | Notes directory               |
+| `EDITOR`        | `nvim`               | Default editor                |
+| `VISUAL`        | `nvim`               | Default visual editor         |
 
 ## Customization
 
@@ -482,6 +485,7 @@ Set in `hosts/home.nix` and available in all shells:
 2. **Hardware config**: Always regenerate `hosts/nixos/hardware-configuration.nix` for your own machine
 
 3. **Disable modules**: Set `<category>.<module>.enable = false` in your host's `home.nix`:
+
    ```nix
    dev.latex.enable = false;
    cli.podman.enable = false;

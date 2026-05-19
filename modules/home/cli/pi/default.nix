@@ -27,15 +27,15 @@
       anthropicSkills = pkgs.fetchFromGitHub {
         owner = "anthropics";
         repo = "skills";
-        rev = "f458cee31a7577a47ba0c9a101976fa599385174";
-        hash = "sha256-jKNYFom6R+Qw7LQ8vFPBe51JpqIP0tTSY8LM4aPlnT4=";
+        rev = "690f15cac7f7b4c055c5ab109c79ed9259934081";
+        hash = "sha256-GMXFJSePrpEvhzMQ82YI9Z10BDkuFK/lXUDELclvQ4c=";
       };
 
       mattpocockSkills = pkgs.fetchFromGitHub {
         owner = "mattpocock";
         repo = "skills";
-        rev = "e74f0061bb67222181640effa98c675bdb2fdaa7";
-        hash = "sha256-5Rr5BQe8bdQXWt/H6QjYpoM4X+GuWPK26rU2VSqTZVI=";
+        rev = "b8be62ffacb0118fa3eaa29a0923c87c8c11985c";
+        hash = "sha256-Qwuu27f95xgAJ4hdv/4TNahHhprCMIxl1H9f9ymEsno=";
       };
     in
     lib.mkIf config.cli.pi.enable {
