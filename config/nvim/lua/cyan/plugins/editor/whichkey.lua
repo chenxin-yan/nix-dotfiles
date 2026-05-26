@@ -17,6 +17,7 @@ return {
         { '<leader>r', group = 'Refactor', mode = { 'n', 'x' } },
         { '<leader>u', group = 'Toggle' },
         { '<leader>g', group = 'Git' },
+        { '<leader>j', group = 'JJ' },
         { '<leader>h', group = 'Hunk', mode = { 'n', 'x' }, icon = ' ' },
         { '<leader>b', group = 'Buffer' },
         { '<leader>S', icon = ' ', group = 'Snippet' },
