@@ -96,8 +96,6 @@
             "anthropic/claude-opus-4-7"
             "anthropic/claude-sonnet-4-6"
             "openai/gpt-5.5"
-            # Routed via pi-cursor-provider (`cursor-agent` CLI on PATH).
-            # `agent models` lists this as `composer-2.5-fast`.
             "cursor/composer-2.5-fast"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the

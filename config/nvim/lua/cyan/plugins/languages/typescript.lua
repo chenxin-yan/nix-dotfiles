@@ -31,6 +31,7 @@ return {
                 },
               },
               tsserver = {
+                maxTsServerMemory = 8192,
                 globalPlugins = {
                   {
                     name = '@astrojs/ts-plugin',
@@ -41,6 +42,9 @@ return {
               },
             },
             typescript = {
+              tsserver = {
+                maxTsServerMemory = 8192,
+              },
               updateImportsOnFileMove = { enabled = 'always' },
               suggest = {
                 completeFunctionCalls = true,

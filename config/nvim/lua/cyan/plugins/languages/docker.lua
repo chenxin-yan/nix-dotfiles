@@ -1,10 +1,7 @@
 return {
   {
     'romus204/tree-sitter-manager.nvim',
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { 'dockerfile' })
-    end,
+    opts = { ensure_installed = { 'dockerfile' } },
   },
   {
     'neovim/nvim-lspconfig',
