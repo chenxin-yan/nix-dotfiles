@@ -114,10 +114,18 @@
             # `~/.pi/agent/pi-subagents`, silently dropping the package even
             # though the npm artifacts exist under ~/.pi/agent/npm/.
             "npm:pi-subagents"
-            # Web search and content fetching (fetch_content, web_search,
-            # code_search). Reads EXA_API_KEY from the environment — no config
-            # file needed. Requires Pi v0.37.3+.
-            "npm:pi-web-access"
+            # Web search and fetch with pluggable providers (Brave, Tavily,
+            # Serper, Exa, Jina, Firecrawl, self-hosted SearXNG). Provides
+            # `web_search` and `web_fetch` tools, plus `/web-search-config`
+            # for interactive provider selection. The active provider is
+            # persisted to ~/.config/rpiv-web-tools/config.json (chmod 0600);
+            # API keys resolve env-var-first (`TAVILY_API_KEY`,
+            # `EXA_API_KEY`, `BRAVE_SEARCH_API_KEY`, …) then config file.
+            # After the next rebuild, run `/web-search-config` once to pick
+            # `tavily` — the default fallback is `brave`. Note this package
+            # does NOT ship `code_search` or `fetch_content` (the two tools
+            # the older `pi-web-access` provided in addition to `web_search`).
+            "npm:@juicesharp/rpiv-web-tools"
             # WakaTime time tracking. Reads api_key from ~/.wakatime.cfg
             # (hand-managed plain file outside Nix — predates this repo;
             # would need a secrets backend to manage declaratively).
@@ -502,7 +510,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-web-access|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|pi-simplify|glimpseui) ;; # glimpseui is a peer dep of pi-web-access (see installGlimpseUi below)
+              pi-subagents|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|pi-simplify) ;;
               *) remove_stale "$pkg" "$dir" ;;
             esac
           done
@@ -516,7 +524,7 @@
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@aliou/pi-processes|@narumitw/pi-goal|@netandreus/pi-cursor-provider) ;;
+                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@juicesharp/rpiv-web-tools|@aliou/pi-processes|@narumitw/pi-goal|@netandreus/pi-cursor-provider) ;;
                 *) remove_stale "$full" "$pkg_dir" ;;
               esac
             done
@@ -532,11 +540,11 @@
             fi
           '';
 
-      home.activation.installPiWebAccess =
+      home.activation.installRpivWebTools =
         lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
           ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-web-access" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-web-access
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-web-tools" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-web-tools
             fi
           '';
 
@@ -635,31 +643,6 @@
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @netandreus/pi-cursor-provider
             fi
           '';
-
-      # Glimpse: native WebView micro-UI used by pi-web-access to render the
-      # search curator inside an OS-level overlay window attached to pi,
-      # instead of launching the system browser. Without it, web_search →
-      # `openInBrowser()` (pi-web-access/index.ts:295) shells out to `open
-      # <url>` and your default browser steals focus.
-      #
-      # NOT a pi extension — it has no pi manifest, so it deliberately does
-      # NOT go in the `packages` list above. pi-web-access discovers it via
-      # `createRequire("glimpseui")` (index.ts:316) which succeeds because
-      # both packages live under the same ~/.pi/agent/npm/lib/node_modules/
-      # tree. The fallback path uses `npm root -g`, which our piNpm wrapper
-      # also redirects to that prefix.
-      #
-      # The npm `postinstall` (glimpseui/scripts/postinstall.mjs) compiles
-      # the Swift backend (src/glimpse, ~190KB arm64 Mach-O) using the
-      # system swiftc from Xcode Command Line Tools. If swiftc is missing,
-      # the install succeeds but writes a `.glimpse-build-skipped` marker
-      # and the WebView won't launch — install Xcode CLT and re-run
-      # `nh darwin switch` to retry.
-      home.activation.installGlimpseUi = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/glimpseui" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g glimpseui
-        fi
-      '';
 
       programs.zsh.shellAliases = {
         p = "pi";
