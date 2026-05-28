@@ -93,7 +93,7 @@
           # uses it programmatically — keeping it pickable in the TUI makes
           # ad-hoc cheap recon turns one keystroke away.
           enabledModels = [
-            "anthropic/claude-opus-4-7"
+            "anthropic/claude-opus-4-8"
             "anthropic/claude-sonnet-4-6"
             "openai/gpt-5.5"
             "cursor/composer-2.5-fast"
@@ -131,9 +131,6 @@
             # would need a secrets backend to manage declaratively).
             # Uses the wakatime-cli binary added to home.packages above.
             "npm:pi-wakatime"
-            # Diff approval viewer — blocks edit/write until approved/rejected
-            # in an interactive split-diff modal. Toggle with /diff-approval.
-            "npm:pi-show-diffs"
             # Batch file reads via read_many with adaptive packing and
             # output-budget awareness. No config needed.
             "npm:pi-read-many"
@@ -213,6 +210,29 @@
             # versions kept a global ~/.pi/agent/pi-goal-state.json
             # which 0.1.19 no longer reads).
             "npm:@narumitw/pi-goal"
+          ]
+          ++ lib.optional pkgs.stdenv.isDarwin
+            # Codex-style computer use for Pi on macOS. Public tools:
+            # list_apps/list_windows/screenshot/click/type_text/set_text/
+            # keypress/scroll/drag/arrange_window/navigate_browser/
+            # computer_actions. AX-first (returns refs like @e1/@w1) and
+            # only attaches screenshots when AX coverage is too thin.
+            #
+            # The npm postinstall (scripts/setup-helper.mjs) drops a
+            # prebuilt Swift bridge into
+            # ~/.pi/agent/helpers/pi-computer-use/bridge and ad-hoc
+            # codesigns it, so the existing `pi-npm install -g` activation
+            # hook below is enough to bootstrap the helper end-to-end on
+            # arm64/x64 macOS — no `pi install git:...` needed.
+            #
+            # MANUAL one-time: grant Accessibility + Screen Recording to
+            # that bridge binary in System Settings → Privacy & Security.
+            # Upstream README pins a git tag (v0.2.5 at time of writing);
+            # we follow this file's npm-unpinned convention instead. Bump
+            # by re-running activation; switch to `npm:@injaneity/
+            # pi-computer-use@<ver>` if a pinned version is ever needed.
+            "npm:@injaneity/pi-computer-use"
+          ++ [
             # Custom provider that routes model requests through the Cursor
             # Agent CLI, so any model on your Cursor subscription (Claude,
             # GPT, Gemini, Grok, Composer, …) is callable from Pi without a
@@ -432,11 +452,6 @@
         };
 
         # Matt Pocock skills (https://github.com/mattpocock/skills).
-        # `grill-me` replaces an earlier local `refine-plan` skill.
-        ".agents/skills/grill-me" = {
-          source = "${mattpocockSkills}/skills/productivity/grill-me";
-          recursive = true;
-        };
         ".agents/skills/diagnose" = {
           source = "${mattpocockSkills}/skills/engineering/diagnose";
           recursive = true;
@@ -510,7 +525,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-wakatime|pi-show-diffs|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|pi-simplify) ;;
+              pi-subagents|pi-wakatime|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|pi-simplify) ;;
               *) remove_stale "$pkg" "$dir" ;;
             esac
           done
@@ -524,7 +539,7 @@
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@juicesharp/rpiv-web-tools|@aliou/pi-processes|@narumitw/pi-goal|@netandreus/pi-cursor-provider) ;;
+                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@juicesharp/rpiv-web-tools|@aliou/pi-processes|@narumitw/pi-goal|@netandreus/pi-cursor-provider|@injaneity/pi-computer-use) ;;
                 *) remove_stale "$full" "$pkg_dir" ;;
               esac
             done
@@ -553,14 +568,6 @@
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-wakatime
         fi
       '';
-
-      home.activation.installPiShowDiffs =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-show-diffs" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-show-diffs
-            fi
-          '';
 
       home.activation.installPiReadMany = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-read-many" ]; then
@@ -643,6 +650,18 @@
               $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @netandreus/pi-cursor-provider
             fi
           '';
+
+      # macOS-only: postinstall builds/copies the Swift bridge into
+      # ~/.pi/agent/helpers/pi-computer-use/bridge. On Linux the package
+      # is simply not declared (see lib.optional above) and this hook is
+      # absent, so there's nothing to skip at activation time.
+      home.activation.installPiComputerUse =
+        lib.mkIf pkgs.stdenv.isDarwin
+          (lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@injaneity/pi-computer-use" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @injaneity/pi-computer-use
+            fi
+          '');
 
       programs.zsh.shellAliases = {
         p = "pi";
