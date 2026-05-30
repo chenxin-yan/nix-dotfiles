@@ -82,12 +82,21 @@
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
-          defaultModel = "claude-opus-4-7";
-          # `xhigh` matches Anthropic's new Claude Code default for Opus 4.7
-          # (claude.com/blog/best-practices-for-using-claude-opus-4-7-with-claude-code).
-          # We keep this on the parent because the parent edits code directly
-          # most of the time in this workflow rather than purely orchestrating;
-          # subagents already pin their own thinking levels below.
+          # Opus 4.8 (claude.com/news/claude-opus-4-8, 2026-05-28). Same
+          # price as 4.7 ($5/$25 per MTok). Not yet in pi 0.75.4's built-in
+          # registry (@earendil-works/pi-ai/dist/models.generated.js stops
+          # at claude-opus-4-7), so we merge it in via the
+          # ~/.pi/agent/models.json overlay declared in home.file below.
+          # Remove the overlay once pi ships a release whose pi-ai bundle
+          # includes claude-opus-4-8.
+          defaultModel = "claude-opus-4-8";
+          # Anthropic's announcement says 4.8 *defaults* to high effort
+          # (vs. 4.7 which defaulted to medium) and recommends `xhigh` for
+          # difficult tasks / long-running async workflows. We keep `high`
+          # on the parent because the parent edits code directly most of
+          # the time in this workflow rather than purely orchestrating;
+          # subagents already pin their own thinking levels below. Bump to
+          # `xhigh` per-session via Ctrl+T when a task warrants it.
           defaultThinkingLevel = "high";
           # Ctrl+P cycle list. Includes haiku-4-5 even though only `scout`
           # uses it programmatically — keeping it pickable in the TUI makes
@@ -211,27 +220,28 @@
             # which 0.1.19 no longer reads).
             "npm:@narumitw/pi-goal"
           ]
-          ++ lib.optional pkgs.stdenv.isDarwin
-            # Codex-style computer use for Pi on macOS. Public tools:
-            # list_apps/list_windows/screenshot/click/type_text/set_text/
-            # keypress/scroll/drag/arrange_window/navigate_browser/
-            # computer_actions. AX-first (returns refs like @e1/@w1) and
-            # only attaches screenshots when AX coverage is too thin.
-            #
-            # The npm postinstall (scripts/setup-helper.mjs) drops a
-            # prebuilt Swift bridge into
-            # ~/.pi/agent/helpers/pi-computer-use/bridge and ad-hoc
-            # codesigns it, so the existing `pi-npm install -g` activation
-            # hook below is enough to bootstrap the helper end-to-end on
-            # arm64/x64 macOS — no `pi install git:...` needed.
-            #
-            # MANUAL one-time: grant Accessibility + Screen Recording to
-            # that bridge binary in System Settings → Privacy & Security.
-            # Upstream README pins a git tag (v0.2.5 at time of writing);
-            # we follow this file's npm-unpinned convention instead. Bump
-            # by re-running activation; switch to `npm:@injaneity/
-            # pi-computer-use@<ver>` if a pinned version is ever needed.
-            "npm:@injaneity/pi-computer-use"
+          ++
+            lib.optional pkgs.stdenv.isDarwin
+              # Codex-style computer use for Pi on macOS. Public tools:
+              # list_apps/list_windows/screenshot/click/type_text/set_text/
+              # keypress/scroll/drag/arrange_window/navigate_browser/
+              # computer_actions. AX-first (returns refs like @e1/@w1) and
+              # only attaches screenshots when AX coverage is too thin.
+              #
+              # The npm postinstall (scripts/setup-helper.mjs) drops a
+              # prebuilt Swift bridge into
+              # ~/.pi/agent/helpers/pi-computer-use/bridge and ad-hoc
+              # codesigns it, so the existing `pi-npm install -g` activation
+              # hook below is enough to bootstrap the helper end-to-end on
+              # arm64/x64 macOS — no `pi install git:...` needed.
+              #
+              # MANUAL one-time: grant Accessibility + Screen Recording to
+              # that bridge binary in System Settings → Privacy & Security.
+              # Upstream README pins a git tag (v0.2.5 at time of writing);
+              # we follow this file's npm-unpinned convention instead. Bump
+              # by re-running activation; switch to `npm:@injaneity/
+              # pi-computer-use@<ver>` if a pinned version is ever needed.
+              "npm:@injaneity/pi-computer-use"
           ++ [
             # Custom provider that routes model requests through the Cursor
             # Agent CLI, so any model on your Cursor subscription (Claude,
@@ -257,8 +267,10 @@
           # Role → model mapping. Each model is the cheapest tier whose
           # known strengths match the role's failure cost.
           #
-          # - opus-4-7  → planner, worker. Edit-quality and tool-orchestration
+          # - opus-4-8  → planner, worker. Edit-quality and tool-orchestration
           #               leader; lowest hallucination rate of the three.
+          #               Same price as 4-7; merged into the registry via
+          #               ~/.pi/agent/models.json (see home.file below).
           # - gpt-5.5   → oracle, reviewer. Cross-family second opinion;
           #               strong at long-context retrieval and abstract
           #               reasoning. Hallucinates more — kept out of any
@@ -285,11 +297,11 @@
               thinking = "high";
             };
             planner = {
-              model = "anthropic/claude-opus-4-7";
+              model = "anthropic/claude-opus-4-8";
               thinking = "high";
             };
             worker = {
-              model = "anthropic/claude-opus-4-7";
+              model = "anthropic/claude-opus-4-8";
               thinking = "high";
             };
             reviewer = {
@@ -337,6 +349,97 @@
           # every time. Other options: "default", "no-tools", "labeled-only", "all".
           treeFilterMode = "user-only";
           enableInstallTelemetry = false;
+        };
+
+        # Custom model registry overlay. Pi merges this into its built-in
+        # registry on `/model` open (no restart needed) per docs/models.md.
+        # Two entries today:
+        #
+        # 1. anthropic / claude-opus-4-8 — released 2026-05-28; not yet in
+        #    pi 0.75.4's bundled @earendil-works/pi-ai/dist/models.generated.js
+        #    registry (top opus there is 4-7). Field shape mirrors the
+        #    built-in claude-opus-4-7 entry. Anthropic kept 4.8 pricing
+        #    identical to 4.7 and hasn't refreshed the public comparison
+        #    table for 4.8 yet, so context window / max output / cache
+        #    rates are inherited from 4.7 as the safe default. Drop this
+        #    entry once a pi release bundles 4.8 in pi-ai natively.
+        #
+        #    NOTE: `reasoning` is deliberately FALSE here. Opus 4.8's API
+        #    rejects the legacy `thinking.type.enabled` body (“Use
+        #    thinking.type.adaptive and output_config.effort”), but pi
+        #    0.75.4's pi-ai bundle picks that path because its
+        #    `supportsAdaptiveThinking()` allowlist in
+        #    providers/anthropic.js substring-matches only opus-4-6,
+        #    opus-4-7, sonnet-4-6. Until pi-ai adds opus-4-8, marking the
+        #    entry as non-reasoning is the only way to suppress the
+        #    thinking block from outside. Cost: pi can't pass an explicit
+        #    `effort` to 4.8, but Anthropic says 4.8 defaults to `high`
+        #    effort internally — the same level our defaultThinkingLevel
+        #    sets — so behavior is effectively unchanged. Flip back to
+        #    `reasoning = true` (and re-add thinkingLevelMap) once pi-ai
+        #    is updated upstream.
+        #
+        # 2. openai / gpt-5.5 — context-window bump from the built-in 272k
+        #    to 1.05M (matching the Azure and Cloudflare-gateway variants,
+        #    which already use 1.05M upstream). Pure override: the rest of
+        #    the entry stays as the built-in default per docs/models.md
+        #    "Custom models are upserted by `id` within the provider. If a
+        #    custom model `id` matches a built-in model `id`, the custom
+        #    model replaces that built-in model." — we therefore restate
+        #    the fields we want to keep (api/reasoning/cost/thinkingLevelMap)
+        #    so the replace doesn't silently drop them.
+        ".pi/agent/models.json".text = builtins.toJSON {
+          providers = {
+            anthropic = {
+              models = [
+                {
+                  id = "claude-opus-4-8";
+                  name = "Claude Opus 4.8";
+                  api = "anthropic-messages";
+                  # See header comment above re: pi-ai 0.75.4 limitation.
+                  reasoning = false;
+                  input = [
+                    "text"
+                    "image"
+                  ];
+                  cost = {
+                    input = 5;
+                    output = 25;
+                    cacheRead = 0.5;
+                    cacheWrite = 6.25;
+                  };
+                  contextWindow = 1000000;
+                  maxTokens = 128000;
+                }
+              ];
+            };
+            openai = {
+              models = [
+                {
+                  id = "gpt-5.5";
+                  name = "GPT-5.5";
+                  api = "openai-responses";
+                  reasoning = true;
+                  thinkingLevelMap = {
+                    off = "none";
+                    xhigh = "xhigh";
+                  };
+                  input = [
+                    "text"
+                    "image"
+                  ];
+                  cost = {
+                    input = 5;
+                    output = 30;
+                    cacheRead = 0.5;
+                    cacheWrite = 0;
+                  };
+                  contextWindow = 1050000;
+                  maxTokens = 128000;
+                }
+              ];
+            };
+          };
         };
 
         # Catppuccin themes from upstream flake
@@ -655,13 +758,13 @@
       # ~/.pi/agent/helpers/pi-computer-use/bridge. On Linux the package
       # is simply not declared (see lib.optional above) and this hook is
       # absent, so there's nothing to skip at activation time.
-      home.activation.installPiComputerUse =
-        lib.mkIf pkgs.stdenv.isDarwin
-          (lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@injaneity/pi-computer-use" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @injaneity/pi-computer-use
-            fi
-          '');
+      home.activation.installPiComputerUse = lib.mkIf pkgs.stdenv.isDarwin (
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+          if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@injaneity/pi-computer-use" ]; then
+            $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @injaneity/pi-computer-use
+          fi
+        ''
+      );
 
       programs.zsh.shellAliases = {
         p = "pi";
