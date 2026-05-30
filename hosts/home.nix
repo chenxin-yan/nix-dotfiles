@@ -31,6 +31,7 @@
 
   config = {
     catppuccin = {
+      autoEnable = true;
       enable = true;
       flavor = "mocha";
       accent = "lavender";
