@@ -107,7 +107,18 @@ return {
         marksman = {
           filetypes = { 'markdown', 'markdown.mdx' },
         },
-        harper_ls = {},
+        harper_ls = {
+          settings = {
+            ['harper-ls'] = {
+              -- harper-ls rejects a null config ("Settings must be an object"),
+              -- so an explicit settings object must always be sent.
+              linters = {
+                SentenceCapitalization = false,
+                SpellCheck = false,
+              },
+            },
+          },
+        },
       },
     },
   },
@@ -118,8 +129,8 @@ return {
         args = { '--fix', '$FILENAME', '--config', vim.fn.expand '~/.markdownlint.jsonc' },
       },
       formatters_by_ft = {
-        markdown = { 'prettierd', 'markdownlint-cli2' },
-        ['markdown.mdx'] = { 'prettierd', 'markdownlint-cli2' },
+        markdown = { 'oxfmt', 'markdownlint-cli2' },
+        ['markdown.mdx'] = { 'oxfmt', 'markdownlint-cli2' },
       },
     },
   },

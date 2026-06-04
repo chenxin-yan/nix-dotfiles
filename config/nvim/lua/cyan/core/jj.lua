@@ -122,18 +122,6 @@ map('n', '<leader>jr', function()
   jj_run({ 'restore', p }, { reload_buffers = true })
 end, { desc = 'JJ: restore current file (discard @ changes)' })
 
-map('n', '<leader>jl', function()
-  jj_term { 'jj', 'log' }
-end, { desc = 'JJ: log' })
-
-map('n', '<leader>jd', function()
-  local p = current_file()
-  if not p then
-    return
-  end
-  jj_term { 'jj', 'diff', '-r', '@', p }
-end, { desc = 'JJ: diff current file' })
-
 map('n', '<leader>ju', function()
   jj_run({ 'undo' }, { reload_buffers = true })
 end, { desc = 'JJ: undo last op' })

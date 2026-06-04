@@ -306,7 +306,7 @@
             };
             reviewer = {
               model = "openai/gpt-5.5";
-              thinking = "medium";
+              thinking = "high";
             };
             # researcher is read-heavy; Sonnet's 1M context does the lifting,
             # not reasoning depth. Start at medium and let hard research

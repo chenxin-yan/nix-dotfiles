@@ -111,6 +111,8 @@
         ui = {
           default-command = "log";
           diff-formatter = ":git";
+          diff-editor = ":builtin";
+          merge-editor = ":builtin";
         };
 
         # --- Templates --------------------------------------------------
