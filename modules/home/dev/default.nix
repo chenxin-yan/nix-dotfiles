@@ -10,6 +10,7 @@
     ./markdown
     ./nix
     ./python
+    ./terraform
     ./typescript
     ./web
     ./c
@@ -25,6 +26,7 @@
     dev.markdown.enable = lib.mkDefault true;
     dev.nix.enable = lib.mkDefault true;
     dev.python.enable = lib.mkDefault true;
+    dev.terraform.enable = lib.mkDefault true;
     dev.typescript.enable = lib.mkDefault true;
     dev.web.enable = lib.mkDefault true;
     dev.c.enable = lib.mkDefault true;

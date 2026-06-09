@@ -21,9 +21,15 @@ return { -- Linting
 
     -- Extend existing linters with custom configurations
     for name, config in pairs(opts.linters) do
-      if lint.linters[name] then
-        ---@diagnostic disable-next-line: param-type-mismatch
-        lint.linters[name] = vim.tbl_deep_extend('force', lint.linters[name], config)
+      local existing = lint.linters[name]
+      if type(existing) == 'function' then
+        -- Function-style linters resolve their config lazily at lint time, so
+        -- merge the override onto the table the original returns.
+        lint.linters[name] = function()
+          return vim.tbl_deep_extend('force', existing(), config)
+        end
+      elseif existing then
+        lint.linters[name] = vim.tbl_deep_extend('force', existing, config)
       else
         lint.linters[name] = config
       end
