@@ -27,15 +27,15 @@
       anthropicSkills = pkgs.fetchFromGitHub {
         owner = "anthropics";
         repo = "skills";
-        rev = "690f15cac7f7b4c055c5ab109c79ed9259934081";
-        hash = "sha256-GMXFJSePrpEvhzMQ82YI9Z10BDkuFK/lXUDELclvQ4c=";
+        rev = "c30d329f5814647c1e2f071020c1e8c1c9893ef1";
+        hash = "sha256-szcnow0yO1ViQt6Mxrd+PNdfZ5jzPqqSmqA0jEQnS1o=";
       };
 
       mattpocockSkills = pkgs.fetchFromGitHub {
         owner = "mattpocock";
         repo = "skills";
-        rev = "b8be62ffacb0118fa3eaa29a0923c87c8c11985c";
-        hash = "sha256-Qwuu27f95xgAJ4hdv/4TNahHhprCMIxl1H9f9ymEsno=";
+        rev = "2bf70051928429983de3b5718d277150926f8c89";
+        hash = "sha256-v8gOB1tvmytemH05C0j+WjwdfzaDgXg+MnKk5mDSblY=";
       };
     in
     lib.mkIf config.cli.pi.enable {
@@ -82,14 +82,13 @@
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
-          # Opus 4.8 (claude.com/news/claude-opus-4-8, 2026-05-28). Same
-          # price as 4.7 ($5/$25 per MTok). Not yet in pi 0.75.4's built-in
-          # registry (@earendil-works/pi-ai/dist/models.generated.js stops
-          # at claude-opus-4-7), so we merge it in via the
-          # ~/.pi/agent/models.json overlay declared in home.file below.
-          # Remove the overlay once pi ships a release whose pi-ai bundle
-          # includes claude-opus-4-8.
-          defaultModel = "claude-opus-4-8";
+          # Fable 5 (anthropic.com/news/claude-fable-5-mythos-5, 2026-06-09).
+          # First Mythos-class model at general availability; sits above Opus
+          # in the capability hierarchy. $10/$50 per MTok input/output.
+          # Requires a models.json overlay (not yet in pi 0.78.0's built-in
+          # registry) with forceAdaptiveThinking so pi sends the adaptive
+          # thinking payload instead of the legacy budget-based one.
+          defaultModel = "claude-fable-5";
           # Anthropic's announcement says 4.8 *defaults* to high effort
           # (vs. 4.7 which defaulted to medium) and recommends `xhigh` for
           # difficult tasks / long-running async workflows. We keep `high`
@@ -102,10 +101,8 @@
           # uses it programmatically — keeping it pickable in the TUI makes
           # ad-hoc cheap recon turns one keystroke away.
           enabledModels = [
-            "anthropic/claude-opus-4-8"
-            "anthropic/claude-sonnet-4-6"
+            "anthropic/claude-fable-5"
             "openai/gpt-5.5"
-            "cursor/composer-2.5-fast"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
@@ -241,19 +238,7 @@
               # we follow this file's npm-unpinned convention instead. Bump
               # by re-running activation; switch to `npm:@injaneity/
               # pi-computer-use@<ver>` if a pinned version is ever needed.
-              "npm:@injaneity/pi-computer-use"
-          ++ [
-            # Custom provider that routes model requests through the Cursor
-            # Agent CLI, so any model on your Cursor subscription (Claude,
-            # GPT, Gemini, Grok, Composer, …) is callable from Pi without a
-            # separate API key per provider. Auth lives in ~/.cursor/ and
-            # is managed by `agent login` (or `/cursor-login` inside Pi);
-            # the `cursor-agent` CLI must be on PATH (currently installed
-            # at ~/.local/bin/agent, outside Nix). Select models with
-            # `/model cursor/<id>` — `agent models` lists what your
-            # account can see. See github.com/netandreus/pi-cursor-provider.
-            "npm:@netandreus/pi-cursor-provider"
-          ];
+              "npm:@injaneity/pi-computer-use";
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
           # We still pin per-role models declaratively so a future
@@ -269,8 +254,7 @@
           #
           # - opus-4-8  → planner, worker. Edit-quality and tool-orchestration
           #               leader; lowest hallucination rate of the three.
-          #               Same price as 4-7; merged into the registry via
-          #               ~/.pi/agent/models.json (see home.file below).
+          #               Same price as 4-7; built into pi 0.78.0's registry.
           # - gpt-5.5   → oracle, reviewer. Cross-family second opinion;
           #               strong at long-context retrieval and abstract
           #               reasoning. Hallucinates more — kept out of any
@@ -313,11 +297,11 @@
             # tasks be explicitly escalated.
             researcher = {
               model = "anthropic/claude-sonnet-4-6";
-              thinking = "medium";
+              thinking = "high";
             };
             oracle = {
               model = "openai/gpt-5.5";
-              thinking = "medium";
+              thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
             # pi-subagents (see ~/.pi/agent/npm/lib/node_modules/pi-subagents/
@@ -353,63 +337,47 @@
 
         # Custom model registry overlay. Pi merges this into its built-in
         # registry on `/model` open (no restart needed) per docs/models.md.
-        # Two entries today:
         #
-        # 1. anthropic / claude-opus-4-8 — released 2026-05-28; not yet in
-        #    pi 0.75.4's bundled @earendil-works/pi-ai/dist/models.generated.js
-        #    registry (top opus there is 4-7). Field shape mirrors the
-        #    built-in claude-opus-4-7 entry. Anthropic kept 4.8 pricing
-        #    identical to 4.7 and hasn't refreshed the public comparison
-        #    table for 4.8 yet, so context window / max output / cache
-        #    rates are inherited from 4.7 as the safe default. Drop this
-        #    entry once a pi release bundles 4.8 in pi-ai natively.
+        # anthropic / claude-fable-5 — new entry (not yet in pi 0.78.0's
+        # built-in registry). forceAdaptiveThinking tells pi to send the
+        # adaptive thinking payload (thinking.type: "adaptive" + effort)
+        # instead of the legacy budget-based payload, matching what the
+        # real Anthropic API requires for Mythos-class models. Once pi
+        # ships this in its built-in registry the entry can be dropped
+        # (same as the former claude-opus-4-8 overlay).
         #
-        #    NOTE: `reasoning` is deliberately FALSE here. Opus 4.8's API
-        #    rejects the legacy `thinking.type.enabled` body (“Use
-        #    thinking.type.adaptive and output_config.effort”), but pi
-        #    0.75.4's pi-ai bundle picks that path because its
-        #    `supportsAdaptiveThinking()` allowlist in
-        #    providers/anthropic.js substring-matches only opus-4-6,
-        #    opus-4-7, sonnet-4-6. Until pi-ai adds opus-4-8, marking the
-        #    entry as non-reasoning is the only way to suppress the
-        #    thinking block from outside. Cost: pi can't pass an explicit
-        #    `effort` to 4.8, but Anthropic says 4.8 defaults to `high`
-        #    effort internally — the same level our defaultThinkingLevel
-        #    sets — so behavior is effectively unchanged. Flip back to
-        #    `reasoning = true` (and re-add thinkingLevelMap) once pi-ai
-        #    is updated upstream.
-        #
-        # 2. openai / gpt-5.5 — context-window bump from the built-in 272k
-        #    to 1.05M (matching the Azure and Cloudflare-gateway variants,
-        #    which already use 1.05M upstream). Pure override: the rest of
-        #    the entry stays as the built-in default per docs/models.md
-        #    "Custom models are upserted by `id` within the provider. If a
-        #    custom model `id` matches a built-in model `id`, the custom
-        #    model replaces that built-in model." — we therefore restate
-        #    the fields we want to keep (api/reasoning/cost/thinkingLevelMap)
-        #    so the replace doesn't silently drop them.
+        # openai / gpt-5.5 — context-window bump from the built-in 272k
+        # to 1.05M (matching the Azure and Cloudflare-gateway variants,
+        # which already use 1.05M upstream). Pure override: the rest of
+        # the entry stays as the built-in default per docs/models.md
+        # "Custom models are upserted by `id` within the provider. If a
+        # custom model `id` matches a built-in model `id`, the custom
+        # model replaces that built-in model." — we therefore restate
+        # the fields we want to keep (api/reasoning/cost/thinkingLevelMap)
+        # so the replace doesn't silently drop them.
         ".pi/agent/models.json".text = builtins.toJSON {
           providers = {
             anthropic = {
               models = [
                 {
-                  id = "claude-opus-4-8";
-                  name = "Claude Opus 4.8";
-                  api = "anthropic-messages";
-                  # See header comment above re: pi-ai 0.75.4 limitation.
-                  reasoning = false;
+                  id = "claude-fable-5";
+                  name = "Claude Fable 5";
+                  reasoning = true;
                   input = [
                     "text"
                     "image"
                   ];
                   cost = {
-                    input = 5;
-                    output = 25;
-                    cacheRead = 0.5;
-                    cacheWrite = 6.25;
+                    input = 10;
+                    output = 50;
+                    cacheRead = 1;
+                    cacheWrite = 0;
                   };
                   contextWindow = 1000000;
                   maxTokens = 128000;
+                  compat = {
+                    forceAdaptiveThinking = true;
+                  };
                 }
               ];
             };
@@ -523,12 +491,8 @@
         # tree so they're discoverable by every agent harness that follows
         # the agent-skills.io convention rather than just pi. The sources
         # of truth are ./config/skills/<name>/.
-        ".agents/skills/commit" = {
-          source = ./config/skills/commit;
-          recursive = true;
-        };
-        ".agents/skills/to-html" = {
-          source = ./config/skills/to-html;
+        ".agents/skills" = {
+          source = ./config/skills;
           recursive = true;
         };
 
@@ -557,6 +521,10 @@
         # Matt Pocock skills (https://github.com/mattpocock/skills).
         ".agents/skills/diagnose" = {
           source = "${mattpocockSkills}/skills/engineering/diagnose";
+          recursive = true;
+        };
+        ".agents/skills/teach" = {
+          source = "${mattpocockSkills}/skills/productivity/teach";
           recursive = true;
         };
         ".agents/skills/grill-with-docs" = {
@@ -642,7 +610,7 @@
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@juicesharp/rpiv-web-tools|@aliou/pi-processes|@narumitw/pi-goal|@netandreus/pi-cursor-provider|@injaneity/pi-computer-use) ;;
+                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@juicesharp/rpiv-web-tools|@aliou/pi-processes|@narumitw/pi-goal|@injaneity/pi-computer-use) ;;
                 *) remove_stale "$full" "$pkg_dir" ;;
               esac
             done
@@ -745,14 +713,6 @@
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @narumitw/pi-goal
         fi
       '';
-
-      home.activation.installPiCursorProvider =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@netandreus/pi-cursor-provider" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @netandreus/pi-cursor-provider
-            fi
-          '';
 
       # macOS-only: postinstall builds/copies the Swift bridge into
       # ~/.pi/agent/helpers/pi-computer-use/bridge. On Linux the package
