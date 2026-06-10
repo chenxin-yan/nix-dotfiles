@@ -14,12 +14,17 @@
   ];
 
   home.packages = with pkgs; [
-    chromium
-    keymapp
+    # terminfo for xterm-ghostty so SSH sessions from Ghostty clients work
+    ghostty.terminfo
   ];
 
-  catppuccin.cursors.enable = true;
-  home.pointerCursor.size = 16;
+  # Headless server: disable GUI apps, keep terminal/CLI tooling
+  app.shared.ghostty.enable = false;
+  app.shared.espanso.enable = false;
+  app.shared.zen-browser.enable = false;
+  app.shared.vesktop.enable = false;
+  app.shared.telegram.enable = false;
+  app.shared.todoist.enable = false;
 
   services.ssh-agent.enable = true;
 

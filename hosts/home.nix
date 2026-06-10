@@ -53,8 +53,6 @@
       vhs
       cursor-cli
 
-      wechat
-      obsidian
       opencode
     ];
 

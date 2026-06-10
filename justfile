@@ -15,7 +15,7 @@ switch:
 # Rebuild and switch nixos configuration
 [linux]
 switch:
-    nh os switch --hostname cyan@nixos .
+    nh os switch --hostname cyan@minipc .
 
 # Switch home-manager configuration (standalone)
 home:

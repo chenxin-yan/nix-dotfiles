@@ -27,7 +27,7 @@
           "macbook" = {
             id = "VVPBX7E-COCNGXP-WASVT2N-HU4M2C2-N3E7MZT-LZQMA2R-T7EF55R-WFADDQM";
           };
-          "nixos" = {
+          "minipc" = {
             id = "A7ARLLU-2SID46Y-XVXR2KS-UX4H5RY-OGWNAUK-ZHPQN5E-SG5DPEH-G76JUAH";
           };
           "raspberry-pi" = {
@@ -40,7 +40,7 @@
             path = "~/dev";
             devices = [
               "macbook"
-              "nixos"
+              "minipc"
               "raspberry-pi"
             ];
             ignorePerms = true;

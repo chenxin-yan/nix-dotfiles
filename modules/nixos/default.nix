@@ -2,19 +2,13 @@
 
 {
   imports = [
-    ./sddm
-    ./hyprland
     ./1password
-    ./audio
     ./bluetooth
     ./mosh
   ];
 
   config = {
-    nixos.sddm.enable = lib.mkDefault true;
-    nixos.hyprland.enable = lib.mkDefault true;
     nixos._1password.enable = lib.mkDefault true;
-    nixos.audio.enable = lib.mkDefault true;
     nixos.bluetooth.enable = lib.mkDefault true;
     nixos.mosh.enable = lib.mkDefault true;
   };

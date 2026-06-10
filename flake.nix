@@ -49,10 +49,10 @@
       ...
     }:
     {
-      nixosConfigurations."cyan@nixos" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."cyan@minipc" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          ./hosts/nixos/configuration.nix
+          ./hosts/minipc/configuration.nix
           catppuccin.nixosModules.catppuccin
           home-manager.nixosModules.home-manager
           {
@@ -61,7 +61,7 @@
               useUserPackages = true;
               users.cyan = {
                 imports = [
-                  ./hosts/nixos/home.nix
+                  ./hosts/minipc/home.nix
                   catppuccin.homeModules.catppuccin
                 ];
               };

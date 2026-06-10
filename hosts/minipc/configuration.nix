@@ -14,7 +14,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "cyan"; # Define your hostname.
+  networking.hostName = "minipc"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -42,12 +42,6 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
   # Enable flakes and nix command
   nix.settings.experimental-features = [
     "nix-command"
@@ -59,12 +53,6 @@
 
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
-  ];
-
-  # Required for Home Manager xdg.portal with useUserPackages
-  environment.pathsToLink = [
-    "/share/applications"
-    "/share/xdg-desktop-portal"
   ];
 
   programs.zsh.enable = true;
@@ -84,8 +72,6 @@
     extraGroups = [
       "networkmanager"
       "wheel"
-      "input"
-      "plugdev"
     ];
     packages = with pkgs; [ ];
     shell = pkgs.zsh;
@@ -144,35 +130,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
-
-  # Installing fonts
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-cjk-serif
-    noto-fonts-color-emoji
-    nerd-fonts.jetbrains-mono
-    geist-font
-  ];
-
-  # Set default fonts system-wide
-  fonts.enableDefaultPackages = true;
-  fonts.enableGhostscriptFonts = true;
-  fonts.fontconfig.defaultFonts = {
-    serif = [
-      "Noto Serif"
-      "Noto Serif CJK SC"
-    ];
-    sansSerif = [
-      "Noto Sans"
-      "Noto Sans CJK SC"
-    ];
-    monospace = [
-      "JetBrainsMono Nerd Font"
-      "Noto Sans Mono CJK SC"
-    ];
-    emoji = [ "Noto Color Emoji" ];
-  };
 
   programs.nh = {
     enable = true;

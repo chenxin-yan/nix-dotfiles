@@ -7,6 +7,8 @@
   ];
 
   home.packages = with pkgs; [
+    wechat
+    obsidian
   ];
 
   programs.ssh = {
