@@ -78,7 +78,11 @@
     casks = [
       "todoist-app"
     ];
-    onActivation.cleanup = "zap";
+    onActivation = {
+      autoUpdate = true;
+      upgrade = true;
+      cleanup = "zap";
+    };
   };
 
   services.tailscale.enable = true;

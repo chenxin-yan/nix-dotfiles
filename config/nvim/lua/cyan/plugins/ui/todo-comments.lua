@@ -4,17 +4,17 @@ return {
   dependencies = { 'nvim-lua/plenary.nvim' },
   opts = {},
   keys = {
-    { '<leader>xt', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todos' },
-    { '<leader>xT', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme' },
+    { '<leader>xt', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme' },
+    { '<leader>xT', '<cmd>Trouble todo toggle<cr>', desc = 'Todos' },
     {
-      '<leader>st',
+      '<leader>sT',
       function()
         Snacks.picker.todo_comments { layout = { preset = 'ivy', layout = { height = 25 } } }
       end,
       desc = 'Todo',
     },
     {
-      '<leader>sT',
+      '<leader>st',
       function()
         Snacks.picker.todo_comments { keywords = { 'TODO', 'FIX', 'FIXME' }, layout = { preset = 'ivy', layout = { height = 25 } } }
       end,
@@ -32,4 +32,3 @@ return {
     end, { desc = 'Previous todo comment' })
   end,
 }
-
