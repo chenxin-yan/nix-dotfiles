@@ -82,13 +82,10 @@
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
-          # Fable 5 (anthropic.com/news/claude-fable-5-mythos-5, 2026-06-09).
-          # First Mythos-class model at general availability; sits above Opus
-          # in the capability hierarchy. $10/$50 per MTok input/output.
-          # Requires a models.json overlay (not yet in pi 0.78.0's built-in
-          # registry) with forceAdaptiveThinking so pi sends the adaptive
-          # thinking payload instead of the legacy budget-based one.
-          defaultModel = "claude-fable-5";
+          # Anthropic removed access to the previous default, so keep the
+          # parent on Opus 4.8 for now. Opus 4.8 is already in pi's built-in
+          # registry, so it does not need a custom models.json overlay.
+          defaultModel = "claude-opus-4-8";
           # Anthropic's announcement says 4.8 *defaults* to high effort
           # (vs. 4.7 which defaulted to medium) and recommends `xhigh` for
           # difficult tasks / long-running async workflows. We keep `high`
@@ -97,11 +94,10 @@
           # subagents already pin their own thinking levels below. Bump to
           # `xhigh` per-session via Ctrl+T when a task warrants it.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. Includes haiku-4-5 even though only `scout`
-          # uses it programmatically — keeping it pickable in the TUI makes
-          # ad-hoc cheap recon turns one keystroke away.
+          # Ctrl+P cycle list. Keep the parent defaults to models that are
+          # currently available on this account.
           enabledModels = [
-            "anthropic/claude-fable-5"
+            "anthropic/claude-opus-4-8"
             "openai/gpt-5.5"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
@@ -185,60 +181,30 @@
             # prebuilt PTY binaries (macOS arm64/x64 + Linux x64/arm64
             # supported — no node-gyp on first install).
             "npm:pi-interactive-shell"
-            # Two-pane browser workspace: /studio opens an Editor + Preview
-            # window (Markdown/LaTeX/Mermaid/code) backed by a local-only
-            # 127.0.0.1 server with tokenized URLs. Adds critique workflow,
-            # response history browsing, annotations, comments rail, and
-            # PDF export via /studio-pdf. PDF export needs `pandoc` (+
-            # MacTeX/TeX Live for LaTeX, `mmdc` for Mermaid in PDFs) on
-            # PATH — not declared here; install ad-hoc if/when needed.
-            "npm:pi-studio"
             # Code-review slash command — `/simplify` reviews uncommitted (or
             # staged / branch-diffed / explicitly-listed) changes for
             # clarity, naming, and redundancy without changing behavior.
             # See github.com/MattDevy/pi-extensions/tree/main/packages/pi-simplify.
             "npm:pi-simplify"
-            # Goal mode — `/goal <task>` makes pi keep working on a single
-            # objective until the agent calls the `goal_complete` tool,
-            # the goal is paused/cleared, or an optional token budget is
-            # hit (`/goal --tokens 100k <task>`). Subcommands: pause,
-            # resume, clear, edit. When an agent turn ends without
-            # `goal_complete`, the extension auto-injects a continuation
-            # prompt — same mechanism as Codex's persistence loop.
+            # Babysitter (a5c.ai) — deterministic, self-orchestrating
+            # workflow harness. The pi package is intentionally thin: an
+            # extensions/index.ts that adds slash-command aliases
+            # (/babysit, /babysitter, /call, /plan, /resume, /doctor,
+            # /yolo) which forward into pi's native /skill: flow, plus a
+            # set of `babysit`/`call`/`doctor`/... skills that carry the
+            # actual orchestration contract. The heavy lifting (runs,
+            # tasks, breakpoints, the event-sourced journal under
+            # .a5c/runs/) lives in its @a5c-ai/babysitter-sdk dependency.
             #
-            # Coexists with `@juicesharp/rpiv-todo` above: different
-            # command (/goal vs /todos), different tool (`goal_complete`
-            # vs `todo`). pi-goal sits one level above the todo list — a
-            # single long-running objective; todos break it into steps.
-            #
-            # Goal state is session-scoped (survives /reload, does NOT
-            # carry across new sessions in the same cwd — older
-            # versions kept a global ~/.pi/agent/pi-goal-state.json
-            # which 0.1.19 no longer reads).
-            "npm:@narumitw/pi-goal"
-          ]
-          ++
-            lib.optional pkgs.stdenv.isDarwin
-              # Codex-style computer use for Pi on macOS. Public tools:
-              # list_apps/list_windows/screenshot/click/type_text/set_text/
-              # keypress/scroll/drag/arrange_window/navigate_browser/
-              # computer_actions. AX-first (returns refs like @e1/@w1) and
-              # only attaches screenshots when AX coverage is too thin.
-              #
-              # The npm postinstall (scripts/setup-helper.mjs) drops a
-              # prebuilt Swift bridge into
-              # ~/.pi/agent/helpers/pi-computer-use/bridge and ad-hoc
-              # codesigns it, so the existing `pi-npm install -g` activation
-              # hook below is enough to bootstrap the helper end-to-end on
-              # arm64/x64 macOS — no `pi install git:...` needed.
-              #
-              # MANUAL one-time: grant Accessibility + Screen Recording to
-              # that bridge binary in System Settings → Privacy & Security.
-              # Upstream README pins a git tag (v0.2.5 at time of writing);
-              # we follow this file's npm-unpinned convention instead. Bump
-              # by re-running activation; switch to `npm:@injaneity/
-              # pi-computer-use@<ver>` if a pinned version is ever needed.
-              "npm:@injaneity/pi-computer-use";
+            # That SDK plus its full transitive tree (puppeteer, aws-sdk,
+            # google genai, … ~340 packages) is installed *nested* under
+            # @a5c-ai/babysitter-pi/node_modules/ rather than hoisted to
+            # the top level, so the cleanup allowlist below only needs the
+            # single top-level @a5c-ai/babysitter-pi entry — the nested
+            # deps (including the `babysitter` CLI bin) are never visited
+            # by the one-level scope scan. Marked Experimental upstream.
+            "npm:@a5c-ai/babysitter-pi"
+          ];
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
           # We still pin per-role models declaratively so a future
@@ -338,14 +304,6 @@
         # Custom model registry overlay. Pi merges this into its built-in
         # registry on `/model` open (no restart needed) per docs/models.md.
         #
-        # anthropic / claude-fable-5 — new entry (not yet in pi 0.78.0's
-        # built-in registry). forceAdaptiveThinking tells pi to send the
-        # adaptive thinking payload (thinking.type: "adaptive" + effort)
-        # instead of the legacy budget-based payload, matching what the
-        # real Anthropic API requires for Mythos-class models. Once pi
-        # ships this in its built-in registry the entry can be dropped
-        # (same as the former claude-opus-4-8 overlay).
-        #
         # openai / gpt-5.5 — context-window bump from the built-in 272k
         # to 1.05M (matching the Azure and Cloudflare-gateway variants,
         # which already use 1.05M upstream). Pure override: the rest of
@@ -357,30 +315,6 @@
         # so the replace doesn't silently drop them.
         ".pi/agent/models.json".text = builtins.toJSON {
           providers = {
-            anthropic = {
-              models = [
-                {
-                  id = "claude-fable-5";
-                  name = "Claude Fable 5";
-                  reasoning = true;
-                  input = [
-                    "text"
-                    "image"
-                  ];
-                  cost = {
-                    input = 10;
-                    output = 50;
-                    cacheRead = 1;
-                    cacheWrite = 0;
-                  };
-                  contextWindow = 1000000;
-                  maxTokens = 128000;
-                  compat = {
-                    forceAdaptiveThinking = true;
-                  };
-                }
-              ];
-            };
             openai = {
               models = [
                 {
@@ -596,7 +530,7 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-wakatime|pi-read-many|pi-vim|pi-interactive-shell|pi-studio|pi-simplify) ;;
+              pi-subagents|pi-wakatime|pi-read-many|pi-vim|pi-interactive-shell|pi-simplify) ;;
               *) remove_stale "$pkg" "$dir" ;;
             esac
           done
@@ -610,7 +544,7 @@
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
               case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@juicesharp/rpiv-web-tools|@aliou/pi-processes|@narumitw/pi-goal|@injaneity/pi-computer-use) ;;
+                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@juicesharp/rpiv-web-tools|@aliou/pi-processes|@a5c-ai/babysitter-pi) ;;
                 *) remove_stale "$full" "$pkg_dir" ;;
               esac
             done
@@ -696,35 +630,19 @@
             fi
           '';
 
-      home.activation.installPiStudio = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-studio" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-studio
-        fi
-      '';
-
       home.activation.installPiSimplify = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
         if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-simplify" ]; then
           $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-simplify
         fi
       '';
 
-      home.activation.installPiGoal = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@narumitw/pi-goal" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @narumitw/pi-goal
-        fi
-      '';
-
-      # macOS-only: postinstall builds/copies the Swift bridge into
-      # ~/.pi/agent/helpers/pi-computer-use/bridge. On Linux the package
-      # is simply not declared (see lib.optional above) and this hook is
-      # absent, so there's nothing to skip at activation time.
-      home.activation.installPiComputerUse = lib.mkIf pkgs.stdenv.isDarwin (
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-          if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@injaneity/pi-computer-use" ]; then
-            $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @injaneity/pi-computer-use
-          fi
-        ''
-      );
+      home.activation.installBabysitterPi =
+        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
+          ''
+            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@a5c-ai/babysitter-pi" ]; then
+              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @a5c-ai/babysitter-pi
+            fi
+          '';
 
       programs.zsh.shellAliases = {
         p = "pi";
