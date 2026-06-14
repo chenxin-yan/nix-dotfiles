@@ -50,7 +50,6 @@
 
       bootdev-cli
       cloudflared
-      railway
       vhs
       cursor-cli
 

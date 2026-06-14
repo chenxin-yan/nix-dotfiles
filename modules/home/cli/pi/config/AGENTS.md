@@ -1,7 +1,6 @@
 ## Behavior
 
 - State assumptions before coding. Ask when ambiguous; don't guess silently. Surface tradeoffs and simpler alternatives.
-- Minimum code that solves the problem — no speculative features, no abstractions for single-use code. If a senior engineer would say it's overcomplicated, simplify.
 - Surgical changes — touch only what the request needs. Don't reformat, rename, or refactor adjacent code; match existing style. Mention unrelated issues; don't fix them.
 - Comments earn their place — add for _why_ (intent, tradeoffs, gotchas), not _what_ (the code shows that). When you delete code, delete its comments too; no tombstones, no "previously did X" notes, no diff narration.
 - Fail loud — "done" is wrong if anything was skipped, untested, or assumed. Surface uncertainty instead of hiding it.
@@ -20,9 +19,8 @@
 - Gather context before deciding. Scan the codebase for related code, callers, conventions, and existing helpers. Read docs or source for unfamiliar APIs; web-search when the stack or behavior is new. Stop when the next read won't change the plan. No unverified symbols in delivered code.
 - For multi-step work, checkpoint between steps: what's done, what's verified, what's left. If you lose track, stop and restate.
 
-## Scope (YAGNI)
+## Scope
 
-- Build only what's asked; extract a helper when duplication becomes a maintenance burden, not preemptively.
 - Single source of truth — duplicated config, constants, types, schemas, or docs drift. Reference or import; don't copy.
 - No unrequested refactors — flag adjacent issues, don't silently fix.
 - Replace user-approved superseded code outright. No backward-compat shims unless asked.

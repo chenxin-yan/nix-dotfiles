@@ -37,6 +37,104 @@
         rev = "2bf70051928429983de3b5718d277150926f8c89";
         hash = "sha256-v8gOB1tvmytemH05C0j+WjwdfzaDgXg+MnKk5mDSblY=";
       };
+
+      # Raindrop AI (raindrop.ai) skills. Two repos, same agent-skills.io
+      # convention as above: `raindrop-ai/skills` ships the
+      # raindrop-investigate / raindrop-setup skills; the Workshop repo
+      # (`raindrop-ai/workshop`) ships instrument-agent / setup-agent-replay
+      # under its skills/ subdir. The upstream install path is
+      # `npx skills add raindrop-ai/skills` — we vendor + pin instead so the
+      # skills are declarative and offline. The Workshop `raindrop` CLI
+      # itself is NOT wired here (it's an occasional dev tool); install it
+      # imperatively when needed.
+      raindropSkills = pkgs.fetchFromGitHub {
+        owner = "raindrop-ai";
+        repo = "skills";
+        rev = "be01a9ef3bd1db5b00919d5f7198678b6969d025";
+        hash = "sha256-30BPbwFJf8m9V/fIoCmJ+aa5z6jNGubtTlYhqhijBLQ=";
+      };
+
+      raindropWorkshop = pkgs.fetchFromGitHub {
+        owner = "raindrop-ai";
+        repo = "workshop";
+        rev = "914d74dc2c5dbfc13fa19ab9eb9bae0ecd48939e";
+        hash = "sha256-7X41HYzcGpe/Z9l80ZrwYIJAaaYaig1Jf4Pj5xmbj+M=";
+      };
+
+      # Ponytail (github.com/DietrichGebert/ponytail) — "lazy senior dev"
+      # ruleset. Not published to npm (its pi-extension/package.json is a
+      # private `…-dev` package), so it can't go in the `packages` list;
+      # we vendor the whole repo and wire the extension + skills from the
+      # store snapshot below. Bump rev/hash to update.
+      ponytail = pkgs.fetchFromGitHub {
+        owner = "DietrichGebert";
+        repo = "ponytail";
+        rev = "0882e2d256fd953c6a3e90b946f68ce4f9f35153";
+        hash = "sha256-+cWfki10COPyTXG6E095IvSVBr/PLXDqyzycwW4n5Xc=";
+      };
+
+      # Single source of truth for declarative pi npm packages. The
+      # settings.json `packages` list, the cleanup allowlist, and the
+      # install activation hook are all derived from this one list — add or
+      # remove a package here and nowhere else. Names are bare (no `npm:`
+      # prefix); the prefix is added for the settings.json `packages` field.
+      piPackages = [
+        # Multi-agent orchestration: subagent tool, builtin agents
+        # (scout/planner/worker/reviewer/researcher/oracle/...), and
+        # /run-chain. Per-role model overrides live in subagents.agentOverrides.
+        "pi-subagents"
+        # Web search and fetch with pluggable providers (Brave, Tavily,
+        # Serper, Exa, Jina, Firecrawl, self-hosted SearXNG). Provides
+        # `web_search` and `web_fetch` tools, plus `/web-search-config`
+        # for interactive provider selection. The active provider is
+        # persisted to ~/.config/rpiv-web-tools/config.json (chmod 0600);
+        # API keys resolve env-var-first (`TAVILY_API_KEY`, `EXA_API_KEY`,
+        # `BRAVE_SEARCH_API_KEY`, …) then config file. Run
+        # `/web-search-config` once to pick `tavily` — default is `brave`.
+        "@juicesharp/rpiv-web-tools"
+        # WakaTime time tracking. Reads api_key from ~/.wakatime.cfg
+        # (hand-managed plain file outside Nix). Uses the wakatime-cli
+        # binary added to home.packages below.
+        "pi-wakatime"
+        # Batch file reads via read_many with adaptive packing and
+        # output-budget awareness. No config needed.
+        "pi-read-many"
+        # Todo list tracking with live overlay above the editor. Provides
+        # the `todo` tool, `/todos` command, and `blockedBy` dependency
+        # tracking with cycle detection.
+        "@juicesharp/rpiv-todo"
+        # Side conversation channel — /btw <question> opens a panel where a
+        # tool-less clone of the primary model answers from a read-only
+        # snapshot of the main transcript. Side answers never pollute the
+        # main session.
+        "@juicesharp/rpiv-btw"
+        # Structured clarifying-question tool — `ask_user_question` presents
+        # a tabbed dialog with single/multi-select questions, side-by-side
+        # option previews, per-option notes, and a Submit-tab review step.
+        "@juicesharp/rpiv-ask-user-question"
+        # Background process manager — the `process` tool starts dev servers,
+        # test watchers, builds, log tails and keeps the conversation going.
+        # /ps panel, /ps:logs, logWatches for runtime stdout/stderr alerts.
+        "@aliou/pi-processes"
+        # Aggregated token/cost usage stats across all sessions.
+        # /usage for table view, /usage --insights for dashboard.
+        "@tmustier/pi-usage-extension"
+        # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
+        # normal mode; covers motions, operators, visual mode basics.
+        "pi-vim"
+        # Run interactive CLIs (vim, psql, ssh, dev servers, sub-agent CLIs)
+        # in a TUI overlay with 4 modes: interactive, hands-free, dispatch,
+        # monitor. Commands: /spawn, /attach, /dismiss. Ships an
+        # `interactive-shell` skill auto-registered via pi.skills. Runtime
+        # dep zigpty ships prebuilt PTY binaries (no node-gyp on install).
+        "pi-interactive-shell"
+        # Autonomous goal mode. /goal <objective> drives guarded
+        # continuation prompts each idle turn until the agent calls the
+        # goal_complete tool, the budget is hit, or the user pauses. Goal
+        # state lives in session entries (restored on /reload).
+        "@narumitw/pi-goal"
+      ];
+      piPackagesStr = lib.concatStringsSep " " piPackages;
     in
     lib.mkIf config.cli.pi.enable {
       home.packages = with pkgs; [
@@ -58,6 +156,18 @@
       # interactive-mode.js:528 `if (PI_SKIP_VERSION_CHECK || PI_OFFLINE)`.
       home.sessionVariables = {
         PI_SKIP_VERSION_CHECK = "1";
+        # Ponytail default mode. `full` keeps the lazy-dev ruleset injected
+        # every turn — it owns the YAGNI/minimal-code philosophy, which has
+        # been trimmed out of ./config/AGENTS.md to avoid duplication
+        # (AGENTS.md keeps the non-minimalism guidance: delegation,
+        # planning, verification, error handling, single-source-of-truth).
+        # Escalate/relax per session with `/ponytail lite|full|ultra` or
+        # `stop ponytail`. The env var is ponytail's highest-priority
+        # source (over ~/.config/ponytail/config.json), so
+        # `/ponytail default <mode>` still writes the file but this wins;
+        # the extension reports that override instead of silently ignoring
+        # it. See ponytail/hooks/ponytail-config.js:getDefaultMode().
+        PONYTAIL_DEFAULT_MODE = "full";
       };
 
       # Seed global pi settings. Only values that diverge from upstream
@@ -73,10 +183,10 @@
       # SKILL.md under this tree via the agent-skills.io convention.
       #
       # Two sources, both wired up via `home.file` entries below:
-      #   1. Upstream repos (anthropics/skills, mattpocock/skills) pinned
-      #      via the let-bound `anthropicSkills` / `mattpocockSkills`
-      #      fetchers above. Each `home.file` entry points at one
-      #      subdirectory of those snapshots.
+      #   1. Upstream repos (anthropics/skills, mattpocock/skills,
+      #      raindrop-ai/skills + raindrop-ai/workshop, DietrichGebert/
+      #      ponytail) pinned via the let-bound fetchers above. Each
+      #      `home.file` entry points at one subdirectory of those snapshots.
       #   2. Locally-authored skills owned by this module under
       #      ./config/skills/<name>/SKILL.md. Currently: commit, to-html.
       home.file = {
@@ -105,106 +215,16 @@
           # use a tiny wrapper that redirects npm's global prefix to a writable
           # location under ~/.pi/agent/.
           npmCommand = [ "${piNpm}/bin/pi-npm" ];
-          # Declarative package list. Pi loads extensions/skills/prompts/themes
-          # from each entry's manifest. `pi install npm:...` would normally
-          # write here, but settings.json is a read-only Nix store symlink, so
-          # we declare packages here directly. The activation hook below
-          # ensures the npm artifacts exist under ~/.pi/agent/npm/.
-          packages = [
-            # MUST use the `npm:` prefix. Without it, pi's `parseSource()` falls
-            # through to the local-path branch and tries to resolve
-            # `~/.pi/agent/pi-subagents`, silently dropping the package even
-            # though the npm artifacts exist under ~/.pi/agent/npm/.
-            "npm:pi-subagents"
-            # Web search and fetch with pluggable providers (Brave, Tavily,
-            # Serper, Exa, Jina, Firecrawl, self-hosted SearXNG). Provides
-            # `web_search` and `web_fetch` tools, plus `/web-search-config`
-            # for interactive provider selection. The active provider is
-            # persisted to ~/.config/rpiv-web-tools/config.json (chmod 0600);
-            # API keys resolve env-var-first (`TAVILY_API_KEY`,
-            # `EXA_API_KEY`, `BRAVE_SEARCH_API_KEY`, …) then config file.
-            # After the next rebuild, run `/web-search-config` once to pick
-            # `tavily` — the default fallback is `brave`. Note this package
-            # does NOT ship `code_search` or `fetch_content` (the two tools
-            # the older `pi-web-access` provided in addition to `web_search`).
-            "npm:@juicesharp/rpiv-web-tools"
-            # WakaTime time tracking. Reads api_key from ~/.wakatime.cfg
-            # (hand-managed plain file outside Nix — predates this repo;
-            # would need a secrets backend to manage declaratively).
-            # Uses the wakatime-cli binary added to home.packages above.
-            "npm:pi-wakatime"
-            # Batch file reads via read_many with adaptive packing and
-            # output-budget awareness. No config needed.
-            "npm:pi-read-many"
-            # Todo list tracking with live overlay above the editor. Tasks
-            # survive /reload and conversation compaction (replayed from the
-            # branch, not disk). Provides the `todo` tool, `/todos` slash
-            # command, and `blockedBy` dependency tracking with cycle
-            # detection. Replaces the simpler `pi-manage-todo-list`
-            # (different tool name: `todo` vs `manage_todo_list`; same
-            # /todos command, so they cannot coexist). Optional companion
-            # `@juicesharp/rpiv-i18n` localizes overlay chrome; not
-            # installed because LANG=en here makes it a no-op.
-            "npm:@juicesharp/rpiv-todo"
-            # Side conversation channel — /btw <question> opens a panel
-            # at the bottom of the terminal, where a tool-less clone of the
-            # primary model answers using a read-only snapshot of the main
-            # transcript. Side answers never pollute the main session.
-            # Replaces the simpler `pi-btw` (same /btw command, less UX).
-            "npm:@juicesharp/rpiv-btw"
-            # Structured clarifying-question tool — agent calls
-            # `ask_user_question` mid-run to present a tabbed dialog with
-            # single/multi-select questions, side-by-side option previews,
-            # per-option notes, and a Submit-tab review step.
-            # Replaces the simpler `pi-ask-user` (different tool name:
-            # `ask_user_question` vs `ask_user`). Optional companion
-            # `@juicesharp/rpiv-i18n` adds /languages locale switcher; not
-            # installed because LANG=en here makes it a no-op.
-            "npm:@juicesharp/rpiv-ask-user-question"
-            # Background process manager — Pi can start dev servers, test
-            # watchers, builds, log tails via the `process` tool and keep
-            # the conversation going. /ps panel, /ps:logs, /ps:pin,
-            # /ps:dock, /ps:settings. Supports logWatches for runtime
-            # alerts on stdout/stderr regex matches.
-            "npm:@aliou/pi-processes"
-            # Aggregated token/cost usage stats across all sessions.
-            # /usage for table view, /usage --insights for dashboard.
-            "npm:@tmustier/pi-usage-extension"
-            # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
-            # normal mode; covers motions, operators, visual mode basics.
-            "npm:pi-vim"
-            # Run interactive CLIs (vim, psql, ssh, dev servers, sub-agent
-            # CLIs) in a TUI overlay with 4 modes: interactive, hands-free,
-            # dispatch, monitor. Commands: /spawn, /attach, /dismiss.
-            # Ships an `interactive-shell` skill auto-registered via
-            # the package's pi.skills field. Runtime dep zigpty ships
-            # prebuilt PTY binaries (macOS arm64/x64 + Linux x64/arm64
-            # supported — no node-gyp on first install).
-            "npm:pi-interactive-shell"
-            # Code-review slash command — `/simplify` reviews uncommitted (or
-            # staged / branch-diffed / explicitly-listed) changes for
-            # clarity, naming, and redundancy without changing behavior.
-            # See github.com/MattDevy/pi-extensions/tree/main/packages/pi-simplify.
-            "npm:pi-simplify"
-            # Babysitter (a5c.ai) — deterministic, self-orchestrating
-            # workflow harness. The pi package is intentionally thin: an
-            # extensions/index.ts that adds slash-command aliases
-            # (/babysit, /babysitter, /call, /plan, /resume, /doctor,
-            # /yolo) which forward into pi's native /skill: flow, plus a
-            # set of `babysit`/`call`/`doctor`/... skills that carry the
-            # actual orchestration contract. The heavy lifting (runs,
-            # tasks, breakpoints, the event-sourced journal under
-            # .a5c/runs/) lives in its @a5c-ai/babysitter-sdk dependency.
-            #
-            # That SDK plus its full transitive tree (puppeteer, aws-sdk,
-            # google genai, … ~340 packages) is installed *nested* under
-            # @a5c-ai/babysitter-pi/node_modules/ rather than hoisted to
-            # the top level, so the cleanup allowlist below only needs the
-            # single top-level @a5c-ai/babysitter-pi entry — the nested
-            # deps (including the `babysitter` CLI bin) are never visited
-            # by the one-level scope scan. Marked Experimental upstream.
-            "npm:@a5c-ai/babysitter-pi"
-          ];
+          # Declarative package list, derived from the let-bound
+          # `piPackages` source of truth above. Pi loads
+          # extensions/skills/prompts/themes from each entry's manifest.
+          # settings.json is a read-only Nix store symlink, so
+          # `pi install npm:...` can't write here; the install activation
+          # hook below ensures the npm artifacts exist under
+          # ~/.pi/agent/npm/. The `npm:` prefix is REQUIRED — without it
+          # pi's parseSource() falls through to the local-path branch and
+          # silently drops the package.
+          packages = map (p: "npm:${p}") piPackages;
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
           # We still pin per-role models declaratively so a future
@@ -289,15 +309,16 @@
           # this on demand; `/builtin-header` restores upstream header for
           # the current session.
           quietStartup = true;
-          # Disable install telemetry. Pi otherwise sends a single GET to
-          # https://pi.dev/install?version=X on the first run after a version
-          # change (interactive-mode.js:631). PI_OFFLINE already short-circuits
-          # this, but we set the explicit flag for defense-in-depth in case
-          # PI_OFFLINE is ever unset.
           # Default tree filter mode. "user-only" mirrors Ctrl+U so you
           # see only your own messages in /tree without having to toggle it
           # every time. Other options: "default", "no-tools", "labeled-only", "all".
           treeFilterMode = "user-only";
+          # Disable install telemetry. Pi otherwise sends a single GET to
+          # https://pi.dev/install?version=X on the first run after a version
+          # change (interactive-mode.js:631). We deliberately do NOT set
+          # PI_OFFLINE (it would also silence the useful extension-update
+          # checks), so this explicit flag is what actually suppresses the
+          # ping.
           enableInstallTelemetry = false;
         };
 
@@ -414,6 +435,20 @@
         # row above the editor.
         ".pi/agent/extensions/tps.ts".source = ./config/extensions/tps.ts;
 
+        # Ponytail pi extension (commands /ponytail, /ponytail-review,
+        # /ponytail-help; injects the lazy-dev system prompt per turn when
+        # mode != off). A re-export wrapper rather than a direct symlink:
+        # ponytail/pi-extension/index.js does `require("../hooks/…")`, so it
+        # must be loaded from its real store path for that relative resolve
+        # to land on ponytail/hooks/. Symlinking the dir into extensions/
+        # would resolve `../hooks` to ~/.pi/agent/extensions/hooks and also
+        # tempt pi to load loose hook .js files as extensions. Importing the
+        # absolute store path sidesteps both.
+        ".pi/agent/extensions/ponytail.js".text = ''
+          import ext from "${ponytail}/pi-extension/index.js";
+          export default ext;
+        '';
+
         ".pi/agent/AGENTS.md".source = ./config/AGENTS.md;
 
         ".pi/agent/prompts" = {
@@ -452,6 +487,24 @@
           recursive = true;
         };
 
+        # Ponytail skills (github.com/DietrichGebert/ponytail). The main
+        # `ponytail` rule text is also read directly from the store by the
+        # extension's instruction builder; these entries make the skills
+        # discoverable so `/ponytail-review` and `/ponytail-help` (and
+        # `/skill:ponytail`) resolve.
+        ".agents/skills/ponytail" = {
+          source = "${ponytail}/skills/ponytail";
+          recursive = true;
+        };
+        ".agents/skills/ponytail-review" = {
+          source = "${ponytail}/skills/ponytail-review";
+          recursive = true;
+        };
+        ".agents/skills/ponytail-help" = {
+          source = "${ponytail}/skills/ponytail-help";
+          recursive = true;
+        };
+
         # Matt Pocock skills (https://github.com/mattpocock/skills).
         ".agents/skills/diagnose" = {
           source = "${mattpocockSkills}/skills/engineering/diagnose";
@@ -461,16 +514,25 @@
           source = "${mattpocockSkills}/skills/productivity/teach";
           recursive = true;
         };
-        ".agents/skills/grill-with-docs" = {
-          source = "${mattpocockSkills}/skills/engineering/grill-with-docs";
+
+        # Raindrop AI skills (raindrop-ai/skills + raindrop-ai/workshop),
+        # vendored from the let-bound fetchers above. raindrop-investigate /
+        # raindrop-setup live at the repo root of `skills`; instrument-agent /
+        # setup-agent-replay live under `skills/` in the Workshop repo.
+        ".agents/skills/raindrop-investigate" = {
+          source = "${raindropSkills}/raindrop-investigate";
           recursive = true;
         };
-        ".agents/skills/improve-codebase-architecture" = {
-          source = "${mattpocockSkills}/skills/engineering/improve-codebase-architecture";
+        ".agents/skills/raindrop-setup" = {
+          source = "${raindropSkills}/raindrop-setup";
           recursive = true;
         };
-        ".agents/skills/zoom-out" = {
-          source = "${mattpocockSkills}/skills/engineering/zoom-out";
+        ".agents/skills/instrument-agent" = {
+          source = "${raindropWorkshop}/skills/instrument-agent";
+          recursive = true;
+        };
+        ".agents/skills/setup-agent-replay" = {
+          source = "${raindropWorkshop}/skills/setup-agent-replay";
           recursive = true;
         };
 
@@ -486,30 +548,33 @@
         };
       };
 
-      # Bootstrap npm artifacts for declarative `packages` entries.
+      # Bootstrap npm artifacts for the declarative `piPackages` list.
       #
       # Pi resolves global npm packages from
       # `<npmCommand> root -g`/lib/node_modules/<name>. We can't use
       # `pi install npm:...` here because that command also tries to mutate
       # settings.json, which is a read-only Nix store symlink under
       # home-manager. Instead we install via the same npm wrapper directly,
-      # which writes only to ~/.pi/agent/npm/. The directory check makes
-      # each install hook idempotent.
+      # which writes only to ~/.pi/agent/npm/. The directory check makes the
+      # install loop idempotent.
       #
-      # Cleanup: cleanupPiPackages runs before all install hooks and removes
-      # any directory in node_modules not present in the declared set below.
-      # Removing a package from the list + `nh os switch` is enough — no
-      # manual `rm` needed.
+      # Both the cleanup allowlist and the install loop derive from the single
+      # let-bound `piPackages` list — add/remove a package there and
+      # `nh os switch`; no manual `rm` and no per-package hook needed.
       #
       # Trailing-slash + symlink footgun: globs like `*/` yield paths with a
       # trailing slash, and `rm -rf foo/` on a symlink-to-dir dereferences the
       # link and tries to delete the target's contents (not the link). For
-      # entries that point into the read-only Nix store (e.g. bootstrap
-      # symlinks created by `linkPiForTaskplane` or by an old `pi install`),
-      # that surfaces as a flood of "Permission denied" errors and fails the
-      # whole activation. We strip the trailing slash and use `rm` (no `-rf`)
-      # for symlinks so we delete the link itself, never its target.
+      # entries that point into the read-only Nix store, that surfaces as a
+      # flood of "Permission denied" errors and fails the whole activation. We
+      # strip the trailing slash and use `rm` (no `-rf`) for symlinks so we
+      # delete the link itself, never its target.
       home.activation.cleanupPiPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        declared="${piPackagesStr}"
+        is_declared() {
+          for d in $declared; do [ "$d" = "$1" ] && return 0; done
+          return 1
+        }
         remove_stale() {
           # $1: label for log line, $2: path (no trailing slash)
           local label="$1" path="$2"
@@ -530,11 +595,11 @@
             pkg=$(basename "$dir")
             case "$pkg" in
               @*) continue ;;
-              pi-subagents|pi-wakatime|pi-read-many|pi-vim|pi-interactive-shell|pi-simplify) ;;
-              *) remove_stale "$pkg" "$dir" ;;
             esac
+            is_declared "$pkg" || remove_stale "$pkg" "$dir"
           done
-          # Remove undeclared scoped packages (@scope/name)
+          # Remove undeclared scoped packages (@scope/name), then prune any
+          # now-empty @scope/ dir left behind.
           for scope_dir in "$node_modules"/@*/; do
             scope_dir="''${scope_dir%/}"
             [ -d "$scope_dir" ] || continue
@@ -543,106 +608,23 @@
               pkg_dir="''${pkg_dir%/}"
               [ -e "$pkg_dir" ] || continue
               full="$scope/$(basename "$pkg_dir")"
-              case "$full" in
-                @tmustier/pi-usage-extension|@juicesharp/rpiv-btw|@juicesharp/rpiv-ask-user-question|@juicesharp/rpiv-todo|@juicesharp/rpiv-web-tools|@aliou/pi-processes|@a5c-ai/babysitter-pi) ;;
-                *) remove_stale "$full" "$pkg_dir" ;;
-              esac
+              is_declared "$full" || remove_stale "$full" "$pkg_dir"
             done
+            $DRY_RUN_CMD rmdir "$scope_dir" 2>/dev/null || true
           done
         fi
       '';
 
-      home.activation.installPiSubagents =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-subagents" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-subagents
-            fi
-          '';
-
-      home.activation.installRpivWebTools =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-web-tools" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-web-tools
-            fi
-          '';
-
-      home.activation.installPiWakatime = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-wakatime" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-wakatime
-        fi
+      # Single install hook: install any declared package whose artifacts are
+      # missing. Runs after cleanup so a rename (remove old + add new) settles
+      # in one activation.
+      home.activation.installPiPackages = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
+        for pkg in ${piPackagesStr}; do
+          if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/$pkg" ]; then
+            $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g "$pkg"
+          fi
+        done
       '';
-
-      home.activation.installPiReadMany = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-read-many" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-read-many
-        fi
-      '';
-
-      home.activation.installRpivTodo = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-todo" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-todo
-        fi
-      '';
-
-      home.activation.installRpivBtw = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-btw" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-btw
-        fi
-      '';
-
-      home.activation.installRpivAskUserQuestion =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@juicesharp/rpiv-ask-user-question" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @juicesharp/rpiv-ask-user-question
-            fi
-          '';
-
-      home.activation.installPiProcesses =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@aliou/pi-processes" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @aliou/pi-processes
-            fi
-          '';
-
-      home.activation.installPiUsageExtension =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@tmustier/pi-usage-extension" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @tmustier/pi-usage-extension
-            fi
-          '';
-
-      home.activation.installPiVim = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-vim" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-vim
-        fi
-      '';
-
-      home.activation.installPiInteractiveShell =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-interactive-shell" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-interactive-shell
-            fi
-          '';
-
-      home.activation.installPiSimplify = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/pi-simplify" ]; then
-          $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g pi-simplify
-        fi
-      '';
-
-      home.activation.installBabysitterPi =
-        lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ]
-          ''
-            if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/@a5c-ai/babysitter-pi" ]; then
-              $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g @a5c-ai/babysitter-pi
-            fi
-          '';
 
       programs.zsh.shellAliases = {
         p = "pi";
