@@ -33,7 +33,9 @@
 
       # Vertical split on prefix+| (zellij muscle memory).
       split_vertical = "prefix+|"
+      # prefix+s toggles the sidebar (frequent); move settings off it to prefix+,.
       toggle_sidebar = "prefix+s"
+      settings = "prefix+comma"
 
       [theme]
       name = "catppuccin"
