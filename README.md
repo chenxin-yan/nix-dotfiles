@@ -189,7 +189,6 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 | ----------- | ----------------------------------------- |
 | `zellij`    | Terminal multiplexer                      |
 | `yazi`      | Terminal file manager with plugins        |
-| `jj`        | Jujutsu version control (Git alternative) |
 | `mise`      | Polyglot runtime/tool version manager     |
 | `syncthing` | File sync across 3 devices                |
 | `gcloud`    | Google Cloud SDK                          |

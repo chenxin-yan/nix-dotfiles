@@ -4,7 +4,6 @@
   imports = [
     ./gcloud
     ./herdr
-    ./jj
     ./mise
     ./pandoc
     ./pi
@@ -24,6 +23,5 @@
     cli.syncthing.enable = lib.mkDefault true;
     cli.yazi.enable = lib.mkDefault true;
     cli.zellij.enable = lib.mkDefault true;
-    cli.jj.enable = lib.mkDefault true;
   };
 }
