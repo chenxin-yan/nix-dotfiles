@@ -26,9 +26,11 @@
       previous_tab = "alt+i"
       next_tab = "alt+o"
       switch_tab = "ctrl+1..9"
-      # Workspaces: prefix+up/down cycle adjacent, prefix+1..9 jump direct.
-      previous_workspace = "prefix+up"
-      next_workspace = "prefix+down"
+      # Workspaces: alt+[ / alt+] cycle prefix-free (free in AeroSpace, which
+      # owns alt+hjkl/arrows/numbers); prefix+arrow kept as fallback and
+      # prefix+1..9 jumps direct.
+      previous_workspace = ["prefix+up", "alt+["]
+      next_workspace = ["prefix+down", "alt+]"]
       switch_workspace = "prefix+1..9"
 
       # Vertical split on prefix+| (zellij muscle memory).
