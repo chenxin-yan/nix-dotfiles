@@ -2,21 +2,19 @@
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
 
-# Build set of valid session names from all project directories
-declare -A valid_sessions
+# Build set of valid workspace labels from all project directories
+declare -A valid_labels
 
 while IFS= read -r dir; do
   [[ -z "$dir" ]] && continue
-  name=$(get_session_name "$dir")
-  valid_sessions["$name"]=1
+  valid_labels["$(get_session_name "$dir")"]=1
 done < <(list_project_dirs)
 
-# Kill any running session not in the valid set
-zellij list-sessions --short --no-formatting 2>/dev/null | while IFS= read -r session; do
-  [[ -z "$session" ]] && continue
-
-  if [[ -z "${valid_sessions[$session]+x}" ]]; then
-    echo "Killing: $session"
-    zellij delete-session "$session" --force
+# Close/kill any live session or workspace whose label is not in the valid set
+mux_list_labels | while IFS= read -r label; do
+  [[ -z "$label" ]] && continue
+  if [[ -z "${valid_labels[$label]+x}" ]]; then
+    echo "Closing: $label"
+    mux_close "$label"
   fi
 done

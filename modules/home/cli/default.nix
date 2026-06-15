@@ -3,6 +3,7 @@
 {
   imports = [
     ./gcloud
+    ./herdr
     ./jj
     ./mise
     ./pandoc
@@ -15,6 +16,7 @@
 
   config = {
     cli.gcloud.enable = lib.mkDefault true;
+    cli.herdr.enable = lib.mkDefault true;
     cli.mise.enable = lib.mkDefault true;
     cli.pandoc.enable = lib.mkDefault true;
     cli.pi.enable = lib.mkDefault true;

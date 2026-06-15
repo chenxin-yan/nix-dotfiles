@@ -13,11 +13,6 @@ SELECTED=$(
 
 [[ -z "$SELECTED" ]] && exit 1
 
-SESSION_NAME=$(get_session_name "$SELECTED")
+LABEL=$(get_session_name "$SELECTED")
 
-if [[ -n "$ZELLIJ" || -n "$ZELLIJ_SESSION_NAME" ]]; then
-  # Already inside Zellij — open a new tab in the current session instead of nesting
-  zellij action new-tab --layout default --cwd "$SELECTED" --name "$SESSION_NAME"
-else
-  cd "$SELECTED" && zellij attach --create "$SESSION_NAME"
-fi
+mux_open "$LABEL" "$SELECTED"

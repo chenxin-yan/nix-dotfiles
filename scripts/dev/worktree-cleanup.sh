@@ -59,12 +59,10 @@ for worktree_dir in "$WORKTREE_BASE"/*/; do
     # Remove the worktree
     git worktree remove "$worktree_dir" --force 2>/dev/null || rm -rf "$worktree_dir"
 
-    # Kill associated zellij session
-    SESSION_NAME=$(truncate_session_name "$OWNER:$REPO:$dir_name")
-    if zellij_session_exists "$SESSION_NAME"; then
-      echo "  Killing zellij session: $SESSION_NAME"
-      zellij delete-session "$SESSION_NAME" --force 2>/dev/null || true
-    fi
+    # Close associated session/workspace
+    LABEL=$(mux_label "$OWNER:$REPO:$dir_name")
+    echo "  Closing session/workspace: $LABEL"
+    mux_close "$LABEL"
 
     ((REMOVED_COUNT++))
   fi

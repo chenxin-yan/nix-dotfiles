@@ -157,9 +157,7 @@ fi
 
 # --- Session Cleanup ---
 
-if zellij_session_exists "$SESSION_NAME"; then
-  echo "Killing zellij session: $SESSION_NAME"
-  zellij delete-session "$SESSION_NAME" --force 2>/dev/null || true
-fi
+echo "Closing session/workspace: $SESSION_NAME"
+mux_close "$SESSION_NAME"
 
 echo "Removed '$DISPLAY_NAME'"

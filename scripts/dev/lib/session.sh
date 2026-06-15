@@ -28,9 +28,24 @@ parse_git_url() {
   REPO="${REPO%.git}"
 }
 
-# Truncate a session name to fit within the macOS 103-byte sun_path limit
-# for zellij Unix domain sockets.
-truncate_session_name() {
+# Multiplexer backend: "zellij" (default) or "herdr". Set DEV_MUX=herdr to
+# drive the herdr workflow with the same scripts while comparing the two.
+: "${DEV_MUX:=zellij}"
+
+# True when a herdr process is an ancestor of this shell. herdr sets no env
+# marker (unlike zellij's $ZELLIJ), so walk the parent chain instead.
+_inside_herdr() {
+  local pid=$PPID comm
+  while [[ -n "$pid" && "$pid" -gt 1 ]]; do
+    comm=$(ps -o comm= -p "$pid" 2>/dev/null)
+    [[ "${comm##*/}" == herdr ]] && return 0
+    pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+  done
+  return 1
+}
+
+_truncate_zellij_name() {
+  # macOS 103-byte sun_path limit for zellij Unix domain sockets.
   local name="$1"
   local zj_base="${TMPDIR%/}/zellij-$(id -u)"
   local zj_subdir
@@ -49,7 +64,17 @@ truncate_session_name() {
   echo "$name"
 }
 
-# Convert a directory path to a zellij session name (with truncation).
+# Normalize a raw project identifier into a backend-appropriate label.
+# herdr labels have no socket-length limit; zellij names must be truncated.
+mux_label() {
+  if [[ "$DEV_MUX" == herdr ]]; then
+    echo "$1"
+  else
+    _truncate_zellij_name "$1"
+  fi
+}
+
+# Convert a directory path to a session/workspace name (backend-normalized).
 get_session_name() {
   local dir="$1"
   local name
@@ -71,7 +96,7 @@ get_session_name() {
   else
     name=$(basename "$dir")
   fi
-  truncate_session_name "$name"
+  mux_label "$name"
 }
 
 # Convert a directory path to a human-readable display name for fzf.
@@ -95,9 +120,67 @@ format_display() {
   fi
 }
 
-# Check if a zellij session exists by exact name.
-zellij_session_exists() {
-  zellij list-sessions --short --no-formatting 2>/dev/null | grep -qxF "$1"
+# Print the herdr workspace_id whose label matches $1 exactly, or nothing.
+_herdr_workspace_id() {
+  herdr workspace list 2>/dev/null \
+    | jq -r --arg l "$1" 'first(.result.workspaces[]? | select(.label == $l) | .workspace_id) // empty' 2>/dev/null
+}
+
+# Open a project: focus/attach if it exists, else create. ($1=label $2=dir)
+# Inside zellij this opens a new tab in the current session.
+mux_open() {
+  local label="$1" dir="$2"
+  if [[ "$DEV_MUX" == herdr ]]; then
+    local id; id=$(_herdr_workspace_id "$label")
+    if [[ -n "$id" ]]; then herdr workspace focus "$id" >/dev/null
+    else herdr workspace create --cwd "$dir" --label "$label" --focus >/dev/null; fi
+    # Outside herdr the focus only changed server state; attach so it shows.
+    _inside_herdr || herdr
+  elif [[ -n "$ZELLIJ" || -n "$ZELLIJ_SESSION_NAME" ]]; then
+    zellij action new-tab --layout default --cwd "$dir" --name "$label"
+  else
+    cd "$dir" && zellij attach --create "$label"
+  fi
+}
+
+# Switch to a project, creating it if needed. ($1=label $2=dir)
+# Inside zellij this switches sessions rather than adding a tab.
+mux_switch() {
+  local label="$1" dir="$2"
+  if [[ "$DEV_MUX" == herdr ]]; then
+    local id; id=$(_herdr_workspace_id "$label")
+    if [[ -n "$id" ]]; then herdr workspace focus "$id" >/dev/null
+    else herdr workspace create --cwd "$dir" --label "$label" --focus >/dev/null; fi
+    _inside_herdr || herdr
+  elif [[ -n "$ZELLIJ" ]]; then
+    if ! mux_list_labels | grep -qxF "$label"; then
+      (cd "$dir" && ZELLIJ= ZELLIJ_SESSION_NAME= zellij attach --create-background "$label")
+    fi
+    zellij action switch-session "$label"
+  else
+    echo "Attaching to session: $label"
+    (cd "$dir" && zellij attach --create "$label")
+  fi
+}
+
+# Close a project's session/workspace if it exists. ($1=label)
+mux_close() {
+  local label="$1"
+  if [[ "$DEV_MUX" == herdr ]]; then
+    local id; id=$(_herdr_workspace_id "$label")
+    [[ -n "$id" ]] && herdr workspace close "$id" >/dev/null 2>&1 || true
+  elif mux_list_labels | grep -qxF "$label"; then
+    zellij delete-session "$label" --force 2>/dev/null || true
+  fi
+}
+
+# List all live session/workspace labels, one per line.
+mux_list_labels() {
+  if [[ "$DEV_MUX" == herdr ]]; then
+    herdr workspace list 2>/dev/null | jq -r '.result.workspaces[]?.label'
+  else
+    zellij list-sessions --short --no-formatting 2>/dev/null
+  fi
 }
 
 # List all project directories (repos, local dirs, worktrees, projects).

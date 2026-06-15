@@ -30,12 +30,22 @@ in
     shellAliases = {
       cdv = "cd $DEV_PATH";
       dvc = "${scriptsDir}/dev/clone.sh";
+
+      # zellij workflow (default backend)
       scu = "${scriptsDir}/dev/cleanup.sh";
       se = "${scriptsDir}/dev/attach.sh";
       wt = "${scriptsDir}/dev/worktree.sh";
       wtc = "${scriptsDir}/dev/worktree-cleanup.sh";
       wtrm = "${scriptsDir}/dev/worktree-delete.sh";
       srm = "${scriptsDir}/dev/session-remove.sh";
+
+      # herdr workflow (same scripts, herdr backend) — run alongside to compare
+      hscu = "DEV_MUX=herdr ${scriptsDir}/dev/cleanup.sh";
+      hse = "DEV_MUX=herdr ${scriptsDir}/dev/attach.sh";
+      hwt = "DEV_MUX=herdr ${scriptsDir}/dev/worktree.sh";
+      hwtc = "DEV_MUX=herdr ${scriptsDir}/dev/worktree-cleanup.sh";
+      hwtrm = "DEV_MUX=herdr ${scriptsDir}/dev/worktree-delete.sh";
+      hsrm = "DEV_MUX=herdr ${scriptsDir}/dev/session-remove.sh";
 
       fzg = "${scriptsDir}/utils/rg_with_fzf.sh";
 

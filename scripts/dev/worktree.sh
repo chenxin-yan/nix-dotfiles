@@ -56,7 +56,7 @@ SAFE_BRANCH="${SELECTED_BRANCH//\//-}"
 
 # Calculate paths
 WORKTREE_PATH="$DEV_PATH/worktrees/$HOST/$OWNER/$REPO/$SAFE_BRANCH"
-SESSION_NAME=$(truncate_session_name "$OWNER:$REPO:$SAFE_BRANCH")
+LABEL=$(mux_label "$OWNER:$REPO:$SAFE_BRANCH")
 
 # Create worktree if it doesn't exist
 if [[ ! -d "$WORKTREE_PATH" ]]; then
@@ -64,16 +64,4 @@ if [[ ! -d "$WORKTREE_PATH" ]]; then
   git worktree add "$WORKTREE_PATH" "$SELECTED_BRANCH"
 fi
 
-# Attach to zellij session
-if [[ -n "$ZELLIJ" ]]; then
-  # Create session in background if it doesn't already exist, then switch to it
-  # Clear ZELLIJ env vars to avoid nesting detection in the subshell
-  if ! zellij_session_exists "$SESSION_NAME"; then
-    (cd "$WORKTREE_PATH" && ZELLIJ= ZELLIJ_SESSION_NAME= zellij attach --create-background "$SESSION_NAME")
-  fi
-  zellij action switch-session "$SESSION_NAME"
-else
-  # Outside zellij - attach normally
-  echo "Attaching to session: $SESSION_NAME"
-  (cd "$WORKTREE_PATH" && zellij attach --create "$SESSION_NAME")
-fi
+mux_switch "$LABEL" "$WORKTREE_PATH"
