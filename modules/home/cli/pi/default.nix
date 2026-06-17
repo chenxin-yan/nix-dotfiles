@@ -208,7 +208,7 @@
           # currently available on this account.
           enabledModels = [
             "anthropic/claude-opus-4-8"
-            "openai/gpt-5.5"
+            "openai-codex/gpt-5.5"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
@@ -275,7 +275,7 @@
               thinking = "high";
             };
             reviewer = {
-              model = "openai/gpt-5.5";
+              model = "openai-codex/gpt-5.5";
               thinking = "high";
             };
             # researcher is read-heavy; Sonnet's 1M context does the lifting,
@@ -286,7 +286,7 @@
               thinking = "high";
             };
             oracle = {
-              model = "openai/gpt-5.5";
+              model = "openai-codex/gpt-5.5";
               thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
