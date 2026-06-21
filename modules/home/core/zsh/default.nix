@@ -16,19 +16,26 @@
   config = lib.mkIf config.core.zsh.enable {
     home.shell.enableZshIntegration = true;
 
+    # Colorize man pages with bat
+    home.sessionVariables = {
+      MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+      MANROFFOPT = "-c";
+    };
+
     programs.zsh = {
       enable = true;
       defaultKeymap = "viins";
       dotDir = "${config.xdg.configHome}/zsh";
       history = {
-        size = 10000;
-        save = 10000;
+        size = 100000;
+        save = 100000;
         path = "${config.xdg.dataHome}/zsh/history";
         ignoreAllDups = true;
         ignoreSpace = true;
         expireDuplicatesFirst = true;
         share = true;
         extended = true;
+        histReduceBlanks = true;
       };
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
@@ -42,6 +49,11 @@
       '';
       initContent = ''
         source ~/.env
+
+        # Shell behavior
+        setopt auto_cd            # type a bare dir name to cd into it
+        setopt numeric_glob_sort  # sort globs numerically (f1 f2 f10, not f1 f10 f2)
+        setopt no_beep            # silence the terminal bell
 
         # Vi mode keybindings
         bindkey -M vicmd 'H' beginning-of-line
