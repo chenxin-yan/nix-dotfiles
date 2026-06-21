@@ -46,6 +46,7 @@
             bottom = 6;
             top = [
               { monitor."LG" = 44; }
+              { monitor."DELL S2725QC" = 44; }
               12
             ];
             right = 6;

@@ -1,9 +1,9 @@
 ---
-name: dependency-context
+name: deps-search
 description: Ground facts about a third-party dependency by reading its actual source at the installed version, instead of recalling it from memory. Clones the upstream repo into .agent-sources/ (git-excluded), checks out the tag matching the installed version, then delegates read-only subagents to trace exact behavior. Use proactively while building — before calling an unfamiliar dependency API, relying on a signature/default/return type, or explaining how a library works — and whenever debugging behavior that originates inside a dependency. Prefer this over training knowledge, which drifts from the version a project actually has installed and invents APIs that don't exist.
 ---
 
-# Dependency Context
+# Deps Search
 
 Answer from the dependency's real source at the *installed* version, not from
 memory. Training knowledge drifts between versions and invents plausible-looking

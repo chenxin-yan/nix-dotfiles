@@ -96,9 +96,6 @@
         # (hand-managed plain file outside Nix). Uses the wakatime-cli
         # binary added to home.packages below.
         "pi-wakatime"
-        # Batch file reads via read_many with adaptive packing and
-        # output-budget awareness. No config needed.
-        "pi-read-many"
         # Todo list tracking with live overlay above the editor. Provides
         # the `todo` tool, `/todos` command, and `blockedBy` dependency
         # tracking with cycle detection.
@@ -119,6 +116,10 @@
         # Aggregated token/cost usage stats across all sessions.
         # /usage for table view, /usage --insights for dashboard.
         "@tmustier/pi-usage-extension"
+        # Codex ChatGPT subscription usage. /codex-status shows 5h/weekly
+        # rate-limit bars; auto-refreshes a compact statusline item while
+        # the selected model provider is openai-codex. No Codex CLI needed.
+        "@narumitw/pi-codex-usage"
         # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
         # normal mode; covers motions, operators, visual mode basics.
         "pi-vim"
@@ -191,24 +192,22 @@
       #      ./config/skills/<name>/SKILL.md. Currently: commit, to-html.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "anthropic";
-          # Anthropic removed access to the previous default, so keep the
-          # parent on Opus 4.8 for now. Opus 4.8 is already in pi's built-in
-          # registry, so it does not need a custom models.json overlay.
-          defaultModel = "claude-opus-4-8";
-          # Anthropic's announcement says 4.8 *defaults* to high effort
-          # (vs. 4.7 which defaulted to medium) and recommends `xhigh` for
-          # difficult tasks / long-running async workflows. We keep `high`
-          # on the parent because the parent edits code directly most of
-          # the time in this workflow rather than purely orchestrating;
-          # subagents already pin their own thinking levels below. Bump to
-          # `xhigh` per-session via Ctrl+T when a task warrants it.
+          defaultProvider = "openai-codex";
+          # GPT-5.5 (ChatGPT subscription path) is the primary model. It's
+          # already in pi's built-in registry, so the openai-codex variant
+          # needs no custom models.json overlay. Anthropic stays on the side
+          # via enabledModels and the subagent overrides below.
+          defaultModel = "gpt-5.5";
+          # Keep `high` on the parent: it edits code directly most of the
+          # time in this workflow rather than purely orchestrating. gpt-5.5
+          # supports `xhigh` for difficult / long-running tasks — bump
+          # per-session via Ctrl+T when warranted. Subagents pin their own
+          # thinking levels below.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. Keep the parent defaults to models that are
-          # currently available on this account.
+          # Ctrl+P cycle list. GPT first (primary), Anthropic on the side.
           enabledModels = [
-            "anthropic/claude-opus-4-8"
             "openai-codex/gpt-5.5"
+            "anthropic/claude-opus-4-8"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
@@ -238,17 +237,18 @@
           # Role → model mapping. Each model is the cheapest tier whose
           # known strengths match the role's failure cost.
           #
-          # - opus-4-8  → planner, worker. Edit-quality and tool-orchestration
-          #               leader; lowest hallucination rate of the three.
-          #               Same price as 4-7; built into pi 0.78.0's registry.
-          # - gpt-5.5   → oracle, reviewer. Cross-family second opinion;
+          # - gpt-5.5   → planner, worker. Primary code-writing family;
           #               strong at long-context retrieval and abstract
-          #               reasoning. Hallucinates more — kept out of any
-          #               role that writes code.
-          # - sonnet-4-6 → researcher, context-builder. 1M context window;
-          #                read-heavy and handoff-synthesis fits.
-          # - haiku-4-5 → scout. Pure recon; output is consumed by a stronger
-          #               downstream agent so model gap doesn't propagate.
+          #               reasoning.
+          # - opus-4-8  → oracle, reviewer. Cross-family second opinion;
+          #               edit-quality leader with the lowest hallucination
+          #               rate, kept on the review/disagreement roles so a
+          #               different family checks the GPT-written code.
+          # - sonnet-4-6 → researcher, context-builder, scout. 1M context
+          #                window; read-heavy, handoff-synthesis, and recon
+          #                over large files all fit. Scout was on haiku-4-5
+          #                (cheaper pure-recon) but moved up to sonnet for
+          #                higher-fidelity recon on the same family.
           #
           # `thinking` is pinned per-role so a future pi-subagents update
           # can't silently change cost/latency. `fallbackModels` is
@@ -258,7 +258,7 @@
           # Revisit if/when an outage actually bites.
           subagents.agentOverrides = {
             scout = {
-              model = "anthropic/claude-haiku-4-5";
+              model = "anthropic/claude-sonnet-4-6";
             };
             # context-builder writes the handoff that planner/worker consume;
             # bad context poisons the whole chain, so spend reasoning here.
@@ -267,15 +267,15 @@
               thinking = "high";
             };
             planner = {
-              model = "anthropic/claude-opus-4-8";
+              model = "openai-codex/gpt-5.5";
               thinking = "high";
             };
             worker = {
-              model = "anthropic/claude-opus-4-8";
+              model = "openai-codex/gpt-5.5";
               thinking = "high";
             };
             reviewer = {
-              model = "openai-codex/gpt-5.5";
+              model = "anthropic/claude-opus-4-8";
               thinking = "high";
             };
             # researcher is read-heavy; Sonnet's 1M context does the lifting,
@@ -286,7 +286,7 @@
               thinking = "high";
             };
             oracle = {
-              model = "openai-codex/gpt-5.5";
+              model = "anthropic/claude-opus-4-8";
               thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in

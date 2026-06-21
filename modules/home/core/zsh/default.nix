@@ -35,8 +35,8 @@
         expireDuplicatesFirst = true;
         share = true;
         extended = true;
-        histReduceBlanks = true;
       };
+      setOptions = [ "HIST_REDUCE_BLANKS" ];
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       enableCompletion = true;
