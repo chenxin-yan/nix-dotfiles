@@ -32,6 +32,8 @@
       previous_workspace = ["prefix+up", "alt+["]
       next_workspace = ["prefix+down", "alt+]"]
       switch_workspace = "prefix+1..9"
+      open_worktree = "prefix+shift+o"
+      remove_worktree = "prefix+shift+c"
 
       # Vertical split on prefix+| (zellij muscle memory).
       split_vertical = "prefix+|"

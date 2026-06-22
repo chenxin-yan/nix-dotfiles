@@ -24,7 +24,6 @@ quit-after-last-window-closed = true
 copy-on-select = clipboard
 shell-integration-features = cursor,sudo,no-title
 
-keybind = shift+enter=text:\n
 keybind = super+w=close_surface
 keybind = super+t=new_tab
 
