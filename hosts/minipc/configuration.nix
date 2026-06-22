@@ -73,6 +73,9 @@
       "networkmanager"
       "wheel"
     ];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF4X1mHyGNSyyVqrWSIO/slGUBFPzcMOuDmP9UKI1FdN"
+    ];
     packages = with pkgs; [ ];
     shell = pkgs.zsh;
     linger = true; # Keep user services running without active login session

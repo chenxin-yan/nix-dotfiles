@@ -24,6 +24,9 @@
       "cyan-minipc" = {
         User = "cyan";
         IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+        ControlMaster = "auto";
+        ControlPersist = "10m";
+        ControlPath = "${config.home.homeDirectory}/.ssh/cm-%C";
       };
 
       "cyanpi" = {
