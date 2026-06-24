@@ -143,11 +143,11 @@
     "homebrew-daytona": {
       "flake": false,
       "locked": {
-        "lastModified": 1782227398,
-        "narHash": "sha256-Sz7wg9OXBz8kwfF/+R56eAuilj9B+MmXlxMmTL24cx4=",
+        "lastModified": 1782291355,
+        "narHash": "sha256-JmQSWhIdbWn5ysBnLQtCw2r5xD6obRdT9uNUexPLN6M=",
         "owner": "daytonaio",
         "repo": "homebrew-cli",
-        "rev": "244f4a4888ea136a3b4cbb85c56616a5f39f14dc",
+        "rev": "b0e2afd85740f4738c203896ef84482941b8ea43",
         "type": "github"
       },
       "original": {
@@ -261,11 +261,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1781607440,
-        "narHash": "sha256-rxO+uc/KFbSJp+pgyXRuAX6QlG9hJdnt0BXpEQRXY+U=",
+        "lastModified": 1782175435,
+        "narHash": "sha256-EMzXKmnOtBQ2MnvpiNOm7E+kOMvdPrIKaeg52Tip2Uk=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "3e41b24abd260e8f71dbe2f5737d24122f972158",
+        "rev": "89570f24e97e614aa34aa9ab1c927b6578a43775",
         "type": "github"
       },
       "original": {
@@ -282,11 +282,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774252203,
-        "narHash": "sha256-LRiBOEl6WHKnG5DcufEfJ4G2/u4Boa7Hpy5VHjy79Qo=",
+        "lastModified": 1782296443,
+        "narHash": "sha256-vGLVjYeLeySjNFD6yfpog9Z8YEe5amg8ZngEPBRGs00=",
         "owner": "otahontas",
         "repo": "pi-coding-agent-catppuccin",
-        "rev": "0a415dacee3e1ba2971d8576a9d49201ca401a30",
+        "rev": "9a716a630c911a4d29d9520a8d5f87e3b8867f93",
         "type": "github"
       },
       "original": {
