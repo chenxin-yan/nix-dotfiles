@@ -26,12 +26,13 @@
       previous_tab = "alt+i"
       next_tab = "alt+o"
       switch_tab = "ctrl+1..9"
-      # Workspaces: alt+[ / alt+] cycle prefix-free (free in AeroSpace, which
-      # owns alt+hjkl/arrows/numbers); prefix+arrow kept as fallback and
-      # prefix+1..9 jumps direct.
-      previous_workspace = ["prefix+up", "alt+["]
-      next_workspace = ["prefix+down", "alt+]"]
+      # Workspaces: Ctrl+Shift+K/J cycle prefix-free; prefix+arrow kept as
+      # fallback and prefix+1..9 jumps direct.
+      previous_workspace = ["prefix+up", "ctrl+shift+k"]
+      next_workspace = ["prefix+down", "ctrl+shift+j"]
       switch_workspace = "prefix+1..9"
+      previous_agent = "ctrl+shift+h"
+      next_agent = "ctrl+shift+l"
       open_worktree = "prefix+shift+o"
       remove_worktree = "prefix+shift+c"
 
@@ -40,6 +41,9 @@
       # prefix+s toggles the sidebar (frequent); move settings off it to prefix+,.
       toggle_sidebar = "prefix+s"
       settings = "prefix+comma"
+
+      [ui]
+      prompt_new_tab_name = false
 
       [theme]
       name = "catppuccin"
