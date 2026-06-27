@@ -48,9 +48,8 @@
       settings.theme = "catppuccin-mocha";
     };
 
-    # Hunk's bundled review skill, linked into the shared ~/.agents/skills/
-    # tree (agent-skills.io convention) so agents discover it. Upstream
-    # exposes it via `hunk skill path`; we symlink the package's copy.
+    # Hunk's bundled review skill belongs with the Hunk/Git module so it is
+    # installed only when the tool it documents is enabled.
     home.file.".agents/skills/hunk-review" = {
       source = "${inputs.hunk.packages.${pkgs.stdenv.hostPlatform.system}.default}/skills/hunk-review";
       recursive = true;

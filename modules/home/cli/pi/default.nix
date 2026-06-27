@@ -19,59 +19,8 @@
         exec ${pkgs.nodejs}/bin/npm "$@"
       '';
 
-      # Upstream skill repos consumed via the agent-skills.io convention.
-      # Each `home.file.".agents/skills/<name>"` entry below symlinks one
-      # subdirectory of these snapshots into ~/.agents/skills/, where pi
-      # auto-discovers them. Bumping the rev/hash refreshes every skill
-      # sourced from that repo in lock-step.
-      anthropicSkills = pkgs.fetchFromGitHub {
-        owner = "anthropics";
-        repo = "skills";
-        rev = "c30d329f5814647c1e2f071020c1e8c1c9893ef1";
-        hash = "sha256-szcnow0yO1ViQt6Mxrd+PNdfZ5jzPqqSmqA0jEQnS1o=";
-      };
-
-      mattpocockSkills = pkgs.fetchFromGitHub {
-        owner = "mattpocock";
-        repo = "skills";
-        rev = "2bf70051928429983de3b5718d277150926f8c89";
-        hash = "sha256-v8gOB1tvmytemH05C0j+WjwdfzaDgXg+MnKk5mDSblY=";
-      };
-
-      # Raindrop AI (raindrop.ai) skills. Two repos, same agent-skills.io
-      # convention as above: `raindrop-ai/skills` ships the
-      # raindrop-investigate / raindrop-setup skills; the Workshop repo
-      # (`raindrop-ai/workshop`) ships instrument-agent / setup-agent-replay
-      # under its skills/ subdir. The upstream install path is
-      # `npx skills add raindrop-ai/skills` — we vendor + pin instead so the
-      # skills are declarative and offline. The Workshop `raindrop` CLI
-      # itself is NOT wired here (it's an occasional dev tool); install it
-      # imperatively when needed.
-      raindropSkills = pkgs.fetchFromGitHub {
-        owner = "raindrop-ai";
-        repo = "skills";
-        rev = "be01a9ef3bd1db5b00919d5f7198678b6969d025";
-        hash = "sha256-30BPbwFJf8m9V/fIoCmJ+aa5z6jNGubtTlYhqhijBLQ=";
-      };
-
-      raindropWorkshop = pkgs.fetchFromGitHub {
-        owner = "raindrop-ai";
-        repo = "workshop";
-        rev = "914d74dc2c5dbfc13fa19ab9eb9bae0ecd48939e";
-        hash = "sha256-7X41HYzcGpe/Z9l80ZrwYIJAaaYaig1Jf4Pj5xmbj+M=";
-      };
-
-      # Ponytail (github.com/DietrichGebert/ponytail) — "lazy senior dev"
-      # ruleset. Not published to npm (its pi-extension/package.json is a
-      # private `…-dev` package), so it can't go in the `packages` list;
-      # we vendor the whole repo and wire the extension + skills from the
-      # store snapshot below. Bump rev/hash to update.
-      ponytail = pkgs.fetchFromGitHub {
-        owner = "DietrichGebert";
-        repo = "ponytail";
-        rev = "0882e2d256fd953c6a3e90b946f68ce4f9f35153";
-        hash = "sha256-+cWfki10COPyTXG6E095IvSVBr/PLXDqyzycwW4n5Xc=";
-      };
+      agentSources = import ../../agents/sources.nix { inherit pkgs; };
+      inherit (agentSources) ponytail;
 
       # Single source of truth for declarative pi npm packages. The
       # settings.json `packages` list, the cleanup allowlist, and the
@@ -165,7 +114,7 @@
         PI_SKIP_VERSION_CHECK = "1";
         # Ponytail default mode. `full` keeps the lazy-dev ruleset injected
         # every turn — it owns the YAGNI/minimal-code philosophy, which has
-        # been trimmed out of ./config/AGENTS.md to avoid duplication
+        # been trimmed out of ../../agents/config/AGENTS.md to avoid duplication
         # (AGENTS.md keeps the non-minimalism guidance: delegation,
         # planning, verification, error handling, single-source-of-truth).
         # Escalate/relax per session with `/ponytail lite|full|ultra` or
@@ -186,16 +135,8 @@
       # preferred over globs because they avoid pulling in dated variants
       # (e.g. claude-sonnet-4-6-20250929) and unrelated families.
       #
-      # Skills layout (~/.agents/skills/<name>) — pi auto-discovers any
-      # SKILL.md under this tree via the agent-skills.io convention.
-      #
-      # Two sources, both wired up via `home.file` entries below:
-      #   1. Upstream repos (anthropics/skills, mattpocock/skills,
-      #      raindrop-ai/skills + raindrop-ai/workshop, DietrichGebert/
-      #      ponytail) pinned via the let-bound fetchers above. Each
-      #      `home.file` entry points at one subdirectory of those snapshots.
-      #   2. Locally-authored skills owned by this module under
-      #      ./config/skills/<name>/SKILL.md. Currently: commit, to-html.
+      # Shared agent instructions and ~/.agents/skills live in
+      # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "openai-codex";
@@ -455,90 +396,10 @@
           export default ext;
         '';
 
-        ".pi/agent/AGENTS.md".source = ./config/AGENTS.md;
+        ".pi/agent/AGENTS.md".source = ../../agents/config/AGENTS.md;
 
         ".pi/agent/prompts" = {
           source = ./config/prompts;
-          recursive = true;
-        };
-
-        # Locally-authored skills, linked into the shared ~/.agents/skills/
-        # tree so they're discoverable by every agent harness that follows
-        # the agent-skills.io convention rather than just pi. The sources
-        # of truth are ./config/skills/<name>/.
-        ".agents/skills" = {
-          source = ./config/skills;
-          recursive = true;
-        };
-
-        # Anthropic skills (https://github.com/anthropics/skills).
-        ".agents/skills/frontend-design" = {
-          source = "${anthropicSkills}/skills/frontend-design";
-          recursive = true;
-        };
-        ".agents/skills/doc-coauthoring" = {
-          source = "${anthropicSkills}/skills/doc-coauthoring";
-          recursive = true;
-        };
-        ".agents/skills/skill-creator" = {
-          source = "${anthropicSkills}/skills/skill-creator";
-          recursive = true;
-        };
-        ".agents/skills/webapp-testing" = {
-          source = "${anthropicSkills}/skills/webapp-testing";
-          recursive = true;
-        };
-        ".agents/skills/pdf" = {
-          source = "${anthropicSkills}/skills/pdf";
-          recursive = true;
-        };
-
-        # Ponytail skills (github.com/DietrichGebert/ponytail). The main
-        # `ponytail` rule text is also read directly from the store by the
-        # extension's instruction builder; these entries make the skills
-        # discoverable so `/ponytail-review` and `/ponytail-help` (and
-        # `/skill:ponytail`) resolve.
-        ".agents/skills/ponytail" = {
-          source = "${ponytail}/skills/ponytail";
-          recursive = true;
-        };
-        ".agents/skills/ponytail-review" = {
-          source = "${ponytail}/skills/ponytail-review";
-          recursive = true;
-        };
-        ".agents/skills/ponytail-help" = {
-          source = "${ponytail}/skills/ponytail-help";
-          recursive = true;
-        };
-
-        # Matt Pocock skills (https://github.com/mattpocock/skills).
-        ".agents/skills/diagnose" = {
-          source = "${mattpocockSkills}/skills/engineering/diagnose";
-          recursive = true;
-        };
-        ".agents/skills/teach" = {
-          source = "${mattpocockSkills}/skills/productivity/teach";
-          recursive = true;
-        };
-
-        # Raindrop AI skills (raindrop-ai/skills + raindrop-ai/workshop),
-        # vendored from the let-bound fetchers above. raindrop-investigate /
-        # raindrop-setup live at the repo root of `skills`; instrument-agent /
-        # setup-agent-replay live under `skills/` in the Workshop repo.
-        ".agents/skills/raindrop-investigate" = {
-          source = "${raindropSkills}/raindrop-investigate";
-          recursive = true;
-        };
-        ".agents/skills/raindrop-setup" = {
-          source = "${raindropSkills}/raindrop-setup";
-          recursive = true;
-        };
-        ".agents/skills/instrument-agent" = {
-          source = "${raindropWorkshop}/skills/instrument-agent";
-          recursive = true;
-        };
-        ".agents/skills/setup-agent-replay" = {
-          source = "${raindropWorkshop}/skills/setup-agent-replay";
           recursive = true;
         };
 

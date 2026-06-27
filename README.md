@@ -170,6 +170,14 @@ app.shared.zen-browser.enable = false;
 
 Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.isDarwin` / `isLinux` in `modules/home/app/default.nix`.
 
+### Agent Modules
+
+`modules/home/agents/`
+
+| Module   | Purpose                                                    |
+| -------- | ---------------------------------------------------------- |
+| `agents` | Shared agent instructions and `~/.agents/skills/` symlinks |
+
 ### Core Modules
 
 `modules/home/core/`
@@ -193,7 +201,7 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 | `syncthing` | File sync across 3 devices                |
 | `gcloud`    | Google Cloud SDK                          |
 | `pandoc`    | Document conversion                       |
-| `pi`        | Pi coding agent (terminal coding harness) |
+| `pi`        | Pi coding agent runtime and extensions    |
 | `podman`    | Rootless containers                       |
 
 ### App Modules
