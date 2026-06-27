@@ -17,7 +17,7 @@
 (defvar
   tap-time 150
   hold-time 150
-  hold-time-slow 170
+  hold-time-slow 180
 )
 
 (defalias
@@ -26,8 +26,8 @@
   s (tap-hold $tap-time $hold-time-slow s lsft)
   d (tap-hold $tap-time $hold-time-slow d lalt)
   f (tap-hold $tap-time $hold-time f lctl)
-  g (tap-hold $tap-time $hold-time g @hyper)
-  h (tap-hold $tap-time $hold-time h @hyper)
+  g (tap-hold $tap-time $hold-time-slow g @hyper)
+  h (tap-hold $tap-time $hold-time-slow h @hyper)
   j (tap-hold $tap-time $hold-time j rctl)
   k (tap-hold $tap-time $hold-time-slow k ralt)
   l (tap-hold $tap-time $hold-time-slow l rsft)
