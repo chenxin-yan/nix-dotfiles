@@ -35,6 +35,11 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 -- Yanking selection into system clipboard
 vim.keymap.set({ 'n', 'x' }, '<leader>y', '"+y', { desc = 'Yank into system clipboard' })
 
+vim.keymap.set('n', '<leader>gA', function()
+  vim.cmd.write()
+  vim.cmd('!git commit --amend --no-edit --only -- ' .. vim.fn.shellescape(vim.api.nvim_buf_get_name(0)))
+end, { desc = 'Git Amend Current File' })
+
 -- toggle spellcheck
 vim.keymap.set('n', '<leader>us', '<cmd>set invspell<cr>', { desc = 'Toggle [S]pell check' })
 
