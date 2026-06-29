@@ -18,6 +18,9 @@
         export NPM_CONFIG_PREFIX="$HOME/.pi/agent/npm"
         exec ${pkgs.nodejs}/bin/npm "$@"
       '';
+      hypa = pkgs.writeShellScriptBin "hypa" ''
+        exec ${pkgs.nodejs}/bin/node "$HOME/.pi/agent/npm/lib/node_modules/@hypabolic/pi-hypa/node_modules/@hypabolic/hypa/bin.js" "$@"
+      '';
 
       agentSources = import ../../agents/sources.nix { inherit pkgs; };
       inherit (agentSources) ponytail;
@@ -95,6 +98,7 @@
     lib.mkIf config.cli.pi.enable {
       home.packages = with pkgs; [
         pi-coding-agent
+        hypa
         # Time-tracking daemon invoked by the npm:pi-wakatime extension
         # below. Reads ~/.wakatime.cfg for `api_key` (file is hand-managed
         # outside Nix; predates this dotfiles repo).
