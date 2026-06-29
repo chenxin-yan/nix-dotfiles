@@ -1,9 +1,12 @@
 local function map(lhs, rhs, desc)
   vim.keymap.set('n', '<leader>r' .. lhs, rhs, { desc = desc, buffer = 0 })
 end
+map('a', "<cmd>lua require('kulala').run_all()<cr>", 'Send all requests')
 map('b', "<cmd>lua require('kulala').scratchpad()<cr>", 'Open scratchpad')
 map('c', "<cmd>lua require('kulala').copy()<cr>", 'Copy as cURL')
 map('C', "<cmd>lua require('kulala').from_curl()<cr>", 'Paste from curl')
+map('e', "<cmd>lua require('kulala').export()<cr>", 'Export requests')
+map('f', "<cmd>lua require('kulala').search()<cr>", 'Find request')
 map('g', "<cmd>lua require('kulala').download_graphql_schema()<cr>", 'Download GraphQL schema')
 map('i', "<cmd>lua require('kulala').inspect()<cr>", 'Inspect current request')
 map('n', "<cmd>lua require('kulala').jump_next()<cr>", 'Jump to next request')
