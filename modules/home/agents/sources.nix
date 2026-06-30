@@ -11,8 +11,8 @@
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "2bf70051928429983de3b5718d277150926f8c89";
-    hash = "sha256-v8gOB1tvmytemH05C0j+WjwdfzaDgXg+MnKk5mDSblY=";
+    rev = "0877403d1e867fd9d574117e9b34ade404f36d2a";
+    hash = "sha256-2+2WR5Soqx4g7/T2YiOFj4XMGT5jGjnzOJlQ5ybCRS8=";
   };
 
   raindropSkills = pkgs.fetchFromGitHub {

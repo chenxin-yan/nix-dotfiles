@@ -28,8 +28,8 @@ in
         source = "${sources.anthropicSkills}/skills/doc-coauthoring";
         recursive = true;
       };
-      ".agents/skills/skill-creator" = {
-        source = "${sources.anthropicSkills}/skills/skill-creator";
+      ".agents/skills/writing-great-skills" = {
+        source = "${sources.mattpocockSkills}/skills/productivity/writing-great-skills";
         recursive = true;
       };
       ".agents/skills/webapp-testing" = {

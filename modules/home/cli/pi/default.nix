@@ -72,6 +72,10 @@
         # rate-limit bars; auto-refreshes a compact statusline item while
         # the selected model provider is openai-codex. No Codex CLI needed.
         "@narumitw/pi-codex-usage"
+        # OpenAI fast-mode package from pi.dev. The gallery URL's
+        # `name=fast mode` query is display metadata; the declarative source
+        # is the npm package name here, with `npm:` added in settings.json.
+        "@diegopetrucci/pi-openai-fast"
         # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
         # normal mode; covers motions, operators, visual mode basics.
         "pi-vim"
@@ -92,6 +96,8 @@
         # goal_complete tool, the budget is hit, or the user pauses. Goal
         # state lives in session entries (restored on /reload).
         "@narumitw/pi-goal"
+        # /rewind checkpoint navigation and /checkpoint storage manager.
+        "@ayulab/pi-rewind"
       ];
       piPackagesStr = lib.concatStringsSep " " piPackages;
     in
@@ -260,10 +266,6 @@
           # this on demand; `/builtin-header` restores upstream header for
           # the current session.
           quietStartup = true;
-          # Default tree filter mode. "user-only" mirrors Ctrl+U so you
-          # see only your own messages in /tree without having to toggle it
-          # every time. Other options: "default", "no-tools", "labeled-only", "all".
-          treeFilterMode = "user-only";
           # Disable install telemetry. Pi otherwise sends a single GET to
           # https://pi.dev/install?version=X on the first run after a version
           # change (interactive-mode.js:631). We deliberately do NOT set
