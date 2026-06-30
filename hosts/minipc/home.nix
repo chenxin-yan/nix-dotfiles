@@ -31,10 +31,10 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "github.com" = {
-        addKeysToAgent = "yes";
-        identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+        AddKeysToAgent = "yes";
+        IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
       };
     };
   };
