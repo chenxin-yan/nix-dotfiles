@@ -266,6 +266,10 @@
           # this on demand; `/builtin-header` restores upstream header for
           # the current session.
           quietStartup = true;
+          # Default tree filter mode. "user-only" mirrors Ctrl+U so you
+          # see only your own messages in /tree without having to toggle it
+          # every time. Other options: "default", "no-tools", "labeled-only" "labeled-only", "all".
+          treeFilterMode = "user-only";
           # Disable install telemetry. Pi otherwise sends a single GET to
           # https://pi.dev/install?version=X on the first run after a version
           # change (interactive-mode.js:631). We deliberately do NOT set

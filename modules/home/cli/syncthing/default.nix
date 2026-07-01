@@ -69,7 +69,7 @@
         (?d).DS_Store
         (?d)node_modules
         (?d)worktrees
-        (?d)**/.git/worktrees
+        (?d).git
         (?d)__pycache__
         (?d).pytest_cache
         (?d).mypy_cache
