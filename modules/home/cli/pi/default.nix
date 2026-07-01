@@ -149,22 +149,20 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "openai-codex";
-          # GPT-5.5 (ChatGPT subscription path) is the primary model. It's
-          # already in pi's built-in registry, so the openai-codex variant
-          # needs no custom models.json overlay. Anthropic stays on the side
-          # via enabledModels and the subagent overrides below.
-          defaultModel = "gpt-5.5";
+          defaultProvider = "anthropic";
+          # Claude Fable 5 is the primary model. GPT-5.5 stays one Ctrl+P
+          # away and handles explicit review/disagreement subagents below.
+          defaultModel = "claude-fable-5";
           # Keep `high` on the parent: it edits code directly most of the
-          # time in this workflow rather than purely orchestrating. gpt-5.5
+          # time in this workflow rather than purely orchestrating. Fable
           # supports `xhigh` for difficult / long-running tasks — bump
           # per-session via Ctrl+T when warranted. Subagents pin their own
           # thinking levels below.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. GPT first (primary), Anthropic on the side.
+          # Ctrl+P cycle list. Fable first (primary), GPT review on the side.
           enabledModels = [
+            "anthropic/claude-fable-5"
             "openai-codex/gpt-5.5"
-            "anthropic/claude-opus-4-8"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
@@ -186,26 +184,13 @@
           # We still pin per-role models declaratively so a future
           # pi-subagents update can't silently change cost/quality/latency.
           #
-          # Mixing model families is intentional: the value of subagents comes
-          # partly from getting a *different perspective* on the same problem.
-          # `oracle` in particular exists to disagree with the parent, so it
-          # runs on a different family than the default model.
+          # Mixing model families is intentional: Fable does the main work;
+          # GPT-5.5 checks it from a different family in review/disagreement
+          # roles.
           #
-          # Role → model mapping. Each model is the cheapest tier whose
-          # known strengths match the role's failure cost.
-          #
-          # - gpt-5.5   → planner, worker. Primary code-writing family;
-          #               strong at long-context retrieval and abstract
-          #               reasoning.
-          # - opus-4-8  → oracle, reviewer. Cross-family second opinion;
-          #               edit-quality leader with the lowest hallucination
-          #               rate, kept on the review/disagreement roles so a
-          #               different family checks the GPT-written code.
-          # - sonnet-4-6 → researcher, context-builder, scout. 1M context
-          #                window; read-heavy, handoff-synthesis, and recon
-          #                over large files all fit. Scout was on haiku-4-5
-          #                (cheaper pure-recon) but moved up to sonnet for
-          #                higher-fidelity recon on the same family.
+          # Role → model mapping:
+          # - claude-fable-5 → scout, context-builder, planner, worker, researcher.
+          # - gpt-5.5       → reviewer, oracle.
           #
           # `thinking` is pinned per-role so a future pi-subagents update
           # can't silently change cost/latency. `fallbackModels` is
@@ -217,34 +202,29 @@
             scout = {
               model = "anthropic/claude-sonnet-4-6";
             };
-            # context-builder writes the handoff that planner/worker consume;
-            # bad context poisons the whole chain, so spend reasoning here.
             "context-builder" = {
               model = "anthropic/claude-sonnet-4-6";
               thinking = "high";
             };
             planner = {
-              model = "openai-codex/gpt-5.5";
+              model = "anthropic/claude-fable-5";
               thinking = "high";
             };
             worker = {
-              model = "openai-codex/gpt-5.5";
+              model = "anthropic/claude-fable-5";
               thinking = "high";
             };
             reviewer = {
-              model = "anthropic/claude-opus-4-8";
-              thinking = "high";
+              model = "openai-codex/gpt-5.5";
+              thinking = "xhigh";
             };
-            # researcher is read-heavy; Sonnet's 1M context does the lifting,
-            # not reasoning depth. Start at medium and let hard research
-            # tasks be explicitly escalated.
             researcher = {
               model = "anthropic/claude-sonnet-4-6";
               thinking = "high";
             };
             oracle = {
-              model = "anthropic/claude-opus-4-8";
-              thinking = "high";
+              model = "openai-codex/gpt-5.5";
+              thinking = "xhigh";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
             # pi-subagents (see ~/.pi/agent/npm/lib/node_modules/pi-subagents/
