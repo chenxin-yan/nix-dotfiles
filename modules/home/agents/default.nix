@@ -54,8 +54,8 @@ in
         recursive = true;
       };
 
-      ".agents/skills/diagnose" = {
-        source = "${sources.mattpocockSkills}/skills/engineering/diagnose";
+      ".agents/skills/diagnosing-bugs" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/diagnosing-bugs";
         recursive = true;
       };
       ".agents/skills/teach" = {
