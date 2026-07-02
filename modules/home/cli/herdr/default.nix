@@ -26,10 +26,10 @@
       previous_tab = "alt+i"
       next_tab = "alt+o"
       switch_tab = "ctrl+1..9"
-      # Workspaces: Ctrl+Shift+K/J cycle prefix-free; prefix+arrow kept as
+      # Workspaces: Alt+Shift+P/N cycle prefix-free; prefix+arrow kept as
       # fallback and prefix+1..9 jumps direct.
-      previous_workspace = ["prefix+up", "ctrl+shift+k"]
-      next_workspace = ["prefix+down", "ctrl+shift+j"]
+      previous_workspace = ["prefix+up", "ctrl+shift+p"]
+      next_workspace = ["prefix+down", "ctrl+shift+n"]
       switch_workspace = "prefix+1..9"
       previous_agent = "ctrl+shift+h"
       next_agent = "ctrl+shift+l"
