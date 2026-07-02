@@ -14,26 +14,28 @@ in
   };
 
   config = lib.mkIf config.cli.podman.enable {
-    home.packages =
-      (with pkgs; [
-        docker-compose
-        dive
+    home.packages = with pkgs; [
+      docker-compose
+      dive
 
-        # editor
-        dockerfile-language-server
-        docker-compose-language-service
-        hadolint
-      ])
-      ++ lib.optionals isDarwin (with pkgs; [
-        podman
-      ]);
+      # editor
+      dockerfile-language-server
+      docker-compose-language-service
+      hadolint
+    ];
+
+    services.podman = lib.mkIf isDarwin {
+      enable = true;
+      useDefaultMachine = true;
+    };
 
     programs.lazydocker.enable = true;
 
     programs.zsh = {
       shellAliases = {
         dk = "lazydocker";
-      } // lib.optionalAttrs isDarwin {
+      }
+      // lib.optionalAttrs isDarwin {
         docker = "podman";
       };
 

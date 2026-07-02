@@ -57,6 +57,20 @@
       };
     };
 
+    # Sync git history for the current repo. Syncthing already delivers the
+    # working-tree files, so we only move history: fast-forward HEAD with a
+    # mixed reset (never touches files), then push local commits.
+    programs.zsh.initContent = ''
+      here() {
+        git fetch || return
+        git rev-parse --abbrev-ref '@{u}' >/dev/null || return
+        if git merge-base --is-ancestor HEAD '@{u}'; then
+          git reset -q --mixed '@{u}'
+        fi
+        git push
+      }
+    '';
+
     # Create .stignore for dev sync exclusions
     home.file = {
       "PARA/.stignore".text = ''
@@ -70,6 +84,7 @@
         (?d)node_modules
         (?d)worktrees
         (?d).git
+        (?d).jj
         (?d)__pycache__
         (?d).pytest_cache
         (?d).mypy_cache
