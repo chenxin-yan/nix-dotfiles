@@ -146,16 +146,19 @@
       enableZshIntegration = true;
 
       defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
-      fileWidgetCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
-      changeDirWidgetCommand = "fd --type=d --hidden --strip-cwd-prefix --exclude .git";
+      fileWidget = {
+        command = "fd --hidden --strip-cwd-prefix --exclude .git";
+        options = [
+          "--preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'"
+        ];
+      };
 
-      fileWidgetOptions = [
-        "--preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'"
-      ];
-
-      changeDirWidgetOptions = [
-        "--preview 'eza --tree --color=always {} | head -200'"
-      ];
+      changeDirWidget = {
+        command = "fd --type=d --hidden --strip-cwd-prefix --exclude .git";
+        options = [
+          "--preview 'eza --tree --color=always {} | head -200'"
+        ];
+      };
     };
 
     programs.oh-my-posh = {
