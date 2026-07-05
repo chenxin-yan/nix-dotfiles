@@ -42,6 +42,16 @@
         media="(prefers-color-scheme: dark)" />
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
   <script>addEventListener("DOMContentLoaded", () => hljs.highlightAll());</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script>
+    addEventListener("DOMContentLoaded", () => {
+      const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+      Chart.defaults.color = dark ? "#94a3b8" : "#64748b";
+      Chart.defaults.borderColor = dark ? "#1e293b" : "#e2e8f0";
+      for (const el of document.querySelectorAll("canvas[data-chart]"))
+        new Chart(el, JSON.parse(el.dataset.chart));
+    });
+  </script>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased font-[ui-sans-serif,system-ui,sans-serif]">
 <main class="mx-auto max-w-5xl px-6 py-10 space-y-10">
@@ -229,6 +239,87 @@ flowchart LR
 + req.user = claims.sub;</code></pre>
       </div>
     </details>
+  </section>
+
+  <!-- ============================================================
+       8. STATS — grid of 2–4 big-number KPI cards.
+          Value + label; optional tone on the value, optional delta.
+          Lead with this right after the Hero when the topic has
+          headline numbers.
+       ============================================================ -->
+  <section>
+    <p class="text-xs font-mono text-slate-500 mb-2">8 · Stats</p>
+    <div class="grid gap-4 grid-cols-2 md:grid-cols-4">
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <p class="text-3xl font-bold tracking-tight">14</p>
+        <p class="mt-1 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">Files touched</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <p class="text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">99.2%</p>
+        <p class="mt-1 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">Tests passing</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <p class="text-3xl font-bold tracking-tight text-rose-600 dark:text-rose-400">3</p>
+        <p class="mt-1 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">High-risk changes</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <p class="text-3xl font-bold tracking-tight">-12ms</p>
+        <p class="mt-1 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">p50 latency <span class="text-emerald-600 dark:text-emerald-400 normal-case">↓ better</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       9. CHART — Chart.js canvas, config as JSON in data-chart.
+          Include the Chart.js script + init snippet.
+          For data where the SHAPE matters. ≤3 numbers → Stats instead.
+          Bars start at zero; label axes; semantic colors only.
+       ============================================================ -->
+  <section>
+    <p class="text-xs font-mono text-slate-500 mb-2">9 · Chart (Chart.js)</p>
+    <figure class="rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
+      <div class="h-64">
+        <canvas data-chart='{
+          "type": "line",
+          "data": {
+            "labels": ["May 1", "May 8", "May 15", "May 22", "May 29"],
+            "datasets": [
+              {"label": "p50 latency (ms)", "data": [48, 47, 49, 41, 36], "borderColor": "#0ea5e9", "backgroundColor": "#0ea5e9", "tension": 0.3},
+              {"label": "p99 latency (ms)", "data": [210, 220, 205, 160, 130], "borderColor": "#f59e0b", "backgroundColor": "#f59e0b", "tension": 0.3}
+            ]
+          },
+          "options": {
+            "maintainAspectRatio": false,
+            "scales": {"y": {"beginAtZero": true, "title": {"display": true, "text": "ms"}}}
+          }
+        }'></canvas>
+      </div>
+      <figcaption class="mt-2 text-xs text-slate-500 dark:text-slate-400">Latency during JWT rollout — Redis removed from hot path May 22.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================
+       BAD EXAMPLE — do not imitate. Card-wrapped everything:
+       identical boxes, no hierarchy, nothing dominates. Compare with
+       the blocks above, where weight follows importance.
+       ============================================================ -->
+  <section>
+    <p class="text-xs font-mono text-rose-500 mb-2">✗ · Bad example — no hierarchy, do not imitate</p>
+    <div class="space-y-3 opacity-70">
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <p class="font-semibold text-sm">Summary</p>
+        <p class="text-sm mt-1">The auth refactor touches 14 files.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <p class="font-semibold text-sm">Status</p>
+        <p class="text-sm mt-1">Tests are mostly passing.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <p class="font-semibold text-sm">Risks</p>
+        <p class="text-sm mt-1">Three changes are high-risk.</p>
+      </div>
+    </div>
+    <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Same information as the Stats block above, but every fact gets an identical box — squint and nothing stands out. Numbers belong in Stats; risks in a Callout.</p>
   </section>
 
   <!-- ============================================================

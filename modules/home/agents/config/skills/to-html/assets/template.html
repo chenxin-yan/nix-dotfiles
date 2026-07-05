@@ -47,6 +47,21 @@
         media="(prefers-color-scheme: dark)" />
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
   <script>addEventListener("DOMContentLoaded", () => hljs.highlightAll());</script>
+
+  <!-- ===================================================================
+       OPTIONAL: keep this block ONLY if the page contains a Chart block
+       (a <canvas data-chart="…"> somewhere in <main>). Otherwise delete.
+       =================================================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script>
+    addEventListener("DOMContentLoaded", () => {
+      const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+      Chart.defaults.color = dark ? "#94a3b8" : "#64748b";
+      Chart.defaults.borderColor = dark ? "#1e293b" : "#e2e8f0";
+      for (const el of document.querySelectorAll("canvas[data-chart]"))
+        new Chart(el, JSON.parse(el.dataset.chart));
+    });
+  </script>
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased
