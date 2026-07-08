@@ -7,11 +7,13 @@
 
 ## Delegation (subagent-first)
 
-- Default: delegate read-heavy or self-contained work; keep main context for synthesis and decisions that need session state. Saves context and cost.
-- Fits: codebase scans, library/API research, multi-file refactors with clear boundaries, parallel independent tasks.
-- Doesn't fit: single-file edits, tasks needing mid-flight user clarification, work where accumulated session context is the input.
+- Delegation is the default posture, not an optimization. Before doing multi-step work inline, ask: could a subagent or chain do this? Inline work burns parent context; delegated work runs in parallel and comes back as summaries. Reserve the main session for synthesis and decisions that need session state.
+- Delegate: codebase recon, library/API research, code review, validation passes, multi-file implementation with clear boundaries — anything read-heavy or self-contained.
+- Keep inline: single-file edits, tasks needing mid-flight user clarification, work where accumulated session context is the input.
+- Fan out independent tasks in parallel; chain dependent stages (scout → planner → worker, implement → review → fix) instead of doing each stage yourself. Prefer async launches and keep working while children run.
+- One writer at a time: parallelize reads, review, and validation freely; never concurrent edits to the same worktree.
 - Brief like a contractor — explicit task, scope, output format, files to read. Vague briefs produce vague output.
-- Verify subagent output against the actual request before adopting. Don't pass-through results you haven't read. See the pi-subagents skill for invocation patterns.
+- Verify subagent output against the actual request before adopting. Don't pass-through results you haven't read. See the pi-subagents skill for invocation patterns and workflow recipes.
 
 ## Planning & Context
 
@@ -22,7 +24,6 @@
 ## Scope
 
 - Single source of truth — duplicated config, constants, types, schemas, or docs drift. Reference or import; don't copy.
-- No unrequested refactors — flag adjacent issues, don't silently fix.
 - Replace user-approved superseded code outright. No backward-compat shims unless asked.
 - When two existing patterns contradict, pick one (more recent / better-tested), explain why, flag the other for cleanup. Don't average them.
 
@@ -30,7 +31,7 @@
 
 - No defense in depth without a named threat. Every redundant check, fallback, defensive copy, or layered guard must justify a specific failure mode it prevents — "just in case" is not a reason. Trust the types, trust validated input, trust your own code one call away.
 - Prefer narrow, recoverable catches; let unexpected failures propagate.
-- Validate untrusted input once at the boundary; trust types inside. Redundant null checks, layered try/catches, or repeat validation need a specific threat justification per layer.
+- Validate untrusted input once at the boundary; trust types inside.
 - No branches for impossible states. If the type system or a prior check rules it out, don't add an `else` / fallback / assertion to "be safe" — that's dead code pretending to be defensive.
 - Expected-noisy catches need an inline comment naming the error class and recovery behavior.
 
