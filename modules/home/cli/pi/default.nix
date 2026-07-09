@@ -35,6 +35,11 @@
         # (scout/planner/worker/reviewer/researcher/oracle/...), and
         # /run-chain. Per-role model overrides live in subagents.agentOverrides.
         "pi-subagents"
+        # pi-subagents companion: gives child agents a private intercom
+        # channel back to the parent session (live need_decision escalation,
+        # progress updates, grouped result delivery). Zero config — the
+        # subagents bridge auto-activates when this package is present.
+        "pi-intercom"
         # Web search and fetch with pluggable providers (Brave, Tavily,
         # Serper, Exa, Jina, Firecrawl, self-hosted SearXNG). Provides
         # `web_search` and `web_fetch` tools, plus `/web-search-config`
@@ -424,16 +429,6 @@
         # comment for the upstream reference and gotchas. Pairs with
         # `quietStartup = true;` above to give a minimal startup.
         ".pi/agent/extensions/custom-header.ts".source = ./config/extensions/custom-header.ts;
-
-        # TPS + TTFT footer chip. Tracks message_start/message_update/
-        # message_end to display time-to-first-token and live tokens/sec
-        # for the active assistant turn (with the authoritative
-        # `usage.output` value swapped in at message_end). See the file's
-        # header comment for measurement details. Renders via
-        # ctx.ui.setStatus("tps", ...), so it slots next to the existing
-        # extension status chips in the footer without claiming a widget
-        # row above the editor.
-        ".pi/agent/extensions/tps.ts".source = ./config/extensions/tps.ts;
 
         # Ponytail pi extension (commands /ponytail, /ponytail-review,
         # /ponytail-help; injects the lazy-dev system prompt per turn when
