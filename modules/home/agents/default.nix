@@ -32,6 +32,18 @@ in
         source = "${sources.mattpocockSkills}/skills/productivity/writing-great-skills";
         recursive = true;
       };
+      ".agents/skills/grill-me" = {
+        source = "${sources.mattpocockSkills}/skills/productivity/grill-me";
+        recursive = true;
+      };
+      ".agents/skills/grilling" = {
+        source = "${sources.mattpocockSkills}/skills/productivity/grilling";
+        recursive = true;
+      };
+      ".agents/skills/handoff" = {
+        source = "${sources.mattpocockSkills}/skills/productivity/handoff";
+        recursive = true;
+      };
       ".agents/skills/webapp-testing" = {
         source = "${sources.anthropicSkills}/skills/webapp-testing";
         recursive = true;
@@ -54,8 +66,72 @@ in
         recursive = true;
       };
 
+      ".agents/skills/ask-matt" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/ask-matt";
+        recursive = true;
+      };
+      ".agents/skills/code-review" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/code-review";
+        recursive = true;
+      };
+      ".agents/skills/codebase-design" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/codebase-design";
+        recursive = true;
+      };
       ".agents/skills/diagnosing-bugs" = {
         source = "${sources.mattpocockSkills}/skills/engineering/diagnosing-bugs";
+        recursive = true;
+      };
+      ".agents/skills/domain-modeling" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/domain-modeling";
+        recursive = true;
+      };
+      ".agents/skills/grill-with-docs" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/grill-with-docs";
+        recursive = true;
+      };
+      ".agents/skills/implement" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/implement";
+        recursive = true;
+      };
+      ".agents/skills/improve-codebase-architecture" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/improve-codebase-architecture";
+        recursive = true;
+      };
+      ".agents/skills/prototype" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/prototype";
+        recursive = true;
+      };
+      ".agents/skills/research" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/research";
+        recursive = true;
+      };
+      ".agents/skills/resolving-merge-conflicts" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/resolving-merge-conflicts";
+        recursive = true;
+      };
+      ".agents/skills/setup-matt-pocock-skills" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/setup-matt-pocock-skills";
+        recursive = true;
+      };
+      ".agents/skills/tdd" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/tdd";
+        recursive = true;
+      };
+      ".agents/skills/to-spec" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/to-spec";
+        recursive = true;
+      };
+      ".agents/skills/to-tickets" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/to-tickets";
+        recursive = true;
+      };
+      ".agents/skills/triage" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/triage";
+        recursive = true;
+      };
+      ".agents/skills/wayfinder" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/wayfinder";
         recursive = true;
       };
       ".agents/skills/teach" = {
