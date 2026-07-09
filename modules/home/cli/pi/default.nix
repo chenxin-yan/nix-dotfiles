@@ -149,10 +149,8 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "anthropic";
-          # Claude Fable 5 is the primary model. GPT-5.5 stays one Ctrl+P
-          # away and handles explicit review/disagreement subagents below.
-          defaultModel = "openai-codex/gpt-5.6-sol";
+          defaultProvider = "openai-codex";
+          defaultModel = "gpt-5.6-sol";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Fable
           # supports `xhigh` for difficult / long-running tasks — bump
@@ -161,8 +159,8 @@
           defaultThinkingLevel = "xhigh";
           # Ctrl+P cycle list. Fable first (primary), GPT review on the side.
           enabledModels = [
-            "anthropic/claude-fable-5"
             "openai-codex/gpt-5.6-sol"
+            "anthropic/claude-fable-5"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
