@@ -152,17 +152,17 @@
           defaultProvider = "anthropic";
           # Claude Fable 5 is the primary model. GPT-5.5 stays one Ctrl+P
           # away and handles explicit review/disagreement subagents below.
-          defaultModel = "claude-fable-5";
+          defaultModel = "openai-codex/gpt-5.6-sol";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Fable
           # supports `xhigh` for difficult / long-running tasks — bump
           # per-session via Ctrl+T when warranted. Subagents pin their own
           # thinking levels below.
-          defaultThinkingLevel = "high";
+          defaultThinkingLevel = "xhigh";
           # Ctrl+P cycle list. Fable first (primary), GPT review on the side.
           enabledModels = [
             "anthropic/claude-fable-5"
-            "openai-codex/gpt-5.5"
+            "openai-codex/gpt-5.6-sol"
           ];
           # Pi shells out to npm for `pi install npm:...`. Under Nix, the
           # default global prefix points into the read-only Node store path, so
@@ -184,13 +184,21 @@
           # We still pin per-role models declaratively so a future
           # pi-subagents update can't silently change cost/quality/latency.
           #
-          # Mixing model families is intentional: Fable does the main work;
-          # GPT-5.5 checks it from a different family in review/disagreement
-          # roles.
+          # Subagents run on the GPT-5.6 family (launched 2026-07-09; Sol
+          # tops the AA Coding Agent Index at 80). Mixing model families is
+          # intentional: the parent stays on Fable, and oracle is the
+          # cross-family second opinion — also Fable, checking GPT-5.6
+          # subagent output from the other family.
           #
-          # Role → model mapping:
-          # - claude-fable-5 → scout, context-builder, planner, worker, researcher.
-          # - gpt-5.5       → reviewer, oracle.
+          # Role → model mapping (tier matched to job):
+          # - gpt-5.6-luna   → scout (fast/cheap recon; weak long-context —
+          #                    MRCR 41.3% — fine for small scout contexts).
+          # - gpt-5.6-terra  → context-builder, researcher (long-context
+          #                    MRCR 89.6%, BrowseComp 87.5%).
+          # - gpt-5.6-sol    → planner, worker (frontier reasoning, best
+          #                    coding model).
+          # - claude-fable-5 → reviewer, oracle (cross-family review /
+          #                    disagreement roles).
           #
           # `thinking` is pinned per-role so a future pi-subagents update
           # can't silently change cost/latency. `fallbackModels` is
@@ -200,31 +208,31 @@
           # Revisit if/when an outage actually bites.
           subagents.agentOverrides = {
             scout = {
-              model = "anthropic/claude-sonnet-4-6";
+              model = "openai-codex/gpt-5.6-luna";
             };
             "context-builder" = {
-              model = "anthropic/claude-sonnet-4-6";
+              model = "openai-codex/gpt-5.6-terra";
               thinking = "high";
             };
             planner = {
-              model = "anthropic/claude-fable-5";
+              model = "openai-codex/gpt-5.6-sol";
               thinking = "high";
             };
             worker = {
-              model = "anthropic/claude-fable-5";
+              model = "openai-codex/gpt-5.6-sol";
               thinking = "high";
             };
             reviewer = {
-              model = "openai-codex/gpt-5.5";
-              thinking = "xhigh";
+              model = "anthropic/claude-fable-5";
+              thinking = "high";
             };
             researcher = {
-              model = "anthropic/claude-sonnet-4-6";
+              model = "openai-codex/gpt-5.6-terra";
               thinking = "high";
             };
             oracle = {
-              model = "openai-codex/gpt-5.5";
-              thinking = "xhigh";
+              model = "anthropic/claude-fable-5";
+              thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
             # pi-subagents (see ~/.pi/agent/npm/lib/node_modules/pi-subagents/
@@ -262,6 +270,24 @@
         # Custom model registry overlay. Pi merges this into its built-in
         # registry on `/model` open (no restart needed) per docs/models.md.
         #
+        # openai-codex / gpt-5.6-{sol,terra,luna} — the GPT-5.6 family
+        # (GA 2026-07-09) is not in pi 0.80.3's built-in registry, so we add
+        # it here. Entries added to a built-in provider inherit its api
+        # (openai-codex-responses), baseUrl, and OAuth (see pi's
+        # model-registry.js:432 built-in defaults caching), so only model
+        # metadata is declared. Notes:
+        # - thinkingLevelMap mirrors the built-in codex gpt-5.5 entry
+        #   (xhigh→xhigh, minimal→low). GPT-5.6's new `max` effort is left
+        #   unmapped — pi's levels stop at xhigh and we keep the mapping
+        #   faithful; revisit if pi grows a `max` thinking level.
+        # - contextWindow 272k is conservative, copied from the built-in
+        #   codex gpt-5.5. OpenAI hasn't published final 5.6 context specs
+        #   (long-context evals ran to 1M); bump when the registry or docs
+        #   confirm.
+        # - Costs are the published API rates for /usage accounting (codex
+        #   itself is subscription-billed). GPT-5.6 changed caching: reads
+        #   keep the 90% discount, writes now bill at 1.25x input rate.
+        #
         # openai / gpt-5.5 — context-window bump from the built-in 272k
         # to 1.05M (matching the Azure and Cloudflare-gateway variants,
         # which already use 1.05M upstream). Pure override: the rest of
@@ -273,6 +299,45 @@
         # so the replace doesn't silently drop them.
         ".pi/agent/models.json".text = builtins.toJSON {
           providers = {
+            "openai-codex" =
+              let
+                gpt56 = id: name: cost: {
+                  inherit id name cost;
+                  reasoning = true;
+                  thinkingLevelMap = {
+                    xhigh = "xhigh";
+                    minimal = "low";
+                  };
+                  input = [
+                    "text"
+                    "image"
+                  ];
+                  contextWindow = 272000;
+                  maxTokens = 128000;
+                };
+              in
+              {
+                models = [
+                  (gpt56 "gpt-5.6-sol" "GPT-5.6 Sol" {
+                    input = 5;
+                    output = 30;
+                    cacheRead = 0.5;
+                    cacheWrite = 6.25;
+                  })
+                  (gpt56 "gpt-5.6-terra" "GPT-5.6 Terra" {
+                    input = 2.5;
+                    output = 15;
+                    cacheRead = 0.25;
+                    cacheWrite = 3.125;
+                  })
+                  (gpt56 "gpt-5.6-luna" "GPT-5.6 Luna" {
+                    input = 1;
+                    output = 6;
+                    cacheRead = 0.1;
+                    cacheWrite = 1.25;
+                  })
+                ];
+              };
             openai = {
               models = [
                 {
