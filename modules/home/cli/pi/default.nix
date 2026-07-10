@@ -411,6 +411,11 @@
         # `quietStartup = true;` above to give a minimal startup.
         ".pi/agent/extensions/custom-header.ts".source = ./config/extensions/custom-header.ts;
 
+        # Live footer metrics: output throughput for the current assistant
+        # message and wall-clock time spent in the current agent run.
+        ".pi/agent/extensions/tps-status.ts".source = ./config/extensions/tps-status.ts;
+        ".pi/agent/extensions/agent-time.ts".source = ./config/extensions/agent-time.ts;
+
         # Ponytail pi extension (commands /ponytail, /ponytail-review,
         # /ponytail-help; injects the lazy-dev system prompt per turn when
         # mode != off). A re-export wrapper rather than a direct symlink:
