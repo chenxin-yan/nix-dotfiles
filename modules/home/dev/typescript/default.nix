@@ -26,13 +26,13 @@
     programs.bun.enable = true;
     home.sessionPath = [ "$HOME/.bun/bin" ];
 
-    # Refuse to install package versions younger than 7 days, mitigating
+    # Refuse to install package versions younger than 3 days, mitigating
     # supply-chain attacks that rely on installing a just-published release.
-    # npm's equivalent (min-release-age=7) lives in ~/.npmrc, which holds an
+    # npm's equivalent (min-release-age=3) lives in ~/.npmrc, which holds an
     # auth token and is therefore not managed here.
-    programs.bun.settings.install.minimumReleaseAge = 604800; # seconds
+    programs.bun.settings.install.minimumReleaseAge = 259200; # seconds
     xdg.configFile."pnpm/config.yaml".text = ''
-      minimumReleaseAge: 10080 # minutes
+      minimumReleaseAge: 4320 # minutes
     '';
   };
 }

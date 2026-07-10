@@ -57,6 +57,7 @@
     ];
 
     home.sessionVariables = {
+      XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";
       DOTFILES_PATH = config.dotfiles;
       DEV_PATH = config.devPath;
       PROJECTS_PATH = config.projectsPath;
