@@ -283,10 +283,8 @@
         #   (xhigh→xhigh, minimal→low). GPT-5.6's new `max` effort is left
         #   unmapped — pi's levels stop at xhigh and we keep the mapping
         #   faithful; revisit if pi grows a `max` thinking level.
-        # - contextWindow 272k is conservative, copied from the built-in
-        #   codex gpt-5.5. OpenAI hasn't published final 5.6 context specs
-        #   (long-context evals ran to 1M); bump when the registry or docs
-        #   confirm.
+        # - All three models have a 1.05M context window per OpenAI's
+        #   GA model pages.
         # - Costs are the published API rates for /usage accounting (codex
         #   itself is subscription-billed). GPT-5.6 changed caching: reads
         #   keep the 90% discount, writes now bill at 1.25x input rate.
@@ -315,7 +313,7 @@
                     "text"
                     "image"
                   ];
-                  contextWindow = 272000;
+                  contextWindow = 1050000;
                   maxTokens = 128000;
                 };
               in
