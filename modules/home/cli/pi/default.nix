@@ -266,11 +266,10 @@
         #   (xhigh→xhigh, minimal→low). GPT-5.6's new `max` effort is left
         #   unmapped — pi's levels stop at xhigh and we keep the mapping
         #   faithful; revisit if pi grows a `max` thinking level.
-        # - All three models have a 1.05M context window per OpenAI's
-        #   GA model pages.
-        # - Costs are the published API rates for /usage accounting (codex
-        #   itself is subscription-billed). GPT-5.6 changed caching: reads
-        #   keep the 90% discount, writes now bill at 1.25x input rate.
+        # - OpenAI's API models have a 1.05M context window, but the Codex
+        #   subscription backend uses 272k per pi 0.80.4's verified metadata.
+        # - Input/output/cache-read costs are API-rate estimates for /usage;
+        #   Codex itself is subscription-billed and reports no cache writes.
         #
         # openai / gpt-5.5 — context-window bump from the built-in 272k
         # to 1.05M (matching the Azure and Cloudflare-gateway variants,
@@ -296,7 +295,7 @@
                     "text"
                     "image"
                   ];
-                  contextWindow = 1050000;
+                  contextWindow = 272000;
                   maxTokens = 128000;
                 };
               in
@@ -306,19 +305,19 @@
                     input = 5;
                     output = 30;
                     cacheRead = 0.5;
-                    cacheWrite = 6.25;
+                    cacheWrite = 0;
                   })
                   (gpt56 "gpt-5.6-terra" "GPT-5.6 Terra" {
                     input = 2.5;
                     output = 15;
                     cacheRead = 0.25;
-                    cacheWrite = 3.125;
+                    cacheWrite = 0;
                   })
                   (gpt56 "gpt-5.6-luna" "GPT-5.6 Luna" {
                     input = 1;
                     output = 6;
                     cacheRead = 0.1;
-                    cacheWrite = 1.25;
+                    cacheWrite = 0;
                   })
                 ];
               };
@@ -331,6 +330,7 @@
                   reasoning = true;
                   thinkingLevelMap = {
                     off = "none";
+                    minimal = null;
                     xhigh = "xhigh";
                   };
                   input = [

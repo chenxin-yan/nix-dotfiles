@@ -13,6 +13,7 @@
 - Fan out independent tasks in parallel; chain dependent stages (scout → planner → worker, implement → review → fix) instead of doing each stage yourself. Prefer async launches and keep working while children run.
 - One writer at a time: parallelize reads, review, and validation freely; never concurrent edits to the same worktree.
 - Brief like a contractor — explicit task, scope, output format, files to read. Vague briefs produce vague output.
+- Model routing is configuration-owned. Omit `model` from subagent calls, unless user explicitly asked for, so each role's configured default is honored; use a per-run override only when the user explicitly requests one. `model: "inherit"` also bypasses the role default.
 - Verify subagent output against the actual request before adopting. Don't pass-through results you haven't read. See the pi-subagents skill for invocation patterns and workflow recipes.
 
 ## Planning & Context
