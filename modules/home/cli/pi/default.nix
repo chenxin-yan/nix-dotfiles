@@ -15,30 +15,23 @@
     let
       piNpm = pkgs.writeShellScriptBin "pi-npm" ''
         export PATH="${pkgs.nodejs}/bin:$PATH"
-        export NPM_CONFIG_PREFIX="$HOME/.pi/agent/npm"
         exec ${pkgs.nodejs}/bin/npm "$@"
       '';
       hypa = pkgs.writeShellScriptBin "hypa" ''
-        exec ${pkgs.nodejs}/bin/node "$HOME/.pi/agent/npm/lib/node_modules/@hypabolic/pi-hypa/node_modules/@hypabolic/hypa/bin.js" "$@"
+        exec "$HOME/.pi/agent/npm/node_modules/.bin/hypa" "$@"
       '';
 
       agentSources = import ../../agents/sources.nix { inherit pkgs; };
       inherit (agentSources) ponytail;
 
-      # Single source of truth for declarative pi npm packages. The
-      # settings.json `packages` list, the cleanup allowlist, and the
-      # install activation hook are all derived from this one list — add or
-      # remove a package here and nowhere else. Names are bare (no `npm:`
-      # prefix); the prefix is added for the settings.json `packages` field.
+      # Single source of truth for declarative pi npm packages. Names are
+      # bare here; the `npm:` prefix is added for settings.json below.
       piPackages = [
         # Multi-agent orchestration: subagent tool, builtin agents
         # (scout/planner/worker/reviewer/researcher/oracle/...), and
         # /run-chain. Per-role model overrides live in subagents.agentOverrides.
         "pi-subagents"
-        # pi-subagents companion: gives child agents a private intercom
-        # channel back to the parent session (live need_decision escalation,
-        # progress updates, grouped result delivery). Zero config — the
-        # subagents bridge auto-activates when this package is present.
+        # Direct messaging between independently running Pi sessions.
         "pi-intercom"
         # Web search and fetch with pluggable providers (Brave, Tavily,
         # Serper, Exa, Jina, Firecrawl, self-hosted SearXNG). Provides
@@ -104,7 +97,6 @@
         # /rewind checkpoint navigation and /checkpoint storage manager.
         "@ayulab/pi-rewind"
       ];
-      piPackagesStr = lib.concatStringsSep " " piPackages;
     in
     lib.mkIf config.cli.pi.enable {
       home.packages = with pkgs; [
@@ -157,30 +149,22 @@
           defaultProvider = "openai-codex";
           defaultModel = "gpt-5.6-sol";
           # Keep `high` on the parent: it edits code directly most of the
-          # time in this workflow rather than purely orchestrating. Fable
-          # supports `xhigh` for difficult / long-running tasks — bump
-          # per-session via Ctrl+T when warranted. Subagents pin their own
-          # thinking levels below.
-          defaultThinkingLevel = "xhigh";
-          # Ctrl+P cycle list. Fable first (primary), GPT review on the side.
+          # time in this workflow rather than purely orchestrating. Subagents
+          # pin their own thinking levels below.
+          defaultThinkingLevel = "high";
+          # Ctrl+P cycle list. GPT-5.6 Sol is primary; Fable is the
+          # cross-family alternative.
           enabledModels = [
             "openai-codex/gpt-5.6-sol"
             "anthropic/claude-fable-5"
           ];
-          # Pi shells out to npm for `pi install npm:...`. Under Nix, the
-          # default global prefix points into the read-only Node store path, so
-          # use a tiny wrapper that redirects npm's global prefix to a writable
-          # location under ~/.pi/agent/.
+          # Pi passes its managed ~/.pi/agent/npm install prefix explicitly;
+          # this wrapper only supplies npm from the Nix-managed Node package.
           npmCommand = [ "${piNpm}/bin/pi-npm" ];
-          # Declarative package list, derived from the let-bound
-          # `piPackages` source of truth above. Pi loads
-          # extensions/skills/prompts/themes from each entry's manifest.
-          # settings.json is a read-only Nix store symlink, so
-          # `pi install npm:...` can't write here; the install activation
-          # hook below ensures the npm artifacts exist under
-          # ~/.pi/agent/npm/. The `npm:` prefix is REQUIRED — without it
-          # pi's parseSource() falls through to the local-path branch and
-          # silently drops the package.
+          # Pi installs missing entries into its managed npm directory and
+          # loads extensions/skills/prompts/themes from each manifest. The
+          # `npm:` prefix is required so parseSource() treats these as npm
+          # packages rather than local paths.
           packages = map (p: "npm:${p}") piPackages;
           # As of pi-subagents (current), builtins inherit the user's default
           # model unless overridden — they no longer hardcode `openai-codex/*`.
@@ -189,17 +173,16 @@
           #
           # Subagents run on the GPT-5.6 family (launched 2026-07-09; Sol
           # tops the AA Coding Agent Index at 80). Mixing model families is
-          # intentional: the parent stays on Fable, and oracle is the
-          # cross-family second opinion — also Fable, checking GPT-5.6
-          # subagent output from the other family.
+          # intentional: the parent stays on GPT-5.6 Sol, while reviewer and
+          # oracle use Fable for cross-family second opinions.
           #
           # Role → model mapping (tier matched to job):
           # - gpt-5.6-luna   → scout (fast/cheap recon; weak long-context —
           #                    MRCR 41.3% — fine for small scout contexts).
-          # - gpt-5.6-terra  → context-builder, researcher (long-context
-          #                    MRCR 89.6%, BrowseComp 87.5%).
-          # - gpt-5.6-sol    → planner, worker (frontier reasoning, best
-          #                    coding model).
+          # - gpt-5.6-terra  → context-builder, researcher, worker
+          #                    (long-context MRCR 89.6%, BrowseComp 87.5%).
+          # - gpt-5.6-sol    → planner (frontier reasoning, best coding
+          #                    model).
           # - claude-fable-5 → reviewer, oracle (cross-family review /
           #                    disagreement roles).
           #
@@ -222,7 +205,7 @@
               thinking = "high";
             };
             worker = {
-              model = "openai-codex/gpt-5.6-sol";
+              model = "openai-codex/gpt-5.6-terra";
               thinking = "high";
             };
             reviewer = {
@@ -238,7 +221,7 @@
               thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
-            # pi-subagents (see ~/.pi/agent/npm/lib/node_modules/pi-subagents/
+            # pi-subagents (see ~/.pi/agent/npm/node_modules/pi-subagents/
             # CHANGELOG.md and the absence of agents/oracle-executor.md).
             # No override needed — `worker` carries the role.
             #
@@ -252,14 +235,14 @@
           # "loaded resources" listing at session start
           # (interactive-mode.js:409, :979). The header container itself is
           # untouched, so the custom-header.ts extension below still renders
-          # via setHeader. Net effect: clean startup with our pi mascot,
+          # via setHeader. Net effect: a clean text-only startup header
           # without the wall of keybinding hints. `pi --verbose` overrides
           # this on demand; `/builtin-header` restores upstream header for
           # the current session.
           quietStartup = true;
           # Default tree filter mode. "user-only" mirrors Ctrl+U so you
           # see only your own messages in /tree without having to toggle it
-          # every time. Other options: "default", "no-tools", "labeled-only" "labeled-only", "all".
+          # every time. Other options: "default", "no-tools", "labeled-only", "all".
           treeFilterMode = "user-only";
           # Disable install telemetry. Pi otherwise sends a single GET to
           # https://pi.dev/install?version=X on the first run after a version
@@ -422,8 +405,8 @@
         };
 
         # Custom startup header. Replaces pi's built-in logo + keybinding
-        # hints with a theme-aware pi-mascot banner via
-        # ctx.ui.setHeader() on session_start. See the file's header
+        # hints with a theme-aware text subtitle via ctx.ui.setHeader() on
+        # session_start. See the file's header
         # comment for the upstream reference and gotchas. Pairs with
         # `quietStartup = true;` above to give a minimal startup.
         ".pi/agent/extensions/custom-header.ts".source = ./config/extensions/custom-header.ts;
@@ -451,7 +434,7 @@
 
         # Predefined chains. pi-subagents discovers user chains from
         # ~/.pi/agent/chains/**/*.chain.md (see
-        # ~/.pi/agent/npm/lib/node_modules/pi-subagents/src/agents/agents.ts:134).
+        # ~/.pi/agent/npm/node_modules/pi-subagents/src/agents/agents.ts:134).
         # NOT ~/.pi/agent/agents/ — that's the agent definitions dir, and the
         # loader at agents.ts:547 explicitly skips *.chain.md files there.
         # Run via `/run-chain <name> -- <task>` or natural language.
@@ -460,84 +443,6 @@
           recursive = true;
         };
       };
-
-      # Bootstrap npm artifacts for the declarative `piPackages` list.
-      #
-      # Pi resolves global npm packages from
-      # `<npmCommand> root -g`/lib/node_modules/<name>. We can't use
-      # `pi install npm:...` here because that command also tries to mutate
-      # settings.json, which is a read-only Nix store symlink under
-      # home-manager. Instead we install via the same npm wrapper directly,
-      # which writes only to ~/.pi/agent/npm/. The directory check makes the
-      # install loop idempotent.
-      #
-      # Both the cleanup allowlist and the install loop derive from the single
-      # let-bound `piPackages` list — add/remove a package there and
-      # `nh os switch`; no manual `rm` and no per-package hook needed.
-      #
-      # Trailing-slash + symlink footgun: globs like `*/` yield paths with a
-      # trailing slash, and `rm -rf foo/` on a symlink-to-dir dereferences the
-      # link and tries to delete the target's contents (not the link). For
-      # entries that point into the read-only Nix store, that surfaces as a
-      # flood of "Permission denied" errors and fails the whole activation. We
-      # strip the trailing slash and use `rm` (no `-rf`) for symlinks so we
-      # delete the link itself, never its target.
-      home.activation.cleanupPiPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        declared="${piPackagesStr}"
-        is_declared() {
-          for d in $declared; do [ "$d" = "$1" ] && return 0; done
-          return 1
-        }
-        remove_stale() {
-          # $1: label for log line, $2: path (no trailing slash)
-          local label="$1" path="$2"
-          echo "pi-nix: removing stale npm package: $label"
-          if [ -L "$path" ]; then
-            $DRY_RUN_CMD rm -f "$path"
-          else
-            $DRY_RUN_CMD rm -rf "$path"
-          fi
-        }
-
-        node_modules="$HOME/.pi/agent/npm/lib/node_modules"
-        if [ -d "$node_modules" ]; then
-          # Remove undeclared unscoped packages
-          for dir in "$node_modules"/*/; do
-            dir="''${dir%/}"
-            [ -e "$dir" ] || continue
-            pkg=$(basename "$dir")
-            case "$pkg" in
-              @*) continue ;;
-            esac
-            is_declared "$pkg" || remove_stale "$pkg" "$dir"
-          done
-          # Remove undeclared scoped packages (@scope/name), then prune any
-          # now-empty @scope/ dir left behind.
-          for scope_dir in "$node_modules"/@*/; do
-            scope_dir="''${scope_dir%/}"
-            [ -d "$scope_dir" ] || continue
-            scope=$(basename "$scope_dir")
-            for pkg_dir in "$scope_dir"/*/; do
-              pkg_dir="''${pkg_dir%/}"
-              [ -e "$pkg_dir" ] || continue
-              full="$scope/$(basename "$pkg_dir")"
-              is_declared "$full" || remove_stale "$full" "$pkg_dir"
-            done
-            $DRY_RUN_CMD rmdir "$scope_dir" 2>/dev/null || true
-          done
-        fi
-      '';
-
-      # Single install hook: install any declared package whose artifacts are
-      # missing. Runs after cleanup so a rename (remove old + add new) settles
-      # in one activation.
-      home.activation.installPiPackages = lib.hm.dag.entryAfter [ "writeBoundary" "cleanupPiPackages" ] ''
-        for pkg in ${piPackagesStr}; do
-          if [ ! -d "$HOME/.pi/agent/npm/lib/node_modules/$pkg" ]; then
-            $DRY_RUN_CMD ${piNpm}/bin/pi-npm install -g "$pkg"
-          fi
-        done
-      '';
 
       programs.zsh.shellAliases = {
         p = "pi";

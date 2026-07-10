@@ -11,8 +11,6 @@ to actually commit, not describe what a commit would look like.
 If the user appends free-form text (e.g. `/skill:commit auth refactor`),
 treat it as a hint about scope — but the diff is the source of truth.
 
-The rule against rewriting published history lives in AGENTS.md.
-
 ## Workflow
 
 1. **Survey changes.** `git status` + `git diff HEAD`. If nothing has

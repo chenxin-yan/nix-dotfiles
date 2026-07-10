@@ -23,9 +23,9 @@
  * limitation (badlogic/pi-mono RFE #3415), not configurable.
  */
 
-import type { ExtensionAPI, Theme } from "@mariozechner/pi-coding-agent";
-import { VERSION } from "@mariozechner/pi-coding-agent";
-import { visibleWidth } from "@mariozechner/pi-tui";
+import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";
+import { VERSION } from "@earendil-works/pi-coding-agent";
+import { visibleWidth } from "@earendil-works/pi-tui";
 
 const NAME = "@chenxin-yan";
 

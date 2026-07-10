@@ -32,7 +32,7 @@
   ponytail = pkgs.fetchFromGitHub {
     owner = "DietrichGebert";
     repo = "ponytail";
-    rev = "523e9dc051a073a85592e74c1f292ac93e3633da";
-    hash = "sha256-3CU7VOeiWWtJQLF69+d91SbiwtVMowHKNtPkxoeV3vo=";
+    rev = "65db9025a7160aedef1212baf833c44455865499";
+    hash = "sha256-8MkfaSXaPIek6Uuw1bVNQ8PUymkwgcTCAekKf9TlS2c=";
   };
 }

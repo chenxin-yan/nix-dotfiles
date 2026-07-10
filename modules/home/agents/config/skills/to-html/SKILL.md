@@ -71,7 +71,7 @@ Blocks give structure; this gives polish. Both are enforced.
 - The output lives in `cwd`. Never write to `tmp/`, `docs/`, `$TMPDIR`, or any other path.
 - Overwrite on slug collision. Don't add timestamp suffixes.
 - The main flow is **blocks, not prose**. No `<p>` longer than ~3 lines outside a `Details`.
-- Don't invent new block types or layouts. Stick to the 7.
+- Don't invent new block types or layouts. Stick to the 9.
 - Tailwind via CDN is always included. Mermaid, highlight.js, and Chart.js are **conditional** — only include them when a block actually uses them.
 - Allowed JS: Mermaid init, highlight.js init, Chart.js init (the `data-chart` snippet in the template), and the Matrix filter snippet. **Nothing else.** No theme toggles, no `localStorage`, no ToC observers, no keyboard shortcuts, no "mark reviewed" checkboxes.
 - Dark mode is `prefers-color-scheme` only — the user's OS already knows. No toggle button.
