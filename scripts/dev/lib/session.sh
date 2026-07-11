@@ -80,13 +80,6 @@ get_session_name() {
   local name
   if [[ "$dir" == "$DEV_PATH/local/"* ]]; then
     name="local:$(basename "$dir")"
-  elif [[ "$dir" == "$DEV_PATH/worktrees/"* ]]; then
-    local rel owner repo branch
-    rel="${dir#"$DEV_PATH/worktrees"/}"
-    owner=$(echo "$rel" | cut -d'/' -f2)
-    repo=$(echo "$rel" | cut -d'/' -f3)
-    branch=$(echo "$rel" | cut -d'/' -f4)
-    name="${owner}:${repo}:${branch}"
   elif [[ "$dir" == "$DEV_PATH"/* ]]; then
     local rel owner repo
     rel="${dir#"$DEV_PATH"/}"
@@ -105,13 +98,6 @@ format_display() {
   local rel
   if [[ "$dir" == "$DEV_PATH/local/"* ]]; then
     basename "$dir"
-  elif [[ "$dir" == "$DEV_PATH/worktrees/"* ]]; then
-    rel="${dir#"$DEV_PATH/worktrees"/}"
-    local owner repo branch
-    owner=$(echo "$rel" | cut -d'/' -f2)
-    repo=$(echo "$rel" | cut -d'/' -f3)
-    branch=$(echo "$rel" | cut -d'/' -f4)
-    echo "[${branch}]${owner}/${repo}"
   elif [[ "$dir" == "$DEV_PATH"/* ]]; then
     rel="${dir#"$DEV_PATH"/}"
     echo "${rel#*/}"
@@ -183,11 +169,10 @@ mux_list_labels() {
   fi
 }
 
-# List all project directories (repos, local dirs, worktrees, projects).
+# List all project directories (repos, local dirs, projects).
 list_project_dirs() {
-  fd --type d --hidden --max-depth 4 '^\.git$' "$DEV_PATH" --exclude local --exclude worktrees 2>/dev/null | xargs -I{} dirname {}
+  fd --type d --hidden --max-depth 4 '^\.git$' "$DEV_PATH" --exclude local 2>/dev/null | xargs -I{} dirname {}
   fd --type d --max-depth 1 . "$DEV_PATH/local" 2>/dev/null
-  fd --type d --exact-depth 4 . "$DEV_PATH/worktrees" 2>/dev/null
   [[ -n "$PROJECTS_PATH" ]] && fd --type d --max-depth 1 . "$PROJECTS_PATH" 2>/dev/null
   true
 }

@@ -67,7 +67,7 @@ dotfiles/
 ├── config/
 │   └── nvim/                  # Neovim configuration (Lua, lazy.nvim)
 └── scripts/
-    ├── dev/                   # Worktree and session management
+    ├── dev/                   # Session management
     ├── utils/                 # Utilities (update-pins, rg+fzf, md2pdf)
     └── notes/                 # Note search
 ```
@@ -393,9 +393,6 @@ All scripts live in `scripts/` and are symlinked to `~/.local/bin/scripts`. Shel
 | `se`     | `dev/attach.sh`           | Attach to or create a Zellij dev session     |
 | `dvc`    | `dev/clone.sh`            | Clone a repo into organized dev directory    |
 | `scu`    | `dev/cleanup.sh`          | Clean up orphaned Zellij sessions            |
-| `wt`     | `dev/worktree.sh`         | Create/switch git worktrees with Zellij      |
-| `wtc`    | `dev/worktree-cleanup.sh` | Remove worktrees for deleted remote branches |
-| `wtrm`   | `dev/worktree-delete.sh`  | Interactively delete worktrees               |
 | `srm`    | `dev/session-remove.sh`   | Remove a project with safety checks          |
 | `fzg`    | `utils/rg_with_fzf.sh`    | Ripgrep with fzf preview, opens in Neovim    |
 | `md2pdf` | `utils/md2pdf.sh`         | Interactive markdown to PDF conversion       |

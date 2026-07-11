@@ -6,27 +6,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
 
 # --- Helper Functions ---
 
-is_worktree() {
-  local dir="$1"
-  [[ "$dir" == "$DEV_PATH/worktrees/"* ]]
-}
-
 is_git_repo() {
   local dir="$1"
   [[ -d "$dir/.git" ]] || [[ -f "$dir/.git" ]]
-}
-
-# Get main repo path for a worktree
-get_main_repo_for_worktree() {
-  local worktree_path="$1"
-  # Worktree: $DEV_PATH/worktrees/host/owner/repo/branch
-  # Main repo: $DEV_PATH/host/owner/repo
-  local rel host owner repo
-  rel="${worktree_path#"$DEV_PATH/worktrees"/}"
-  host=$(echo "$rel" | cut -d'/' -f1)
-  owner=$(echo "$rel" | cut -d'/' -f2)
-  repo=$(echo "$rel" | cut -d'/' -f3)
-  echo "$DEV_PATH/$host/$owner/$repo"
 }
 
 # Clean up empty parent directories
@@ -93,18 +75,16 @@ if is_git_repo "$SELECTED"; then
     WARNINGS+=("Has untracked files")
   fi
 
-  # Check for unpushed commits (only for non-worktrees, as worktrees track remote branches)
-  if ! is_worktree "$SELECTED"; then
-    UPSTREAM=$(git -C "$SELECTED" rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || echo "")
-    if [[ -n "$UPSTREAM" ]]; then
-      UNPUSHED=$(git -C "$SELECTED" log '@{upstream}..HEAD' --oneline 2>/dev/null | wc -l | tr -d ' ')
-      if [[ "$UNPUSHED" -gt 0 ]]; then
-        WARNINGS+=("Has $UNPUSHED unpushed commit(s)")
-      fi
-    else
-      # No upstream set - might have local-only commits
-      WARNINGS+=("No upstream branch set (local commits may be lost)")
+  # Check for unpushed commits
+  UPSTREAM=$(git -C "$SELECTED" rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || echo "")
+  if [[ -n "$UPSTREAM" ]]; then
+    UNPUSHED=$(git -C "$SELECTED" log '@{upstream}..HEAD' --oneline 2>/dev/null | wc -l | tr -d ' ')
+    if [[ "$UNPUSHED" -gt 0 ]]; then
+      WARNINGS+=("Has $UNPUSHED unpushed commit(s)")
     fi
+  else
+    # No upstream set - might have local-only commits
+    WARNINGS+=("No upstream branch set (local commits may be lost)")
   fi
 
   # Display warnings
@@ -130,29 +110,12 @@ fi
 
 echo "Removing '$DISPLAY_NAME'..."
 
-if is_worktree "$SELECTED"; then
-  # Worktree removal
-  MAIN_REPO=$(get_main_repo_for_worktree "$SELECTED")
+# Remove the selected repo or directory.
+rm -rf "$SELECTED"
 
-  if [[ -d "$MAIN_REPO" ]]; then
-    # Try to remove via git worktree command
-    git -C "$MAIN_REPO" worktree remove "$SELECTED" --force 2>/dev/null || rm -rf "$SELECTED"
-  else
-    # Main repo doesn't exist, just remove the directory
-    rm -rf "$SELECTED"
-  fi
-
-  # Clean up empty parent directories
-  cleanup_empty_parents "$SELECTED" "$DEV_PATH/worktrees"
-
-else
-  # Regular repo/directory removal
-  rm -rf "$SELECTED"
-
-  # Clean up empty parent directories (for repos under $DEV_PATH/host/owner/)
-  if [[ "$SELECTED" == "$DEV_PATH/"* && "$SELECTED" != "$DEV_PATH/local/"* ]]; then
-    cleanup_empty_parents "$SELECTED" "$DEV_PATH"
-  fi
+# Clean up empty parent directories (for repos under $DEV_PATH/host/owner/)
+if [[ "$SELECTED" == "$DEV_PATH/"* && "$SELECTED" != "$DEV_PATH/local/"* ]]; then
+  cleanup_empty_parents "$SELECTED" "$DEV_PATH"
 fi
 
 # --- Session Cleanup ---

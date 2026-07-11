@@ -82,7 +82,6 @@
       "dev/.stignore".text = ''
         (?d).DS_Store
         (?d)node_modules
-        (?d)worktrees
         (?d).git
         (?d).jj
         (?d)__pycache__
