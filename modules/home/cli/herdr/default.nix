@@ -42,8 +42,30 @@
       toggle_sidebar = "prefix+s"
       settings = "prefix+comma"
 
+      # Herdr plugins are runtime state: herdr plugin install paulbkim-dev/vim-herdr-navigation --ref v0.1.0 --yes
+      [[keys.command]]
+      key = "ctrl+h"
+      type = "plugin_action"
+      command = "vim-herdr-navigation.left"
+
+      [[keys.command]]
+      key = "ctrl+j"
+      type = "plugin_action"
+      command = "vim-herdr-navigation.down"
+
+      [[keys.command]]
+      key = "ctrl+k"
+      type = "plugin_action"
+      command = "vim-herdr-navigation.up"
+
+      [[keys.command]]
+      key = "ctrl+l"
+      type = "plugin_action"
+      command = "vim-herdr-navigation.right"
+
       [ui]
       prompt_new_tab_name = false
+      pane_borders = false
 
       [theme]
       name = "catppuccin"

@@ -18,14 +18,6 @@ vim.keymap.del('n', '<c-w><c-d>')
 vim.keymap.set('x', '<leader>p', '"_dP', { desc = 'Paste in without yanking selected text' })
 vim.keymap.set({ 'n', 'x' }, 'x', '"_x', { desc = 'Delete without yanking' })
 
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<cmd>wincmd h<cr>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<cmd>wincmd l<cr>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<cmd>wincmd j<cr>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<cmd>wincmd k<cr>', { desc = 'Move focus to the upper window' })
-
 -- Keep cursor always in the middle when scrolling
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
