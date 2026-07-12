@@ -11,8 +11,8 @@
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "d574778f94cf620fcc8ce741584093bc650a61d3";
-    hash = "sha256-XqF709Y9GMKINzZITlbCTyatG9AxRZh0qn2vcv1Z8yo=";
+    rev = "391a2701dd948f94f56a39f7533f8eea9a859c87";
+    hash = "sha256-gFPkjrujFAoNXYa0ariPKTj/xBoiCTLUo3X20qrTzRE=";
   };
 
   raindropSkills = pkgs.fetchFromGitHub {
@@ -32,7 +32,7 @@
   ponytail = pkgs.fetchFromGitHub {
     owner = "DietrichGebert";
     repo = "ponytail";
-    rev = "65db9025a7160aedef1212baf833c44455865499";
-    hash = "sha256-8MkfaSXaPIek6Uuw1bVNQ8PUymkwgcTCAekKf9TlS2c=";
+    rev = "14a0d79548d4de8fc2de95c1b94bb0de63a739d3";
+    hash = "sha256-aspTFUIRsyR2yiy3jqVsvwC/xiposWdM9j3DrVX06M8=";
   };
 }

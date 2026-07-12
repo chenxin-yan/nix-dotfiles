@@ -61,6 +61,18 @@ in
         source = "${sources.ponytail}/skills/ponytail-review";
         recursive = true;
       };
+      ".agents/skills/ponytail-audit" = {
+        source = "${sources.ponytail}/skills/ponytail-audit";
+        recursive = true;
+      };
+      ".agents/skills/ponytail-debt" = {
+        source = "${sources.ponytail}/skills/ponytail-debt";
+        recursive = true;
+      };
+      ".agents/skills/ponytail-gain" = {
+        source = "${sources.ponytail}/skills/ponytail-gain";
+        recursive = true;
+      };
       ".agents/skills/ponytail-help" = {
         source = "${sources.ponytail}/skills/ponytail-help";
         recursive = true;

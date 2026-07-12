@@ -417,7 +417,8 @@
         ".pi/agent/extensions/agent-time.ts".source = ./config/extensions/agent-time.ts;
 
         # Ponytail pi extension (commands /ponytail, /ponytail-review,
-        # /ponytail-help; injects the lazy-dev system prompt per turn when
+        # /ponytail-audit, /ponytail-debt, /ponytail-gain, /ponytail-help;
+        # injects the lazy-dev system prompt per turn when
         # mode != off). A re-export wrapper rather than a direct symlink:
         # ponytail/pi-extension/index.js does `require("../hooks/…")`, so it
         # must be loaded from its real store path for that relative resolve
