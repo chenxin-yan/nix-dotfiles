@@ -38,6 +38,7 @@
             MessageLogger = {
               enabled = true;
               ignoreSelf = true;
+              ignoreBots = true;
             };
             AlwaysTrust = {
               enabled = true;

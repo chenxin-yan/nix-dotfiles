@@ -16,7 +16,7 @@
       globalConfig = {
         settings = {
           experimental = true;
-          "node.compile" = false;
+          node.compile = false;
         };
       };
     };
