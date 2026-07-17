@@ -89,11 +89,6 @@
         # Local deterministic compression for noisy Pi tool output. Adds
         # /hypa diagnostics plus hypa_shell/read/grep/find/ls tools.
         "@hypabolic/pi-hypa"
-        # Autonomous goal mode. /goal <objective> drives guarded
-        # continuation prompts each idle turn until the agent calls the
-        # goal_complete tool, the budget is hit, or the user pauses. Goal
-        # state lives in session entries (restored on /reload).
-        "@narumitw/pi-goal"
         # /rewind checkpoint navigation and /checkpoint storage manager.
         "@ayulab/pi-rewind"
       ];
