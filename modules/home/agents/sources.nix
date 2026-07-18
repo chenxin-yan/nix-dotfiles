@@ -4,15 +4,15 @@
   anthropicSkills = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
-    rev = "9d2f1ae187231d8199c64b5b762e1bdf2244733d";
-    hash = "sha256-U7Nt1xrFOSOEm4vuWmy4pVsEyvv+Hj4sv8yXOofmwAw=";
+    rev = "fa0fa64bdc967915dc8399e803be67759e1e62b8";
+    hash = "sha256-QZ+zJkyLd/42rxgtJEZSUOz9R75Tse6UXW7G0nOkFS8=";
   };
 
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "391a2701dd948f94f56a39f7533f8eea9a859c87";
-    hash = "sha256-gFPkjrujFAoNXYa0ariPKTj/xBoiCTLUo3X20qrTzRE=";
+    rev = "9603c1cc8118d08bc1b3bf34cf714f62178dea3b";
+    hash = "sha256-S6pARK99oGGSi6XdFm6zYKHT4gjOCN0wIPZFcl1hREE=";
   };
 
   raindropSkills = pkgs.fetchFromGitHub {
@@ -32,7 +32,7 @@
   ponytail = pkgs.fetchFromGitHub {
     owner = "DietrichGebert";
     repo = "ponytail";
-    rev = "14a0d79548d4de8fc2de95c1b94bb0de63a739d3";
-    hash = "sha256-aspTFUIRsyR2yiy3jqVsvwC/xiposWdM9j3DrVX06M8=";
+    rev = "16f29800fd2681bdf24f3eb4ccffe38be3baec6b";
+    hash = "sha256-Y7d4s7uqjH6IbEXhqAiQ+yaxr6iiGcv2X64LuMtG1T8=";
   };
 }
