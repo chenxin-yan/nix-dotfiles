@@ -44,6 +44,41 @@
               "raspberry-pi"
             ];
             ignorePerms = true;
+            ignorePatterns = [
+              "(?d).DS_Store"
+              "(?d)node_modules"
+              "(?d).git"
+              "(?d).jj"
+              "(?d)**/.pi/supervisor"
+              "(?d)**/.pi/telemetry"
+              "(?d)__pycache__"
+              "(?d).pytest_cache"
+              "(?d).mypy_cache"
+              "(?d).ruff_cache"
+              "(?d).tox"
+              "(?d).venv"
+              "(?d)venv"
+              "(?d).next"
+              "(?d).nuxt"
+              "(?d).svelte-kit"
+              "(?d).turbo"
+              "(?d).parcel-cache"
+              "(?d).vite"
+              "(?d).cache"
+              "(?d)dist"
+              "(?d)build"
+              "(?d)out"
+              "(?d)coverage"
+              "(?d).coverage"
+              "(?d)target"
+              "(?d).gradle"
+              "(?d).idea"
+              "(?d).direnv"
+              "(?d).wrangler"
+              "(?d)*.egg-info"
+              "(?d).eslintcache"
+              "(?d).output"
+            ];
           };
           "PARA" = {
             path = "~/PARA";
@@ -52,6 +87,12 @@
               "raspberry-pi"
             ];
             ignorePerms = true;
+            ignorePatterns = [
+              "(?d).DS_Store"
+              "(?d).Spotlight-V100"
+              "(?d).Trashes"
+              "(?d)._*"
+            ];
           };
         };
       };
@@ -71,47 +112,5 @@
       }
     '';
 
-    # Create .stignore for dev sync exclusions
-    home.file = {
-      "PARA/.stignore".text = ''
-        (?d).DS_Store
-        (?d).Spotlight-V100
-        (?d).Trashes
-        (?d)._*
-      '';
-      "dev/.stignore".text = ''
-        (?d).DS_Store
-        (?d)node_modules
-        (?d).git
-        (?d).jj
-        (?d)__pycache__
-        (?d).pytest_cache
-        (?d).mypy_cache
-        (?d).ruff_cache
-        (?d).tox
-        (?d).venv
-        (?d)venv
-        (?d).next
-        (?d).nuxt
-        (?d).svelte-kit
-        (?d).turbo
-        (?d).parcel-cache
-        (?d).vite
-        (?d).cache
-        (?d)dist
-        (?d)build
-        (?d)out
-        (?d)coverage
-        (?d).coverage
-        (?d)target
-        (?d).gradle
-        (?d).idea
-        (?d).direnv
-        (?d).wrangler
-        (?d)*.egg-info
-        (?d).eslintcache
-        (?d).output
-      '';
-    };
   };
 }

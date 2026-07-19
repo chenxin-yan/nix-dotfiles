@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 
@@ -13,13 +12,16 @@ let
   };
 in
 {
-  imports = [ inputs.hunk.homeManagerModules.default ];
-
   options = {
     core.git.enable = lib.mkEnableOption "enables git version control and related tools";
   };
 
   config = lib.mkIf config.core.git.enable {
+    home.packages = [ pkgs.hunk ];
+
+    xdg.configFile."hunk/config.toml".text = ''
+      theme = "catppuccin-mocha"
+    '';
 
     programs.git = {
       enable = true;
@@ -42,6 +44,7 @@ in
         fetch.prune = true;
         color.ui = true;
         core.editor = "nvim";
+        core.pager = "hunk pager";
         difftool.prompt = false;
       };
     };
@@ -68,16 +71,10 @@ in
       };
     };
 
-    programs.hunk = {
-      enable = true;
-      enableGitIntegration = true;
-      settings.theme = "catppuccin-mocha";
-    };
-
     # Hunk's bundled review skill belongs with the Hunk/Git module so it is
     # installed only when the tool it documents is enabled.
     home.file.".agents/skills/hunk-review" = {
-      source = "${inputs.hunk.packages.${pkgs.stdenv.hostPlatform.system}.default}/skills/hunk-review";
+      source = "${pkgs.hunk}/skills/hunk-review";
       recursive = true;
     };
 

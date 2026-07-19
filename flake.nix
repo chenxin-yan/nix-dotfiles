@@ -29,11 +29,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    hunk = {
-      url = "github:modem-dev/hunk";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     herdr = {
       url = "github:ogulcancelik/herdr/v0.7.0";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -49,7 +44,6 @@
       nix-darwin,
       nix-homebrew,
       zen-browser,
-      hunk,
       herdr,
       homebrew-daytona,
       ...
