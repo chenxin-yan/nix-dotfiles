@@ -66,10 +66,8 @@
         # Aggregated token/cost usage stats across all sessions.
         # /usage for table view, /usage --insights for dashboard.
         "@tmustier/pi-usage-extension"
-        # Codex ChatGPT subscription usage. /codex-status shows 5h/weekly
-        # rate-limit bars; auto-refreshes a compact statusline item while
-        # the selected model provider is openai-codex. No Codex CLI needed.
-        "@narumitw/pi-codex-usage"
+        # Current-account usage across supported model providers.
+        "@narumitw/pi-usage"
         # OpenAI fast-mode package from pi.dev. The gallery URL's
         # `name=fast mode` query is display metadata; the declarative source
         # is the npm package name here, with `npm:` added in settings.json.
@@ -86,6 +84,8 @@
         # MCP adapter: one proxy `mcp` tool plus /mcp setup; reads standard
         # .mcp.json and ~/.config/mcp/mcp.json lazily.
         "pi-mcp-adapter"
+        # Desktop app observation and control on macOS and Windows.
+        "@injaneity/pi-computer-use"
         # Local deterministic compression for noisy Pi tool output. Adds
         # /hypa diagnostics plus hypa_shell/read/grep/find/ls tools.
         "@hypabolic/pi-hypa"

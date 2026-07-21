@@ -100,11 +100,11 @@
     "homebrew-daytona": {
       "flake": false,
       "locked": {
-        "lastModified": 1784297620,
-        "narHash": "sha256-dNicGey9dx7mEEqeImLSw4CftSrc6AAfS30aw7NeXj8=",
+        "lastModified": 1784630444,
+        "narHash": "sha256-BoACgLY5Di3F/kVb7Df52h81SeY7ffrDd0rSBh2J2FY=",
         "owner": "daytonaio",
         "repo": "homebrew-cli",
-        "rev": "592591f55aea0146062233310c42454d4a9d9765",
+        "rev": "575ee4a2faa28c09b90067e02aaf4041fab248be",
         "type": "github"
       },
       "original": {
