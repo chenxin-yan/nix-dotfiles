@@ -101,6 +101,7 @@
         # below. Reads ~/.wakatime.cfg for `api_key` (file is hand-managed
         # outside Nix; predates this dotfiles repo).
         wakatime-cli
+        claude-code
       ];
 
       # Disable pi's startup "new version available" toast. The pi binary
@@ -200,7 +201,7 @@
               thinking = "high";
             };
             worker = {
-              model = "openai-codex/gpt-5.6-terra";
+              model = "openai-codex/gpt-5.6-sol";
               thinking = "high";
             };
             reviewer = {

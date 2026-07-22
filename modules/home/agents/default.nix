@@ -19,6 +19,8 @@ in
         source = ./config/skills;
         recursive = true;
       };
+      ".claude/skills".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
 
       ".agents/skills/frontend-design" = {
         source = "${sources.anthropicSkills}/skills/frontend-design";
