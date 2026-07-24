@@ -68,10 +68,8 @@
         "@tmustier/pi-usage-extension"
         # Current-account usage across supported model providers.
         "@narumitw/pi-usage"
-        # OpenAI fast-mode package from pi.dev. The gallery URL's
-        # `name=fast mode` query is display metadata; the declarative source
-        # is the npm package name here, with `npm:` added in settings.json.
-        "@diegopetrucci/pi-openai-fast"
+        # Priority service tier for configured OpenAI and Codex models.
+        "@pi-plugins/fast-mode"
         # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
         # normal mode; covers motions, operators, visual mode basics.
         "pi-vim"
@@ -277,76 +275,8 @@
         # model replaces that built-in model." — we therefore restate
         # the fields we want to keep (api/reasoning/cost/thinkingLevelMap)
         # so the replace doesn't silently drop them.
-        ".pi/agent/models.json".text = builtins.toJSON {
-          providers = {
-            "openai-codex" =
-              let
-                gpt56 = id: name: cost: {
-                  inherit id name cost;
-                  reasoning = true;
-                  thinkingLevelMap = {
-                    xhigh = "xhigh";
-                    minimal = "low";
-                  };
-                  input = [
-                    "text"
-                    "image"
-                  ];
-                  contextWindow = 272000;
-                  maxTokens = 128000;
-                };
-              in
-              {
-                models = [
-                  (gpt56 "gpt-5.6-sol" "GPT-5.6 Sol" {
-                    input = 5;
-                    output = 30;
-                    cacheRead = 0.5;
-                    cacheWrite = 0;
-                  })
-                  (gpt56 "gpt-5.6-terra" "GPT-5.6 Terra" {
-                    input = 2.5;
-                    output = 15;
-                    cacheRead = 0.25;
-                    cacheWrite = 0;
-                  })
-                  (gpt56 "gpt-5.6-luna" "GPT-5.6 Luna" {
-                    input = 1;
-                    output = 6;
-                    cacheRead = 0.1;
-                    cacheWrite = 0;
-                  })
-                ];
-              };
-            openai = {
-              models = [
-                {
-                  id = "gpt-5.5";
-                  name = "GPT-5.5";
-                  api = "openai-responses";
-                  reasoning = true;
-                  thinkingLevelMap = {
-                    off = "none";
-                    minimal = null;
-                    xhigh = "xhigh";
-                  };
-                  input = [
-                    "text"
-                    "image"
-                  ];
-                  cost = {
-                    input = 5;
-                    output = 30;
-                    cacheRead = 0.5;
-                    cacheWrite = 0;
-                  };
-                  contextWindow = 1050000;
-                  maxTokens = 128000;
-                }
-              ];
-            };
-          };
-        };
+        # ".pi/agent/models.json".text = builtins.toJSON {
+        # };
 
         # Catppuccin themes from upstream flake
         # (github:otahontas/pi-coding-agent-catppuccin). We consume the
@@ -412,6 +342,11 @@
         # message and wall-clock time spent in the current agent run.
         ".pi/agent/extensions/tps-status.ts".source = ./config/extensions/tps-status.ts;
         ".pi/agent/extensions/agent-time.ts".source = ./config/extensions/agent-time.ts;
+
+        # Start each session with the fast-mode package enabled.
+        ".pi/agent/extensions/fast-mode.json".text = builtins.toJSON {
+          enabled = true;
+        };
 
         # Ponytail pi extension (commands /ponytail, /ponytail-review,
         # /ponytail-audit, /ponytail-debt, /ponytail-gain, /ponytail-help;
