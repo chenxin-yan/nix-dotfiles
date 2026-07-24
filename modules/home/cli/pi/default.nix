@@ -102,6 +102,7 @@
         # outside Nix; predates this dotfiles repo).
         wakatime-cli
         claude-code
+        codex
       ];
 
       # Disable pi's startup "new version available" toast. The pi binary
