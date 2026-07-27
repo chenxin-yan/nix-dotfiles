@@ -73,6 +73,7 @@ discover_pins() {
   find "$root" -type f -name '*.nix' \
     -not -path '*/.git/*' \
     -not -path '*/.direnv/*' \
+    -not -path '*/.agent-sources/*' \
     -not -path '*/result/*' \
     -not -path '*/result-*' \
     -print0 \

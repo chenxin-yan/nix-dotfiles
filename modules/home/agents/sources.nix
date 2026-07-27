@@ -4,29 +4,29 @@
   anthropicSkills = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
-    rev = "fa0fa64bdc967915dc8399e803be67759e1e62b8";
-    hash = "sha256-QZ+zJkyLd/42rxgtJEZSUOz9R75Tse6UXW7G0nOkFS8=";
+    rev = "b29e7cf65e5cb78a5ac33d582270551bc74a14eb";
+    hash = "sha256-RH2B03gj4kzw1j5LORezgUZPPu8mW+mWb+Kl2U7WUbY=";
   };
 
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "9603c1cc8118d08bc1b3bf34cf714f62178dea3b";
-    hash = "sha256-S6pARK99oGGSi6XdFm6zYKHT4gjOCN0wIPZFcl1hREE=";
+    rev = "ed37663cc5fbef691ddfecd080dff42f7e7e350d";
+    hash = "sha256-o/H9s3t6ahBqFwpkOMBOTwpsvb33pgvpI9n0PA+uLYM=";
   };
 
   raindropSkills = pkgs.fetchFromGitHub {
     owner = "raindrop-ai";
     repo = "skills";
-    rev = "7d80323c7ae0938fa6eb0c0c88f819a4da6e6ed8";
-    hash = "sha256-eJ4lVBhdoRblii7B/O4SqomvPAgqCmMJHinnxOooHVU=";
+    rev = "ed9ffb3307fa183aaa33fdabfea8524e20d6bd72";
+    hash = "sha256-A4WZ+ho+G2G4PFZQjBVU1l+csXh3h1UvSOS91oVnBDU=";
   };
 
   raindropWorkshop = pkgs.fetchFromGitHub {
     owner = "raindrop-ai";
     repo = "workshop";
-    rev = "914d74dc2c5dbfc13fa19ab9eb9bae0ecd48939e";
-    hash = "sha256-7X41HYzcGpe/Z9l80ZrwYIJAaaYaig1Jf4Pj5xmbj+M=";
+    rev = "8aa2d336dc8f9481a8b83a49a3a0c1aec3925fb1";
+    hash = "sha256-kJcy5Kj+nwROdA73X8AHSPw59XVRQ04UF1/5LS35+3g=";
   };
 
   ponytail = pkgs.fetchFromGitHub {
