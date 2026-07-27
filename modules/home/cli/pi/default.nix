@@ -205,7 +205,7 @@
               thinking = "high";
             };
             reviewer = {
-              model = "openai-codex/gpt-5.6-sol";
+              model = "anthropic/claude-fable-5";
               thinking = "high";
             };
             researcher = {
