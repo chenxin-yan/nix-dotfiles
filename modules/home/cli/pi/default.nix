@@ -143,15 +143,16 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "openai-codex";
-          defaultModel = "gpt-5.6-sol";
+          defaultProvider = "anthropic";
+          defaultModel = "claude-opus-5";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. GPT-5.6 Sol is primary; Fable is the
+          # Ctrl+P cycle list. Opus 5 is primary; GPT-5.6 Sol is the
           # cross-family alternative.
           enabledModels = [
+            "anthropic/claude-opus-5"
             "openai-codex/gpt-5.6-sol"
             "anthropic/claude-fable-5"
           ];
@@ -170,18 +171,16 @@
           #
           # Subagents run on the GPT-5.6 family (launched 2026-07-09; Sol
           # tops the AA Coding Agent Index at 80). Mixing model families is
-          # intentional: the parent stays on GPT-5.6 Sol, while reviewer and
-          # oracle use Fable for cross-family second opinions.
+          # intentional: the parent stays on Opus 5, while GPT-5.6 handles
+          # delegated work and cross-family review.
           #
           # Role → model mapping (tier matched to job):
-          # - gpt-5.6-luna   → scout (fast/cheap recon; weak long-context —
-          #                    MRCR 41.3% — fine for small scout contexts).
-          # - gpt-5.6-terra  → context-builder, researcher, worker
-          #                    (long-context MRCR 89.6%, BrowseComp 87.5%).
-          # - gpt-5.6-sol    → planner (frontier reasoning, best coding
-          #                    model).
-          # - claude-fable-5 → reviewer, oracle (cross-family review /
-          #                    disagreement roles).
+          # - gpt-5.6-luna  → scout (fast/cheap recon; weak long-context —
+          #                   MRCR 41.3% — fine for small scout contexts).
+          # - gpt-5.6-terra → context-builder, researcher (long-context
+          #                   MRCR 89.6%, BrowseComp 87.5%).
+          # - gpt-5.6-sol   → planner, worker, reviewer, oracle, delegate
+          #                   (frontier reasoning, best coding model).
           #
           # `thinking` is pinned per-role so a future pi-subagents update
           # can't silently change cost/latency. `fallbackModels` is
@@ -198,7 +197,7 @@
               thinking = "high";
             };
             planner = {
-              model = "openai-codex/gpt-5.6-sol";
+              model = "anthropic/claude-fable-5";
               thinking = "high";
             };
             worker = {
@@ -206,7 +205,7 @@
               thinking = "high";
             };
             reviewer = {
-              model = "anthropic/claude-fable-5";
+              model = "openai-codex/gpt-5.6-sol";
               thinking = "high";
             };
             researcher = {
@@ -214,16 +213,17 @@
               thinking = "high";
             };
             oracle = {
-              model = "anthropic/claude-fable-5";
+              model = "openai-codex/gpt-5.6-sol";
+              thinking = "high";
+            };
+            delegate = {
+              model = "openai-codex/gpt-5.6-sol";
               thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
             # pi-subagents (see ~/.pi/agent/npm/node_modules/pi-subagents/
             # CHANGELOG.md and the absence of agents/oracle-executor.md).
             # No override needed — `worker` carries the role.
-            #
-            # `delegate` intentionally has no model override – it inherits the
-            # parent's model, which is the whole point of that builtin.
           };
           # Custom theme name (matches `name` field inside the JSON file).
           # Pi auto-discovers theme files from ~/.pi/agent/themes/.
