@@ -82,13 +82,15 @@
         # MCP adapter: one proxy `mcp` tool plus /mcp setup; reads standard
         # .mcp.json and ~/.config/mcp/mcp.json lazily.
         "pi-mcp-adapter"
-        # Desktop app observation and control on macOS and Windows.
-        "@injaneity/pi-computer-use"
         # Local deterministic compression for noisy Pi tool output. Adds
         # /hypa diagnostics plus hypa_shell/read/grep/find/ls tools.
         "@hypabolic/pi-hypa"
         # /rewind checkpoint navigation and /checkpoint storage manager.
         "@ayulab/pi-rewind"
+      ]
+      ++ lib.optionals pkgs.stdenv.isDarwin [
+        # Desktop app observation and control. The NixOS host is headless.
+        "@injaneity/pi-computer-use"
       ];
     in
     lib.mkIf config.cli.pi.enable {
