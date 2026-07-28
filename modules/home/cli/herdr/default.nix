@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  inputs,
   ...
 }:
 
@@ -12,9 +11,7 @@
   };
 
   config = lib.mkIf config.cli.herdr.enable {
-    home.packages = [
-      inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
-    ];
+    home.packages = [ pkgs.herdr ];
 
     # Parity with the zellij setup: Ctrl+s leader, catppuccin, Alt-tab nav.
     # vim hjkl focus/resize, splits, and session persistence are herdr defaults.

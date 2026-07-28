@@ -35,27 +35,6 @@
         "type": "github"
       }
     },
-    "herdr": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1781540022,
-        "narHash": "sha256-DjCSwhRMBRE9lSvjpX6m8IpoEgUbOP1jcmeXMlQlSQY=",
-        "owner": "ogulcancelik",
-        "repo": "herdr",
-        "rev": "0bf9bb58eb9c9495f660aed1bd9336121b953fdc",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ogulcancelik",
-        "ref": "v0.7.0",
-        "repo": "herdr",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -204,7 +183,6 @@
     "root": {
       "inputs": {
         "catppuccin": "catppuccin",
-        "herdr": "herdr",
         "home-manager": "home-manager",
         "homebrew-daytona": "homebrew-daytona",
         "nix-darwin": "nix-darwin",
@@ -222,11 +200,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785187836,
-        "narHash": "sha256-s0bx1KUa8wQhkL4zatdFmhae97J5O4DryIMJaHEeS7c=",
+        "lastModified": 1785224333,
+        "narHash": "sha256-8DNJUVM10ktK02V9ZIV064CH+fuPF272VCAZBn6arig=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "17a400c5b5afc3b8ff3ec1c8bfa6cc2e763b4d45",
+        "rev": "5f1a4be4d280e1ae06d61a75775a234b1714da3f",
         "type": "github"
       },
       "original": {
