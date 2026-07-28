@@ -143,18 +143,17 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "anthropic";
-          defaultModel = "claude-opus-5";
+          defaultProvider = "openai-codex";
+          defaultModel = "gpt-5.6-sol";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. Opus 5 is primary; GPT-5.6 Sol is the
+          # Ctrl+P cycle list. Fable 5 is primary; GPT-5.6 Sol is the
           # cross-family alternative.
           enabledModels = [
-            "anthropic/claude-opus-5"
-            "openai-codex/gpt-5.6-sol"
             "anthropic/claude-fable-5"
+            "openai-codex/gpt-5.6-sol"
           ];
           # Pi passes its managed ~/.pi/agent/npm install prefix explicitly;
           # this wrapper only supplies npm from the Nix-managed Node package.
@@ -171,7 +170,7 @@
           #
           # Subagents run on the GPT-5.6 family (launched 2026-07-09; Sol
           # tops the AA Coding Agent Index at 80). Mixing model families is
-          # intentional: the parent stays on Opus 5, while GPT-5.6 handles
+          # intentional: the parent stays on Fable 5, while GPT-5.6 handles
           # delegated work and cross-family review.
           #
           # Role → model mapping (tier matched to job):
@@ -213,7 +212,7 @@
               thinking = "high";
             };
             oracle = {
-              model = "openai-codex/gpt-5.6-sol";
+              model = "anthropic/claude-fable-5";
               thinking = "high";
             };
             delegate = {
