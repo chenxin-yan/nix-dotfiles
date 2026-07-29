@@ -11,15 +11,15 @@
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "ed37663cc5fbef691ddfecd080dff42f7e7e350d";
-    hash = "sha256-o/H9s3t6ahBqFwpkOMBOTwpsvb33pgvpI9n0PA+uLYM=";
+    rev = "2ab958093e83e0ec752e6c1c5932da465bf23e0c";
+    hash = "sha256-dQtG6usJWlg/FqTajrjcs8GSdymH92WsgLiUaCfvKPA=";
   };
 
   raindropSkills = pkgs.fetchFromGitHub {
     owner = "raindrop-ai";
     repo = "skills";
-    rev = "ed9ffb3307fa183aaa33fdabfea8524e20d6bd72";
-    hash = "sha256-A4WZ+ho+G2G4PFZQjBVU1l+csXh3h1UvSOS91oVnBDU=";
+    rev = "4c83dceb754151ba99203d5cb618e9c794dc5677";
+    hash = "sha256-JR/xbylclogkWNukfEWvuC7jDvP6mYcl86BvtXvsd8c=";
   };
 
   raindropWorkshop = pkgs.fetchFromGitHub {

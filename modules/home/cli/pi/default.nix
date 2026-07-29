@@ -68,8 +68,6 @@
         "@tmustier/pi-usage-extension"
         # Current-account usage across supported model providers.
         "@narumitw/pi-usage"
-        # Priority service tier for configured OpenAI and Codex models.
-        "@pi-plugins/fast-mode"
         # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
         # normal mode; covers motions, operators, visual mode basics.
         "pi-vim"
@@ -343,11 +341,6 @@
         # message and wall-clock time spent in the current agent run.
         ".pi/agent/extensions/tps-status.ts".source = ./config/extensions/tps-status.ts;
         ".pi/agent/extensions/agent-time.ts".source = ./config/extensions/agent-time.ts;
-
-        # Start each session with the fast-mode package enabled.
-        ".pi/agent/extensions/fast-mode.json".text = builtins.toJSON {
-          enabled = true;
-        };
 
         # Ponytail pi extension (commands /ponytail, /ponytail-review,
         # /ponytail-audit, /ponytail-debt, /ponytail-gain, /ponytail-help;
