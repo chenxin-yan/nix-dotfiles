@@ -31,6 +31,8 @@
         # (scout/planner/worker/reviewer/researcher/oracle/...), and
         # /run-chain. Per-role model overrides live in subagents.agentOverrides.
         "pi-subagents"
+        # JavaScript workflows with parallel model-routed subagents and resume.
+        "@quintinshaw/pi-dynamic-workflows"
         # Direct messaging between independently running Pi sessions.
         "pi-intercom"
         # Web search and fetch with pluggable providers (Brave, Tavily,
