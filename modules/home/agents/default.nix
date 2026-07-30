@@ -46,10 +46,6 @@ in
         source = "${sources.mattpocockSkills}/skills/productivity/handoff";
         recursive = true;
       };
-      ".agents/skills/webapp-testing" = {
-        source = "${sources.anthropicSkills}/skills/webapp-testing";
-        recursive = true;
-      };
       ".agents/skills/pdf" = {
         source = "${sources.anthropicSkills}/skills/pdf";
         recursive = true;
