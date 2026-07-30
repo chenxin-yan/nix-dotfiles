@@ -288,7 +288,7 @@ Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/f
 - **fzf-lua** — Fuzzy finder (files, buffers, diagnostics, git)
 - **flash.nvim** — Enhanced motion/search
 - **nvim-treesitter** — Syntax highlighting, text objects, context
-- **blink.cmp** — Completion engine (LSP, Copilot, snippets, paths)
+- **blink.cmp** — Completion engine (LSP, snippets, paths)
 - **snacks.nvim** — Dashboard, file explorer, lazygit, indent guides, zen mode
 - **mini.nvim** — AI text objects, surround, splitjoin, move, autopairs
 - **trouble.nvim** — Diagnostics and quickfix panel

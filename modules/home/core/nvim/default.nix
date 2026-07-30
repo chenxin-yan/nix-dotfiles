@@ -14,8 +14,6 @@
       tree-sitter
       imagemagick_light
       neovim
-      copilot-language-server
-      github-copilot-cli
       lua51Packages.tree-sitter-cli
     ];
 

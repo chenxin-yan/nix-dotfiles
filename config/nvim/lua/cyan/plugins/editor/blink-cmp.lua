@@ -77,30 +77,6 @@ return {
     dependencies = {
       'rafamadriz/friendly-snippets',
       'Kaiser-Yang/blink-cmp-avante',
-      'fang2hou/blink-copilot',
-      {
-        'zbirenbaum/copilot.lua',
-        cmd = 'Copilot',
-        build = ':Copilot auth',
-        event = 'InsertEnter',
-        opts = {
-          suggestion = {
-            enabled = false, -- disable inline suggestions, handled by blink.cmp
-            auto_trigger = true,
-            hide_during_completion = true,
-            keymap = {
-              accept = false, -- handled by blink.cmp
-              next = '<M-]>',
-              prev = '<M-[>',
-            },
-          },
-          panel = { enabled = false },
-          filetypes = {
-            markdown = true,
-            help = true,
-          },
-        },
-      },
       {
         'Kaiser-Yang/blink-cmp-git',
         dependencies = { 'nvim-lua/plenary.nvim' },
@@ -120,11 +96,6 @@ return {
         ['<C-n>'] = {
           function(cmp)
             cmp.show { providers = { 'snippets' } }
-          end,
-        },
-        ['<C-a>'] = {
-          function(cmp)
-            cmp.show { providers = { 'copilot' } }
           end,
         },
         ['<C-i>'] = { 'show', 'show_documentation', 'hide_documentation' },
@@ -221,7 +192,6 @@ return {
           'path',
           'snippets',
           'buffer',
-          'copilot',
           'git',
           'avante',
         },
@@ -244,12 +214,6 @@ return {
             name = 'LazyDev',
             module = 'lazydev.integrations.blink',
             score_offset = 100,
-          },
-          copilot = {
-            name = 'copilot',
-            module = 'blink-copilot',
-            score_offset = -100,
-            async = true,
           },
           git = {
             module = 'blink-cmp-git',
