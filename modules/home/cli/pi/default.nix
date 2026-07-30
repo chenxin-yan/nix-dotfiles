@@ -70,6 +70,8 @@
         "@tmustier/pi-usage-extension"
         # Current-account usage across supported model providers.
         "@narumitw/pi-usage"
+        # Opt-in OpenAI priority service tier (`/fast`); faster but costlier.
+        "@pi-plugins/fast-mode"
         # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
         # normal mode; covers motions, operators, visual mode basics.
         "pi-vim"
@@ -116,6 +118,12 @@
       # interactive-mode.js:528 `if (PI_SKIP_VERSION_CHECK || PI_OFFLINE)`.
       home.sessionVariables = {
         PI_SKIP_VERSION_CHECK = "1";
+        # Pin the rpiv-web-tools backend to Firecrawl for web_search/web_fetch
+        # (env tier wins over ~/.config/rpiv-web-tools/config.json). The API
+        # key is a secret and stays out of this repo: run `/web-tools` once in
+        # pi to store FIRECRAWL_API_KEY in the config file, or export it in a
+        # hand-managed shell env (env-var-first resolution).
+        WEB_SEARCH_PROVIDER = "firecrawl";
         # Ponytail default mode. `full` keeps the lazy-dev ruleset injected
         # every turn — it owns the YAGNI/minimal-code philosophy, which has
         # been trimmed out of ../../agents/config/AGENTS.md to avoid duplication

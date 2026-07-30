@@ -22,7 +22,7 @@ return {
       },
       snacks = {
         enabled = true,
-        indent_scope_color = 'lavender', -- catppuccin color (eg. `lavender`) Default: text
+        indent_scope_color = 'lavender',
       },
       lsp_trouble = true,
       which_key = true,
