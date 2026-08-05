@@ -30,8 +30,8 @@ in
         source = "${sources.anthropicSkills}/skills/doc-coauthoring";
         recursive = true;
       };
-      ".agents/skills/writing-great-skills" = {
-        source = "${sources.mattpocockSkills}/skills/productivity/writing-great-skills";
+      ".agents/skills/writing-for-agents" = {
+        source = "${sources.mattpocockSkills}/skills/productivity/writing-for-agents";
         recursive = true;
       };
       ".agents/skills/grill-me" = {
@@ -48,6 +48,10 @@ in
       };
       ".agents/skills/pdf" = {
         source = "${sources.anthropicSkills}/skills/pdf";
+        recursive = true;
+      };
+      ".agents/skills/herdr" = {
+        source = "${pkgs.herdr}/share/herdr/skills/herdr";
         recursive = true;
       };
 
@@ -144,8 +148,20 @@ in
         source = "${sources.mattpocockSkills}/skills/engineering/wayfinder";
         recursive = true;
       };
+      ".agents/skills/wizard" = {
+        source = "${sources.mattpocockSkills}/skills/engineering/wizard";
+        recursive = true;
+      };
       ".agents/skills/teach" = {
         source = "${sources.mattpocockSkills}/skills/productivity/teach";
+        recursive = true;
+      };
+      ".agents/skills/to-questionnaire" = {
+        source = "${sources.mattpocockSkills}/skills/productivity/to-questionnaire";
+        recursive = true;
+      };
+      ".agents/skills/wait-what" = {
+        source = "${sources.mattpocockSkills}/skills/productivity/wait-what";
         recursive = true;
       };
 
