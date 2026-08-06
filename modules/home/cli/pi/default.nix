@@ -350,11 +350,6 @@
         ".pi/agent/extensions/tps-status.ts".source = ./config/extensions/tps-status.ts;
         ".pi/agent/extensions/agent-time.ts".source = ./config/extensions/agent-time.ts;
 
-        # GPT-5.6 fast mode toggle (/fast). Injects `service_tier: "fast"`
-        # into OpenAI Responses payloads for gpt-5.6* models: ~2.5x faster
-        # inference at 2x token pricing. Replaces @pi-plugins/fast-mode.
-        ".pi/agent/extensions/fast-mode.ts".source = ./config/extensions/fast-mode.ts;
-
         # Ponytail pi extension (commands /ponytail, /ponytail-review,
         # /ponytail-audit, /ponytail-debt, /ponytail-gain, /ponytail-help;
         # injects the lazy-dev system prompt per turn when
