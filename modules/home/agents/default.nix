@@ -26,10 +26,6 @@ in
         source = "${sources.anthropicSkills}/skills/frontend-design";
         recursive = true;
       };
-      ".agents/skills/doc-coauthoring" = {
-        source = "${sources.anthropicSkills}/skills/doc-coauthoring";
-        recursive = true;
-      };
       ".agents/skills/writing-for-agents" = {
         source = "${sources.mattpocockSkills}/skills/productivity/writing-for-agents";
         recursive = true;
@@ -165,22 +161,6 @@ in
         recursive = true;
       };
 
-      ".agents/skills/raindrop-investigate" = {
-        source = "${sources.raindropSkills}/raindrop-investigate";
-        recursive = true;
-      };
-      ".agents/skills/raindrop-setup" = {
-        source = "${sources.raindropSkills}/raindrop-setup";
-        recursive = true;
-      };
-      ".agents/skills/instrument-agent" = {
-        source = "${sources.raindropWorkshop}/skills/instrument-agent";
-        recursive = true;
-      };
-      ".agents/skills/setup-agent-replay" = {
-        source = "${sources.raindropWorkshop}/skills/setup-agent-replay";
-        recursive = true;
-      };
     };
   };
 }

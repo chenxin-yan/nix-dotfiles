@@ -79,9 +79,6 @@
         # `interactive-shell` skill auto-registered via pi.skills. Runtime
         # dep zigpty ships prebuilt PTY binaries (no node-gyp on install).
         "pi-interactive-shell"
-        # MCP adapter: one proxy `mcp` tool plus /mcp setup; reads standard
-        # .mcp.json and ~/.config/mcp/mcp.json lazily.
-        "pi-mcp-adapter"
         # Local deterministic compression for noisy Pi tool output. Adds
         # /hypa diagnostics plus hypa_shell/read/grep/find/ls tools.
         "@hypabolic/pi-hypa"
