@@ -31,8 +31,6 @@
         # (scout/planner/worker/reviewer/researcher/oracle/...), and
         # /run-chain. Per-role model overrides live in subagents.agentOverrides.
         "pi-subagents"
-        # JavaScript workflows with parallel model-routed subagents and resume.
-        "@quintinshaw/pi-dynamic-workflows"
         # Direct messaging between independently running Pi sessions.
         "pi-intercom"
         # Web search and fetch with pluggable providers (Brave, Tavily,
@@ -369,16 +367,6 @@
           recursive = true;
         };
 
-        # Predefined chains. pi-subagents discovers user chains from
-        # ~/.pi/agent/chains/**/*.chain.md (see
-        # ~/.pi/agent/npm/node_modules/pi-subagents/src/agents/agents.ts:134).
-        # NOT ~/.pi/agent/agents/ — that's the agent definitions dir, and the
-        # loader at agents.ts:547 explicitly skips *.chain.md files there.
-        # Run via `/run-chain <name> -- <task>` or natural language.
-        ".pi/agent/chains" = {
-          source = ./config/chains;
-          recursive = true;
-        };
       };
 
       programs.zsh.shellAliases = {
