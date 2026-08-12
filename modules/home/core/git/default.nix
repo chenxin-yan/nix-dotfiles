@@ -95,9 +95,15 @@ in
       enable = true;
       enableZshIntegration = true;
       settings = {
-        git.pagers = [
-          { externalDiffCommand = "difft --color=always"; }
-          { colorArg = "always"; }
+        git.diffRenderers = [
+          {
+            type = "extDiff";
+            command = "difft --color=always";
+          }
+          {
+            type = "rawGit";
+            colorArg = "always";
+          }
         ];
         keybinding = {
           universal = {
