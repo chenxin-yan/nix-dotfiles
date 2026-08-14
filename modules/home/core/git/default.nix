@@ -74,7 +74,7 @@ in
     # Hunk's bundled review skill belongs with the Hunk/Git module so it is
     # installed only when the tool it documents is enabled.
     home.file.".agents/skills/hunk-review" = {
-      source = "${pkgs.hunk}/skills/hunk-review";
+      source = "${pkgs.hunk}/share/skills/hunk/hunk-review";
       recursive = true;
     };
 
