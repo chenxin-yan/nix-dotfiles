@@ -14,7 +14,7 @@
     services.espanso = {
       enable = true;
 
-      waylandSupport = pkgs.stdenv.isLinux;
+      waylandSupport = pkgs.stdenv.hostPlatform.isLinux;
 
       configs = {
         default = {

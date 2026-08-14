@@ -168,7 +168,7 @@ Every module defines an `enable` option and is enabled by default via `lib.mkDef
 app.shared.zen-browser.enable = false;
 ```
 
-Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.isDarwin` / `isLinux` in `modules/home/app/default.nix`.
+Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.hostPlatform.isDarwin` / `isLinux` in `modules/home/app/default.nix`.
 
 ### Agent Modules
 

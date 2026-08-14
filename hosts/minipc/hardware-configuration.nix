@@ -57,7 +57,7 @@
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   hardware.logitech.wireless.enable = true;
-  hardware.logitech.wireless.enableGraphical = true;
+  programs.solaar.enable = true;
 
   hardware.keyboard.zsa.enable = true;
 }

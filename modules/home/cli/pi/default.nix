@@ -83,7 +83,7 @@
         # /rewind checkpoint navigation and /checkpoint storage manager.
         "@ayulab/pi-rewind"
       ]
-      ++ lib.optionals pkgs.stdenv.isDarwin [
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         # Desktop app observation and control. The NixOS host is headless.
         "@injaneity/pi-computer-use"
       ];

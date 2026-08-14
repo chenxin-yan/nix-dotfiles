@@ -16,12 +16,13 @@
     # `ghostty-bin`, which fetches the official signed Ghostty.dmg and
     # installs Ghostty.app into ~/Applications/Home Manager Apps via
     # home-manager's targets.darwin.linkApps default.
-    home.packages = if pkgs.stdenv.isDarwin then [ pkgs.ghostty-bin ] else [ pkgs.ghostty ];
+    home.packages =
+      if pkgs.stdenv.hostPlatform.isDarwin then [ pkgs.ghostty-bin ] else [ pkgs.ghostty ];
 
     home.file = {
       ".config/ghostty/config".source = ./config/config;
     }
-    // lib.optionalAttrs pkgs.stdenv.isLinux {
+    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
       # Linux-specific: reduce font size to compensate for 2x Wayland scaling
       ".config/ghostty/config-linux".text = ''
         font-size = 12

@@ -7,7 +7,7 @@
 let
   # Use the system directly from pkgs to avoid infinite recursion
   # This is safe because we're in a let binding, not in imports
-  isDarwin = pkgs.stdenv.isDarwin;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
 in
 {
   imports = [
