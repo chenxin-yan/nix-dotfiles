@@ -191,6 +191,7 @@
           subagents.agentOverrides = {
             scout = {
               model = "openai-codex/gpt-5.6-luna";
+              thinking = "high";
             };
             "context-builder" = {
               model = "openai-codex/gpt-5.6-terra";

@@ -33,8 +33,8 @@
       open_worktree = "prefix+shift+o"
       remove_worktree = "prefix+shift+c"
 
-      # Vertical split on prefix+| (zellij muscle memory).
       split_vertical = "prefix+|"
+      split_horizontal = "prefix+_"
       # prefix+s toggles the sidebar (frequent); move settings off it to prefix+,.
       toggle_sidebar = "prefix+s"
       settings = "prefix+comma"
