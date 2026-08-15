@@ -20,7 +20,6 @@ return {
         { '<leader>h', group = 'Hunk', mode = { 'n', 'x' }, icon = ' ' },
         { '<leader>b', group = 'Buffer' },
         { '<leader>S', icon = ' ', group = 'Snippet' },
-        { '<leader>a', group = 'AI' },
       },
       plugins = {
         spelling = {
