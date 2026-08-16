@@ -2,16 +2,21 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 
 {
+  imports = [ inputs.herdr-micro.homeManagerModules.default ];
+
   options = {
     cli.herdr.enable = lib.mkEnableOption "enables herdr terminal workspace manager";
   };
 
   config = lib.mkIf config.cli.herdr.enable {
     home.packages = [ pkgs.herdr ];
+
+    services.herdr-micro.enable = pkgs.stdenv.hostPlatform.isDarwin;
 
     # Parity with the zellij setup: Ctrl+s leader, catppuccin, Alt-tab nav.
     # vim hjkl focus/resize, splits, and session persistence are herdr defaults.
