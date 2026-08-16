@@ -16,7 +16,15 @@
   config = lib.mkIf config.cli.herdr.enable {
     home.packages = [ pkgs.herdr ];
 
-    services.herdr-micro.enable = pkgs.stdenv.hostPlatform.isDarwin;
+    services.herdr-micro = {
+      enable = pkgs.stdenv.hostPlatform.isDarwin;
+      settings = {
+        targets = {
+          local.socket = "~/.config/herdr/herdr.sock";
+          minipc.ssh = "cyan-minipc";
+        };
+      };
+    };
 
     # Parity with the zellij setup: Ctrl+s leader, catppuccin, Alt-tab nav.
     # vim hjkl focus/resize, splits, and session persistence are herdr defaults.
