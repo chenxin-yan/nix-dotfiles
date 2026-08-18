@@ -15,6 +15,7 @@
       nodejs_26
       pnpm
       ni
+      deno
 
       # editor
       vtsls

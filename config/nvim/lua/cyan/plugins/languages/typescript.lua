@@ -120,6 +120,7 @@ return {
             end
           end,
         },
+        denols = {},
         astro = {}, -- astro lsp
         prismals = {},
       },
