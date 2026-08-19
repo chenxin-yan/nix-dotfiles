@@ -26,9 +26,6 @@ return {
             Lua = {
               workspace = {
                 checkThirdParty = false,
-                -- TODO: a workaround from https://github.com/folke/lazydev.nvim/issues/136
-                -- might be able to remove in the future
-                library = vim.api.nvim_get_runtime_file('', true),
               },
               codeLens = {
                 enable = true,
