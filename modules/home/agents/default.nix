@@ -30,6 +30,10 @@ in
         source = "${sources.mattpocockSkills}/skills/productivity/writing-for-agents";
         recursive = true;
       };
+      ".agents/skills/typescript-best-practices" = {
+        source = "${sources.pstack}/skills/typescript-best-practices";
+        recursive = true;
+      };
       ".agents/skills/grill-me" = {
         source = "${sources.mattpocockSkills}/skills/productivity/grill-me";
         recursive = true;

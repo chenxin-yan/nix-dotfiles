@@ -15,6 +15,13 @@
     hash = "sha256-wp/zC1c/0CEDd28+LRyLMozaURnLKWvlN9GunLM99IY=";
   };
 
+  pstack = pkgs.fetchFromGitHub {
+    owner = "backnotprop";
+    repo = "pstack";
+    rev = "bf5378aaf3e1dba8ab75f9c2b07f21c4d7b673d3";
+    hash = "sha256-qQ50ldODjVNChURsftPL7rEfJQLl2euTtDic1JT0UXI=";
+  };
+
   ponytail = pkgs.fetchFromGitHub {
     owner = "DietrichGebert";
     repo = "ponytail";
