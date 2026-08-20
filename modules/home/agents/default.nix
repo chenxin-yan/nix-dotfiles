@@ -34,6 +34,10 @@ in
         source = "${sources.pstack}/skills/typescript-best-practices";
         recursive = true;
       };
+      ".agents/skills/unslop" = {
+        source = "${sources.pstack}/skills/unslop";
+        recursive = true;
+      };
       ".agents/skills/grill-me" = {
         source = "${sources.mattpocockSkills}/skills/productivity/grill-me";
         recursive = true;
