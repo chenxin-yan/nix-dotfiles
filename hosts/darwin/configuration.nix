@@ -23,21 +23,8 @@
     keymapp
   ];
 
-  # Necessary for using flakes on this system.
-  nix.settings.experimental-features = "nix-command flakes";
-
-  # Automatic garbage collection
-  nix.gc = {
-    automatic = true;
-    interval = [ { Weekday = 7; } ]; # Sunday (any time)
-    options = "--delete-older-than 7d";
-  };
-
-  # Automatic Nix store optimization
-  nix.optimise = {
-    automatic = true;
-    interval = [ { Weekday = 7; } ]; # Sunday (any time)
-  };
+  # Determinate manages the Nix installation and daemon on this machine.
+  nix.enable = false;
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = config.rev or config.dirtyRev or null;
@@ -45,8 +32,6 @@
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
   system.stateVersion = 6;
-
-  system.primaryUser = "yanchenxin";
 
   programs.zsh.enable = true;
   users.users.${config.system.primaryUser} = {

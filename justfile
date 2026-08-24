@@ -10,7 +10,7 @@ default:
 # Rebuild and switch darwin configuration
 [macos]
 switch:
-    nh darwin switch --hostname yanchenxin@darwin .
+    nh darwin switch --hostname darwin .
 
 # Rebuild and switch nixos configuration
 [linux]

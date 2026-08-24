@@ -1,5 +1,6 @@
 {
   config,
+  darwinUser,
   pkgs,
   ...
 }:
@@ -41,7 +42,7 @@
       };
 
       "cyan-macbook" = {
-        User = "yanchenxin";
+        User = darwinUser;
         IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
         CheckHostIP = false;
         UserKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts.d/cyan-macbook ${config.home.homeDirectory}/.ssh/known_hosts";

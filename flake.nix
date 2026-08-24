@@ -47,6 +47,9 @@
       homebrew-daytona,
       ...
     }:
+    let
+      darwinUser = "yanchenxin";
+    in
     {
       nixosConfigurations."cyan@minipc" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -64,22 +67,24 @@
                   catppuccin.homeModules.catppuccin
                 ];
               };
-              extraSpecialArgs = { inherit inputs; };
+              extraSpecialArgs = { inherit inputs darwinUser; };
             };
           }
         ];
         specialArgs = { inherit inputs; };
       };
 
-      darwinConfigurations."yanchenxin@darwin" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations.darwin = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
           nix-homebrew.darwinModules.nix-homebrew
           {
+            system.primaryUser = darwinUser;
+
             nix-homebrew = {
               enable = true;
               enableRosetta = false;
-              user = "yanchenxin";
+              user = darwinUser;
               mutableTaps = true;
               taps = {
                 "daytonaio/homebrew-cli" = homebrew-daytona;
@@ -92,7 +97,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.yanchenxin = {
+              users.${darwinUser} = {
                 imports = [
                   ./hosts/darwin/home.nix
                   catppuccin.homeModules.catppuccin

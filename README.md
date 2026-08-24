@@ -193,16 +193,16 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 
 `modules/home/cli/`
 
-| Module      | Purpose                                   |
-| ----------- | ----------------------------------------- |
-| `zellij`    | Terminal multiplexer                      |
-| `yazi`      | Terminal file manager with plugins        |
-| `mise`      | Polyglot runtime/tool version manager     |
-| `syncthing` | File sync across 3 devices                |
-| `gcloud`    | Google Cloud SDK                          |
-| `pandoc`    | Document conversion                       |
-| `pi`        | Pi coding agent runtime and extensions    |
-| `podman`    | Rootless containers                       |
+| Module      | Purpose                                |
+| ----------- | -------------------------------------- |
+| `zellij`    | Terminal multiplexer                   |
+| `yazi`      | Terminal file manager with plugins     |
+| `mise`      | Polyglot runtime/tool version manager  |
+| `syncthing` | File sync across 3 devices             |
+| `gcloud`    | Google Cloud SDK                       |
+| `pandoc`    | Document conversion                    |
+| `pi`        | Pi coding agent runtime and extensions |
+| `podman`    | Rootless containers                    |
 
 ### App Modules
 
@@ -258,11 +258,11 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 
 **NixOS** (`modules/nixos/`):
 
-| Module      | Purpose               |
-| ----------- | --------------------- |
-| `1password` | 1Password CLI         |
-| `bluetooth` | Bluetooth support     |
-| `mosh`      | Mobile shell server   |
+| Module      | Purpose             |
+| ----------- | ------------------- |
+| `1password` | 1Password CLI       |
+| `bluetooth` | Bluetooth support   |
+| `mosh`      | Mobile shell server |
 
 ## Neovim
 
@@ -388,16 +388,16 @@ Zsh with vi mode (`viins` keymap) and [oh-my-posh](https://ohmyposh.dev/) prompt
 
 All scripts live in `scripts/` and are symlinked to `~/.local/bin/scripts`. Shell aliases are defined in `modules/home/core/zsh/scripting.nix`.
 
-| Alias    | Script                    | Purpose                                      |
-| -------- | ------------------------- | -------------------------------------------- |
-| `se`     | `dev/attach.sh`           | Attach to or create a Zellij dev session     |
-| `dvc`    | `dev/clone.sh`            | Clone a repo into organized dev directory    |
-| `scu`    | `dev/cleanup.sh`          | Clean up orphaned Zellij sessions            |
-| `srm`    | `dev/session-remove.sh`   | Remove a project with safety checks          |
-| `fzg`    | `utils/rg_with_fzf.sh`    | Ripgrep with fzf preview, opens in Neovim    |
-| `md2pdf` | `utils/md2pdf.sh`         | Interactive markdown to PDF conversion       |
-| `notes`  | `notes/search.sh`         | Search and open notes with fzf               |
-| `cdv`    | _(alias)_                 | `cd $DEV_PATH`                               |
+| Alias    | Script                  | Purpose                                   |
+| -------- | ----------------------- | ----------------------------------------- |
+| `se`     | `dev/attach.sh`         | Attach to or create a Zellij dev session  |
+| `dvc`    | `dev/clone.sh`          | Clone a repo into organized dev directory |
+| `scu`    | `dev/cleanup.sh`        | Clean up orphaned Zellij sessions         |
+| `srm`    | `dev/session-remove.sh` | Remove a project with safety checks       |
+| `fzg`    | `utils/rg_with_fzf.sh`  | Ripgrep with fzf preview, opens in Neovim |
+| `md2pdf` | `utils/md2pdf.sh`       | Interactive markdown to PDF conversion    |
+| `notes`  | `notes/search.sh`       | Search and open notes with fzf            |
+| `cdv`    | _(alias)_               | `cd $DEV_PATH`                            |
 
 Dev repos are organized as `~/dev/<host>/<owner>/<repo>` (e.g., `~/dev/github.com/user/project`).
 
@@ -439,17 +439,17 @@ The ZSA Voyager keyboard is excluded from Kanata remapping.
 
 ## Flake Inputs
 
-| Input              | Source                              | Purpose                                     |
-| ------------------ | ----------------------------------- | ------------------------------------------- |
-| `nixpkgs`          | `nixos-unstable`                    | Package repository                          |
-| `home-manager`     | follows nixpkgs                     | User environment management                 |
-| `nix-darwin`       | `nix-darwin/nix-darwin/master`      | macOS system configuration                  |
-| `nix-homebrew`     | `zhaofengli/nix-homebrew`           | Declarative Homebrew management             |
-| `homebrew-daytona` | `daytonaio/homebrew-cli`            | Daytona tap (used by nix-homebrew)          |
-| `catppuccin`       | `catppuccin/nix`                    | Global theming                              |
+| Input              | Source                                 | Purpose                                  |
+| ------------------ | -------------------------------------- | ---------------------------------------- |
+| `nixpkgs`          | `nixos-unstable`                       | Package repository                       |
+| `home-manager`     | follows nixpkgs                        | User environment management              |
+| `nix-darwin`       | `nix-darwin/nix-darwin/master`         | macOS system configuration               |
+| `nix-homebrew`     | `zhaofengli/nix-homebrew`              | Declarative Homebrew management          |
+| `homebrew-daytona` | `daytonaio/homebrew-cli`               | Daytona tap (used by nix-homebrew)       |
+| `catppuccin`       | `catppuccin/nix`                       | Global theming                           |
 | `pi-catppuccin`    | `otahontas/pi-coding-agent-catppuccin` | Catppuccin theme for the pi coding agent |
-| `zen-browser`      | `0xc000022070/zen-browser-flake`    | Zen Browser for NixOS                       |
-| `hunk`             | `modem-dev/hunk`                    | Diff viewer (Home Manager module)           |
+| `zen-browser`      | `0xc000022070/zen-browser-flake`       | Zen Browser for NixOS                    |
+| `hunk`             | `modem-dev/hunk`                       | Diff viewer (Home Manager module)        |
 
 ## Environment Variables
 
@@ -469,7 +469,7 @@ Set in `hosts/home.nix` and available in all shells:
 
 ### Forking for Your Own Use
 
-1. **Change user and host**: Update `flake.nix` outputs, `hosts/darwin/configuration.nix` (username, uid), and `hosts/minipc/configuration.nix` (hostname, username)
+1. **Change user and host**: Update `darwinUser` in `flake.nix`, plus the UID and host settings in `hosts/darwin/configuration.nix` and `hosts/minipc/configuration.nix`
 
 2. **Hardware config**: Always regenerate `hosts/minipc/hardware-configuration.nix` for your own machine
 

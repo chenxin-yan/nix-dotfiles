@@ -16,6 +16,8 @@
 # Refs: nix-darwin#1219 (tracker), #1660, #1678, LnL7/nix-darwin#558.
 
 let
+  userHome = "/Users/${config.system.primaryUser}";
+
   # Use a literal `/bin/sh` shebang (Apple-shipped, never moves) so the
   # wrapper file's content hash is fully stable across rebuilds. Using
   # pkgs.writeShellScript would embed /nix/store/<bash-hash> in the
@@ -49,6 +51,8 @@ in
     # (config files are managed via xdg.configFile in home-manager).
     launchd.user.agents.sketchybar.serviceConfig.ProgramArguments = lib.mkForce [
       "/usr/local/libexec/nix-darwin/sketchybar-wrapper"
+      "--config"
+      "${userHome}/.config/sketchybar/sketchybarrc"
     ];
   };
 }
