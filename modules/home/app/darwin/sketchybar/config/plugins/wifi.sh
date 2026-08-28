@@ -1,9 +1,11 @@
 #!/usr/bin/env sh
 
-LABEL="$(networksetup -listallhardwareports | awk '/Wi-Fi/{getline; print $2}' | xargs networksetup -getairportnetwork)"
+INTERFACE="$(networksetup -listallhardwareports | awk '/Wi-Fi/{getline; print $2; exit}')"
+LABEL="$(/usr/sbin/ipconfig getsummary "$INTERFACE" | awk '/^[[:space:]]*SSID[[:space:]]*:/{sub(/^[^:]*:[[:space:]]*/, ""); print; exit}')"
 
-if [[ "$LABEL" == *"You are not associated with an AirPort network."* ]]; then
-   sketchybar --set wifi label="Disconnected"
-else   LABEL=$(echo "$LABEL" | sed "s/Current Wi-Fi Network: //")
-   sketchybar --set wifi label="$LABEL"
+if [ "$LABEL" = "<redacted>" ]; then
+  LABEL="$(networksetup -listpreferredwirelessnetworks "$INTERFACE" | awk 'NR == 2 { sub(/^[[:space:]]*/, ""); ssid=$0 } NR > 2 { ssid="" } END { print ssid }')"
+  LABEL="${LABEL:-Connected}"
 fi
+
+sketchybar --set wifi label="${LABEL:-Disconnected}"
