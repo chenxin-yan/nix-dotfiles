@@ -23,8 +23,10 @@
     keymapp
   ];
 
-  # Determinate manages the Nix installation and daemon on this machine.
-  nix.enable = false;
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = config.rev or config.dirtyRev or null;

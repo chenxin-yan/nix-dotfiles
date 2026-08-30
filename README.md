@@ -94,10 +94,10 @@ dotfiles/
 
 ### macOS
 
-1. Install Nix using the [Determinate Systems installer](https://github.com/DeterminateSystems/nix-installer) (recommended — it enables flakes by default):
+1. Install Nix using the [official installer](https://nixos.org/download/)
 
    ```sh
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+   sh <(curl -L https://nixos.org/nix/install)
    ```
 
 2. Clone the repository:
@@ -107,13 +107,21 @@ dotfiles/
    cd ~/dotfiles
    ```
 
-3. Build and apply the system configuration:
+3. Build and apply the system configuration for the first time (`just` and `nh` are not installed yet, and root does not have flakes enabled until this activates):
+
+   ```sh
+   sudo nix --extra-experimental-features 'nix-command flakes' run nix-darwin/master#darwin-rebuild -- switch --flake .#darwin
+   ```
+
+   The first build will take a while as it downloads the entire package closure.
+
+4. For all subsequent rebuilds:
 
    ```sh
    just switch
    ```
 
-   This runs `nh darwin switch`, which builds the full nix-darwin + Home Manager configuration. The first build will take a while as it downloads the entire package closure.
+   This runs `nh darwin switch`, which builds the full nix-darwin + Home Manager configuration.
 
 ### NixOS
 
