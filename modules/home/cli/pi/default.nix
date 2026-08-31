@@ -68,9 +68,6 @@
         "@tmustier/pi-usage-extension"
         # Current-account usage across supported model providers.
         "@narumitw/pi-usage"
-        # Vim-style modal editing for Pi's input box. Esc/Ctrl+[ to enter
-        # normal mode; covers motions, operators, visual mode basics.
-        "pi-vim"
         # Run interactive CLIs (vim, psql, ssh, dev servers, sub-agent CLIs)
         # in a TUI overlay with 4 modes: interactive, hands-free, dispatch,
         # monitor. Commands: /spawn, /attach, /dismiss. Ships an
