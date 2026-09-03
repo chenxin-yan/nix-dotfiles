@@ -141,16 +141,16 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "openai-codex";
-          defaultModel = "gpt-5.6-sol";
+          defaultProvider = "anthropic";
+          defaultModel = "claude-fable-5-1";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. Fable 5 is primary; GPT-5.6 Sol is the
+          # Ctrl+P cycle list. Fable 5.1 is primary; GPT-5.6 Sol is the
           # cross-family alternative.
           enabledModels = [
-            "anthropic/claude-fable-5"
+            "anthropic/claude-fable-5-1"
             "openai-codex/gpt-5.6-sol"
           ];
           # Pi passes its managed ~/.pi/agent/npm install prefix explicitly;
@@ -166,18 +166,18 @@
           # We still pin per-role models declaratively so a future
           # pi-subagents update can't silently change cost/quality/latency.
           #
-          # Subagents run on the GPT-5.6 family (launched 2026-07-09; Sol
-          # tops the AA Coding Agent Index at 80). Mixing model families is
-          # intentional: the parent stays on Fable 5, while GPT-5.6 handles
-          # delegated work and cross-family review.
+          # Mixing model families is intentional: the parent, planner, and
+          # reviewer use Fable 5.1; the oracle uses Opus 5; GPT-5.6 handles
+          # the remaining delegated work.
           #
           # Role → model mapping (tier matched to job):
           # - gpt-5.6-luna  → scout (fast/cheap recon; weak long-context —
           #                   MRCR 41.3% — fine for small scout contexts).
           # - gpt-5.6-terra → context-builder, researcher (long-context
           #                   MRCR 89.6%, BrowseComp 87.5%).
-          # - gpt-5.6-sol   → planner, worker, reviewer, oracle, delegate
-          #                   (frontier reasoning, best coding model).
+          # - gpt-5.6-sol   → worker, delegate (frontier coding/reasoning).
+          # - fable-5.1     → planner, reviewer (intent and judgment).
+          # - opus-5        → oracle (bounded top-reasoning escalation).
           #
           # `thinking` is pinned per-role so a future pi-subagents update
           # can't silently change cost/latency. `fallbackModels` is
@@ -195,7 +195,7 @@
               thinking = "high";
             };
             planner = {
-              model = "anthropic/claude-fable-5";
+              model = "anthropic/claude-fable-5-1";
               thinking = "high";
             };
             worker = {
@@ -203,7 +203,7 @@
               thinking = "high";
             };
             reviewer = {
-              model = "anthropic/claude-fable-5";
+              model = "anthropic/claude-fable-5-1";
               thinking = "high";
             };
             researcher = {
@@ -211,7 +211,7 @@
               thinking = "high";
             };
             oracle = {
-              model = "anthropic/claude-fable-5";
+              model = "anthropic/claude-opus-5";
               thinking = "high";
             };
             delegate = {
