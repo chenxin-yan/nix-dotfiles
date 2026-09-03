@@ -4,8 +4,8 @@
   anthropicSkills = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
-    rev = "3b3fad96af16a10759d930941b4520ba0c40edae";
-    hash = "sha256-nVid8vENmLDh7ffDqh+bJbEWtXcVltA0qa2rItmniZM=";
+    rev = "41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f";
+    hash = "sha256-sjgPv9tZZVTXPxZWaCOc7JwFceNn3C1ghy8mSHqgqB8=";
   };
 
   mattpocockSkills = pkgs.fetchFromGitHub {
@@ -27,5 +27,12 @@
     repo = "ponytail";
     rev = "2ed6c52c9d7e5e56942508591085fd45dea277d3";
     hash = "sha256-bGdXvzhWPwGdz3T2Yh2h6lf+3PBRFAfdBxP5pESmCHI=";
+  };
+
+  humanlayerSkills = pkgs.fetchFromGitHub {
+    owner = "humanlayer";
+    repo = "skills";
+    rev = "3c2629142c5d437428269b1b722b08c0b87f574d";
+    hash = "sha256-lJvu9CGAN/+dzmzck0CodRXn/p7GUkCbfyZxys4nIoU=";
   };
 }

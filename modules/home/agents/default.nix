@@ -169,6 +169,11 @@ in
         recursive = true;
       };
 
+      ".agents/skills/show-me" = {
+        source = "${sources.humanlayerSkills}/plugins/show-me/skills/show-me";
+        recursive = true;
+      };
+
     };
   };
 }
