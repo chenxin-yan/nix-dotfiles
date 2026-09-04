@@ -147,11 +147,11 @@
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. Fable 5.1 is primary; GPT-5.6 Sol is the
+          # Ctrl+P cycle list. Fable 5.1 is primary; GPT-6 Astra is the
           # cross-family alternative.
           enabledModels = [
             "anthropic/claude-fable-5-1"
-            "openai-codex/gpt-5.6-sol"
+            "openai-codex/gpt-6-astra"
           ];
           # Pi passes its managed ~/.pi/agent/npm install prefix explicitly;
           # this wrapper only supplies npm from the Nix-managed Node package.
@@ -167,15 +167,17 @@
           # pi-subagents update can't silently change cost/quality/latency.
           #
           # Mixing model families is intentional: the parent, planner, and
-          # reviewer use Fable 5.1; the oracle uses Opus 5; GPT-5.6 handles
-          # the remaining delegated work.
+          # reviewer use Fable 5.1; the oracle uses Opus 5; OpenAI models
+          # handle the remaining delegated work.
           #
           # Role → model mapping (tier matched to job):
           # - gpt-5.6-luna  → scout (fast/cheap recon; weak long-context —
           #                   MRCR 41.3% — fine for small scout contexts).
           # - gpt-5.6-terra → context-builder, researcher (long-context
           #                   MRCR 89.6%, BrowseComp 87.5%).
-          # - gpt-5.6-sol   → worker, delegate (frontier coding/reasoning).
+          # - gpt-6-astra   → worker, delegate (frontier coding/agentic:
+          #                   Terminal-Bench 57.9% vs Sol 37.3%, ~70% fewer
+          #                   output tokens than Sol per Artificial Analysis).
           # - fable-5.1     → planner, reviewer (intent and judgment).
           # - opus-5        → oracle (bounded top-reasoning escalation).
           #
@@ -199,7 +201,7 @@
               thinking = "high";
             };
             worker = {
-              model = "openai-codex/gpt-5.6-sol";
+              model = "openai-codex/gpt-6-astra";
               thinking = "high";
             };
             reviewer = {
@@ -215,7 +217,7 @@
               thinking = "high";
             };
             delegate = {
-              model = "openai-codex/gpt-5.6-sol";
+              model = "openai-codex/gpt-6-astra";
               thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
@@ -251,32 +253,54 @@
         # Custom model registry overlay. Pi merges this into its built-in
         # registry on `/model` open (no restart needed) per docs/models.md.
         #
-        # openai-codex / gpt-5.6-{sol,terra,luna} — the GPT-5.6 family
-        # (GA 2026-07-09) is not in pi 0.80.3's built-in registry, so we add
-        # it here. Entries added to a built-in provider inherit its api
-        # (openai-codex-responses), baseUrl, and OAuth (see pi's
-        # model-registry.js:432 built-in defaults caching), so only model
-        # metadata is declared. Notes:
-        # - thinkingLevelMap mirrors the built-in codex gpt-5.5 entry
-        #   (xhigh→xhigh, minimal→low). GPT-5.6's new `max` effort is left
-        #   unmapped — pi's levels stop at xhigh and we keep the mapping
-        #   faithful; revisit if pi grows a `max` thinking level.
-        # - OpenAI's API models have a 1.05M context window, but the Codex
-        #   subscription backend uses 272k per pi 0.80.4's verified metadata.
-        # - Input/output/cache-read costs are API-rate estimates for /usage;
-        #   Codex itself is subscription-billed and reports no cache writes.
-        #
-        # openai / gpt-5.5 — context-window bump from the built-in 272k
-        # to 1.05M (matching the Azure and Cloudflare-gateway variants,
-        # which already use 1.05M upstream). Pure override: the rest of
-        # the entry stays as the built-in default per docs/models.md
-        # "Custom models are upserted by `id` within the provider. If a
-        # custom model `id` matches a built-in model `id`, the custom
-        # model replaces that built-in model." — we therefore restate
-        # the fields we want to keep (api/reasoning/cost/thinkingLevelMap)
-        # so the replace doesn't silently drop them.
-        # ".pi/agent/models.json".text = builtins.toJSON {
-        # };
+        # openai-codex / gpt-6-astra — GPT-6 Astra (released 2026-09-03) is
+        # not in pi 0.85.0's built-in registry yet (earendil-works/pi#9133),
+        # but the Codex backend already serves it. Entries added to a
+        # built-in provider inherit its api (openai-codex-responses),
+        # baseUrl, and OAuth, so only model metadata is declared. Notes:
+        # - thinkingLevelMap mirrors the built-in codex gpt-5.6-sol entry
+        #   (xhigh→xhigh, max→max, minimal→low); Astra supports
+        #   low/medium/high/xhigh/max, no minimal.
+        # - contextWindow 272k matches the built-in codex GPT-5.6 entries
+        #   (Codex subscription tier), not the API's 1.05M.
+        # - Costs are API list rates for /usage estimates (tiers = long-
+        #   context rates above 272k input); Codex is subscription-billed.
+        # Delete this block once pi's built-in registry ships gpt-6-astra.
+        ".pi/agent/models.json".text = builtins.toJSON {
+          providers."openai-codex".models = [
+            {
+              id = "gpt-6-astra";
+              name = "GPT-6 Astra";
+              reasoning = true;
+              thinkingLevelMap = {
+                xhigh = "xhigh";
+                max = "max";
+                minimal = "low";
+              };
+              input = [
+                "text"
+                "image"
+              ];
+              cost = {
+                input = 10;
+                output = 50;
+                cacheRead = 1;
+                cacheWrite = 12.5;
+                tiers = [
+                  {
+                    inputTokensAbove = 272000;
+                    input = 20;
+                    output = 75;
+                    cacheRead = 2;
+                    cacheWrite = 25;
+                  }
+                ];
+              };
+              contextWindow = 272000;
+              maxTokens = 128000;
+            }
+          ];
+        };
 
         # Catppuccin themes from upstream flake
         # (github:otahontas/pi-coding-agent-catppuccin). We consume the
