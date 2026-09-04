@@ -62,11 +62,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788458226,
-        "narHash": "sha256-UZTAlg8iKVEmyEXakzKmukrzFIKrXezYsRy9vajDrGw=",
+        "lastModified": 1788487777,
+        "narHash": "sha256-Ro/e1N4ZR8/XaFF+sF9SgfPK79HM5YNEppzFj8p+0Ak=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "aa308770461dcf22c333a5e8a31c8bddbde5bee9",
+        "rev": "693e8ce0fb240a73c116a03cfd7b19269c87af88",
         "type": "github"
       },
       "original": {
@@ -93,22 +93,6 @@
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
-        "type": "github"
-      }
-    },
-    "homebrew-daytona": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1788260814,
-        "narHash": "sha256-9zIXHZC0W9qr0B4ZxX7p5cG6CnzfOy1+/3d/e5yuNnw=",
-        "owner": "daytonaio",
-        "repo": "homebrew-cli",
-        "rev": "5b7cec145d86c976d35a5d93b9986b6cf025636e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "daytonaio",
-        "repo": "homebrew-cli",
         "type": "github"
       }
     },
@@ -205,7 +189,6 @@
         "catppuccin": "catppuccin",
         "herdr-micro": "herdr-micro",
         "home-manager": "home-manager",
-        "homebrew-daytona": "homebrew-daytona",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs_2",

@@ -58,12 +58,8 @@
 
   homebrew = {
     enable = true;
-    taps = [
-      "daytonaio/cli"
-    ];
     brews = [
       "mole"
-      "daytonaio/cli/daytona"
     ];
     casks = [
       "font-sf-pro"

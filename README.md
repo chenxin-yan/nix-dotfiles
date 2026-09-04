@@ -453,7 +453,6 @@ The ZSA Voyager keyboard is excluded from Kanata remapping.
 | `home-manager`     | follows nixpkgs                        | User environment management              |
 | `nix-darwin`       | `nix-darwin/nix-darwin/master`         | macOS system configuration               |
 | `nix-homebrew`     | `zhaofengli/nix-homebrew`              | Declarative Homebrew management          |
-| `homebrew-daytona` | `daytonaio/homebrew-cli`               | Daytona tap (used by nix-homebrew)       |
 | `catppuccin`       | `catppuccin/nix`                       | Global theming                           |
 | `pi-catppuccin`    | `otahontas/pi-coding-agent-catppuccin` | Catppuccin theme for the pi coding agent |
 | `zen-browser`      | `0xc000022070/zen-browser-flake`       | Zen Browser for NixOS                    |
