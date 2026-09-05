@@ -141,17 +141,17 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "anthropic";
-          defaultModel = "claude-fable-5-1";
+          defaultProvider = "openai-codex";
+          defaultModel = "gpt-6-astra";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. Fable 5.1 is primary; GPT-6 Astra is the
+          # Ctrl+P cycle list. GPT-6 Astra is primary; Fable 5.1 is the
           # cross-family alternative.
           enabledModels = [
-            "anthropic/claude-fable-5-1"
             "openai-codex/gpt-6-astra"
+            "anthropic/claude-fable-5-1"
           ];
           # Pi passes its managed ~/.pi/agent/npm install prefix explicitly;
           # this wrapper only supplies npm from the Nix-managed Node package.
@@ -166,9 +166,9 @@
           # We still pin per-role models declaratively so a future
           # pi-subagents update can't silently change cost/quality/latency.
           #
-          # Mixing model families is intentional: the parent, planner, and
-          # reviewer use Fable 5.1; the oracle uses Opus 5; OpenAI models
-          # handle the remaining delegated work.
+          # Mixing model families is intentional: the parent uses GPT-6 Astra;
+          # the planner and reviewer use Fable 5.1; the oracle uses Opus 5;
+          # OpenAI models handle the remaining delegated work.
           #
           # Role → model mapping (tier matched to job):
           # - gpt-5.6-luna  → scout (fast/cheap recon; weak long-context —
