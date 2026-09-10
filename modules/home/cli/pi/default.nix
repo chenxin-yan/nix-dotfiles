@@ -141,13 +141,13 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "openai-codex";
-          defaultModel = "gpt-6-astra";
+          defaultProvider = "anthropic";
+          defaultModel = "claude-fable-5-1";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. GPT-6 Astra is primary; Fable 5.1 is the
+          # Ctrl+P cycle list. Fable 5.1 is primary; GPT-6 Astra is the
           # cross-family alternative.
           enabledModels = [
             "openai-codex/gpt-6-astra"
@@ -166,8 +166,8 @@
           # We still pin per-role models declaratively so a future
           # pi-subagents update can't silently change cost/quality/latency.
           #
-          # Mixing model families is intentional: the parent uses GPT-6 Astra;
-          # the planner and reviewer use Fable 5.1; the oracle uses Opus 5;
+          # Mixing model families is intentional: the parent and planner use
+          # Fable 5.1; the reviewer and oracle use GPT-6 Astra;
           # OpenAI models handle the remaining delegated work.
           #
           # Role → model mapping (tier matched to job):
@@ -175,11 +175,9 @@
           #                   MRCR 41.3% — fine for small scout contexts).
           # - gpt-5.6-terra → context-builder, researcher (long-context
           #                   MRCR 89.6%, BrowseComp 87.5%).
-          # - gpt-6-astra   → worker, delegate (frontier coding/agentic:
-          #                   Terminal-Bench 57.9% vs Sol 37.3%, ~70% fewer
-          #                   output tokens than Sol per Artificial Analysis).
-          # - fable-5.1     → planner, reviewer (intent and judgment).
-          # - opus-5        → oracle (bounded top-reasoning escalation).
+          # - gpt-5.6-sol   → worker, delegate (coding and execution).
+          # - gpt-6-astra   → reviewer, oracle (review and reasoning).
+          # - fable-5.1     → planner (intent and judgment).
           #
           # `thinking` is pinned per-role so a future pi-subagents update
           # can't silently change cost/latency. `fallbackModels` is
@@ -201,11 +199,11 @@
               thinking = "high";
             };
             worker = {
-              model = "openai-codex/gpt-6-astra";
+              model = "openai-codex/gpt-5.6-sol";
               thinking = "high";
             };
             reviewer = {
-              model = "anthropic/claude-fable-5-1";
+              model = "openai-codex/gpt-6-astra";
               thinking = "high";
             };
             researcher = {
@@ -213,11 +211,11 @@
               thinking = "high";
             };
             oracle = {
-              model = "anthropic/claude-opus-5";
+              model = "openai-codex/gpt-6-astra";
               thinking = "high";
             };
             delegate = {
-              model = "openai-codex/gpt-6-astra";
+              model = "openai-codex/gpt-5.6-sol";
               thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
