@@ -34,6 +34,18 @@ in
         source = "${sources.pstack}/skills/typescript-best-practices";
         recursive = true;
       };
+      ".agents/skills/principle-type-system-discipline" = {
+        source = "${sources.pstack}/skills/principle-type-system-discipline";
+        recursive = true;
+      };
+      ".agents/skills/principle-boundary-discipline" = {
+        source = "${sources.pstack}/skills/principle-boundary-discipline";
+        recursive = true;
+      };
+      ".agents/skills/technical-writing" = {
+        source = "${sources.pstack}/skills/technical-writing";
+        recursive = true;
+      };
       ".agents/skills/unslop" = {
         source = "${sources.pstack}/skills/unslop";
         recursive = true;
@@ -50,8 +62,8 @@ in
         source = "${sources.mattpocockSkills}/skills/productivity/handoff";
         recursive = true;
       };
-      ".agents/skills/pdf" = {
-        source = "${sources.anthropicSkills}/skills/pdf";
+      ".agents/skills/skill-creator" = {
+        source = "${sources.anthropicSkills}/skills/skill-creator";
         recursive = true;
       };
       ".agents/skills/herdr" = {
@@ -169,6 +181,10 @@ in
         recursive = true;
       };
 
+      ".agents/skills/narrow-react-prop-types" = {
+        source = "${sources.humanlayerSkills}/plugins/narrow-react-prop-types/skills/narrow-react-prop-types";
+        recursive = true;
+      };
       ".agents/skills/show-me" = {
         source = "${sources.humanlayerSkills}/plugins/show-me/skills/show-me";
         recursive = true;
