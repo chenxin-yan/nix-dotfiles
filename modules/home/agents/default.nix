@@ -22,6 +22,10 @@ in
       ".claude/skills".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.agents/skills";
 
+      ".agents/skills/doc-coauthoring" = {
+        source = "${sources.anthropicSkills}/skills/doc-coauthoring";
+        recursive = true;
+      };
       ".agents/skills/frontend-design" = {
         source = "${sources.anthropicSkills}/skills/frontend-design";
         recursive = true;
