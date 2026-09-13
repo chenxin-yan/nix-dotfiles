@@ -71,7 +71,7 @@ in
         recursive = true;
       };
       ".agents/skills/herdr" = {
-        source = "${pkgs.herdr}/share/herdr/skills/herdr";
+        source = "${pkgs.herdr}/share/skills/herdr/herdr";
         recursive = true;
       };
 
