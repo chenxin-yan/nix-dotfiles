@@ -199,7 +199,7 @@
               thinking = "high";
             };
             worker = {
-              model = "openai-codex/gpt-5.6-sol";
+              model = "anthropic/claude-fable-5-1";
               thinking = "high";
             };
             reviewer = {
