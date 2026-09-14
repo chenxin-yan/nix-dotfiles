@@ -45,8 +45,7 @@ function M.resolve(root)
   elseif override == 'native' or version == nil or (version and version.major >= 7) then
     local cmd = native_binary(root)
     if cmd then
-      -- Named 'tsgo' so upstream lsp/tsgo.lua supplies filetypes; TS 7 ships the same binary as `tsc`.
-      return { server = 'tsgo', cmd = { cmd, '--lsp', '--stdio' } }
+      return { server = 'tsc', cmd = { cmd, '--lsp', '--stdio' } }
     end
   end
   return nil, 'no valid local ' .. (override or 'TypeScript 5/6 SDK or TypeScript 7+ native') .. ' toolchain at ' .. root
@@ -81,7 +80,7 @@ end
 
 function M.cmd(dispatchers, config)
   local selected, err = M.resolve(config.root_dir)
-  assert(selected and selected.server == 'tsgo', err or 'TypeScript toolchain changed; restart LSP')
+  assert(selected and selected.server == 'tsc', err or 'TypeScript toolchain changed; restart LSP')
   config.cmd = selected.cmd
   return vim.lsp.rpc.start(config.cmd, dispatchers, { cwd = config.root_dir })
 end
