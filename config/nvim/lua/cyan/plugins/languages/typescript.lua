@@ -124,8 +124,8 @@ return {
             end
           end,
         },
-        tsc = {
-          root_dir = toolchain.root_dir 'tsc',
+        tsgo = {
+          root_dir = toolchain.root_dir 'tsgo',
           cmd = toolchain.cmd,
           on_attach = function(_, buffer)
             -- A buffer may have used legacy before the user restarted LSP with a native override.
