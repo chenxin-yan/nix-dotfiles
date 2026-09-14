@@ -5,7 +5,14 @@
   inputs,
   ...
 }:
-
+let
+  vim-herdr-navigation = pkgs.fetchFromGitHub {
+    owner = "paulbkim-dev";
+    repo = "vim-herdr-navigation";
+    rev = "79679dacc791f70fc34de8b29a3cf9706c0f5b2f";
+    hash = "sha256-iF0DLRn56eLGqY2iKTb3lX5iyVgl9CtSX5O2E5/pHjM=";
+  };
+in
 {
   imports = [ inputs.herdr-micro.homeManagerModules.default ];
 
@@ -15,6 +22,11 @@
 
   config = lib.mkIf config.cli.herdr.enable {
     home.packages = [ pkgs.herdr ];
+
+    # Herdr has no plugin discovery; registration is a CLI side effect.
+    home.activation.herdrNavigation = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      run ${pkgs.herdr}/bin/herdr plugin link ${vim-herdr-navigation}
+    '';
 
     services.herdr-micro = {
       enable = pkgs.stdenv.hostPlatform.isDarwin;
@@ -54,7 +66,6 @@
       toggle_sidebar = "prefix+s"
       settings = "prefix+comma"
 
-      # Herdr plugins are runtime state: herdr plugin install paulbkim-dev/vim-herdr-navigation --ref v0.1.0 --yes
       [[keys.command]]
       key = "ctrl+h"
       type = "plugin_action"
