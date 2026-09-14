@@ -29,6 +29,8 @@
     # Parity with the zellij setup: Ctrl+s leader, catppuccin, Alt-tab nav.
     # vim hjkl focus/resize, splits, and session persistence are herdr defaults.
     xdg.configFile."herdr/config.toml".text = ''
+      onboarding = false
+
       [keys]
       prefix = "ctrl+s"
       detach = "prefix+d"
