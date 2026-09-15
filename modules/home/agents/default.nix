@@ -140,10 +140,6 @@ in
         source = "${sources.mattpocockSkills}/skills/engineering/research";
         recursive = true;
       };
-      ".agents/skills/resolving-merge-conflicts" = {
-        source = "${sources.mattpocockSkills}/skills/engineering/resolving-merge-conflicts";
-        recursive = true;
-      };
       ".agents/skills/setup-matt-pocock-skills" = {
         source = "${sources.mattpocockSkills}/skills/engineering/setup-matt-pocock-skills";
         recursive = true;
