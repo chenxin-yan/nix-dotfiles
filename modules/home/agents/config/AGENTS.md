@@ -4,12 +4,13 @@
 - Surgical changes: touch only what the request needs. Don't reformat, rename, or refactor adjacent code; match existing style. Mention unrelated issues; don't fix them.
 - Comments earn their place: add for _why_ (intent, tradeoffs, gotchas), not _what_ (the code shows that). When you delete code, delete its comments too; no tombstones, no "previously did X" notes, no diff narration.
 
-## Delegation (subagent-first)
+## Delegation
 
-- Delegate substantial, bounded recon, research, review, validation, and multi-file implementation by default. Reserve the main session for synthesis and decisions needing session state.
-- Keep inline: single-file edits, tasks needing mid-flight user clarification, work where accumulated session context is the input.
-- Run independent tasks in parallel; chain dependent work only as needed.
-- One writer per worktree; parallelize read-only work freely.
+- Choose inline work or delegation based on task boundaries, context needs, and coordination cost. Neither is the default; file count alone is not a deciding factor.
+- Work inline when shared context, tightly coupled changes, or frequent user decisions make a handoff more costly than useful.
+- Delegate bounded, self-contained work when parallel progress, an independent review, or isolating a large investigation provides enough benefit to justify handoff and verification costs.
+- Parallelize independent tasks; sequence dependent work. Size the agent count to useful work streams, and avoid duplicating delegated work in the main session.
+- One writer per worktree.
 - Give each child an explicit task, scope, relevant files, expected output, and acceptance criteria.
 - Read and verify subagent output against the request before adopting it.
 
