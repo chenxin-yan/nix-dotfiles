@@ -235,6 +235,7 @@
           # this on demand; `/builtin-header` restores upstream header for
           # the current session.
           quietStartup = true;
+          warnings.anthropicExtraUsage = false;
           # Default tree filter mode. "user-only" mirrors Ctrl+U so you
           # see only your own messages in /tree without having to toggle it
           # every time. Other options: "default", "no-tools", "labeled-only", "all".
