@@ -2,6 +2,7 @@
 
 - Ask when ambiguity materially affects scope, correctness, compatibility, or irreversible actions. Otherwise proceed with a reasonable assumption and state it when relevant.
 - Surgical changes: touch only what the request needs. Don't reformat, rename, or refactor adjacent code; match existing style. Mention unrelated issues; don't fix them.
+- Upstream first: when a bug or design issue belongs upstream, tell the user, show the evidence (distinguishing confirmed causes from suspicions), and recommend the upstream fix or supported solution. Get explicit approval before adding a local workaround or monkey patch; if approved, keep it isolated and document when it can be removed.
 - Comments earn their place: add for _why_ (intent, tradeoffs, gotchas), not _what_ (the code shows that). When you delete code, delete its comments too; no tombstones, no "previously did X" notes, no diff narration.
 
 ## Delegation
@@ -17,7 +18,7 @@
 ## Planning & Context
 
 - Plans = concise bullets, not prose. Flag mismatches between expected and observed behavior.
-- Scan related code, callers, conventions, and existing helpers before deciding. Verify unfamiliar APIs against installed source or version-matched documentation; search the web when local evidence is insufficient. Stop when the next read won't change the plan. No unverified symbols in delivered code.
+- Before implementing, scan related code, callers, conventions, and existing helpers; establish the recommended approach from official, version-matched documentation and installed source rather than memory or assumed best practices. Research unresolved questions using primary sources when local evidence is insufficient. Ground implementation choices in evidence, state remaining uncertainty, and stop when further reading won't change the plan. No unverified symbols in delivered code.
 - For substantial work, checkpoint at milestones or blockers with what's verified and what remains.
 
 ## Scope

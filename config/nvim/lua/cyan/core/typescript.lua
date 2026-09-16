@@ -54,6 +54,10 @@ end
 local upstream_root
 function M.root_dir(server)
   return function(bufnr, on_dir)
+    -- Unnamed buffers serialize to `file://`, which crashes tsgo (panic in computeConfigFileName).
+    if vim.api.nvim_buf_get_name(bufnr) == '' then
+      return
+    end
     -- Reuse upstream lockfile roots, .git/cwd fallback, and Deno exclusions, not its PATH discovery.
     if not upstream_root then
       upstream_root = dofile(assert(vim.api.nvim_get_runtime_file('lsp/vtsls.lua', false)[1])).root_dir
