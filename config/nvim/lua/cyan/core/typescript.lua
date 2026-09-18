@@ -12,18 +12,16 @@ local function package_version(root)
   return version or false
 end
 
--- ponytail: synchronous probes, capped at 2s each; resolve asynchronously if startup latency matters.
+-- ponytail: synchronous probe, capped at 2s; resolve asynchronously if startup latency matters.
 local function native_binary(root)
-  for _, name in ipairs { 'tsc', 'tsgo' } do
-    local path = root .. '/node_modules/.bin/' .. name
-    if vim.fn.executable(path) == 1 then
-      local ok, result = pcall(function()
-        return vim.system({ path, '--version' }, { text = true }):wait(2000)
-      end)
-      local version = ok and result.code == 0 and vim.version.parse(result.stdout or '')
-      if version and version.major >= 7 then
-        return path
-      end
+  local path = root .. '/node_modules/.bin/tsc'
+  if vim.fn.executable(path) == 1 then
+    local ok, result = pcall(function()
+      return vim.system({ path, '--version' }, { text = true }):wait(2000)
+    end)
+    local version = ok and result.code == 0 and vim.version.parse(result.stdout or '')
+    if version and version.major >= 7 then
+      return path
     end
   end
 end
@@ -54,7 +52,7 @@ end
 local upstream_root
 function M.root_dir(server)
   return function(bufnr, on_dir)
-    -- Unnamed buffers serialize to `file://`, which crashes tsgo (panic in computeConfigFileName).
+    -- Unnamed buffers serialize to `file://`, which crashes the native LSP (panic in computeConfigFileName).
     if vim.api.nvim_buf_get_name(bufnr) == '' then
       return
     end

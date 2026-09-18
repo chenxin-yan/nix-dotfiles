@@ -1,4 +1,5 @@
 local toolchain = require 'cyan.core.typescript'
+local js_filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' }
 
 return {
   {
@@ -125,6 +126,7 @@ return {
           end,
         },
         tsc = {
+          filetypes = js_filetypes,
           root_dir = toolchain.root_dir 'tsc',
           cmd = toolchain.cmd,
           on_attach = function(_, buffer)
@@ -186,8 +188,6 @@ return {
         debugger_cmd = { 'js-debug' },
         adapters = { 'pwa-node' },
       }
-
-      local js_filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' }
 
       for _, language in ipairs(js_filetypes) do
         require('dap').configurations[language] = {
