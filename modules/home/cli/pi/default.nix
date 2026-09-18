@@ -141,8 +141,8 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "anthropic";
-          defaultModel = "claude-fable-5-1";
+          defaultProvider = "openai-codex";
+          defaultModel = "gpt-5.6-sol";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
@@ -211,11 +211,11 @@
               thinking = "high";
             };
             oracle = {
-              model = "openai-codex/gpt-6-astra";
+              model = "anthropic/claude-fable-5-1";
               thinking = "high";
             };
             delegate = {
-              model = "openai-codex/gpt-5.6-sol";
+              model = "openai-codex/gpt-6-astra";
               thinking = "high";
             };
             # `oracle-executor` was consolidated into `worker` upstream in
