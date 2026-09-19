@@ -49,5 +49,19 @@ return {
       depth_limit = 5,
       lazy_update_context = true,
     },
+    config = function(_, opts)
+      -- Remove when navic passes for_buf to make_text_document_params, including retries.
+      local lib = require 'nvim-navic.lib'
+      local request_symbol = lib.request_symbol
+      lib.request_symbol = function(bufnr, handler, client, file_uri, retry_count)
+        if not vim.api.nvim_buf_is_loaded(bufnr) then
+          return
+        end
+        return vim.api.nvim_buf_call(bufnr, function()
+          return request_symbol(bufnr, handler, client, file_uri, retry_count)
+        end)
+      end
+      require('nvim-navic').setup(opts)
+    end,
   },
 }
