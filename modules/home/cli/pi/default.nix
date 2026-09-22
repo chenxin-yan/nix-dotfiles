@@ -13,6 +13,28 @@
 
   config =
     let
+      # Remove this override once the locked nixpkgs ships Pi >= 0.87.0.
+      pi = pkgs.pi-coding-agent.overrideAttrs (
+        finalAttrs: _: {
+          version = "0.87.0";
+          src = pkgs.fetchFromGitHub {
+            owner = "earendil-works";
+            repo = "pi";
+            tag = "v${finalAttrs.version}";
+            hash = "sha256-7YkIA5IEs4U0qnoaO3IzlY+p/M7j30fSVelLeyoV+F8=";
+          };
+          npmDepsHash = "sha256-fbxwpQHnrUihO9MU72m331Uwt9dv0fQtEjdJ9hU8UxA=";
+          npmDeps = pkgs.fetchNpmDeps {
+            name = "pi-coding-agent-${finalAttrs.version}-npm-deps";
+            inherit (finalAttrs) src;
+            hash = finalAttrs.npmDepsHash;
+          };
+          modelData = pkgs.fetchurl {
+            url = "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-${finalAttrs.version}.tgz";
+            hash = "sha256-8q353oCdA192+NrfPRSHIOvu9GBqhIqzbug02JWugS8=";
+          };
+        }
+      );
       piNpm = pkgs.writeShellScriptBin "pi-npm" ''
         export PATH="${pkgs.nodejs}/bin:$PATH"
         exec ${pkgs.nodejs}/bin/npm "$@"
@@ -87,7 +109,7 @@
     in
     lib.mkIf config.cli.pi.enable {
       home.packages = with pkgs; [
-        pi-coding-agent
+        pi
         hypa
         # Time-tracking daemon invoked by the npm:pi-wakatime extension
         # below. Reads ~/.wakatime.cfg for `api_key` (file is hand-managed
@@ -142,11 +164,11 @@
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "openai-codex";
-          defaultModel = "gpt-5.6-sol";
+          defaultModel = "gpt-6-astra";
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
-          defaultThinkingLevel = "high";
+          defaultThinkingLevel = "medium";
           # Ctrl+P cycle list. Fable 5.1 is primary; GPT-6 Astra is the
           # cross-family alternative.
           enabledModels = [
