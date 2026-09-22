@@ -168,7 +168,7 @@
           # Keep `high` on the parent: it edits code directly most of the
           # time in this workflow rather than purely orchestrating. Subagents
           # pin their own thinking levels below.
-          defaultThinkingLevel = "medium";
+          defaultThinkingLevel = "high";
           # Ctrl+P cycle list. Fable 5.1 is primary; GPT-6 Astra is the
           # cross-family alternative.
           enabledModels = [
@@ -188,18 +188,11 @@
           # We still pin per-role models declaratively so a future
           # pi-subagents update can't silently change cost/quality/latency.
           #
-          # Mixing model families is intentional: the parent and planner use
-          # Fable 5.1; the reviewer and oracle use GPT-6 Astra;
-          # OpenAI models handle the remaining delegated work.
-          #
           # Role → model mapping (tier matched to job):
-          # - gpt-5.6-luna  → scout (fast/cheap recon; weak long-context —
-          #                   MRCR 41.3% — fine for small scout contexts).
-          # - gpt-5.6-terra → context-builder, researcher (long-context
-          #                   MRCR 89.6%, BrowseComp 87.5%).
-          # - gpt-5.6-sol   → worker, delegate (coding and execution).
-          # - gpt-6-astra   → reviewer, oracle (review and reasoning).
-          # - fable-5.1     → planner (intent and judgment).
+          # - gpt-6-luna  → scout (fast/cheap recon).
+          # - gpt-6-sol   → context-builder, researcher.
+          # - gpt-6-astra → reviewer, delegate.
+          # - fable-5.1   → planner, worker, oracle.
           #
           # `thinking` is pinned per-role so a future pi-subagents update
           # can't silently change cost/latency. `fallbackModels` is
@@ -209,11 +202,11 @@
           # Revisit if/when an outage actually bites.
           subagents.agentOverrides = {
             scout = {
-              model = "openai-codex/gpt-5.6-luna";
+              model = "openai-codex/gpt-6-luna";
               thinking = "high";
             };
             "context-builder" = {
-              model = "openai-codex/gpt-5.6-terra";
+              model = "openai-codex/gpt-6-sol";
               thinking = "high";
             };
             planner = {
@@ -229,7 +222,7 @@
               thinking = "high";
             };
             researcher = {
-              model = "openai-codex/gpt-5.6-terra";
+              model = "openai-codex/gpt-6-sol";
               thinking = "high";
             };
             oracle = {
@@ -271,54 +264,76 @@
           enableInstallTelemetry = false;
         };
 
-        # Custom model registry overlay. Pi merges this into its built-in
-        # registry on `/model` open (no restart needed) per docs/models.md.
-        #
-        # openai-codex / gpt-6-astra — GPT-6 Astra (released 2026-09-03) is
-        # not in pi 0.85.0's built-in registry yet (earendil-works/pi#9133),
-        # but the Codex backend already serves it. Entries added to a
-        # built-in provider inherit its api (openai-codex-responses),
-        # baseUrl, and OAuth, so only model metadata is declared. Notes:
-        # - thinkingLevelMap mirrors the built-in codex gpt-5.6-sol entry
-        #   (xhigh→xhigh, max→max, minimal→low); Astra supports
-        #   low/medium/high/xhigh/max, no minimal.
-        # - contextWindow 272k matches the built-in codex GPT-5.6 entries
-        #   (Codex subscription tier), not the API's 1.05M.
-        # - Costs are API list rates for /usage estimates (tiers = long-
-        #   context rates above 272k input); Codex is subscription-billed.
-        # Delete this block once pi's built-in registry ships gpt-6-astra.
+        # Remove these entries once Pi's built-in Codex catalog includes them.
+        # Metadata: https://developers.openai.com/api/docs/models/gpt-6-sol
+        #           https://developers.openai.com/api/docs/models/gpt-6-luna
+        # Retain the conservative 272K window until Codex limits are confirmed.
+        # Costs are API estimates; Codex itself is subscription-billed.
         ".pi/agent/models.json".text = builtins.toJSON {
           providers."openai-codex".models = [
             {
-              id = "gpt-6-astra";
-              name = "GPT-6 Astra";
+              id = "gpt-6-sol";
+              name = "GPT-6 Sol";
               reasoning = true;
               thinkingLevelMap = {
+                off = "none";
+                minimal = "low";
                 xhigh = "xhigh";
                 max = "max";
-                minimal = "low";
               };
               input = [
                 "text"
                 "image"
               ];
+              contextWindow = 272000;
+              maxTokens = 128000;
               cost = {
-                input = 10;
-                output = 50;
-                cacheRead = 1;
-                cacheWrite = 12.5;
+                input = 2;
+                output = 10;
+                cacheRead = 0.2;
+                cacheWrite = 2.5;
                 tiers = [
                   {
                     inputTokensAbove = 272000;
-                    input = 20;
-                    output = 75;
-                    cacheRead = 2;
-                    cacheWrite = 25;
+                    input = 4;
+                    output = 15;
+                    cacheRead = 0.4;
+                    cacheWrite = 5;
                   }
                 ];
               };
+            }
+            {
+              id = "gpt-6-luna";
+              name = "GPT-6 Luna";
+              reasoning = true;
+              thinkingLevelMap = {
+                off = "none";
+                minimal = "low";
+                xhigh = "xhigh";
+                max = "max";
+              };
+              input = [
+                "text"
+                "image"
+              ];
               contextWindow = 272000;
               maxTokens = 128000;
+              cost = {
+                input = 0.1;
+                output = 0.5;
+                cacheRead = 0.01;
+                cacheWrite = 0.125;
+                tiers = [
+                  {
+                    inputTokensAbove = 272000;
+                    input = 0.2;
+                    output = 0.75;
+                    cacheRead = 0.02;
+                    cacheWrite = 0.25;
+                  }
+                ];
+              };
             }
           ];
         };
