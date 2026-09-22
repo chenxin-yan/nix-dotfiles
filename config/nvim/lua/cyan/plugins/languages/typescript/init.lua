@@ -1,4 +1,4 @@
-local toolchain = require 'cyan.core.typescript'
+local toolchain = require 'cyan.plugins.languages.typescript.toolchain'
 local js_filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' }
 
 return {
