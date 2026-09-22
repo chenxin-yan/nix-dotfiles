@@ -39,44 +39,4 @@ return {
       },
     },
   },
-  {
-    'nvim-neotest/neotest',
-    dependencies = {
-      'nvim-neotest/neotest-python',
-    },
-    opts = {
-      adapters = {
-        ['neotest-python'] = {},
-      },
-    },
-  },
-  {
-    'mfussenegger/nvim-dap',
-    dependencies = {
-      {
-        'mfussenegger/nvim-dap-python',
-        keys = {
-          {
-            '<leader>ddm',
-            function()
-              require('dap-python').test_method()
-            end,
-            desc = 'Debug Method',
-            ft = 'python',
-          },
-          {
-            '<leader>ddc',
-            function()
-              require('dap-python').test_class()
-            end,
-            desc = 'Debug Class',
-            ft = 'python',
-          },
-        },
-        config = function()
-          require('dap-python').setup 'debugpy-adapter'
-        end,
-      },
-    },
-  },
 }

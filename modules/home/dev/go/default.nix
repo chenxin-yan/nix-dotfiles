@@ -16,7 +16,6 @@
       gopls
       gofumpt
       (lib.meta.lowPrio gotools)
-      delve
     ];
 
     programs.go.enable = true;

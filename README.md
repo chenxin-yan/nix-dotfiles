@@ -241,7 +241,7 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 
 | Module       | Includes                                     |
 | ------------ | -------------------------------------------- |
-| `python`     | Python 3.13, uv, ruff, basedpyright, debugpy |
+| `python`     | Python 3.13, uv, ruff, basedpyright          |
 | `typescript` | TypeScript/JavaScript tooling                |
 | `go`         | Go toolchain                                 |
 | `java`       | Java development tools                       |
@@ -291,7 +291,7 @@ Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/f
 </details>
 
 <details>
-<summary><b>Editor</b> (20 plugins)</summary>
+<summary><b>Editor</b> (18 plugins)</summary>
 
 - **fzf-lua** — Fuzzy finder (files, buffers, diagnostics, git)
 - **flash.nvim** — Enhanced motion/search
@@ -303,8 +303,6 @@ Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/f
 - **which-key.nvim** — Keymap hints
 - **gitsigns.nvim** — Git change indicators
 - **grug-far.nvim** — Find and replace
-- **nvim-dap** — Debug adapter protocol (with UI and virtual text)
-- **neotest** — Test runner (Python, Go, Vitest, Bun)
 - **multicursor.nvim** — Multi-cursor editing
 - **arrow.nvim** — File navigation
 - **nvim-ufo** — Code folding

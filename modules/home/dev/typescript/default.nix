@@ -21,7 +21,6 @@
       vtsls
       astro-language-server
       prisma-language-server
-      vscode-js-debug
     ];
 
     programs.bun.enable = true;

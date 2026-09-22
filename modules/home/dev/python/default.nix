@@ -19,7 +19,6 @@
       # editor
       ruff
       basedpyright
-      python313Packages.debugpy
     ];
 
     programs.uv.enable = true;

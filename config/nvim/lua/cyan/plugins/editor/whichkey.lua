@@ -11,8 +11,6 @@ return {
         { '<leader>c', group = 'Code', mode = { 'n', 'x' } },
         { '<leader>x', group = 'Diagnostic/QuickFix' },
         { '<leader>t', group = 'Tab' },
-        { '<leader>n', group = 'Neotest' },
-        { '<leader>d', group = 'Debug' },
         { '<leader>s', group = 'Search' },
         { '<leader>r', group = 'Refactor', mode = { 'n', 'x' } },
         { '<leader>u', group = 'Toggle' },

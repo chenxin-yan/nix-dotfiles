@@ -16,7 +16,6 @@ return {
                 generate = true,
                 regenerate_cgo = true,
                 run_govulncheck = true,
-                test = true,
                 tidy = true,
                 upgrade_dependency = true,
                 vendor = true,
@@ -58,28 +57,6 @@ return {
           }
         end
       end,
-    },
-  },
-  {
-    'nvim-neotest/neotest',
-    dependencies = {
-      'fredrikaverpil/neotest-golang',
-    },
-    opts = {
-      adapters = {
-        ['neotest-golang'] = {
-          dap_go_enabled = true,
-        },
-      },
-    },
-  },
-  {
-    'mfussenegger/nvim-dap',
-    dependencies = {
-      {
-        'leoluz/nvim-dap-go',
-        opts = {},
-      },
     },
   },
   {
