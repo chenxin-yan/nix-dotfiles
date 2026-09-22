@@ -2,7 +2,7 @@
 
 Nix Flakes + Home Manager dotfiles for macOS and NixOS, themed with Catppuccin Mocha.
 
-Everything is declarative — no symlink managers, no install scripts, no imperative setup. A single `just switch` rebuilds the entire system from this repo.
+Everything is declarative — no symlink managers, no install scripts, no imperative setup. A single `just switch` rebuilds the machine you run it on from this repo.
 
 ## Table of Contents
 
@@ -24,51 +24,55 @@ Everything is declarative — no symlink managers, no install scripts, no impera
 
 ## Overview
 
-This repo manages two machines from a single Nix flake. Home Manager handles all user-level configuration, while nix-darwin and NixOS modules handle system-level settings. Catppuccin Mocha with Lavender accent is applied globally across the terminal, editor, status bar, and all CLI tools.
+This repo manages three machines from a single Nix flake. Each machine is registered once in `hosts/default.nix`; its key is the flake target and its managed hostname. Home Manager handles all user-level configuration, while nix-darwin and NixOS modules handle system-level settings. Catppuccin Mocha with Lavender accent is applied globally across the terminal, editor, status bar, and all CLI tools.
 
-|                    | macOS (Darwin)              | NixOS (minipc, headless)    |
-| ------------------ | --------------------------- | --------------------------- |
-| **Architecture**   | aarch64-darwin              | x86_64-linux                |
-| **User**           | yanchenxin                  | cyan                        |
-| **Shell**          | Zsh                         | Zsh                         |
-| **Window Manager** | Aerospace                   | — (server, SSH only)        |
-| **Status Bar**     | Sketchybar                  | —                           |
-| **Terminal**       | Ghostty                     | — (accessed via SSH/mosh)   |
-| **Browser**        | Zen Browser                 | —                           |
-| **Editor**         | Neovim                      | Neovim                      |
-| **Theme**          | Catppuccin Mocha (Lavender) | Catppuccin Mocha (Lavender) |
+|                  | `macbook`                   | `work-macbook`              | `minipc`                    |
+| ---------------- | --------------------------- | --------------------------- | --------------------------- |
+| **OS**           | macOS (nix-darwin)          | macOS (nix-darwin)          | NixOS (headless server)     |
+| **Architecture** | aarch64-darwin              | aarch64-darwin              | x86_64-linux                |
+| **User**         | yanchenxin                  | chenxin-yan                 | cyan                        |
+| **Profiles**     | base + development + desktop | base + development + desktop | base + development         |
+| **Syncthing**    | yes                         | no                          | yes                         |
+| **Shell**        | Zsh                         | Zsh                         | Zsh                         |
+| **Desktop**      | Aerospace, Sketchybar, Ghostty | Aerospace, Sketchybar, Ghostty | — (SSH/mosh only)      |
+| **Editor**       | Neovim                      | Neovim                      | Neovim                      |
+| **Theme**        | Catppuccin Mocha (Lavender) | Catppuccin Mocha (Lavender) | Catppuccin Mocha (Lavender) |
 
 ## Repository Structure
 
 ```
 dotfiles/
-├── flake.nix                  # Entry point — defines all hosts and inputs
+├── flake.nix                  # Inputs + native nixosSystem/darwinSystem constructors per registered host
 ├── flake.lock                 # Locked flake dependencies
-├── justfile                   # Task runner (switch, home, update, clean, fmt)
+├── justfile                   # Task runner (switch, update, clean, fmt)
 ├── hosts/
-│   ├── home.nix               # Shared home-manager config (packages, env vars, theme)
-│   ├── darwin/
-│   │   ├── configuration.nix  # macOS system config (fonts, homebrew, nix settings)
-│   │   └── home.nix           # macOS home-manager imports
-│   └── minipc/
-│       ├── configuration.nix  # NixOS system config (boot, networking, services)
+│   ├── default.nix            # Host inventory: target name -> platform + login (the only machine list)
+│   ├── macbook/               # Personal Mac: account (UID 501), state versions, sync on
+│   ├── work-macbook/          # Work Mac: separate login, same baseline, sync off
+│   └── minipc/                # NixOS server: account, hardware, firewall, services
+│       ├── configuration.nix
 │       ├── hardware-configuration.nix
-│       └── home.nix           # NixOS home-manager imports
+│       └── home.nix
+├── profiles/home/
+│   ├── base.nix               # Shared paths, theme, core tools (git, nvim, zsh, nushell, agents)
+│   ├── development.nix        # Language toolchains and developer CLIs
+│   ├── desktop.nix            # Opt-in GUI apps (Darwin-only apps guarded by platform)
+│   └── darwin.nix             # Both Macs: base + development + desktop, macOS packages, SSH peers, nh
 ├── modules/
-│   ├── home/                  # Home Manager modules (shared across platforms)
+│   ├── home/                  # Home Manager feature modules (each has an enable option, off by default)
 │   │   ├── core/              # Shell, editor, git
-│   │   ├── cli/               # CLI tools and services
+│   │   ├── cli/               # CLI tools and services (incl. syncthing)
 │   │   ├── app/               # GUI applications
 │   │   │   ├── shared/        # Cross-platform (ghostty, vesktop, espanso, zen-browser, todoist, telegram)
 │   │   │   └── darwin/        # macOS-only (iina, kanata, sketchybar)
 │   │   └── dev/               # Language toolchains and LSPs
-│   ├── darwin/                # nix-darwin system modules (1password, aerospace, kanata)
-│   └── nixos/                 # NixOS system modules (1password, bluetooth, mosh)
+│   ├── darwin/                # nix-darwin system modules; shared.nix = settings shared by every Mac
+│   └── nixos/                 # NixOS system modules (1password, bluetooth, mosh, podman)
 ├── config/
 │   └── nvim/                  # Neovim configuration (Lua, lazy.nvim)
 └── scripts/
     ├── dev/                   # Session management
-    ├── utils/                 # Utilities (update-pins, rg+fzf, md2pdf)
+    ├── utils/                 # Utilities (switch, update-pins, rg+fzf, md2pdf)
     └── notes/                 # Note search
 ```
 
@@ -107,13 +111,15 @@ dotfiles/
    cd ~/dotfiles
    ```
 
-3. Build and apply the system configuration for the first time (`just` and `nh` are not installed yet, and root does not have flakes enabled until this activates):
+3. Pick the registered target for this machine from `hosts/default.nix` (`macbook` or `work-macbook`) and make sure you are logged in as its user. Build and apply for the first time (`just` and `nh` are not installed yet, and root does not have flakes enabled until this activates). `--inputs-from` runs the `darwin-rebuild` pinned in `flake.lock` instead of a moving branch:
 
    ```sh
-   sudo nix --extra-experimental-features 'nix-command flakes' run nix-darwin/master#darwin-rebuild -- switch --flake .#darwin
+   sudo nix --extra-experimental-features 'nix-command flakes' run --inputs-from ~/dotfiles nix-darwin#darwin-rebuild -- switch --flake ~/dotfiles#macbook
    ```
 
-   The first build will take a while as it downloads the entire package closure.
+   The first build will take a while as it downloads the entire package closure. Activation sets the macOS `HostName`/`LocalHostName` to the target name.
+
+   > **Homebrew cleanup is destructive.** Both Macs use `homebrew.onActivation.cleanup = "zap"`: activation removes packages absent from the effective Homebrew configuration and can delete associated cask data. Declare anything you want to keep in `modules/darwin/shared.nix` or its owning feature module before activation.
 
 4. For all subsequent rebuilds:
 
@@ -121,7 +127,7 @@ dotfiles/
    just switch
    ```
 
-   This runs `nh darwin switch`, which builds the full nix-darwin + Home Manager configuration.
+   This runs `scripts/utils/switch.sh`, which checks that the hostname is a registered target and that the platform, login, UID and checkout path match it, then runs `nh darwin switch --hostname <target>` with the full nix-darwin + Home Manager configuration.
 
 ### NixOS
 
@@ -138,13 +144,19 @@ dotfiles/
    sudo nixos-generate-config --show-hardware-config > hosts/minipc/hardware-configuration.nix
    ```
 
-3. Build and apply:
+3. Build and apply for the first time with the target name (`just`/`nh` come from Home Manager, so they are not available yet):
+
+   ```sh
+   sudo nixos-rebuild switch --flake ~/dotfiles#minipc
+   ```
+
+4. For all subsequent rebuilds:
 
    ```sh
    just switch
    ```
 
-   This runs `nh os switch`, which rebuilds NixOS with Home Manager integrated.
+   This runs `nh os switch --hostname minipc` after the same preflight checks as on macOS. Other Linux distributions (including Raspberry Pi OS) are rejected; there is no target for them.
 
 ### Post-Install
 
@@ -156,10 +168,10 @@ dotfiles/
 
 ## Usage
 
-| Command             | Description                                        |
-| ------------------- | -------------------------------------------------- |
-| `just switch`       | Rebuild and apply system configuration             |
-| `just home`         | Apply home-manager configuration (standalone)      |
+| Command                 | Description                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------ |
+| `just switch`           | Rebuild and apply this machine's configuration (system + Home Manager)               |
+| `just switch <target>`  | Same, selecting a registered target explicitly (one-time bootstrap before the hostname matches) |
 | `just update`       | Update all flake inputs to latest                  |
 | `just update-pins`  | Update pinned fetchFromGitHub dependencies         |
 | `just clean`        | Garbage collect old generations and optimize store |
@@ -169,14 +181,30 @@ dotfiles/
 
 ## Module Architecture
 
-Every module defines an `enable` option and is enabled by default via `lib.mkDefault true`. This lets you disable any module per-host:
+Every Home Manager feature leaf under `modules/home/` defines an `enable` option and does nothing until enabled; the `modules/home/*/default.nix` aggregators only import. Selections live in `profiles/home/`:
+
+- `base.nix` enables the core tools (git, nvim, zsh, nushell, agents) and defines shared paths/theme.
+- `development.nix` enables every language toolchain and developer CLI.
+- `desktop.nix` enables the GUI apps; Darwin-only apps are guarded by `pkgs.stdenv.hostPlatform.isDarwin`.
+
+Each host's `home.nix` imports the profiles it wants and owns its `home.stateVersion` and Syncthing enrollment (`cli.syncthing.enable`). A headless host is simply base + development; no GUI opt-out list is needed. Profiles use `lib.mkDefault`, so a host can still override any single feature:
 
 ```nix
-# In hosts/darwin/home.nix or hosts/minipc/home.nix
+# In hosts/<name>/home.nix
 app.shared.zen-browser.enable = false;
 ```
 
-Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.hostPlatform.isDarwin` / `isLinux` in `modules/home/app/default.nix`.
+System modules keep their existing selections: `modules/darwin/default.nix` and `modules/nixos/default.nix` enable their features with `lib.mkDefault`, and `modules/darwin/shared.nix` applies the shared macOS settings directly (no `enable` option).
+
+### Switching
+
+`just switch` runs `scripts/utils/switch.sh`. It reads the inventory from the flake's `hosts` output (never a second list in shell), then refuses to activate unless the OS is macOS or NixOS, the target is registered, and the target's platform, login, UID and `~/dotfiles` path match the running machine and checkout. It never updates `flake.lock`, deploys over SSH, or falls back to a default target. `scripts/utils/switch.test.sh` exercises these branches with stubbed `nix`/`nh`/`uname`/`hostname`/`id` and never builds anything.
+
+New configuration files must be tracked by Git before switching; Git-backed flakes omit untracked files. Deploy the changes to `~/dotfiles` rather than activating a separate development checkout. On an existing Mac whose hostname has not changed yet, use `just switch macbook` or `just switch work-macbook` once, after checking its declared UID/home and the Homebrew cleanup policy.
+
+### Inter-machine SSH (follow-up)
+
+The goal is password-less SSH between all managed machines. Today the repo carries the existing authorized key on both Macs and the existing client aliases (`cyan-minipc`, `cyan-macbook`, `cyanpi`). A full mesh is deferred until each device's public key and reachable address are known: use one key per device, authorize public keys explicitly, and keep host-key verification as is. Never copy private keys between machines.
 
 ### Agent Modules
 
@@ -206,7 +234,7 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 | `zellij`    | Terminal multiplexer                   |
 | `yazi`      | Terminal file manager with plugins     |
 | `mise`      | Polyglot runtime/tool version manager  |
-| `syncthing` | File sync across 3 devices             |
+| `syncthing` | File sync across 3 devices (enabled on `macbook` and `minipc`; not the work Mac) |
 | `gcloud`    | Google Cloud SDK                       |
 | `pandoc`    | Document conversion                    |
 | `pi`        | Pi coding agent runtime and extensions |
@@ -271,6 +299,7 @@ Platform-specific modules are conditionally enabled using `lib.mkIf pkgs.stdenv.
 | `1password` | 1Password CLI       |
 | `bluetooth` | Bluetooth support   |
 | `mosh`      | Mobile shell server |
+| `podman`    | Podman with Docker compatibility (host account joins the `podman` group) |
 
 ## Neovim
 
@@ -409,7 +438,7 @@ Dev repos are organized as `~/dev/<host>/<owner>/<repo>` (e.g., `~/dev/github.co
 
 ## Syncthing
 
-File synchronization across three devices, managed declaratively in `modules/home/cli/syncthing/`.
+File synchronization across three devices, managed declaratively in `modules/home/cli/syncthing/` and enabled per host (`macbook`, `minipc`; the work Mac stays out).
 
 | Folder   | macbook | minipc | raspberry-pi |
 | -------- | :-----: | :----: | :----------: |
@@ -458,7 +487,7 @@ The ZSA Voyager keyboard is excluded from Kanata remapping.
 
 ## Environment Variables
 
-Set in `hosts/home.nix` and available in all shells:
+Set in `profiles/home/base.nix` and available in all shells:
 
 | Variable        | Default              | Purpose                       |
 | --------------- | -------------------- | ----------------------------- |
@@ -474,7 +503,7 @@ Set in `hosts/home.nix` and available in all shells:
 
 ### Forking for Your Own Use
 
-1. **Change user and host**: Update `darwinUser` in `flake.nix`, plus the UID and host settings in `hosts/darwin/configuration.nix` and `hosts/minipc/configuration.nix`
+1. **Register your machine**: Add an entry to `hosts/default.nix` (the key becomes the hostname and flake target) with its platform and login, then create `hosts/<name>/configuration.nix` (UID, authorized keys, state version) and `hosts/<name>/home.nix` (profiles, `home.stateVersion`)
 
 2. **Hardware config**: Always regenerate `hosts/minipc/hardware-configuration.nix` for your own machine
 
@@ -488,7 +517,7 @@ Set in `hosts/home.nix` and available in all shells:
 
 4. **Add a new module**: Follow the pattern in any existing module directory — create a `default.nix` with an `enable` option, then import it in the category's `default.nix`
 
-5. **Change the theme**: Modify `catppuccin.flavor` and `catppuccin.accent` in `hosts/home.nix`
+5. **Change the theme**: Modify `catppuccin.flavor` and `catppuccin.accent` in `profiles/home/base.nix`
 
 6. **Neovim plugins**: Add plugin specs under `config/nvim/lua/cyan/plugins/` in the appropriate category directory
 

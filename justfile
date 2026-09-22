@@ -5,21 +5,9 @@
 default:
     @just --list
 
-# Darwin-specific recipes
-
-# Rebuild and switch darwin configuration
-[macos]
-switch:
-    nh darwin switch --hostname darwin .
-
-# Rebuild and switch nixos configuration
-[linux]
-switch:
-    nh os switch --hostname cyan@minipc .
-
-# Switch home-manager configuration (standalone)
-home:
-    home-manager switch --flake .
+# Rebuild and switch this host's registered configuration; TARGET only for one-time bootstrap
+switch TARGET='':
+    {{ quote(justfile_directory() / "scripts/utils/switch.sh") }} {{ if TARGET == '' { '' } else { quote(TARGET) } }}
 
 # Update flake inputs
 update:

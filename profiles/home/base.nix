@@ -1,12 +1,17 @@
+# Shared preferences, paths and core tools for every managed home.
+# Hosts opt into ./development.nix, ./desktop.nix and cli.syncthing themselves.
 {
   config,
   pkgs,
   lib,
-  inputs,
   ...
 }:
 
 {
+  imports = [
+    ../../modules/home
+  ];
+
   options = {
     dotfiles = lib.mkOption {
       type = lib.types.path;
@@ -30,6 +35,12 @@
   };
 
   config = {
+    agents.enable = lib.mkDefault true;
+    core.git.enable = lib.mkDefault true;
+    core.nvim.enable = lib.mkDefault true;
+    core.zsh.enable = lib.mkDefault true;
+    core.nushell.enable = lib.mkDefault true;
+
     catppuccin = {
       autoEnable = true;
       enable = true;
@@ -37,8 +48,6 @@
       accent = "lavender";
       zsh-syntax-highlighting.enable = false;
     };
-
-    home.stateVersion = "25.05";
 
     home.packages = with pkgs; [
       tlrc

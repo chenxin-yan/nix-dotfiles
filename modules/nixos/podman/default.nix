@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  host,
+  ...
+}:
 
 {
   options = {
@@ -13,6 +18,6 @@
       defaultNetwork.settings.dns_enabled = true;
     };
 
-    users.users.cyan.extraGroups = [ "podman" ];
+    users.users.${host.login}.extraGroups = [ "podman" ];
   };
 }

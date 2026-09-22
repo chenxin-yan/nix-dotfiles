@@ -1,9 +1,18 @@
-{ config, pkgs, ... }:
+# Home policy shared by every registered Mac: full development + desktop
+# selection plus the macOS-specific packages, SSH client peers and NH setup.
+# Host files own the home state version and the Syncthing enrollment.
+{
+  config,
+  pkgs,
+  hosts,
+  ...
+}:
 
 {
   imports = [
-    ../home.nix
-    ../../modules/home
+    ./base.nix
+    ./development.nix
+    ./desktop.nix
   ];
 
   home.packages = with pkgs; [
@@ -23,7 +32,7 @@
       };
 
       "cyan-minipc" = {
-        User = "cyan";
+        User = hosts.minipc.login;
         IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
         ControlMaster = "auto";
         ControlPersist = "10m";
@@ -40,7 +49,7 @@
   programs.nh = {
     enable = true;
     clean.enable = false;
-    clean.extraArgs = "--keep-since 4d --keep 3";
+    clean.extraArgs = "--keep-since 3d --keep 2";
   };
   app.shared.zen-browser.enable = false;
 }

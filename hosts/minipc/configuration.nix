@@ -2,7 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{
+  config,
+  host,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -14,7 +19,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "minipc"; # Define your hostname.
+  # networking.hostName comes from the inventory key in hosts/default.nix.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -66,7 +71,7 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.cyan = {
+  users.users.${host.login} = {
     isNormalUser = true;
     description = "Chenxin Yan";
     uid = 1000;

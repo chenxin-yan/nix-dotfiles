@@ -1,5 +1,4 @@
-{ lib, pkgs, ... }:
-
+# Feature implementations only; selections live in profiles/home/*.nix.
 {
   imports = [
     ./agents
@@ -8,6 +7,4 @@
     ./core
     ./dev
   ];
-
-  config.agents.enable = lib.mkDefault true;
 }

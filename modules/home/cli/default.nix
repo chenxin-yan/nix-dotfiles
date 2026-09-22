@@ -1,5 +1,3 @@
-{ lib, config, ... }:
-
 {
   imports = [
     ./gcloud
@@ -12,16 +10,4 @@
     ./yazi
     ./zellij
   ];
-
-  config = {
-    cli.gcloud.enable = lib.mkDefault true;
-    cli.herdr.enable = lib.mkDefault true;
-    cli.mise.enable = lib.mkDefault true;
-    cli.pandoc.enable = lib.mkDefault true;
-    cli.pi.enable = lib.mkDefault true;
-    cli.podman.enable = lib.mkDefault true;
-    cli.syncthing.enable = lib.mkDefault true;
-    cli.yazi.enable = lib.mkDefault true;
-    cli.zellij.enable = lib.mkDefault true;
-  };
 }
