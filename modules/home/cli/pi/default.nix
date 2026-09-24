@@ -114,6 +114,14 @@
         PONYTAIL_DEFAULT_MODE = "full";
       };
 
+      # pi-web-access prefers this path when XDG_CONFIG_HOME is set.
+      # Keep the key in a private 0600 file on each host, never the Nix store.
+      xdg.configFile."pi/web-search.json".text = builtins.toJSON {
+        provider = "firecrawl";
+        firecrawlBaseUrl = "https://api.firecrawl.dev";
+        firecrawlApiKey = "!${pkgs.coreutils}/bin/cat ${lib.escapeShellArg "${config.xdg.configHome}/pi/firecrawl-api-key"}";
+      };
+
       # Seed global pi settings. Only values that diverge from upstream
       # defaults are listed; everything else is left to pi's defaults.
       #
@@ -203,13 +211,6 @@
           # checks), so this explicit flag is what actually suppresses the
           # ping.
           enableInstallTelemetry = false;
-        };
-
-        # Keep the key in a private 0600 file on each host, never the Nix store.
-        ".pi/agent/web-search.json".text = builtins.toJSON {
-          provider = "firecrawl";
-          firecrawlBaseUrl = "https://api.firecrawl.dev";
-          firecrawlApiKey = "!${pkgs.coreutils}/bin/cat ${lib.escapeShellArg "${config.xdg.configHome}/pi/firecrawl-api-key"}";
         };
 
         # Remove these entries once Pi's built-in Codex catalog includes them.
