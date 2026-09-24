@@ -23,25 +23,17 @@
 
       agentSources = import ../../agents/sources.nix { inherit pkgs; };
       inherit (agentSources) ponytail;
+      piWebAccessExtension = "${config.home.homeDirectory}/.pi/agent/npm/node_modules/pi-web-access/dist/index.js";
 
       # Single source of truth for declarative pi npm packages. Names are
       # bare here; the `npm:` prefix is added for settings.json below.
       piPackages = [
-        # Multi-agent orchestration: subagent tool, builtin agents
-        # (scout/planner/worker/reviewer/researcher/oracle/...), and
-        # /run-chain. Per-role model overrides live in subagents.agentOverrides.
+        # Builtin roles and orchestration; per-role routing lives below.
         "pi-subagents"
         # Direct messaging between independently running Pi sessions.
         "pi-intercom"
-        # Web search and fetch with pluggable providers (Brave, Tavily,
-        # Serper, Exa, Jina, Firecrawl, self-hosted SearXNG). Provides
-        # `web_search` and `web_fetch` tools, plus `/web-search-config`
-        # for interactive provider selection. The active provider is
-        # persisted to ~/.config/rpiv-web-tools/config.json (chmod 0600);
-        # API keys resolve env-var-first (`TAVILY_API_KEY`, `EXA_API_KEY`,
-        # `BRAVE_SEARCH_API_KEY`, …) then config file. Run
-        # `/web-search-config` once to pick `tavily` — default is `brave`.
-        "@juicesharp/rpiv-web-tools"
+        # Required by upstream researcher/evidence-auditor tool contracts.
+        "pi-web-access"
         # WakaTime time tracking. Reads api_key from ~/.wakatime.cfg
         # (hand-managed plain file outside Nix). Uses the wakatime-cli
         # binary added to home.packages below.
@@ -108,12 +100,6 @@
       # interactive-mode.js:528 `if (PI_SKIP_VERSION_CHECK || PI_OFFLINE)`.
       home.sessionVariables = {
         PI_SKIP_VERSION_CHECK = "1";
-        # Pin the rpiv-web-tools backend to Firecrawl for web_search/web_fetch
-        # (env tier wins over ~/.config/rpiv-web-tools/config.json). The API
-        # key is a secret and stays out of this repo: run `/web-tools` once in
-        # pi to store FIRECRAWL_API_KEY in the config file, or export it in a
-        # hand-managed shell env (env-var-first resolution).
-        WEB_SEARCH_PROVIDER = "firecrawl";
         # Ponytail default mode. `full` keeps the lazy-dev ruleset injected
         # every turn — it owns the YAGNI/minimal-code philosophy, which has
         # been trimmed out of ../../agents/config/AGENTS.md to avoid duplication
@@ -143,15 +129,13 @@
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "openai-codex";
           defaultModel = "gpt-6-astra";
-          # Keep `high` on the parent: it edits code directly most of the
-          # time in this workflow rather than purely orchestrating. Subagents
-          # pin their own thinking levels below.
+          # Opus starts at medium; keep high for Astra/Fable and explicit
+          # role-level thinking for children.
           defaultThinkingLevel = "high";
-          # Ctrl+P cycle list. Fable 5.1 is primary; GPT-6 Astra is the
-          # cross-family alternative.
+          modelThinkingLevels."anthropic/claude-opus-5-5" = "medium";
           enabledModels = [
             "openai-codex/gpt-6-astra"
-            "anthropic/claude-fable-5-1"
+            "anthropic/claude-opus-5-5"
           ];
           # Pi passes its managed ~/.pi/agent/npm install prefix explicitly;
           # this wrapper only supplies npm from the Nix-managed Node package.
@@ -161,39 +145,17 @@
           # `npm:` prefix is required so parseSource() treats these as npm
           # packages rather than local paths.
           packages = map (p: "npm:${p}") piPackages;
-          # As of pi-subagents (current), builtins inherit the user's default
-          # model unless overridden — they no longer hardcode `openai-codex/*`.
-          # We still pin per-role models declaratively so a future
-          # pi-subagents update can't silently change cost/quality/latency.
-          #
-          # Role → model mapping (tier matched to job):
-          # - gpt-6-luna  → scout (fast/cheap recon).
-          # - gpt-6-sol   → context-builder, researcher.
-          # - gpt-6-astra → reviewer, delegate.
-          # - fable-5.1   → planner, worker, oracle.
-          #
-          # `thinking` is pinned per-role so a future pi-subagents update
-          # can't silently change cost/latency. `fallbackModels` is
-          # intentionally not set here: pi-subagents fallbacks fire only on
-          # provider/auth/quota errors (not bad output), so they're not a
-          # quality escape hatch — adding them would mainly muddy debugging.
-          # Revisit if/when an outage actually bites.
+          # Pin routing independently of the parent: cheap recon/research,
+          # Opus implementation, Astra cross-family review, Fable escalation.
+          # Upstream returns provider failures; another model needs an explicit launch.
           subagents.agentOverrides = {
             scout = {
               model = "openai-codex/gpt-6-luna";
               thinking = "high";
             };
-            "context-builder" = {
-              model = "openai-codex/gpt-6-sol";
-              thinking = "high";
-            };
-            planner = {
-              model = "anthropic/claude-fable-5-1";
-              thinking = "high";
-            };
             worker = {
-              model = "anthropic/claude-fable-5-1";
-              thinking = "high";
+              model = "anthropic/claude-opus-5-5";
+              thinking = "medium";
             };
             reviewer = {
               model = "openai-codex/gpt-6-astra";
@@ -202,6 +164,11 @@
             researcher = {
               model = "openai-codex/gpt-6-sol";
               thinking = "high";
+              # Foreground children do not load ambient package extensions.
+              subagentOnlyExtensions = [ piWebAccessExtension ];
+            };
+            "evidence-auditor" = {
+              subagentOnlyExtensions = [ piWebAccessExtension ];
             };
             oracle = {
               model = "anthropic/claude-fable-5-1";
@@ -211,10 +178,6 @@
               model = "openai-codex/gpt-6-astra";
               thinking = "high";
             };
-            # `oracle-executor` was consolidated into `worker` upstream in
-            # pi-subagents (see ~/.pi/agent/npm/node_modules/pi-subagents/
-            # CHANGELOG.md and the absence of agents/oracle-executor.md).
-            # No override needed — `worker` carries the role.
           };
           # Custom theme name (matches `name` field inside the JSON file).
           # Pi auto-discovers theme files from ~/.pi/agent/themes/.
@@ -240,6 +203,13 @@
           # checks), so this explicit flag is what actually suppresses the
           # ping.
           enableInstallTelemetry = false;
+        };
+
+        # Keep the key in a private 0600 file on each host, never the Nix store.
+        ".pi/agent/web-search.json".text = builtins.toJSON {
+          provider = "firecrawl";
+          firecrawlBaseUrl = "https://api.firecrawl.dev";
+          firecrawlApiKey = "!${pkgs.coreutils}/bin/cat ${lib.escapeShellArg "${config.xdg.configHome}/pi/firecrawl-api-key"}";
         };
 
         # Remove these entries once Pi's built-in Codex catalog includes them.
