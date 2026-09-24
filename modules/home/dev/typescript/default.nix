@@ -20,6 +20,7 @@
       # editor
       vtsls
       astro-language-server
+      svelte-language-server
       prisma-language-server
     ];
 

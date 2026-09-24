@@ -12,7 +12,7 @@ return {
   },
   {
     'romus204/tree-sitter-manager.nvim',
-    opts = { ensure_installed = { 'javascript', 'typescript', 'tsx', 'astro', 'json5', 'jsdoc', 'prisma' } },
+    opts = { ensure_installed = { 'javascript', 'typescript', 'tsx', 'astro', 'svelte', 'json5', 'jsdoc', 'prisma' } },
   },
 
   { 'b0o/schemastore.nvim', lazy = true, version = false },
@@ -150,6 +150,7 @@ return {
         },
         denols = {},
         astro = {}, -- astro lsp
+        svelte = {},
         prismals = {},
       },
     },
