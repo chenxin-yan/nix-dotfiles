@@ -24,16 +24,16 @@ If you would otherwise produce a wall of prose with two headings, **write the pr
 
 - One file: `./<slug>.html` in the **current working directory**. Overwrite if it exists — regen is cheap.
 - The slug is the topic in kebab-case (`auth-refactor-plan`, `pr-42-review`). With no topic, slug = `note`.
-- Chat reply is **one line**: the absolute `file://` URL. No bullets, no recap, no "here's how to regenerate."
+- On successful validation, chat reply is **one line**: the absolute `file://` URL. If the user approves skipping unavailable validation, append a short warning that diagrams are unverified.
 - The file embeds a regen breadcrumb near the top: `<!-- regen: <verbatim user request> -->`. If the request contains `--`, replace it with `- -` so the comment stays valid.
-- Don't try to `open` the file. The user clicks the URL.
+- Don't launch the user's browser with `open`. Use an automated browser for validation; the user clicks the URL to view the result.
 
 ## Workflow
 
 1. **Pick blocks** — read `assets/blocks.html`. Decide which of the 9 blocks the topic actually needs. Two- or three-block pages are good. Nine-block pages are a smell.
 2. **Start from `assets/template.html`** — copy it, fill in `<title>`, the regen comment, and the Hero. Drop in the blocks you picked.
-3. **Toggle optional CDNs in the template** — uncomment the Mermaid `<script>` if any block is a Diagram. Uncomment the highlight.js block if any block contains code. Uncomment the Chart.js block if any block is a Chart. Uncomment the filter `<script>` only if a Matrix has ≥10 rows.
-4. **Self-check, write, reply** — run the pre-delivery check below, write the file, reply with only the absolute `file://` URL on its own line.
+3. **Keep only used scripts** — the template's scripts are already active. Keep Mermaid for Diagrams, highlight.js for code, Chart.js for Charts, and the filter script for a Matrix with ≥10 rows; delete unused optional blocks. Preserve the template's tested Mermaid version. For Diagrams, follow the Mermaid rules below.
+4. **Self-check, write, validate** — run the design check below, write the file, then complete the Mermaid render check if it contains Diagrams. Repair failures and recheck before replying.
 
 ## The 9 blocks
 
@@ -60,11 +60,23 @@ Blocks give structure; this gives polish. Both are enforced.
 - **Anti-slop, hard bans:** gradients, box-shadows for decoration, emojis as bullets or icons, rainbow palettes, `background-clip: text`. Two or more present → redesign, don't patch.
 - **Chart discipline:** bar charts start at zero; label axes or the chart is a decoration; one series color from the semantic palette unless series *are* semantically different; no 3D, no donut charts with <4 slices.
 
-**Pre-delivery self-check** (before writing the file):
+**Design check** (before writing the file):
 1. Fewest blocks that carry the message? Any block you could delete without losing meaning — delete it.
 2. Does one element visually dominate, and is it the right one?
 3. Every optional CDN in the file matches an actual block on the page?
 4. No prose `<p>` over ~3 lines outside a Details?
+
+## Mermaid diagrams
+
+- Separate simple node IDs (`n_request`, `n_end`) from display labels. Avoid reserved IDs such as `end`; quote flowchart node and edge labels, e.g. `n_call["Call foo()"] -->|"items[0]"| n_done["Done"]`. Parentheses and brackets in unquoted labels are Mermaid syntax, not prose.
+- `<pre>` still parses HTML. For literal `<`, `>`, `&`, and quotes inside flowchart labels, use Mermaid entity codes `#60;`, `#62;`, `#38;`, and `#quot;`. For example, `n_result["Result#60;User#62;"]` preserves `Result<User>`; raw `<User>` becomes an HTML tag, and HTML escaping alone can still lose it during rendering. Keep Mermaid source directly inside `<pre class="mermaid">`, without Markdown fences or a `<code>` wrapper.
+- Use the cookbook's Diagram as the embedding pattern. For other diagram types or unfamiliar syntax, consult the [official syntax reference](https://mermaid.js.org/intro/syntax-reference.html) and verify against the template's version.
+
+**Render check** (after writing any page with Diagrams):
+
+1. Load the actual saved HTML in an automated browser and wait for Mermaid to finish. Check console errors and failed script requests; rendering extracted text alone misses HTML-embedding failures. `mermaid.parse()` is only a preliminary syntax check.
+2. Verify **every** Mermaid block renders a visible, nonzero-size diagram, not raw source or a syntax-error graphic. An SVG or `data-processed` attribute alone is not proof of success. Expand any enclosing Details when checking visibility, and check that code-like labels retain their intended characters.
+3. Fix syntax/embedding errors and reload the file to recheck; Mermaid marks failed nodes processed, so rerunning init alone may skip them. Keep security defaults and surface errors rather than suppressing them. If browser tooling or CDN access is unavailable, ask for the minimum needed to validate, or permission to deliver explicitly unverified output.
 
 ## Hard rules
 

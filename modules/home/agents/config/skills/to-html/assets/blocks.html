@@ -28,7 +28,7 @@
     }
   </style>
   <script type="module">
-    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.esm.min.mjs";
     mermaid.initialize({
       startOnLoad: true,
       theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default",
@@ -135,11 +135,11 @@
     <figure class="rounded-lg border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 overflow-x-auto">
       <pre class="mermaid">
 flowchart LR
-    A[Request] --> B{Has JWT?}
-    B -- no --> R[401 Unauthorized]
-    B -- yes --> V[Verify signature]
-    V -- valid --> H[Handler]
-    V -- invalid --> R
+    n_request["Request"] --> n_token{"Has JWT?"}
+    n_token -->|"no"| n_reject["401 Unauthorized"]
+    n_token -->|"yes"| n_verify["Verify signature (JWT)"]
+    n_verify -->|"valid"| n_handler["Handler: Result#60;User#62;"]
+    n_verify -->|"invalid"| n_reject
       </pre>
     </figure>
   </section>
