@@ -140,7 +140,7 @@
           # Opus starts at medium; keep high for Astra/Fable and explicit
           # role-level thinking for children.
           defaultThinkingLevel = "high";
-          modelThinkingLevels."anthropic/claude-opus-5-5" = "medium";
+          modelThinkingLevels."anthropic/claude-opus-5-5" = "high";
           enabledModels = [
             "openai-codex/gpt-6-astra"
             "anthropic/claude-opus-5-5"
@@ -163,7 +163,7 @@
             };
             worker = {
               model = "anthropic/claude-opus-5-5";
-              thinking = "medium";
+              thinking = "high";
             };
             reviewer = {
               model = "openai-codex/gpt-6-astra";
