@@ -305,6 +305,10 @@ The goal is password-less SSH between all managed machines. Today the repo carri
 
 Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/folke/lazy.nvim) as the plugin manager. Space is the leader key.
 
+Vite+ integration lives in `config/nvim/lua/cyan/plugins/languages/web/viteplus.lua`; `web/init.lua` wires its project detection, Oxlint configuration, and Conform override into the shared web setup. Vite+ projects use the workspace-local `node_modules/.bin/vp`: `vp lint --lsp` for diagnostics and `vp fmt --stdin-filepath` through Conform for formatting (including Markdown/MDX). Detection checks the package-manager workspace/lockfile root's `package.json` for a `vite-plus` dependency, falling back to the nearest package when there is no workspace marker. Install project dependencies first; keep shared lint/format settings in the root `vite.config.ts`. Plain Vite projects are not opted in. Other projects retain standalone Oxc, Biome, and Prettier selection. Oxfmt is configured only in Conform, not as an LSP server.
+
+After changing this configuration, restart Neovim. `:ConformInfo` shows the formatter executable and `:checkhealth vim.lsp` shows attached servers. Run the routing checks with installed plugins/tools using `nvim --headless -u NONE -l config/nvim/tests/viteplus.lua` from this repo.
+
 <details>
 <summary><b>Coding</b> (8 plugins)</summary>
 
@@ -360,7 +364,7 @@ Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/f
 | Language   | LSP Server(s)               | Formatter          |
 | ---------- | --------------------------- | ------------------ |
 | Python     | basedpyright, ruff          | ruff               |
-| TypeScript | vtsls                       | prettier           |
+| TypeScript | vtsls                       | Vite+/Oxfmt, Biome, or prettierd |
 | Go         | gopls                       | goimports, gofumpt |
 | Java       | jdtls                       | -                  |
 | Lua        | lua_ls                      | stylua             |
@@ -368,8 +372,8 @@ Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/f
 | C          | clangd                      | clang-format       |
 | Bash       | bashls                      | shfmt              |
 | SQL        | sqls                        | -                  |
-| Markdown   | -                           | -                  |
-| Web        | emmet_ls, astro             | prettier           |
+| Markdown   | -                           | Vite+/Oxfmt, markdownlint-cli2 |
+| Web        | emmet_ls, astro             | Vite+/Oxfmt, Biome, or prettierd |
 | Docker     | dockerls, docker_compose_ls | -                  |
 
 </details>

@@ -1,3 +1,5 @@
+local viteplus = require 'cyan.plugins.languages.web.viteplus'
+
 -- astro is intentionally absent: oxfmt does not yet support .astro
 -- (https://github.com/oxc-project/oxc/issues/15665). svelte needs svelte/compiler
 -- installed in the project for oxfmt to work on .svelte files.
@@ -38,11 +40,12 @@ local oxc_root_markers = {
 }
 
 local function has_oxc_config(bufnr)
-  return vim.fs.root(bufnr, oxc_root_markers) ~= nil
+  return viteplus.root(bufnr) ~= nil or vim.fs.root(bufnr, oxc_root_markers) ~= nil
 end
 
 -- union of filetypes any of our formatters can handle
-local formatted_fts = { 'css', 'scss', 'less', 'graphql', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json', 'jsonc', 'vue', 'svelte', 'astro' }
+local formatted_fts =
+  { 'css', 'scss', 'less', 'graphql', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'json', 'jsonc', 'vue', 'svelte', 'astro' }
 
 return {
   {
@@ -125,7 +128,7 @@ return {
         biome = {},
         tailwindcss = {},
         ---@type lspconfig.settings.oxlint
-        oxlint = {
+        oxlint = viteplus.oxlint {
           root_dir = function(bufnr, on_dir)
             -- prefer the top-level oxlint config if it exists (monorepo support)
             local git = vim.fs.root(bufnr, '.git')
@@ -139,8 +142,6 @@ return {
             fixKind = 'all',
           },
         },
-        --- disable the oxfmt lsp server since we use conform for formatting
-        oxfmt = { enabled = false },
       },
     },
   },
@@ -148,6 +149,7 @@ return {
     'stevearc/conform.nvim',
     opts = function(_, opts)
       opts.formatters = vim.tbl_extend('force', opts.formatters or {}, {
+        oxfmt = viteplus.formatter,
         biome = {
           require_cwd = true,
           -- Use 'biome check' instead of 'biome format' to include organize imports
