@@ -47,7 +47,7 @@ local formatted_fts = { 'css', 'scss', 'less', 'graphql', 'javascript', 'javascr
 return {
   {
     'romus204/tree-sitter-manager.nvim',
-    opts = { ensure_installed = { 'xml', 'html', 'css', 'json', 'json5', 'yaml', 'toml' } },
+    opts = { ensure_installed = { 'xml', 'html', 'css', 'json', 'json5', 'yaml', 'toml', 'graphql' } },
   },
 
   { -- emmet integration

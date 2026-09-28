@@ -26,7 +26,6 @@
       vscode-langservers-extracted
       tailwindcss-language-server
       emmet-language-server
-      kulala-fmt
       prettierd
       biome
       oxfmt

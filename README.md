@@ -375,10 +375,9 @@ Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/f
 </details>
 
 <details>
-<summary><b>Extras</b> (6 plugins)</summary>
+<summary><b>Extras</b> (5 plugins)</summary>
 
 - **yazi.nvim** — Terminal file manager integration
-- **kulala.nvim** — HTTP client for REST APIs
 - **leetcode.nvim** — LeetCode practice
 - **cord.nvim** — Discord Rich Presence
 - **vim-wakatime** — Code time tracking
