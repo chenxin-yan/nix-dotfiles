@@ -135,12 +135,9 @@
       # modules/home/agents; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
-          defaultProvider = "openai-codex";
-          defaultModel = "gpt-6-astra";
-          # Opus starts at medium; keep high for Astra/Fable and explicit
-          # role-level thinking for children.
+          defaultProvider = "anthropic";
+          defaultModel = "claude-opus-5-5";
           defaultThinkingLevel = "high";
-          modelThinkingLevels."anthropic/claude-opus-5-5" = "high";
           enabledModels = [
             "openai-codex/gpt-6-astra"
             "anthropic/claude-opus-5-5"
@@ -154,7 +151,7 @@
           # packages rather than local paths.
           packages = map (p: "npm:${p}") piPackages;
           # Pin routing independently of the parent: cheap recon/research,
-          # Opus implementation, Astra cross-family review, Fable escalation.
+          # Opus implementation, Astra cross-family review and oracle.
           # Upstream returns provider failures; another model needs an explicit launch.
           subagents.agentOverrides = {
             scout = {
@@ -172,14 +169,13 @@
             researcher = {
               model = "openai-codex/gpt-6-sol";
               thinking = "high";
-              # Foreground children do not load ambient package extensions.
               subagentOnlyExtensions = [ piWebAccessExtension ];
             };
             "evidence-auditor" = {
               subagentOnlyExtensions = [ piWebAccessExtension ];
             };
             oracle = {
-              model = "anthropic/claude-fable-5-1";
+              model = "openai-codex/gpt-6-astra";
               thinking = "high";
             };
             delegate = {
@@ -211,80 +207,6 @@
           # checks), so this explicit flag is what actually suppresses the
           # ping.
           enableInstallTelemetry = false;
-        };
-
-        # Remove these entries once Pi's built-in Codex catalog includes them.
-        # Metadata: https://developers.openai.com/api/docs/models/gpt-6-sol
-        #           https://developers.openai.com/api/docs/models/gpt-6-luna
-        # Retain the conservative 272K window until Codex limits are confirmed.
-        # Costs are API estimates; Codex itself is subscription-billed.
-        ".pi/agent/models.json".text = builtins.toJSON {
-          providers."openai-codex".models = [
-            {
-              id = "gpt-6-sol";
-              name = "GPT-6 Sol";
-              reasoning = true;
-              thinkingLevelMap = {
-                off = "none";
-                minimal = "low";
-                xhigh = "xhigh";
-                max = "max";
-              };
-              input = [
-                "text"
-                "image"
-              ];
-              contextWindow = 272000;
-              maxTokens = 128000;
-              cost = {
-                input = 2;
-                output = 10;
-                cacheRead = 0.2;
-                cacheWrite = 2.5;
-                tiers = [
-                  {
-                    inputTokensAbove = 272000;
-                    input = 4;
-                    output = 15;
-                    cacheRead = 0.4;
-                    cacheWrite = 5;
-                  }
-                ];
-              };
-            }
-            {
-              id = "gpt-6-luna";
-              name = "GPT-6 Luna";
-              reasoning = true;
-              thinkingLevelMap = {
-                off = "none";
-                minimal = "low";
-                xhigh = "xhigh";
-                max = "max";
-              };
-              input = [
-                "text"
-                "image"
-              ];
-              contextWindow = 272000;
-              maxTokens = 128000;
-              cost = {
-                input = 0.1;
-                output = 0.5;
-                cacheRead = 0.01;
-                cacheWrite = 0.125;
-                tiers = [
-                  {
-                    inputTokensAbove = 272000;
-                    input = 0.2;
-                    output = 0.75;
-                    cacheRead = 0.02;
-                    cacheWrite = 0.25;
-                  }
-                ];
-              };
-            }
-          ];
         };
 
         # Catppuccin themes from upstream flake
