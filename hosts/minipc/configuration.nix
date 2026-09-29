@@ -12,7 +12,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos
+    ../../profiles/nixos
   ];
 
   # Bootloader.
@@ -46,12 +46,6 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
-
-  # Enable flakes and nix command
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
 
   # Automatic Nix store optimization
   nix.optimise.automatic = true;
@@ -141,7 +135,6 @@
   system.stateVersion = "25.05"; # Did you read the comment?
 
   programs.nh = {
-    enable = true;
     clean.enable = true;
     clean.extraArgs = "--keep-since 4d --keep 3";
   };

@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../modules/darwin/shared.nix
+    ../../profiles/darwin
   ];
 
   # Used for backwards compatibility, please read the changelog before changing.

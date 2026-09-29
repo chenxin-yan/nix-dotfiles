@@ -47,8 +47,10 @@
       # platform from inventory, integrated Home Manager for the host login.
       # Host modules receive their inventory entry as `host`; home modules
       # receive the whole inventory as `hosts` for managed-peer facts.
+      # The inventory key owns the hostname, so an imported installer
+      # configuration's own networking.hostName cannot override it.
       hostModule = name: host: {
-        networking.hostName = name;
+        networking.hostName = lib.mkForce name;
         nixpkgs.hostPlatform = host.system;
         home-manager = {
           useGlobalPkgs = true;

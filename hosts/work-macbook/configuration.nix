@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../modules/darwin/shared.nix
+    ../../profiles/darwin
   ];
 
   system.stateVersion = 6;

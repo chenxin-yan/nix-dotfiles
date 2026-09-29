@@ -1,11 +1,21 @@
 # System settings shared by every registered Mac. Account facts, state
 # versions and hostnames stay in hosts/<name>/configuration.nix and the flake.
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
-    ./.
+    ../../modules/darwin
   ];
+
+  darwin._1password.enable = lib.mkDefault true;
+  darwin.aerospace.enable = lib.mkDefault true;
+  darwin.kanata.enable = lib.mkDefault true;
+  darwin.sketchybar.enable = lib.mkDefault true;
 
   # Fix macOS locale issue (BCP 47 format incompatible with Unix tools)
   environment.variables = {
