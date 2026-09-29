@@ -46,10 +46,6 @@
     };
   };
 
-  programs.nh = {
-    enable = true;
-    clean.enable = false;
-    clean.extraArgs = "--keep-since 3d --keep 2";
-  };
+  programs.nh.enable = true;
   app.shared.zen-browser.enable = false;
 }

@@ -47,9 +47,6 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Automatic Nix store optimization
-  nix.optimise.automatic = true;
-
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
   ];
@@ -133,11 +130,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
-
-  programs.nh = {
-    clean.enable = true;
-    clean.extraArgs = "--keep-since 4d --keep 3";
-  };
 
   # Tailscale VPN
   services.tailscale.enable = true;

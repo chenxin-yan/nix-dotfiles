@@ -9,6 +9,7 @@
 
 {
   imports = [
+    ../cleanup-policy.nix
     ../../modules/darwin
   ];
 

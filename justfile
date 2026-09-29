@@ -19,7 +19,7 @@ update-pins *ARGS:
 
 # Clean up old generations and garbage collect
 clean:
-    nh clean all --optomize
+    args=$(nix eval --raw --file {{ quote(justfile_directory() / "profiles/cleanup-policy.nix") }} nix.gc.options) && sudo -- "$(command -v nix-collect-garbage)" $args && sudo -- "$(command -v nix-store)" --optimise
 
 # Format all nix files
 fmt:

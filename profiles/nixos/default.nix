@@ -3,8 +3,11 @@
 {
   imports = [
     ./base.nix
+    ../cleanup-policy.nix
     ../../modules/nixos
   ];
+
+  nix.gc.dates = "weekly";
 
   nixos._1password.enable = lib.mkDefault true;
   nixos.bluetooth.enable = lib.mkDefault true;
