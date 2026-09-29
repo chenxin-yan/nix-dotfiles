@@ -30,6 +30,10 @@ in
         source = "${sources.anthropicSkills}/skills/frontend-design";
         recursive = true;
       };
+      ".agents/skills/web-design-guidelines" = {
+        source = "${sources.vercelSkills}/skills/web-design-guidelines";
+        recursive = true;
+      };
       ".agents/skills/writing-for-agents" = {
         source = "${sources.mattpocockSkills}/skills/productivity/writing-for-agents";
         recursive = true;

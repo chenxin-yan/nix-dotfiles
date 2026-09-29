@@ -8,6 +8,13 @@
     hash = "sha256-xUs7UX8pOcZwR0okaSbI/f8EE5F4Zi/BUd+nIZNafPc=";
   };
 
+  vercelSkills = pkgs.fetchFromGitHub {
+    owner = "vercel-labs";
+    repo = "agent-skills";
+    rev = "063bee94c3f4df8453406c830b0a7df0f2860278";
+    hash = "sha256-tTSJf53OQltUfxTH4hdqcnw5ywCjCZP8/JqQ593cyB8=";
+  };
+
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
