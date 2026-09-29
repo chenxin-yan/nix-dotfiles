@@ -167,12 +167,12 @@
               thinking = "high";
             };
             researcher = {
-              model = "openai-codex/gpt-6-sol";
+              model = "openai-codex/gpt-6.1-sol";
               thinking = "high";
               subagentOnlyExtensions = [ piWebAccessExtension ];
             };
             "evidence-auditor" = {
-              model = "openai-codex/gpt-6-astra";
+              model = "openai-codex/gpt-6.1-sol";
               thinking = "high";
               subagentOnlyExtensions = [ piWebAccessExtension ];
             };
