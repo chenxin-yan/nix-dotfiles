@@ -172,6 +172,8 @@
               subagentOnlyExtensions = [ piWebAccessExtension ];
             };
             "evidence-auditor" = {
+              model = "openai-codex/gpt-6-astra";
+              thinking = "high";
               subagentOnlyExtensions = [ piWebAccessExtension ];
             };
             oracle = {
@@ -179,7 +181,7 @@
               thinking = "high";
             };
             delegate = {
-              model = "openai-codex/gpt-6-astra";
+              model = "anthropic/claude-opus-5-5";
               thinking = "high";
             };
           };
