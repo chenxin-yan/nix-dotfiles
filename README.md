@@ -107,7 +107,7 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 
 - **`git add` new files before switching.** Git-backed flakes don't see untracked files.
 - **Homebrew removes what isn't declared.** Activation runs with `cleanup = "zap"`, so declare casks in the feature they belong to (`darwin.homebrew.casks`).
-- **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/editor/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/shell/zsh/scripts/`) apply without a rebuild.
+- **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/cli/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/cli/zsh/scripts/`) apply without a rebuild.
 - **`nix flake check` only evaluates the NixOS hosts.** A broken Mac config shows up at `just switch`.
 
 ## Making changes
@@ -117,7 +117,7 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 Create a file under `modules/features/<group>/` with the parts it needs:
 
 ```nix
-# modules/features/apps/todoist.nix
+# modules/features/gui/todoist.nix
 {
   features.todoist = {
     darwin.homebrew.casks = [ "todoist-app" ];
