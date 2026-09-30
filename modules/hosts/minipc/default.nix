@@ -11,7 +11,6 @@ in
       server
       workstation
       syncthing
-      bluetooth
     ];
 
     nixos =

@@ -28,8 +28,7 @@ in
             // lib.optionalAttrs isDarwin {
               UseKeychain = "yes";
             };
-          }
-          // lib.optionalAttrs isDarwin {
+
             "cyan-minipc" = {
               User = hosts.minipc.login;
               IdentityFile = identity;

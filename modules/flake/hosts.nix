@@ -33,6 +33,8 @@ let
   hostModule = name: host: {
     _module.args.host = host;
     networking.hostName = lib.mkForce name;
+    # Shown by darwin-version/nixos-version --configuration-revision.
+    system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
     nixpkgs.hostPlatform = host.system;
     home-manager = {
       useGlobalPkgs = true;
@@ -49,8 +51,6 @@ let
         home-manager.darwinModules.home-manager
         (hostModule name host)
         {
-          # Set Git commit hash for darwin-version.
-          system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
           system.primaryUser = host.login;
           nix-homebrew = {
             enable = true;
