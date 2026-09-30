@@ -2,7 +2,6 @@
 { config, ... }:
 {
   features.development.includes = with config.features; [
-    gcloud
     herdr
     mise
     pandoc

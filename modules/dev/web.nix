@@ -4,15 +4,7 @@
     {
       home.packages = with pkgs; [
         curlie
-        awscli2
-        doppler
-        infisical
-        jless
-        ngrok
-        nginx
-
         wget
-        mongosh
 
         # editor
         vscode-langservers-extracted

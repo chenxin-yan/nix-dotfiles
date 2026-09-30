@@ -26,17 +26,17 @@ Everything is declarative — no symlink managers, no install scripts, no impera
 
 This repo manages three machines from a single Nix flake. Each machine is one file in `modules/hosts/`; its `hosts.<name>` key is the flake target and its managed hostname. Home Manager handles all user-level configuration, while nix-darwin and NixOS modules handle system-level settings. Catppuccin Mocha with Lavender accent is applied globally across the terminal, editor, status bar, and all CLI tools.
 
-|                  | `macbook`                   | `work-macbook`              | `minipc`                    |
-| ---------------- | --------------------------- | --------------------------- | --------------------------- |
-| **OS**           | macOS (nix-darwin)          | macOS (nix-darwin)          | NixOS (headless server)     |
-| **Architecture** | aarch64-darwin              | aarch64-darwin              | x86_64-linux                |
-| **User**         | yanchenxin                  | chenxin-yan                 | cyan                        |
-| **Features**     | `mac` + `syncthing`         | `mac`, excluding `podman`   | `server` + `syncthing`      |
-| **Syncthing**    | yes                         | no                          | yes                         |
-| **Shell**        | Zsh                         | Zsh                         | Zsh                         |
-| **Desktop**      | Aerospace, Sketchybar, Ghostty | Aerospace, Sketchybar, Ghostty | — (SSH/mosh only)      |
-| **Editor**       | Neovim                      | Neovim                      | Neovim                      |
-| **Theme**        | Catppuccin Mocha (Lavender) | Catppuccin Mocha (Lavender) | Catppuccin Mocha (Lavender) |
+|                  | `macbook`                      | `work-macbook`                 | `minipc`                    |
+| ---------------- | ------------------------------ | ------------------------------ | --------------------------- |
+| **OS**           | macOS (nix-darwin)             | macOS (nix-darwin)             | NixOS (headless server)     |
+| **Architecture** | aarch64-darwin                 | aarch64-darwin                 | x86_64-linux                |
+| **User**         | yanchenxin                     | chenxin-yan                    | cyan                        |
+| **Features**     | `mac` + `syncthing`            | `mac`, excluding `podman`      | `server` + `syncthing`      |
+| **Syncthing**    | yes                            | no                             | yes                         |
+| **Shell**        | Zsh                            | Zsh                            | Zsh                         |
+| **Desktop**      | Aerospace, Sketchybar, Ghostty | Aerospace, Sketchybar, Ghostty | — (SSH/mosh only)           |
+| **Editor**       | Neovim                         | Neovim                         | Neovim                      |
+| **Theme**        | Catppuccin Mocha (Lavender)    | Catppuccin Mocha (Lavender)    | Catppuccin Mocha (Lavender) |
 
 ## Repository Structure
 
@@ -166,17 +166,17 @@ This runs `nh os switch --hostname <target>` after the same preflight checks as 
 
 ## Usage
 
-| Command                 | Description                                                                          |
-| ----------------------- | ------------------------------------------------------------------------------------ |
-| `just switch`           | Rebuild and apply this machine's configuration (system + Home Manager)               |
-| `just switch <target>`  | Same, selecting a registered target explicitly (one-time bootstrap before the hostname matches) |
-| `just update`       | Update all flake inputs to latest                  |
-| `just update-pins`  | Update pinned fetchFromGitHub dependencies         |
-| `just clean`        | Garbage collect old generations and optimize store |
-| `just fmt`          | Format all Nix files (`nix fmt`, nixfmt-tree)      |
-| `nix flake check`   | Evaluate this platform's hosts; run the resolver and wizard tests |
-| `just search <pkg>` | Search nixpkgs for a package                       |
-| `just show <pkg>`   | Show package information                           |
+| Command                | Description                                                                                     |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `just switch`          | Rebuild and apply this machine's configuration (system + Home Manager)                          |
+| `just switch <target>` | Same, selecting a registered target explicitly (one-time bootstrap before the hostname matches) |
+| `just update`          | Update all flake inputs to latest                                                               |
+| `just update-pins`     | Update pinned fetchFromGitHub dependencies                                                      |
+| `just clean`           | Garbage collect old generations and optimize store                                              |
+| `just fmt`             | Format all Nix files (`nix fmt`, nixfmt-tree)                                                   |
+| `nix flake check`      | Evaluate this platform's hosts; run the resolver and wizard tests                               |
+| `just search <pkg>`    | Search nixpkgs for a package                                                                    |
+| `just show <pkg>`      | Show package information                                                                        |
 
 Native Nix cleanup is defined once in [`modules/system/_gc-policy.nix`](modules/system/_gc-policy.nix), applied by the `nix-gc` feature (included by `mac` and `server`) and read by `just clean`. All machines collect weekly with 14-day generation retention; the current generation is preserved, with no minimum-count guarantee. Store optimization runs separately (daily on MiniPC, weekly on Macs). `just clean` uses sudo to run native GC, then optimization; NH remains the rebuild CLI, not the collector. Retention protects profile generations, not arbitrary unreferenced build outputs.
 
@@ -231,40 +231,38 @@ The goal is password-less SSH between all managed machines. Today the repo carri
 
 `h` = Home Manager, `d` = nix-darwin, `n` = NixOS part.
 
-| Group | Feature | Parts | Purpose |
-| --- | --- | --- | --- |
-| `core/` | `paths` | h | `dotfiles`, `devPath`, `projectsPath` options and their session variables |
-| | `theme` | h n | Catppuccin Mocha / Lavender via catppuccin/nix |
-| | `agents` | h | Shared agent instructions and `~/.agents/skills/` |
-| | `git` | h | Git config, difftastic, GitHub CLI, gh-dash, lazygit, hunk |
-| | `jj` | h | Jujutsu and jjui |
-| | `nvim` | h | Neovim with out-of-store symlink to `modules/core/nvim/config/` |
-| | `zsh` | h | Zsh with vi keybindings, oh-my-posh prompt, fzf, direnv, modern CLI tools, script aliases |
-| | `nushell` | h | Nushell |
-| `cli/` | `zellij` | h | Terminal multiplexer |
-| | `herdr` | h | Terminal workspace manager |
-| | `yazi` | h | Terminal file manager with plugins |
-| | `mise` | h | Polyglot runtime/tool version manager |
-| | `syncthing` | h | File sync across 3 devices (selected by `macbook` and `minipc`) |
-| | `gcloud` | h | Google Cloud SDK |
-| | `pandoc` | h | Document conversion |
-| | `pi` | h | Pi coding agent runtime and extensions |
-| | `podman` | h n | Podman service on NixOS (host account joins `podman`), podman machine on macOS, container tooling |
-| `dev/` | `python` `typescript` `go` `java` `lua` `nix` `c` `bash` `markdown` `sql` `latex` `web` | h | Language toolchains, LSPs and formatters |
-| `apps/` | `1password` (`_1password`) | d n | 1Password GUI + CLI on macOS, CLI on NixOS |
-| | `ghostty` | h | Terminal emulator |
-| | `vesktop` | h | Discord client |
-| | `telegram` | h | Telegram Desktop |
-| | `espanso` | h | Text expander |
-| | `todoist` | h | Task management |
-| | `iina` | h | Video player (macOS) |
-| | `zen-browser` | h | Privacy-focused browser; not selected by any host |
-| `desktop/` | `aerospace` | d | Tiling window manager |
-| | `kanata` | d h | Keyboard remapper daemon and its keymap |
-| | `sketchybar` | d h | Status bar agent and its config |
-| `system/` | `bluetooth` | n | Bluetooth support |
-| | `mosh` | n | Mobile shell server |
-| | `nix-gc` | d n | Native garbage collection and store optimisation |
+| Group      | Feature                                                                                 | Parts | Purpose                                                                                           |
+| ---------- | --------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------- |
+| `core/`    | `paths`                                                                                 | h     | `dotfiles`, `devPath`, `projectsPath` options and their session variables                         |
+|            | `theme`                                                                                 | h n   | Catppuccin Mocha / Lavender via catppuccin/nix                                                    |
+|            | `agents`                                                                                | h     | Shared agent instructions and `~/.agents/skills/`                                                 |
+|            | `git`                                                                                   | h     | Git config, difftastic, GitHub CLI, gh-dash, lazygit, hunk                                        |
+|            | `jj`                                                                                    | h     | Jujutsu and jjui                                                                                  |
+|            | `nvim`                                                                                  | h     | Neovim with out-of-store symlink to `modules/core/nvim/config/`                                   |
+|            | `zsh`                                                                                   | h     | Zsh with vi keybindings, oh-my-posh prompt, fzf, direnv, modern CLI tools, script aliases         |
+| `cli/`     | `zellij`                                                                                | h     | Terminal multiplexer                                                                              |
+|            | `herdr`                                                                                 | h     | Terminal workspace manager                                                                        |
+|            | `yazi`                                                                                  | h     | Terminal file manager with plugins                                                                |
+|            | `mise`                                                                                  | h     | Polyglot runtime/tool version manager                                                             |
+|            | `syncthing`                                                                             | h     | File sync across 3 devices (selected by `macbook` and `minipc`)                                   |
+|            | `pandoc`                                                                                | h     | Document conversion                                                                               |
+|            | `pi`                                                                                    | h     | Pi coding agent runtime and extensions                                                            |
+|            | `podman`                                                                                | h n   | Podman service on NixOS (host account joins `podman`), podman machine on macOS, container tooling |
+| `dev/`     | `python` `typescript` `go` `java` `lua` `nix` `c` `bash` `markdown` `sql` `latex` `web` | h     | Language toolchains, LSPs and formatters                                                          |
+| `apps/`    | `1password` (`_1password`)                                                              | d n   | 1Password GUI + CLI on macOS, CLI on NixOS                                                        |
+|            | `ghostty`                                                                               | h     | Terminal emulator                                                                                 |
+|            | `vesktop`                                                                               | h     | Discord client                                                                                    |
+|            | `telegram`                                                                              | h     | Telegram Desktop                                                                                  |
+|            | `espanso`                                                                               | h     | Text expander                                                                                     |
+|            | `todoist`                                                                               | h     | Task management                                                                                   |
+|            | `iina`                                                                                  | h     | Video player (macOS)                                                                              |
+|            | `zen-browser`                                                                           | h     | Privacy-focused browser; not selected by any host                                                 |
+| `desktop/` | `aerospace`                                                                             | d     | Tiling window manager                                                                             |
+|            | `kanata`                                                                                | d h   | Keyboard remapper daemon and its keymap                                                           |
+|            | `sketchybar`                                                                            | d h   | Status bar agent and its config                                                                   |
+| `system/`  | `bluetooth`                                                                             | n     | Bluetooth support                                                                                 |
+|            | `mosh`                                                                                  | n     | Mobile shell server                                                                               |
+|            | `nix-gc`                                                                                | d n   | Native garbage collection and store optimisation                                                  |
 
 ## Neovim
 
@@ -326,20 +324,20 @@ After changing this configuration, restart Neovim. `:ConformInfo` shows the form
 <details>
 <summary><b>Languages</b> (12 configs)</summary>
 
-| Language   | LSP Server(s)               | Formatter          |
-| ---------- | --------------------------- | ------------------ |
-| Python     | basedpyright, ruff          | ruff               |
+| Language   | LSP Server(s)               | Formatter                        |
+| ---------- | --------------------------- | -------------------------------- |
+| Python     | basedpyright, ruff          | ruff                             |
 | TypeScript | vtsls                       | Vite+/Oxfmt, Biome, or prettierd |
-| Go         | gopls                       | goimports, gofumpt |
-| Java       | jdtls                       | -                  |
-| Lua        | lua_ls                      | stylua             |
-| Nix        | nil_ls                      | nixfmt             |
-| C          | clangd                      | clang-format       |
-| Bash       | bashls                      | shfmt              |
-| SQL        | sqls                        | -                  |
-| Markdown   | -                           | Vite+/Oxfmt, markdownlint-cli2 |
+| Go         | gopls                       | goimports, gofumpt               |
+| Java       | jdtls                       | -                                |
+| Lua        | lua_ls                      | stylua                           |
+| Nix        | nil_ls                      | nixfmt                           |
+| C          | clangd                      | clang-format                     |
+| Bash       | bashls                      | shfmt                            |
+| SQL        | sqls                        | -                                |
+| Markdown   | -                           | Vite+/Oxfmt, markdownlint-cli2   |
 | Web        | emmet_ls, astro             | Vite+/Oxfmt, Biome, or prettierd |
-| Docker     | dockerls, docker_compose_ls | -                  |
+| Docker     | dockerls, docker_compose_ls | -                                |
 
 </details>
 
@@ -442,18 +440,18 @@ The ZSA Voyager keyboard is excluded from Kanata remapping.
 
 ## Flake Inputs
 
-| Input              | Source                                 | Purpose                                  |
-| ------------------ | -------------------------------------- | ---------------------------------------- |
-| `nixpkgs`          | `nixos-unstable`                       | Package repository                       |
-| `flake-parts`      | `hercules-ci/flake-parts`              | Module system for the flake itself       |
-| `import-tree`      | `denful/import-tree`                   | Loads every module under `modules/`      |
-| `home-manager`     | follows nixpkgs                        | User environment management              |
-| `nix-darwin`       | `nix-darwin/nix-darwin/master`         | macOS system configuration               |
-| `nix-homebrew`     | `zhaofengli/nix-homebrew`              | Declarative Homebrew management          |
-| `catppuccin`       | `catppuccin/nix`                       | Global theming                           |
-| `pi-catppuccin`    | `otahontas/pi-coding-agent-catppuccin` | Catppuccin theme for the pi coding agent |
-| `zen-browser`      | `0xc000022070/zen-browser-flake`       | Zen Browser for NixOS                    |
-| `hunk`             | `modem-dev/hunk`                       | Diff viewer (Home Manager module)        |
+| Input           | Source                                 | Purpose                                  |
+| --------------- | -------------------------------------- | ---------------------------------------- |
+| `nixpkgs`       | `nixos-unstable`                       | Package repository                       |
+| `flake-parts`   | `hercules-ci/flake-parts`              | Module system for the flake itself       |
+| `import-tree`   | `denful/import-tree`                   | Loads every module under `modules/`      |
+| `home-manager`  | follows nixpkgs                        | User environment management              |
+| `nix-darwin`    | `nix-darwin/nix-darwin/master`         | macOS system configuration               |
+| `nix-homebrew`  | `zhaofengli/nix-homebrew`              | Declarative Homebrew management          |
+| `catppuccin`    | `catppuccin/nix`                       | Global theming                           |
+| `pi-catppuccin` | `otahontas/pi-coding-agent-catppuccin` | Catppuccin theme for the pi coding agent |
+| `zen-browser`   | `0xc000022070/zen-browser-flake`       | Zen Browser for NixOS                    |
+| `hunk`          | `modem-dev/hunk`                       | Diff viewer (Home Manager module)        |
 
 ## Environment Variables
 

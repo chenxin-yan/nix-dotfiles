@@ -10,7 +10,6 @@
       jj
       nvim
       zsh
-      nushell
     ];
 
     homeManager =
