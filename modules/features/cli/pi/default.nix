@@ -29,9 +29,8 @@
         "pi-intercom"
         # Required by upstream researcher/evidence-auditor tool contracts.
         "pi-web-access"
-        # WakaTime time tracking. Reads api_key from ~/.wakatime.cfg
-        # (hand-managed plain file outside Nix). Uses the wakatime-cli
-        # binary added to home.packages below.
+        # WakaTime time tracking, through the wakatime-cli binary added to
+        # home.packages below.
         "pi-wakatime"
         # Todo list tracking with live overlay above the editor. Provides
         # the `todo` tool, `/todos` command, and `blockedBy` dependency
@@ -76,9 +75,9 @@
       home.packages = with pkgs; [
         pi-coding-agent
         hypa
-        # Time-tracking daemon invoked by the npm:pi-wakatime extension
-        # below. Reads ~/.wakatime.cfg for `api_key` (file is hand-managed
-        # outside Nix; predates this dotfiles repo).
+        # Invoked by pi-wakatime and vim-wakatime. Its key comes from
+        # WAKATIME_API_KEY in ~/.env; an api_key in ~/.wakatime.cfg would
+        # take precedence over it.
         wakatime-cli
         claude-code
         codex

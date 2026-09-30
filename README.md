@@ -75,10 +75,9 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 
 **Secrets and logins**
 
-- `~/.env`: private environment variables, sourced by every zsh session. Create it even if it's empty, or each shell starts with an error.
+- `~/.env`: API keys and other private environment variables, sourced by every zsh session. WakaTime (in pi and Neovim) reads `WAKATIME_API_KEY` from it. Create the file even if it's empty, or each shell starts with an error.
 - SSH: create `~/.ssh/id_ed25519`, add the public key to GitHub, and add it to `openssh.authorizedKeys.keys` in the host files of the machines that should accept it.
 - `gh auth login`, 1Password (app and `op`), and the coding agents' own logins (pi, Claude Code, Codex).
-- API keys read from files: `~/.wakatime.cfg` (`api_key`, for WakaTime in pi and Neovim) and `~/.config/pi/firecrawl-api-key` (mode 0600, for pi's web search).
 
 **Network and sync**
 
