@@ -178,7 +178,7 @@ This runs `nh os switch --hostname <target>` after the same preflight checks as 
 | `just search <pkg>`    | Search nixpkgs for a package                                                                    |
 | `just show <pkg>`      | Show package information                                                                        |
 
-Native Nix cleanup is defined once in [`modules/system/_gc-policy.nix`](modules/system/_gc-policy.nix), applied by the `nix-gc` feature (included by `mac` and `server`) and read by `just clean`. All machines collect weekly with 14-day generation retention; the current generation is preserved, with no minimum-count guarantee. Store optimization runs separately (daily on MiniPC, weekly on Macs). `just clean` uses sudo to run native GC, then optimization; NH remains the rebuild CLI, not the collector. Retention protects profile generations, not arbitrary unreferenced build outputs.
+Native Nix cleanup is defined once in the `nix-gc` feature ([`modules/system/nix-gc.nix`](modules/system/nix-gc.nix), included by `mac` and `server`); `just clean` reads the retention from the host's evaluated `nix.gc.options`. All machines collect weekly with 14-day generation retention; the current generation is preserved, with no minimum-count guarantee. Store optimization runs separately (daily on MiniPC, weekly on Macs). `just clean` uses sudo to run native GC, then optimization; NH remains the rebuild CLI, not the collector. Retention protects profile generations, not arbitrary unreferenced build outputs.
 
 ## Module Architecture
 

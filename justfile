@@ -19,7 +19,13 @@ update-pins *ARGS:
 
 # Clean up old generations and garbage collect
 clean:
-    args=$(nix eval --raw --file {{ quote(justfile_directory() / "modules/system/_gc-policy.nix") }} nix.gc.options) && sudo -- "$(command -v nix-collect-garbage)" $args && sudo -- "$(command -v nix-store)" --optimise
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case "$(uname -s)" in Darwin) kind=darwin ;; *) kind=nixos ;; esac
+    # Retention is this host's nix.gc.options, set by the nix-gc feature.
+    args=$(nix eval --raw {{ quote(justfile_directory()) }}"#${kind}Configurations.$(hostname).config.nix.gc.options")
+    sudo -- "$(command -v nix-collect-garbage)" $args
+    sudo -- "$(command -v nix-store)" --optimise
 
 # Format all nix files
 fmt:
