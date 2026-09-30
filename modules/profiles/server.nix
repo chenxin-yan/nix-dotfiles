@@ -8,15 +8,9 @@
       development
       nix-gc
       _1password
+      bluetooth
+      mosh
     ];
 
-    nixos =
-      { lib, ... }:
-      {
-        imports = [ ../../legacy/modules/nixos ];
-
-        nixos.bluetooth.enable = lib.mkDefault true;
-        nixos.mosh.enable = lib.mkDefault true;
-      };
   };
 }

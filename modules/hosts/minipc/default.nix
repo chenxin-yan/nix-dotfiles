@@ -7,7 +7,10 @@ in
     system = "x86_64-linux";
     login = "cyan";
 
-    features = with config.features; [ server ];
+    features = with config.features; [
+      server
+      syncthing
+    ];
 
     configuration =
       {
@@ -148,8 +151,6 @@ in
 
       {
         home.stateVersion = "25.05";
-
-        cli.syncthing.enable = true;
 
         home.packages = with pkgs; [
           # terminfo for xterm-ghostty so SSH sessions from Ghostty clients work

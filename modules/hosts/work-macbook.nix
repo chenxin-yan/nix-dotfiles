@@ -36,7 +36,6 @@
         ];
 
         programs.lazydocker.enable = true;
-        cli.syncthing.enable = false;
       };
   };
 }

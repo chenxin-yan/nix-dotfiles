@@ -13,22 +13,19 @@ in
       desktop
       nix-gc
       _1password
+      aerospace
       kanata
       sketchybar
+      iina
     ];
 
     darwin =
       {
         config,
-        lib,
         pkgs,
         ...
       }:
       {
-        imports = [ ../../legacy/modules/darwin ];
-
-        darwin.aerospace.enable = lib.mkDefault true;
-
         # Fix macOS locale issue (BCP 47 format incompatible with Unix tools)
         environment.variables = {
           LANG = "en_US.UTF-8";
@@ -83,13 +80,10 @@ in
     homeManager =
       {
         config,
-        lib,
         pkgs,
         ...
       }:
       {
-        app.darwin.iina.enable = lib.mkDefault true;
-
         home.packages = with pkgs; [
           wechat
           obsidian
@@ -122,7 +116,6 @@ in
         };
 
         programs.nh.enable = true;
-        app.shared.zen-browser.enable = false;
       };
   };
 }

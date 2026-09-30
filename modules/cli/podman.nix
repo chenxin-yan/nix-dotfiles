@@ -45,12 +45,16 @@
           docker = "podman";
         };
 
-        initContent = lib.mkIf isDarwin ''
-          # Set DOCKER_HOST for Podman machine on macOS.
-          if command -v podman >/dev/null 2>&1; then
-            export DOCKER_HOST=unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
-          fi
-        '';
+        # mkAfter: runs after the zsh feature's `source ~/.env`, so this
+        # DOCKER_HOST wins over one set there.
+        initContent = lib.mkIf isDarwin (
+          lib.mkAfter ''
+            # Set DOCKER_HOST for Podman machine on macOS.
+            if command -v podman >/dev/null 2>&1; then
+              export DOCKER_HOST=unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
+            fi
+          ''
+        );
       };
     };
 }

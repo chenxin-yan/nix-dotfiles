@@ -4,7 +4,10 @@
     system = "aarch64-darwin";
     login = "yanchenxin";
 
-    features = with config.features; [ mac ];
+    features = with config.features; [
+      mac
+      syncthing
+    ];
 
     configuration =
       { host, pkgs, ... }:
@@ -26,7 +29,6 @@
     home = {
       home.stateVersion = "25.05";
 
-      cli.syncthing.enable = true;
     };
   };
 }

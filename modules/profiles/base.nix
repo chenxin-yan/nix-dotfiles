@@ -5,20 +5,17 @@
     includes = with config.features; [
       paths
       theme
+      agents
+      git
+      jj
+      nvim
+      zsh
+      nushell
     ];
 
     homeManager =
-      { pkgs, lib, ... }:
+      { pkgs, ... }:
       {
-        imports = [ ../../legacy/modules/home ];
-
-        agents.enable = lib.mkDefault true;
-        core.git.enable = lib.mkDefault true;
-        core.jj.enable = lib.mkDefault true;
-        core.nvim.enable = lib.mkDefault true;
-        core.zsh.enable = lib.mkDefault true;
-        core.nushell.enable = lib.mkDefault true;
-
         home.packages = with pkgs; [
           tlrc
           tokei

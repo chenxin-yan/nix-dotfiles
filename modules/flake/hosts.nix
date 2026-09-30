@@ -16,7 +16,7 @@ let
     ;
 
   # Plain facts without the modules: the `hosts` flake output that
-  # scripts/utils/switch.sh reads, and the `host`/`hosts` module arguments.
+  # scripts/utils/switch.sh reads, and the `host` module argument.
   hosts = lib.mapAttrs (_: host: { inherit (host) system login; }) config.hosts;
 
   # The host's selected features, as modules of one class (see features.nix).
@@ -24,25 +24,24 @@ let
 
   # Facts every registered target shares: hostname = inventory key,
   # platform from inventory, integrated Home Manager for the host login.
-  # Host modules receive their inventory entry as `host`; home modules
-  # receive the whole inventory as `hosts` for managed-peer facts.
+  # System modules receive their inventory entry as `host`; anything else
+  # (inputs, other hosts) is read from the top-level config by closure.
   # The inventory key owns the hostname, so an imported installer
   # configuration's own networking.hostName cannot override it.
   hostModule = name: host: {
+    _module.args.host = host;
     networking.hostName = lib.mkForce name;
     nixpkgs.hostPlatform = host.system;
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;
       users.${host.login}.imports = [ config.hosts.${name}.home ] ++ classModules "homeManager" name;
-      extraSpecialArgs = { inherit inputs hosts; };
     };
   };
 
   darwinHost =
     name: host:
     nix-darwin.lib.darwinSystem {
-      specialArgs = { inherit inputs host; };
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
@@ -64,7 +63,6 @@ let
   nixosHost =
     name: host:
     nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs host; };
       modules = [
         home-manager.nixosModules.home-manager
         config.hosts.${name}.configuration
@@ -119,6 +117,8 @@ in
       // {
         uid = cfg.users.users.${host.login}.uid;
         dotfiles = cfg.home-manager.users.${host.login}.dotfiles;
+        # `nix eval .#hosts.<name>.features` answers "is X on for this host?"
+        features = map (f: f.name) config.hosts.${name}.selected;
       }
     ) hosts;
   };
