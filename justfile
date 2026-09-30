@@ -23,7 +23,7 @@ clean:
 
 # Format all nix files
 fmt:
-    treefmt
+    nix fmt
 
 # Search for a package
 search PACKAGE:
