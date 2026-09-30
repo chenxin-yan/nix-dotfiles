@@ -1,7 +1,8 @@
-# Full local development toolchain: language tools plus developer CLIs.
+# Development toolchain: coding agents, developer CLIs and languages.
 { config, ... }:
 {
   features.development.includes = with config.features; [
+    agents
     herdr
     mise
     pandoc

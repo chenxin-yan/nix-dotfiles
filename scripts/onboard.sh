@@ -380,9 +380,9 @@ else
       mkdir -p "$work/host/_installed/$(dirname "$rel")"
       cp "$src/$rel" "$work/host/_installed/$rel"
     done
-    features="nixos-base base development"
+    features="base development"
   else
-    features="mac"
+    features="workstation desktop"
   fi
   {
     if [ "$os" = nixos ]; then

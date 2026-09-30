@@ -1,5 +1,7 @@
-{ lib, ... }:
+{ config, lib, ... }:
 let
+  inherit (config) features;
+
   featureRef =
     lib.types.addCheck lib.types.raw (f: builtins.isAttrs f && f ? name && f ? includes)
     // {
@@ -84,8 +86,16 @@ in
             selected = lib.mkOption {
               type = lib.types.listOf featureRef;
               readOnly = true;
-              default = resolve { inherit (config) features exclude; };
-              description = "The resolved feature set.";
+              # The platform profile follows `system`, so it cannot be
+              # forgotten or disagree with it.
+              default = resolve {
+                features = [
+                  (if lib.hasSuffix "-darwin" config.system then features.darwin else features.nixos)
+                ]
+                ++ config.features;
+                inherit (config) exclude;
+              };
+              description = "The resolved feature set, platform profile first.";
             };
           };
         }

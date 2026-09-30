@@ -9,7 +9,9 @@ in
 
     features = with config.features; [
       server
+      workstation
       syncthing
+      bluetooth
     ];
 
     nixos =

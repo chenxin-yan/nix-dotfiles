@@ -4,7 +4,10 @@
     system = "aarch64-darwin";
     login = "chenxin-yan";
 
-    features = with config.features; [ mac ];
+    features = with config.features; [
+      workstation
+      desktop
+    ];
 
     # Docker via colima instead of podman (see homeManager below).
     exclude = with config.features; [ podman ];

@@ -5,7 +5,8 @@
     login = "yanchenxin";
 
     features = with config.features; [
-      mac
+      workstation
+      desktop
       syncthing
     ];
 

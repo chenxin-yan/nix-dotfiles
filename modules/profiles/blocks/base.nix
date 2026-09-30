@@ -1,14 +1,15 @@
-# Shared preferences and core tools for every managed home.
+# Every managed home: shell, editor, version control and client tools.
 { config, ... }:
 {
   features.base.includes = with config.features; [
     paths
     theme
-    agents
+    zsh
+    nvim
     git
     jj
-    nvim
-    zsh
     utils
+    ssh
+    mosh
   ];
 }
