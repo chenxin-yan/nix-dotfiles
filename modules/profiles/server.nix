@@ -7,6 +7,9 @@
       base
       development
       nix-gc
+      unfree
+      tailscale
+      ssh
       _1password
       bluetooth
       mosh

@@ -1,4 +1,10 @@
 {
+  features.mosh.homeManager =
+    { pkgs, lib, ... }:
+    {
+      home.packages = lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.mosh ];
+    };
+
   features.mosh.nixos = {
     programs.mosh.enable = true;
 

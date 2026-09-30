@@ -3,6 +3,9 @@
 {
   features.zsh.includes = with config.features; [ paths ];
 
+  features.zsh.darwin.programs.zsh.enable = true;
+  features.zsh.nixos.programs.zsh.enable = true;
+
   features.zsh.homeManager =
     { config, ... }:
     {

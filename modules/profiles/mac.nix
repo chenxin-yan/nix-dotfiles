@@ -12,6 +12,12 @@ in
       development
       apps
       nix-gc
+      nix-settings
+      nh
+      unfree
+      tailscale
+      ssh
+      mosh
       _1password
       aerospace
       kanata
@@ -20,11 +26,7 @@ in
     ];
 
     darwin =
-      {
-        config,
-        pkgs,
-        ...
-      }:
+      { pkgs, ... }:
       {
         # Fix macOS locale issue (BCP 47 format incompatible with Unix tools)
         environment.variables = {
@@ -38,17 +40,8 @@ in
           keymapp
         ];
 
-        nix.settings.experimental-features = [
-          "nix-command"
-          "flakes"
-        ];
-
         # Set Git commit hash for darwin-version.
         system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
-
-        programs.zsh.enable = true;
-
-        nixpkgs.config.allowUnfree = true;
 
         fonts.packages = [
           pkgs.nerd-fonts.jetbrains-mono
@@ -66,10 +59,6 @@ in
             cleanup = "zap";
           };
         };
-
-        services.tailscale.enable = true;
-
-        services.openssh.enable = true;
       };
 
     homeManager =
@@ -82,19 +71,10 @@ in
         home.packages = with pkgs; [
           wechat
           obsidian
-          mosh
         ];
 
         programs.ssh = {
-          enable = true;
-          enableDefaultConfig = false;
           settings = {
-            "github.com" = {
-              AddKeysToAgent = "yes";
-              IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
-              UseKeychain = "yes";
-            };
-
             "cyan-minipc" = {
               User = hosts.minipc.login;
               IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
@@ -109,8 +89,6 @@ in
             };
           };
         };
-
-        programs.nh.enable = true;
       };
   };
 }

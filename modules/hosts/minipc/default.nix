@@ -54,8 +54,6 @@ in
         programs.nix-ld.libraries = with pkgs; [
         ];
 
-        programs.zsh.enable = true;
-
         # Define a user account. Don't forget to set a password with ‘passwd’.
         users.users.${host.login} = {
           isNormalUser = true;
@@ -71,9 +69,6 @@ in
           shell = pkgs.zsh;
           linger = true; # Keep user services running without active login session
         };
-
-        # Allow unfree packages
-        nixpkgs.config.allowUnfree = true;
 
         # List packages installed in system profile. To search, run:
         # $ nix search wget
@@ -91,8 +86,6 @@ in
 
         # List services that you want to enable:
 
-        # Enable the OpenSSH daemon.
-        services.openssh.enable = true;
         services.openssh.settings.PermitRootLogin = "yes";
 
         # Firewall
@@ -124,9 +117,6 @@ in
         # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
         system.stateVersion = "25.05"; # Did you read the comment?
 
-        # Tailscale VPN
-        services.tailscale.enable = true;
-
         # Use systemd-resolved for DNS (fixes known Tailscale DNS issue on NixOS,
         # enables MagicDNS). See: https://github.com/tailscale/tailscale/issues/4254
         services.resolved.enable = true;
@@ -154,14 +144,7 @@ in
           "cyan-macbook ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILWPwldEec8fXHXQVExXb+Wix89Sxs5fOxxYCrShl+aI";
 
         programs.ssh = {
-          enable = true;
-          enableDefaultConfig = false;
           settings = {
-            "github.com" = {
-              AddKeysToAgent = "yes";
-              IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
-            };
-
             "cyan-macbook" = {
               User = hosts.macbook.login;
               IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
