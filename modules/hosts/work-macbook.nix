@@ -5,10 +5,10 @@
     login = "chenxin-yan";
 
     features = with config.features; [ mac ];
-    # Docker via colima instead of podman (see home below).
+    # Docker via colima instead of podman (see homeManager below).
     exclude = with config.features; [ podman ];
 
-    configuration =
+    darwin =
       { host, pkgs, ... }:
       {
         system.stateVersion = 6;
@@ -23,7 +23,7 @@
         };
       };
 
-    home =
+    homeManager =
       { pkgs, ... }:
       {
         home.stateVersion = "25.05";

@@ -35,7 +35,7 @@ Profiles are features that only bundle others. `mac` is what every Mac gets, and
 
 ### Hosts
 
-A host (`hosts.<name>`) sets its platform, login, selected features and any machine-only config. The name is both the flake target and the hostname.
+A host (`hosts.<name>`) sets its platform, login, selected features and any machine-only config, under the same `darwin`, `nixos` and `homeManager` keys a feature uses. The name is both the flake target and the hostname.
 
 ```nix
 # modules/hosts/work-macbook.nix
@@ -44,8 +44,8 @@ hosts.work-macbook = {
   login = "chenxin-yan";
   features = with config.features; [ mac ];
   exclude = with config.features; [ podman ]; # an exception to the profile
-  configuration = { /* nix-darwin: state version, account */ };
-  home = { /* Home Manager: machine-only packages */ };
+  darwin = { /* nix-darwin: state version, account */ };
+  homeManager = { /* Home Manager: machine-only packages */ };
 };
 ```
 

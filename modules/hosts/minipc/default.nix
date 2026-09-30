@@ -12,7 +12,7 @@ in
       syncthing
     ];
 
-    configuration =
+    nixos =
       {
         config,
         host,
@@ -133,7 +133,7 @@ in
         services.envfs.enable = true;
       };
 
-    home =
+    homeManager =
       {
         config,
         pkgs,

@@ -19,8 +19,10 @@ let
   # scripts/utils/switch.sh reads, and the `host` module argument.
   hosts = lib.mapAttrs (_: host: { inherit (host) system login; }) config.hosts;
 
-  # The host's selected features, as modules of one class (see features.nix).
-  classModules = class: name: map (f: f.${class}) config.hosts.${name}.selected;
+  # The host's own module of one class, then its selected features' (see
+  # features.nix). A host sets the same class keys a feature does.
+  classModules =
+    class: name: [ config.hosts.${name}.${class} ] ++ map (f: f.${class}) config.hosts.${name}.selected;
 
   # Facts every registered target shares: hostname = inventory key,
   # platform from inventory, integrated Home Manager for the host login.
@@ -35,7 +37,7 @@ let
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;
-      users.${host.login}.imports = [ config.hosts.${name}.home ] ++ classModules "homeManager" name;
+      users.${host.login}.imports = classModules "homeManager" name;
     };
   };
 
@@ -45,7 +47,6 @@ let
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
-        config.hosts.${name}.configuration
         (hostModule name host)
         {
           system.primaryUser = host.login;
@@ -65,7 +66,6 @@ let
     nixpkgs.lib.nixosSystem {
       modules = [
         home-manager.nixosModules.home-manager
-        config.hosts.${name}.configuration
         (hostModule name host)
       ]
       ++ classModules "nixos" name;
@@ -90,12 +90,17 @@ in
             type = lib.types.str;
             description = "Primary user, managed by integrated Home Manager.";
           };
-          configuration = lib.mkOption {
+          darwin = lib.mkOption {
             type = lib.types.deferredModule;
             default = { };
-            description = "nix-darwin or NixOS module for this host.";
+            description = "nix-darwin module for this host; used when `system` is `*-darwin`.";
           };
-          home = lib.mkOption {
+          nixos = lib.mkOption {
+            type = lib.types.deferredModule;
+            default = { };
+            description = "NixOS module for this host; used when `system` is `*-linux`.";
+          };
+          homeManager = lib.mkOption {
             type = lib.types.deferredModule;
             default = { };
             description = "Home Manager module for the login user.";

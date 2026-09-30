@@ -9,7 +9,7 @@
       syncthing
     ];
 
-    configuration =
+    darwin =
       { host, pkgs, ... }:
       {
         # Used for backwards compatibility, please read the changelog before changing.
@@ -26,7 +26,7 @@
         };
       };
 
-    home = {
+    homeManager = {
       home.stateVersion = "25.05";
     };
   };

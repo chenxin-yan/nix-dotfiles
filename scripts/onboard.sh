@@ -399,7 +399,7 @@ else
     echo "    login = \"$login\";"
     echo "    features = with config.features; [ $features ];"
     echo
-    echo "    configuration ="
+    echo "    $os ="
     echo "      { host, ... }:"
     echo "      {"
     if [ "$os" = nixos ]; then
@@ -417,7 +417,7 @@ else
     [ "$automigrate" = no ] || { echo; echo "        nix-homebrew.autoMigrate = true;"; }
     echo "      };"
     echo
-    echo "    home.home.stateVersion = \"$hm_state\";"
+    echo "    homeManager.home.stateVersion = \"$hm_state\";"
     echo "  };"
     echo "}"
   } >"$work/host/default.nix"
