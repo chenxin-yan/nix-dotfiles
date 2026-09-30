@@ -86,13 +86,9 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 
 **macOS permissions** (approve in System Settings when prompted)
 
-- Karabiner driver extension (for kanata): *General → Login Items & Extensions*.
-- Input Monitoring for kanata, Accessibility for AeroSpace and espanso: *Privacy & Security*.
-- Background items for sketchybar and the other agents: *General → Login Items & Extensions*.
-
-**work-macbook**
-
-- `colima start` before using Docker; it uses colima instead of podman.
+- Karabiner driver extension (for kanata): _General → Login Items & Extensions_.
+- Input Monitoring for kanata, Accessibility for AeroSpace and espanso: _Privacy & Security_.
+- Background items for sketchybar and the other agents: _General → Login Items & Extensions_.
 
 ## Daily use
 
