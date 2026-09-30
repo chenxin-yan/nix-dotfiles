@@ -4,20 +4,13 @@
     system = "aarch64-darwin";
     login = "chenxin-yan";
 
+    features = with config.features; [ mac ];
     # Docker via colima instead of podman (see home below).
-    features = with config.features; [
-      _1password
-      kanata
-      sketchybar
-    ];
+    exclude = with config.features; [ podman ];
 
     configuration =
       { host, pkgs, ... }:
       {
-        imports = [
-          ../../legacy/profiles/darwin
-        ];
-
         system.stateVersion = 6;
 
         users.users.${host.login} = {
@@ -33,10 +26,6 @@
     home =
       { pkgs, ... }:
       {
-        imports = [
-          ../../legacy/profiles/home/darwin.nix
-        ];
-
         home.stateVersion = "25.05";
 
         home.packages = with pkgs; [

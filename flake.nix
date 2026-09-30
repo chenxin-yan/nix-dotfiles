@@ -37,7 +37,5 @@
     };
   };
 
-  # Every .nix file under ./modules is a flake-parts module; paths containing
-  # `/_` are skipped (import-tree's default).
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }

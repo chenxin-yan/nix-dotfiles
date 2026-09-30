@@ -1,13 +1,13 @@
 { config, ... }:
+let
+  inherit (config) hosts;
+in
 {
   hosts.minipc = {
     system = "x86_64-linux";
     login = "cyan";
 
-    features = with config.features; [
-      _1password
-      podman
-    ];
+    features = with config.features; [ server ];
 
     configuration =
       {
@@ -20,7 +20,6 @@
       {
         imports = [
           ./_hardware-configuration.nix
-          ../../../legacy/profiles/nixos
         ];
 
         # Bootloader.
@@ -60,14 +59,6 @@
         ];
 
         programs.zsh.enable = true;
-
-        # catppuccin
-        catppuccin = {
-          autoEnable = true;
-          enable = true;
-          flavor = "mocha";
-          accent = "lavender";
-        };
 
         # Define a user account. Don't forget to set a password with ‘passwd’.
         users.users.${host.login} = {
@@ -151,17 +142,11 @@
     home =
       {
         config,
-        hosts,
         pkgs,
         ...
       }:
 
       {
-        imports = [
-          ../../../legacy/profiles/home/base.nix
-          ../../../legacy/profiles/home/development.nix
-        ];
-
         home.stateVersion = "25.05";
 
         cli.syncthing.enable = true;

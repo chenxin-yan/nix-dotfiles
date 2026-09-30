@@ -10,7 +10,6 @@
 let
   inherit (inputs)
     nixpkgs
-    catppuccin
     home-manager
     nix-darwin
     nix-homebrew
@@ -35,7 +34,6 @@ let
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;
-      sharedModules = [ catppuccin.homeModules.catppuccin ];
       users.${host.login}.imports = [ config.hosts.${name}.home ] ++ classModules "homeManager" name;
       extraSpecialArgs = { inherit inputs hosts; };
     };
@@ -68,7 +66,6 @@ let
     nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs host; };
       modules = [
-        catppuccin.nixosModules.catppuccin
         home-manager.nixosModules.home-manager
         config.hosts.${name}.configuration
         (hostModule name host)
