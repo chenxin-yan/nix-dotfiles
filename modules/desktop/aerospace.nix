@@ -6,9 +6,6 @@
         enable = true;
         settings = {
           after-login-command = [ ];
-          # after-startup-command = [
-          #   "exec-and-forget ${pkgs.sketchybar}/bin/sketchybar"
-          # ];
           exec-on-workspace-change = [
             "${pkgs.bash}/bin/bash"
             "-c"

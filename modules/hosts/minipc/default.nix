@@ -29,13 +29,6 @@ in
         boot.loader.systemd-boot.enable = true;
         boot.loader.efi.canTouchEfiVariables = true;
 
-        # networking.hostName comes from the `hosts.minipc` key.
-        # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-        # Configure network proxy if necessary
-        # networking.proxy.default = "http://user:password@proxy:port/";
-        # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
         # Enable networking
         networking.networkmanager.enable = true;
 
@@ -75,7 +68,6 @@ in
           openssh.authorizedKeys.keys = [
             "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF4X1mHyGNSyyVqrWSIO/slGUBFPzcMOuDmP9UKI1FdN"
           ];
-          packages = with pkgs; [ ];
           shell = pkgs.zsh;
           linger = true; # Keep user services running without active login session
         };
@@ -87,7 +79,6 @@ in
         # $ nix search wget
         environment.systemPackages = with pkgs; [
           git
-          vim
         ];
 
         # Some programs need SUID wrappers, can be configured further or are
