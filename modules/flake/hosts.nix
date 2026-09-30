@@ -1,6 +1,12 @@
-# Pre-dendritic host wiring, moved verbatim from flake.nix. It shrinks as
-# features move into modules/ and is deleted with legacy/.
-{ inputs, ... }:
+# Host inventory and system constructors. Each modules/hosts/<name> file
+# registers one machine under `hosts.<name>`; the key is the flake target and
+# the managed hostname.
+{
+  inputs,
+  config,
+  lib,
+  ...
+}:
 let
   inherit (inputs)
     nixpkgs
@@ -9,8 +15,10 @@ let
     nix-darwin
     nix-homebrew
     ;
-  lib = nixpkgs.lib;
-  hosts = import ../../legacy/hosts;
+
+  # Plain facts without the modules: the `hosts` flake output that
+  # scripts/utils/switch.sh reads, and the `host`/`hosts` module arguments.
+  hosts = lib.mapAttrs (_: host: { inherit (host) system login; }) config.hosts;
 
   # Facts every registered target shares: hostname = inventory key,
   # platform from inventory, integrated Home Manager for the host login.
@@ -25,7 +33,7 @@ let
       useGlobalPkgs = true;
       useUserPackages = true;
       sharedModules = [ catppuccin.homeModules.catppuccin ];
-      users.${host.login}.imports = [ ../../legacy/hosts/${name}/home.nix ];
+      users.${host.login}.imports = [ config.hosts.${name}.home ];
       extraSpecialArgs = { inherit inputs hosts; };
     };
   };
@@ -37,7 +45,7 @@ let
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
-        ../../legacy/hosts/${name}/configuration.nix
+        config.hosts.${name}.configuration
         (hostModule name host)
         {
           system.primaryUser = host.login;
@@ -53,12 +61,12 @@ let
 
   nixosHost =
     name: host:
-    lib.nixosSystem {
+    nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs host; };
       modules = [
         catppuccin.nixosModules.catppuccin
         home-manager.nixosModules.home-manager
-        ../../legacy/hosts/${name}/configuration.nix
+        config.hosts.${name}.configuration
         (hostModule name host)
       ];
     };
@@ -69,7 +77,35 @@ let
   configurations = darwinConfigurations // nixosConfigurations;
 in
 {
-  flake = {
+  options.hosts = lib.mkOption {
+    default = { };
+    type = lib.types.attrsOf (
+      lib.types.submodule {
+        options = {
+          system = lib.mkOption {
+            type = lib.types.enum config.systems;
+            description = "Platform; `*-darwin` builds nix-darwin, `*-linux` builds NixOS.";
+          };
+          login = lib.mkOption {
+            type = lib.types.str;
+            description = "Primary user, managed by integrated Home Manager.";
+          };
+          configuration = lib.mkOption {
+            type = lib.types.deferredModule;
+            default = { };
+            description = "nix-darwin or NixOS module for this host.";
+          };
+          home = lib.mkOption {
+            type = lib.types.deferredModule;
+            default = { };
+            description = "Home Manager module for the login user.";
+          };
+        };
+      }
+    );
+  };
+
+  config.flake = {
     inherit darwinConfigurations nixosConfigurations;
 
     hosts = lib.mapAttrs (

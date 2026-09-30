@@ -2,7 +2,7 @@
 # Activate this machine's registered configuration with nh.
 #
 # Usage: ./scripts/utils/switch.sh [TARGET]
-#   (none)  The local hostname must be a target registered in hosts/default.nix.
+#   (none)  The local hostname must be a target registered in modules/hosts/.
 #   TARGET  One-time explicit bootstrap for a machine not yet named after its
 #           target. Platform, login, UID and checkout checks still apply.
 #

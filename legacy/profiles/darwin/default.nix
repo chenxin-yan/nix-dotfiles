@@ -1,5 +1,5 @@
 # System settings shared by every registered Mac. Account facts, state
-# versions and hostnames stay in hosts/<name>/configuration.nix and the flake.
+# versions and hostnames stay in modules/hosts/<name> and modules/flake/hosts.nix.
 {
   config,
   lib,
