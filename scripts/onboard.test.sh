@@ -36,7 +36,7 @@ case "${0##*/}" in
         while [ "$1" != --out-link ]; do shift; done
         ln -s "$MOCK/system" "$2"
         exit "${FAIL_BUILD:-0}" ;;
-      *'/* inventory */'*) [ "$MOCK_NEW" = yes ] || printf 'laptop %s alice\n' "$MOCK_SYSTEM" ;;
+      *onboard-inventory.nix*) [ "$MOCK_NEW" = yes ] || printf 'laptop %s alice\n' "$MOCK_SYSTEM" ;;
       *release.json*) echo '26.11 7' ;;
       *type.check*) echo yes ;;
       *'#hosts.laptop '*) printf '%s\nalice\n1001\n%s/dotfiles\n' "$MOCK_SYSTEM" "$HOME" ;;

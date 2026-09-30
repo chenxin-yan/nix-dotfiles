@@ -219,23 +219,9 @@ esac
 # ── Stage 2 ───────────────────────────────────────────────────────────────
 stage "Select or register the target"
 
-# Registration is the host file itself. The files are read directly, not
-# through the flake, so a host written by an earlier run but not yet tracked
-# by Git still counts (stage 5 then offers the git add). Host files are
-# functions of the top-level config; only system and login are forced.
-# shellcheck disable=SC2016 # Nix interpolation, not shell
-inventory="$(ONBOARD_HOSTS_DIR="$root/modules/hosts" nixx eval --raw --impure --expr '/* inventory */
-  let
-    dir = /. + builtins.getEnv "ONBOARD_HOSTS_DIR";
-    entries = builtins.readDir dir;
-    file = n: if entries.${n} == "directory" then dir + "/${n}/default.nix" else dir + "/${n}";
-    isHost = n: builtins.match "_.*" n == null
-      && (if entries.${n} == "directory" then builtins.pathExists (file n) else builtins.match ".*\\.nix" n != null);
-    load = n: let m = import (file n); in
-      (if builtins.isFunction m then m { config = { features = { }; hosts = { }; }; } else m).hosts or { };
-  in builtins.concatStringsSep "" (builtins.concatMap
-    (n: let h = load n; in map (k: "${k} ${h.${k}.system} ${h.${k}.login}\n") (builtins.attrNames h))
-    (builtins.filter isHost (builtins.attrNames entries)))')" \
+# Registration is the host file itself; see scripts/onboard-inventory.nix.
+inventory="$(nixx eval --raw --impure --file "$root/scripts/onboard-inventory.nix" \
+  --apply "f: f { dir = \"$root/modules/hosts\"; }")" \
   || die "could not read the host files in modules/hosts"
 say "Registered targets (modules/hosts/):"
 printf '%s\n' "$inventory" | indent
