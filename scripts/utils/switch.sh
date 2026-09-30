@@ -2,7 +2,7 @@
 # Activate this machine's registered configuration with nh.
 #
 # Usage: ./scripts/utils/switch.sh [TARGET]
-#   (none)  The local hostname must be a target registered in hosts/default.nix.
+#   (none)  The local hostname must be a target registered in modules/hosts/.
 #   TARGET  One-time explicit bootstrap for a machine not yet named after its
 #           target. Platform, login, UID and checkout checks still apply.
 #
@@ -22,7 +22,7 @@ die() {
 root="$(cd -P "$(dirname "$0")/../.." && pwd -P)"
 
 command -v nix >/dev/null || die "nix not found"
-command -v nh >/dev/null || die "nh not found; for a fresh install use the bootstrap command in README.md"
+command -v nh >/dev/null || die "nh not found; onboard a fresh install with: bash scripts/onboard.sh"
 
 # Supported operating systems: macOS (nix-darwin) and NixOS. Other Linux
 # distributions, including Raspberry Pi OS, have no target in this phase.

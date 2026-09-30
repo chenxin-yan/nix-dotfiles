@@ -1,9 +1,0 @@
-{ ... }:
-
-{
-  imports = [
-    ./iina
-    ./kanata
-    ./sketchybar
-  ];
-}
