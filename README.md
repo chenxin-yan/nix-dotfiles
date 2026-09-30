@@ -210,7 +210,7 @@ There are no enable flags: a feature is on for a host when the host selects it, 
 ```
 
 - **Features** (`modules/flake/features.nix`): `features.<name>` has optional `darwin`, `nixos` and `homeManager` modules plus `includes`. Each part is tagged with its module class, so a part in the wrong place is an evaluation error. Features are selected by reference, so a misspelt name fails evaluation instead of being ignored.
-- **Resolution**: a host's features are expanded through `includes` (breadth-first, deduplicated), minus `exclude`. Excluding a feature also drops what only it includes. `hosts.nix` imports each selected feature's part for the host's platform and for its Home Manager user. A feature no host selects, like `apps/zen-browser`, is never evaluated.
+- **Resolution**: a host's features are expanded through `includes` (breadth-first, deduplicated), minus `exclude`. Excluding a feature also drops what only it includes. `hosts.nix` imports each selected feature's part for the host's platform and for its Home Manager user. A feature no host selects is never evaluated.
 - **Profiles** (`modules/profiles/`): `base` (every home), `development`, `desktop` (cross-platform GUI apps), `mac` (every Mac: base + development + desktop + macOS system policy and window management), `nixos-base` (flakes + NH, what onboarding adds to a new NixOS host) and `server` (the mini PC).
 - **Shared settings**: features that read another feature's options include it (`nvim` and `zsh` include `paths`). Values from outside a module, like flake inputs or another host's login, come from the top-level config by closure; the only module argument passed in is the host's own entry, `host`.
 - **Inspect**: `nix eval .#hosts.<name>.features --json` lists what a host runs.
@@ -256,7 +256,6 @@ The goal is password-less SSH between all managed machines. Today the repo carri
 |            | `espanso`                                                                               | h     | Text expander                                                                                     |
 |            | `todoist`                                                                               | h     | Task management                                                                                   |
 |            | `iina`                                                                                  | h     | Video player (macOS)                                                                              |
-|            | `zen-browser`                                                                           | h     | Privacy-focused browser; not selected by any host                                                 |
 | `desktop/` | `aerospace`                                                                             | d     | Tiling window manager                                                                             |
 |            | `kanata`                                                                                | d h   | Keyboard remapper daemon and its keymap                                                           |
 |            | `sketchybar`                                                                            | d h   | Status bar agent and its config                                                                   |
@@ -450,7 +449,6 @@ The ZSA Voyager keyboard is excluded from Kanata remapping.
 | `nix-homebrew`  | `zhaofengli/nix-homebrew`              | Declarative Homebrew management          |
 | `catppuccin`    | `catppuccin/nix`                       | Global theming                           |
 | `pi-catppuccin` | `otahontas/pi-coding-agent-catppuccin` | Catppuccin theme for the pi coding agent |
-| `zen-browser`   | `0xc000022070/zen-browser-flake`       | Zen Browser for NixOS                    |
 | `hunk`          | `modem-dev/hunk`                       | Diff viewer (Home Manager module)        |
 
 ## Environment Variables

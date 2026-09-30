@@ -26,11 +26,6 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     herdr-micro = {
       url = "github:chenxin-yan/herdr-micro";
       inputs.nixpkgs.follows = "nixpkgs";
