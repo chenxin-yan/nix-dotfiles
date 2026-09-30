@@ -65,7 +65,6 @@ in
           ];
           casks = [
             "font-sf-pro"
-            "todoist-app"
           ];
           onActivation = {
             cleanup = "zap";
