@@ -219,7 +219,7 @@ To add a feature, create a file (for example `modules/cli/foo.nix` defining `fea
 
 ### Switching
 
-`just switch` runs `scripts/utils/switch.sh`. It reads the inventory from the flake's `hosts` output (never a second list in shell), then refuses to activate unless the OS is macOS or NixOS, the target is registered, and the target's platform, login, UID and `~/dotfiles` path match the running machine and checkout. It never updates `flake.lock`, deploys over SSH, or falls back to a default target. `scripts/utils/switch.test.sh` exercises these branches with stubbed `nix`/`nh`/`uname`/`hostname`/`id` and never builds anything.
+`just switch` runs `scripts/utils/switch.sh`. It reads the inventory from the flake's `hosts` output (never a second list in shell), then refuses to activate unless the OS is macOS or NixOS, the target is registered, and the target's platform, login, UID and `~/dotfiles` path match the running machine and checkout. It never updates `flake.lock`, deploys over SSH, or falls back to a default target.
 
 New configuration files must be tracked by Git before switching; Git-backed flakes omit untracked files. Deploy the changes to `~/dotfiles` rather than activating a separate development checkout. On an existing Mac whose hostname has not changed yet, use `just switch macbook` or `just switch work-macbook` once, after checking its declared UID/home and the Homebrew cleanup policy.
 
@@ -270,7 +270,7 @@ Lua-based configuration in `modules/core/nvim/config/` using [lazy.nvim](https:/
 
 Vite+ integration lives in `modules/core/nvim/config/lua/cyan/plugins/languages/web/viteplus.lua`; `web/init.lua` wires its project detection, Oxlint configuration, and Conform override into the shared web setup. Vite+ projects use the workspace-local `node_modules/.bin/vp`: `vp lint --lsp` for diagnostics and `vp fmt --stdin-filepath` through Conform for formatting (including Markdown/MDX). Detection checks the package-manager workspace/lockfile root's `package.json` for a `vite-plus` dependency, falling back to the nearest package when there is no workspace marker. Install project dependencies first; keep shared lint/format settings in the root `vite.config.ts`. Plain Vite projects are not opted in. Other projects retain standalone Oxc, Biome, and Prettier selection. Oxfmt is configured only in Conform, not as an LSP server.
 
-After changing this configuration, restart Neovim. `:ConformInfo` shows the formatter executable and `:checkhealth vim.lsp` shows attached servers. Run the routing checks with installed plugins/tools using `nvim --headless -u NONE -l modules/core/nvim/config/tests/viteplus.lua` from this repo.
+After changing this configuration, restart Neovim. `:ConformInfo` shows the formatter executable and `:checkhealth vim.lsp` shows attached servers.
 
 <details>
 <summary><b>Coding</b> (8 plugins)</summary>
