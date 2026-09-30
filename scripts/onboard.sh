@@ -265,7 +265,7 @@ if [ "$mode" = existing ]; then
   say "Reusing $hostrel; the installed configuration is not re-imported or overwritten."
 elif [ "$os" = nixos ]; then
   if [ -L "$src" ] || [ ! -d "$src" ] || [ ! -f "$src/configuration.nix" ]; then
-    die "$src is not a plain directory with configuration.nix; only a conventional /etc/nixos is migrated. Register this machine by hand (README)."
+    die "$src is not a plain directory with configuration.nix; only a conventional /etc/nixos is migrated. Register this machine by copying a host file under modules/hosts/."
   fi
   [ ! -e "$src/flake.nix" ] \
     || die "$src/flake.nix is an independent flake with its own inputs; port it into $hostrel by hand instead."
@@ -372,7 +372,9 @@ else
   fi
 
   # One file registers the host: inventory facts, features, and the system
-  # and home modules. The installed NixOS files go under _installed/, which
+  # and home modules. A new Mac gets its roles; a NixOS machine gets only
+  # base + development until you pick roles, which bring unfree, Tailscale
+  # and sshd. The installed NixOS files go under _installed/, which
   # import-tree skips (they are NixOS modules, not flake modules).
   mkdir "$work/host"
   if [ "$os" = nixos ]; then
