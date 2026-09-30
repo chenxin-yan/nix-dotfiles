@@ -5,6 +5,7 @@
     login = "chenxin-yan";
 
     features = with config.features; [ mac ];
+
     # Docker via colima instead of podman (see homeManager below).
     exclude = with config.features; [ podman ];
 

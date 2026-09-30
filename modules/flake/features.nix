@@ -1,11 +1,3 @@
-# Feature registry and per-host selection. A feature is on for a host when
-# the host selects it, directly or through another feature's `includes`;
-# there are no enable flags. Each feature carries its half for every class
-# it touches, so one name brings, say, kanata's darwin daemon and its Home
-# Manager keymap together. Profiles are features too: config plus includes.
-#
-# Features are selected by reference (`with config.features; [ kanata ]`),
-# so a misspelt name is an "attribute missing" error, not a silent no-op.
 { lib, ... }:
 let
   featureRef =
