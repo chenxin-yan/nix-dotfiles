@@ -4,8 +4,8 @@
   anthropicSkills = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
-    rev = "33375500bcea98d610eb30ce10ac4e59b89c390d";
-    hash = "sha256-xUs7UX8pOcZwR0okaSbI/f8EE5F4Zi/BUd+nIZNafPc=";
+    rev = "8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4";
+    hash = "sha256-PRBkTEGNwT73EFCvuTprzIBGiG+UGSYiaCkY7Ji13us=";
   };
 
   vercelSkills = pkgs.fetchFromGitHub {
@@ -18,8 +18,8 @@
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "c55ee46073ed923f86ce59a5eb3b6d895095d1b7";
-    hash = "sha256-L3CpIT2DeI+fUFl9fcygojtQo2DzEen69rMD1XqR1vM=";
+    rev = "d81f3a183412e71a5b1e84ca21bc1a35eea03a60";
+    hash = "sha256-zQ/wVrcHjIC+UjP4nDw3HARMqZd6LIDFmHKlp8AADYI=";
   };
 
   pstack = pkgs.fetchFromGitHub {
