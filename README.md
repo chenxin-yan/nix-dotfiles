@@ -130,7 +130,7 @@ Create a file under `modules/features/<group>/` with the parts it needs:
 }
 ```
 
-Then add it to a profile's `includes` or a host's `features`.
+Then add it to a profile's `includes` or a host's `features`. Related features can nest: `core/agents/` owns shared skills and agent tools, and includes the separate `pi` feature in `core/agents/pi/`. Selecting `base` brings in the full agent setup; `exclude = [ pi ]` leaves the other agents available.
 
 ### Leave a feature out on one host
 

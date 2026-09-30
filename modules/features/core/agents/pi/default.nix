@@ -16,7 +16,7 @@
         exec "$HOME/.pi/agent/npm/node_modules/.bin/hypa" "$@"
       '';
 
-      agentSources = import ../../core/agents/_sources.nix { inherit pkgs; };
+      agentSources = import ../_sources.nix { inherit pkgs; };
       inherit (agentSources) ponytail;
       piWebAccessExtension = "${config.home.homeDirectory}/.pi/agent/npm/node_modules/pi-web-access/dist/index.js";
 
@@ -79,8 +79,6 @@
         # WAKATIME_API_KEY in ~/.env; an api_key in ~/.wakatime.cfg would
         # take precedence over it.
         wakatime-cli
-        claude-code
-        codex
       ];
 
       # Disable pi's startup "new version available" toast. The pi binary
@@ -96,7 +94,7 @@
         PI_SKIP_VERSION_CHECK = "1";
         # Ponytail default mode. `full` keeps the lazy-dev ruleset injected
         # every turn — it owns the YAGNI/minimal-code philosophy, which has
-        # been trimmed out of ../../core/agents/config/AGENTS.md to avoid duplication
+        # been trimmed out of ../config/AGENTS.md to avoid duplication
         # (AGENTS.md keeps the non-minimalism guidance: delegation,
         # planning, verification, error handling, single-source-of-truth).
         # Escalate/relax per session with `/ponytail lite|full|ultra` or
@@ -125,8 +123,8 @@
       # preferred over globs because they avoid pulling in dated variants
       # (e.g. claude-sonnet-4-6-20250929) and unrelated families.
       #
-      # Shared agent instructions and ~/.agents/skills live in
-      # modules/home/agents; this module only keeps Pi runtime settings.
+      # Shared agent instructions and ~/.agents/skills live in the parent
+      # agents feature; this module only keeps Pi runtime settings.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
@@ -285,7 +283,7 @@
           export default ext;
         '';
 
-        ".pi/agent/AGENTS.md".source = ../../core/agents/config/AGENTS.md;
+        ".pi/agent/AGENTS.md".source = ../config/AGENTS.md;
 
         ".pi/agent/prompts" = {
           source = ./config/prompts;

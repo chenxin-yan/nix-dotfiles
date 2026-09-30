@@ -5,7 +5,6 @@
     herdr
     mise
     pandoc
-    pi
     podman
     yazi
     zellij

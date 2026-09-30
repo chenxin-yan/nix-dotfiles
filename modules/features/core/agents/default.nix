@@ -1,4 +1,7 @@
+{ config, ... }:
 {
+  features.agents.includes = with config.features; [ pi ];
+
   features.agents.homeManager =
     {
       config,
@@ -9,6 +12,12 @@
       sources = import ./_sources.nix { inherit pkgs; };
     in
     {
+      home.packages = with pkgs; [
+        claude-code
+        codex
+        opencode
+      ];
+
       home.file = {
         ".agents/skills" = {
           source = ./config/skills;

@@ -26,8 +26,6 @@
           bootdev-cli
           cloudflared
           vhs
-
-          opencode
         ];
 
         # Let Home Manager install and manage itself.
