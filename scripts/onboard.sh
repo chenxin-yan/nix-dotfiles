@@ -584,7 +584,9 @@ EOF
 if [ -n "$collisions" ]; then
   printf '%s' "$collisions" | indent
   note "Home Manager will not overwrite these. Move each aside yourself, e.g."
-  note "mv ~/.zshrc ~/.zshrc.before-dotfiles (pick a name that is not already taken),"
+  first="${collisions%%
+*}"
+  note "mv $first $first.before-dotfiles (pick a name that is not already taken),"
   note "then rerun. Nothing was built or activated."
   die "existing files occupy paths Home Manager manages"
 fi
