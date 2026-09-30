@@ -3,8 +3,7 @@
 # a host file written by an earlier wizard run but not yet tracked by Git
 # still counts. Host files are flake-parts modules: each is called with empty
 # stand-ins for the module arguments it names, and only `system` and `login`
-# are forced. checks.<system>.onboard-inventory compares this with
-# config.hosts, so a host-file shape this cannot read fails `nix flake check`.
+# are forced.
 { dir }:
 let
   root = if builtins.isPath dir then dir else /. + dir;

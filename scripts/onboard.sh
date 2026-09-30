@@ -51,12 +51,10 @@ ask() {
 # Reruns reuse a registered target and stop on partial or conflicting state.
 #
 # Keep runnable by macOS /bin/bash 3.2: no mapfile, ${v,,}, GNU-only tool
-# flags, or arrays. ONBOARD_SYSROOT (tests only) prefixes the system paths
-# read below; scripts/onboard.test.sh uses it with stubbed system tools.
+# flags, or arrays.
 
 TOTAL_STAGES=7
 
-SYSROOT="${ONBOARD_SYSROOT:-}"
 NAME_RE='^[a-z0-9]+(-[a-z0-9]+)*$'
 PATH_RE='^/[A-Za-z0-9._/-]+$'
 VERSION_RE='^[0-9]+\.[0-9]+$'
@@ -174,7 +172,7 @@ case "$(uname -s)" in
       || die "Xcode Command Line Tools are missing (Git needs them). Run: xcode-select --install, then rerun."
     ;;
   Linux)
-    grep -qx 'ID=nixos' "$SYSROOT/etc/os-release" 2>/dev/null \
+    grep -qx 'ID=nixos' "/etc/os-release" 2>/dev/null \
       || die "this Linux is not NixOS; only macOS and installed NixOS are supported (Raspberry Pi OS is not)."
     os=nixos
     command -v nixos-rebuild >/dev/null 2>&1 || die "nixos-rebuild not found on this NixOS system"
@@ -262,7 +260,7 @@ stage "Preserve the current installation"
 
 automigrate=no
 installed_unfree=no
-src="$SYSROOT/etc/nixos"
+src="/etc/nixos"
 if [ "$mode" = existing ]; then
   say "Reusing $hostrel; the installed configuration is not re-imported or overwritten."
 elif [ "$os" = nixos ]; then
@@ -298,11 +296,11 @@ elif [ "$os" = nixos ]; then
   gate "Include these files in the repository, leaving the originals untouched?" \
     || declined "nothing was copied or written." "Review $src, then rerun."
 else
-  if [ -e "$SYSROOT/run/current-system" ] || [ -e "$SYSROOT/etc/nix-darwin" ]; then
+  if [ -e "/run/current-system" ] || [ -e "/etc/nix-darwin" ]; then
     die "an existing nix-darwin installation was found. It is not replaced automatically: port its configuration (and its system.stateVersion) into a hand-written $hostrel, then rerun."
   fi
   brew=""
-  for b in "$SYSROOT/opt/homebrew/bin/brew" "$SYSROOT/usr/local/bin/brew"; do
+  for b in "/opt/homebrew/bin/brew" "/usr/local/bin/brew"; do
     if [ -x "$b" ]; then brew="$b" && break; fi
   done
   if [ -n "$brew" ]; then
@@ -342,7 +340,7 @@ else
   for d in "$home/.config/home-manager" "$home/.config/nixpkgs"; do
     if [ -f "$d/home.nix" ] || [ -f "$d/flake.nix" ]; then hm_found="$hm_found $d"; fi
   done
-  for p in "$home/.local/state/nix/profiles/home-manager" "$SYSROOT/nix/var/nix/profiles/per-user/$login/home-manager"; do
+  for p in "$home/.local/state/nix/profiles/home-manager" "/nix/var/nix/profiles/per-user/$login/home-manager"; do
     if [ -e "$p" ] || [ -L "$p" ]; then hm_found="$hm_found $p"; fi
   done
   say "home.stateVersion fixes Home Manager's compatibility defaults for this home."
@@ -621,7 +619,7 @@ else
   say "Homebrew after activation (declared in Nix):"
   printf '%s' "$brewfile" | grep -E '^(tap|brew|cask|mas) ' | indent || true
   brew="$(command -v brew || true)"
-  for b in "$SYSROOT/opt/homebrew/bin/brew" "$SYSROOT/usr/local/bin/brew"; do
+  for b in "/opt/homebrew/bin/brew" "/usr/local/bin/brew"; do
     if [ -z "$brew" ] && [ -x "$b" ]; then brew="$b"; fi
   done
   if [ -n "$brew" ]; then
@@ -653,7 +651,7 @@ now="${now%%.*}"
 [ "$(id -un)" = "$login" ] && [ "$(id -u)" = "$uid" ] || problems="${problems}account changed from $login ($uid)
 "
 for tool in just nh; do
-  if [ ! -x "$SYSROOT/etc/profiles/per-user/$login/bin/$tool" ] && [ ! -x "$SYSROOT/run/current-system/sw/bin/$tool" ]; then
+  if [ ! -x "/etc/profiles/per-user/$login/bin/$tool" ] && [ ! -x "/run/current-system/sw/bin/$tool" ]; then
     problems="${problems}$tool is not in the new profile
 "
   fi

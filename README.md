@@ -51,7 +51,7 @@ dotfiles/
 │   ├── flake/                 # Plumbing
 │   │   ├── features.nix       # features.<name> registry, per-host selection and resolver
 │   │   ├── hosts.nix          # hosts.<name> option -> darwin/nixosConfigurations + `hosts` output
-│   │   ├── checks.nix         # nix fmt, nix flake check
+│   │   ├── formatter.nix      # nix fmt
 │   │   └── systems.nix
 │   ├── hosts/                 # One file per machine: platform, login, features, host-only config
 │   │   ├── macbook.nix
@@ -66,7 +66,7 @@ dotfiles/
 │   ├── desktop/               # macOS window management (aerospace, kanata, sketchybar)
 │   └── system/                # System services (bluetooth, mosh, nix-gc)
 └── scripts/                   # Repo tooling, runnable before any configuration is applied
-    ├── onboard.sh             # Onboarding wizard (+ onboard.test.sh, onboard-inventory.nix)
+    ├── onboard.sh             # Onboarding wizard (+ onboard-inventory.nix)
     └── utils/                 # switch.sh, update-pins.sh (used by the justfile)
 ```
 
@@ -111,7 +111,7 @@ The wizard needs only Bash, Nix and Git (not Just or NH) and walks through seven
 6. **Build, then activate**: builds as your user; activation is a separate prompt (`nixos-rebuild switch --sudo`, or the built `darwin-rebuild switch` with sudo on macOS, after showing the Homebrew `zap` effect).
 7. **Verify**: hostname, account, Just and NH in the new profile; then open a new login shell and use `just switch` from then on.
 
-Evaluation may download locked inputs or realize evaluation-time dependencies; the separate build gate controls the full system build. It never resets, pulls or cleans the checkout, commits, pushes, updates `flake.lock` (flake evaluations/builds use `--no-update-lock-file --no-write-lock-file`), uses remote builders (`--option builders ''`), garbage-collects or reboots. Scratch files and build-result links use a private temporary directory (`$TMPDIR`, or `/tmp`), outside the checkout, removed on exit. No persistent wizard state directory is created. Nix store packages remain subject to normal garbage collection; if you decline activation, rerun the wizard when ready. Rerun it any time: it reuses a registered target and stops on partial or conflicting state instead of repairing it. Commit the new host files yourself. `bash scripts/onboard.test.sh` (also part of `nix flake check`) runs focused lifecycle checks with stubbed Nix and system tools; it does not evaluate real configurations, build packages or activate anything.
+Evaluation may download locked inputs or realize evaluation-time dependencies; the separate build gate controls the full system build. It never resets, pulls or cleans the checkout, commits, pushes, updates `flake.lock` (flake evaluations/builds use `--no-update-lock-file --no-write-lock-file`), uses remote builders (`--option builders ''`), garbage-collects or reboots. Scratch files and build-result links use a private temporary directory (`$TMPDIR`, or `/tmp`), outside the checkout, removed on exit. No persistent wizard state directory is created. Nix store packages remain subject to normal garbage collection; if you decline activation, rerun the wizard when ready. Rerun it any time: it reuses a registered target and stops on partial or conflicting state instead of repairing it. Commit the new host files yourself.
 
 ### macOS (registered target, manual)
 
@@ -174,7 +174,7 @@ This runs `nh os switch --hostname <target>` after the same preflight checks as 
 | `just update-pins`     | Update pinned fetchFromGitHub dependencies                                                      |
 | `just clean`           | Garbage collect old generations and optimize store                                              |
 | `just fmt`             | Format all Nix files (`nix fmt`, nixfmt-tree)                                                   |
-| `nix flake check`      | Evaluate this platform's hosts; run the resolver and wizard tests                               |
+| `nix flake check`      | Evaluate the flake's outputs (NixOS hosts; nix-darwin ones are not checked)                     |
 | `just search <pkg>`    | Search nixpkgs for a package                                                                    |
 | `just show <pkg>`      | Show package information                                                                        |
 
