@@ -10,7 +10,6 @@
       unfree
       tailscale
       ssh
-      _1password
       bluetooth
       mosh
     ];

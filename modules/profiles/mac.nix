@@ -10,7 +10,7 @@ in
     includes = with config.features; [
       base
       development
-      apps
+      desktop
       nix-gc
       nix-settings
       nh
@@ -18,7 +18,6 @@ in
       tailscale
       ssh
       mosh
-      _1password
       aerospace
       kanata
       sketchybar

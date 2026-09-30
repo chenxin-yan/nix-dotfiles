@@ -16,12 +16,12 @@ justfile             everyday commands (`just --list`)
 modules/
 ├── flake/           plumbing: the `features` and `hosts` options, system builders
 ├── hosts/           one file (or directory) per machine
-├── profiles/        bundles of features: base, development, apps, mac, server, …
-└── features/        everything a host can select: core, cli, dev, apps, desktop, system
+├── profiles/        bundles of features: base, development, desktop, mac, server, …
+└── features/        everything a host can select: core, cli, dev, desktop, system
 scripts/             onboarding wizard and the helpers behind the justfile
 ```
 
-Under `features/`, `core/` holds the shared shell/editor setup, `cli/` command-line tools, `dev/` language tooling, `apps/` applications, `desktop/` window/input/bar integration, and `system/` services and policy. Use a single `.nix` file unless a feature has assets or helpers to keep beside it.
+Under `features/`, `core/` holds the shared shell/editor setup, `cli/` command-line tools, `dev/` language tooling, `desktop/` desktop applications and window/input/bar integration, and `system/` services and policy. Use a single `.nix` file unless a feature has assets or helpers to keep beside it.
 
 Every `.nix` file under `modules/` is a flake-parts module, loaded automatically by [import-tree](https://github.com/denful/import-tree). Paths containing `/_` are skipped; use them for assets and helpers.
 
@@ -33,7 +33,7 @@ A feature (`features.<name>`) keeps its `darwin`, `nixos` and `homeManager` part
 
 ### Profiles
 
-Profiles bundle features and can add shared settings. `mac` is what every Mac gets, and `server` is what the mini PC gets. Both build on `base` and `development`; `mac` also selects `apps`. A NixOS desktop can select `apps` too, alongside its own desktop environment or window manager—without selecting `mac`.
+Profiles bundle features and can add shared settings. `mac` is what every Mac gets, and `server` is what the mini PC gets. Both build on `base` and `development`; `mac` also selects `desktop`. A NixOS desktop can select `desktop` too, alongside its own desktop environment or window manager—without selecting `mac`. The shared desktop profile includes 1Password (app and CLI); the server does not. Platform-specific features such as AeroSpace stay selected by `mac`, even though their files live in the same `features/desktop/` folder.
 
 ### Hosts
 
@@ -79,7 +79,7 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 
 - `~/.env`: API keys and other private environment variables, sourced by every zsh session. WakaTime (in pi and Neovim) reads `WAKATIME_API_KEY` from it. Create the file even if it's empty, or each shell starts with an error.
 - SSH: create `~/.ssh/id_ed25519`, add the public key to GitHub, and add it to `openssh.authorizedKeys.keys` in the host files of the machines that should accept it.
-- `gh auth login`, 1Password (app and `op`), and the coding agents' own logins (pi, Claude Code, Codex).
+- `gh auth login`, 1Password (app and `op`, on desktops), and the coding agents' own logins (pi, Claude Code, Codex).
 
 **Network and sync**
 
@@ -119,7 +119,7 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 Create a file under `modules/features/<group>/` with the parts it needs:
 
 ```nix
-# modules/features/apps/todoist.nix
+# modules/features/desktop/todoist.nix
 {
   features.todoist = {
     darwin.homebrew.casks = [ "todoist-app" ];
