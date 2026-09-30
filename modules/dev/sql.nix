@@ -9,6 +9,8 @@
         sqlfluff
       ];
 
-      xdg.configFile."sqlit/settings.json".source = ./config/settings.json;
+      xdg.configFile."sqlit/settings.json".text = builtins.toJSON {
+        theme = "catppuccin-mocha";
+      };
     };
 }
