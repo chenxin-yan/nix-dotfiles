@@ -1,3 +1,7 @@
+-- Vite+ projects lint (`vp lint --lsp`) and format (`vp fmt`, via Conform, Markdown
+-- included) with the workspace's own node_modules/.bin/vp, so install dependencies
+-- first and keep lint/fmt settings in the root vite.config.ts. A project opts in by
+-- depending on vite-plus; plain Vite and other projects keep standalone Oxc/Biome/Prettier.
 local M = {}
 
 function M.root(source)
