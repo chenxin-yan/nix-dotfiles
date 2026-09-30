@@ -1,7 +1,15 @@
+{ config, ... }:
 {
   hosts.work-macbook = {
     system = "aarch64-darwin";
     login = "chenxin-yan";
+
+    # Docker via colima instead of podman (see home below).
+    features = with config.features; [
+      _1password
+      kanata
+      sketchybar
+    ];
 
     configuration =
       { host, pkgs, ... }:
@@ -38,7 +46,6 @@
           docker-buildx
         ];
 
-        cli.podman.enable = false;
         programs.lazydocker.enable = true;
         cli.syncthing.enable = false;
       };

@@ -9,7 +9,6 @@
     cli.mise.enable = lib.mkDefault true;
     cli.pandoc.enable = lib.mkDefault true;
     cli.pi.enable = lib.mkDefault true;
-    cli.podman.enable = lib.mkDefault true;
     cli.yazi.enable = lib.mkDefault true;
     cli.zellij.enable = lib.mkDefault true;
 

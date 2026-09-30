@@ -1,7 +1,15 @@
+{ config, ... }:
 {
   hosts.macbook = {
     system = "aarch64-darwin";
     login = "yanchenxin";
+
+    features = with config.features; [
+      _1password
+      kanata
+      podman
+      sketchybar
+    ];
 
     configuration =
       { host, pkgs, ... }:

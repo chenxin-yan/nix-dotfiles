@@ -20,6 +20,9 @@ let
   # scripts/utils/switch.sh reads, and the `host`/`hosts` module arguments.
   hosts = lib.mapAttrs (_: host: { inherit (host) system login; }) config.hosts;
 
+  # The host's selected features, as modules of one class (see features.nix).
+  classModules = class: name: map (f: f.${class}) config.hosts.${name}.selected;
+
   # Facts every registered target shares: hostname = inventory key,
   # platform from inventory, integrated Home Manager for the host login.
   # Host modules receive their inventory entry as `host`; home modules
@@ -32,11 +35,8 @@ let
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;
-      sharedModules = [
-        catppuccin.homeModules.catppuccin
-        config.flake.modules.homeManager.features
-      ];
-      users.${host.login}.imports = [ config.hosts.${name}.home ];
+      sharedModules = [ catppuccin.homeModules.catppuccin ];
+      users.${host.login}.imports = [ config.hosts.${name}.home ] ++ classModules "homeManager" name;
       extraSpecialArgs = { inherit inputs hosts; };
     };
   };
@@ -48,7 +48,6 @@ let
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
-        config.flake.modules.darwin.features
         config.hosts.${name}.configuration
         (hostModule name host)
         {
@@ -60,7 +59,8 @@ let
             mutableTaps = true;
           };
         }
-      ];
+      ]
+      ++ classModules "darwin" name;
     };
 
   nixosHost =
@@ -70,10 +70,10 @@ let
       modules = [
         catppuccin.nixosModules.catppuccin
         home-manager.nixosModules.home-manager
-        config.flake.modules.nixos.features
         config.hosts.${name}.configuration
         (hostModule name host)
-      ];
+      ]
+      ++ classModules "nixos" name;
     };
 
   hostsOn = suffix: lib.filterAttrs (_: host: lib.hasSuffix suffix host.system) hosts;
@@ -82,10 +82,6 @@ let
   configurations = darwinConfigurations // nixosConfigurations;
 in
 {
-  # Every feature file adds its per-class half to flake.modules.<class>.features;
-  # all hosts import all features, and profiles pick them with enable flags.
-  imports = [ inputs.flake-parts.flakeModules.modules ];
-
   options.hosts = lib.mkOption {
     default = { };
     type = lib.types.attrsOf (

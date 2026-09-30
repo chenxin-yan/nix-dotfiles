@@ -1,7 +1,13 @@
+{ config, ... }:
 {
   hosts.minipc = {
     system = "x86_64-linux";
     login = "cyan";
+
+    features = with config.features; [
+      _1password
+      podman
+    ];
 
     configuration =
       {
