@@ -1,7 +1,7 @@
 # Everything every registered Mac gets: the full development + desktop
 # stack, the macOS window-management setup and shared system policy.
 # Account facts, state versions and hostnames stay in modules/hosts/<name>.
-{ config, ... }:
+{ config, inputs, ... }:
 let
   inherit (config) hosts;
 in
@@ -44,7 +44,7 @@ in
         ];
 
         # Set Git commit hash for darwin-version.
-        system.configurationRevision = config.rev or config.dirtyRev or null;
+        system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
 
         programs.zsh.enable = true;
 
