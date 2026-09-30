@@ -10,7 +10,7 @@ in
     includes = with config.features; [
       base
       development
-      desktop
+      apps
       nix-gc
       _1password
       aerospace

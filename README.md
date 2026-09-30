@@ -16,10 +16,12 @@ justfile             everyday commands (`just --list`)
 modules/
 ├── flake/           plumbing: the `features` and `hosts` options, system builders
 ├── hosts/           one file (or directory) per machine
-├── profiles/        bundles of features: base, development, desktop, mac, server, …
+├── profiles/        bundles of features: base, development, apps, mac, server, …
 └── features/        everything a host can select: core, cli, dev, apps, desktop, system
 scripts/             onboarding wizard and the helpers behind the justfile
 ```
+
+Under `features/`, `core/` holds the shared shell/editor setup, `cli/` command-line tools, `dev/` language tooling, `apps/` applications, `desktop/` window/input/bar integration, and `system/` services and policy. Use a single `.nix` file unless a feature has assets or helpers to keep beside it.
 
 Every `.nix` file under `modules/` is a flake-parts module, loaded automatically by [import-tree](https://github.com/denful/import-tree). Paths containing `/_` are skipped; use them for assets and helpers.
 
@@ -31,7 +33,7 @@ A feature (`features.<name>`) keeps its `darwin`, `nixos` and `homeManager` part
 
 ### Profiles
 
-Profiles are features that only bundle others. `mac` is what every Mac gets, and `server` is what the mini PC gets. Both build on `base`, `development` and (for `mac`) `desktop`.
+Profiles bundle features and can add shared settings. `mac` is what every Mac gets, and `server` is what the mini PC gets. Both build on `base` and `development`; `mac` also selects `apps`. A NixOS desktop can select `apps` too, alongside its own desktop environment or window manager—without selecting `mac`.
 
 ### Hosts
 
