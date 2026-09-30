@@ -37,6 +37,7 @@
   config = {
     agents.enable = lib.mkDefault true;
     core.git.enable = lib.mkDefault true;
+    core.jj.enable = lib.mkDefault true;
     core.nvim.enable = lib.mkDefault true;
     core.zsh.enable = lib.mkDefault true;
     core.nushell.enable = lib.mkDefault true;

@@ -49,22 +49,8 @@ in
       };
     };
 
-    # jj is used in colocated mode (.jj + .git side by side); run
-    # `jj git init --colocate` per repo. Git tooling above keeps working.
-    programs.jujutsu = {
-      enable = true;
-      settings = {
-        user = identity;
-        ui.default-command = "log";
-        git.push-new-bookmarks = true;
-      };
-    };
-
-    programs.jjui.enable = true;
-
     programs.difftastic = {
       enable = true;
-      jujutsu.enable = true;
       git = {
         enable = true;
         mode = "difftool";
@@ -117,7 +103,6 @@ in
     programs.zsh = {
       shellAliases = {
         g = "git";
-        j = "jj";
 
         di = "hunk diff";
         dib = "hunk diff origin/HEAD...HEAD";
