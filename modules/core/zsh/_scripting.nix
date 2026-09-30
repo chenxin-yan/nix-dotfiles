@@ -23,7 +23,7 @@ in
   };
 
   home.file = {
-    ".local/bin/scripts".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/scripts";
+    ".local/bin/scripts".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/core/zsh/scripts";
   };
 
   programs.zsh = {

@@ -17,7 +17,7 @@
         lua51Packages.tree-sitter-cli
       ];
 
-      xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/config/nvim";
+      xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/core/nvim/config";
 
       programs.zsh.shellAliases = {
         v = "nvim";

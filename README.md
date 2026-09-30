@@ -65,14 +65,12 @@ dotfiles/
 │   ├── apps/                  # GUI apps (1password, ghostty, vesktop, …)
 │   ├── desktop/               # macOS window management (aerospace, kanata, sketchybar)
 │   └── system/                # System services (bluetooth, mosh, nix-gc)
-├── config/
-│   └── nvim/                  # Neovim configuration (Lua, lazy.nvim), linked out of store
-└── scripts/
-    ├── dev/                   # Session management
-    ├── onboard.sh             # Onboarding wizard for a new or reinstalled machine (+ onboard.test.sh)
-    ├── utils/                 # Utilities (switch, update-pins, rg+fzf, md2pdf)
-    └── notes/                 # Note search
+└── scripts/                   # Repo tooling, runnable before any configuration is applied
+    ├── onboard.sh             # Onboarding wizard (+ onboard.test.sh, onboard-inventory.nix)
+    └── utils/                 # switch.sh, update-pins.sh (used by the justfile)
 ```
+
+Feature assets live next to their feature. Two are linked out of the store so edits apply without a rebuild: `modules/core/nvim/config/` (lazy.nvim writes `lazy-lock.json` there) and `modules/core/zsh/scripts/` (the personal shell tools behind the zsh aliases).
 
 ## Prerequisites
 
@@ -240,7 +238,7 @@ The goal is password-less SSH between all managed machines. Today the repo carri
 | | `agents` | h | Shared agent instructions and `~/.agents/skills/` |
 | | `git` | h | Git config, difftastic, GitHub CLI, gh-dash, lazygit, hunk |
 | | `jj` | h | Jujutsu and jjui |
-| | `nvim` | h | Neovim with out-of-store symlink to `config/nvim/` |
+| | `nvim` | h | Neovim with out-of-store symlink to `modules/core/nvim/config/` |
 | | `zsh` | h | Zsh with vi keybindings, oh-my-posh prompt, fzf, direnv, modern CLI tools, script aliases |
 | | `nushell` | h | Nushell |
 | `cli/` | `zellij` | h | Terminal multiplexer |
@@ -270,11 +268,11 @@ The goal is password-less SSH between all managed machines. Today the repo carri
 
 ## Neovim
 
-Lua-based configuration in `config/nvim/` using [lazy.nvim](https://github.com/folke/lazy.nvim) as the plugin manager. Space is the leader key.
+Lua-based configuration in `modules/core/nvim/config/` using [lazy.nvim](https://github.com/folke/lazy.nvim) as the plugin manager. Space is the leader key.
 
-Vite+ integration lives in `config/nvim/lua/cyan/plugins/languages/web/viteplus.lua`; `web/init.lua` wires its project detection, Oxlint configuration, and Conform override into the shared web setup. Vite+ projects use the workspace-local `node_modules/.bin/vp`: `vp lint --lsp` for diagnostics and `vp fmt --stdin-filepath` through Conform for formatting (including Markdown/MDX). Detection checks the package-manager workspace/lockfile root's `package.json` for a `vite-plus` dependency, falling back to the nearest package when there is no workspace marker. Install project dependencies first; keep shared lint/format settings in the root `vite.config.ts`. Plain Vite projects are not opted in. Other projects retain standalone Oxc, Biome, and Prettier selection. Oxfmt is configured only in Conform, not as an LSP server.
+Vite+ integration lives in `modules/core/nvim/config/lua/cyan/plugins/languages/web/viteplus.lua`; `web/init.lua` wires its project detection, Oxlint configuration, and Conform override into the shared web setup. Vite+ projects use the workspace-local `node_modules/.bin/vp`: `vp lint --lsp` for diagnostics and `vp fmt --stdin-filepath` through Conform for formatting (including Markdown/MDX). Detection checks the package-manager workspace/lockfile root's `package.json` for a `vite-plus` dependency, falling back to the nearest package when there is no workspace marker. Install project dependencies first; keep shared lint/format settings in the root `vite.config.ts`. Plain Vite projects are not opted in. Other projects retain standalone Oxc, Biome, and Prettier selection. Oxfmt is configured only in Conform, not as an LSP server.
 
-After changing this configuration, restart Neovim. `:ConformInfo` shows the formatter executable and `:checkhealth vim.lsp` shows attached servers. Run the routing checks with installed plugins/tools using `nvim --headless -u NONE -l config/nvim/tests/viteplus.lua` from this repo.
+After changing this configuration, restart Neovim. `:ConformInfo` shows the formatter executable and `:checkhealth vim.lsp` shows attached servers. Run the routing checks with installed plugins/tools using `nvim --headless -u NONE -l modules/core/nvim/config/tests/viteplus.lua` from this repo.
 
 <details>
 <summary><b>Coding</b> (8 plugins)</summary>
@@ -391,7 +389,7 @@ Zsh with vi mode (`viins` keymap) and [oh-my-posh](https://ohmyposh.dev/) prompt
 
 ## Scripts
 
-All scripts live in `scripts/` and are symlinked to `~/.local/bin/scripts`. Shell aliases are defined in `modules/core/zsh/_scripting.nix`.
+These scripts live in `modules/core/zsh/scripts/` and are symlinked to `~/.local/bin/scripts`. Shell aliases are defined in `modules/core/zsh/_scripting.nix`.
 
 | Alias    | Script                  | Purpose                                   |
 | -------- | ----------------------- | ----------------------------------------- |
@@ -459,7 +457,7 @@ The ZSA Voyager keyboard is excluded from Kanata remapping.
 
 ## Environment Variables
 
-Set in `modules/core/paths.nix` (`EDITOR`/`VISUAL` in `modules/core/nvim.nix`) and available in all shells:
+Set in `modules/core/paths.nix` (`EDITOR`/`VISUAL` in `modules/core/nvim/default.nix`) and available in all shells:
 
 | Variable        | Default              | Purpose                       |
 | --------------- | -------------------- | ----------------------------- |
@@ -489,6 +487,6 @@ Set in `modules/core/paths.nix` (`EDITOR`/`VISUAL` in `modules/core/nvim.nix`) a
 
 5. **Change the theme**: Modify the palette in `modules/core/theme.nix`
 
-6. **Neovim plugins**: Add plugin specs under `config/nvim/lua/cyan/plugins/` in the appropriate category directory
+6. **Neovim plugins**: Add plugin specs under `modules/core/nvim/config/lua/cyan/plugins/` in the appropriate category directory
 
 7. **Syncthing devices**: Update device IDs and folder config in `modules/cli/syncthing.nix`
