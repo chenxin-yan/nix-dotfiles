@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Update pinned fetchFromGitHub dependencies to their latest commits.
+# Update pinned fetchFromGitHub/fetchFromGitLab dependencies to their latest commits.
 #
-# Auto-discovers every `fetchFromGitHub { ... }` block under the repo —
+# Auto-discovers every `fetchFromGitHub/fetchFromGitLab { ... }` block under the repo —
 # there is no hardcoded pin list. Replacements are scoped to the matched
 # block's line range so a branch-name rev like "master" cannot bleed
 # into other parts of the file.
@@ -25,7 +25,7 @@ for arg in "$@"; do
       cat <<'EOF'
 Usage: ./scripts/utils/update-pins.sh [--dry-run] [filter]
 
-Auto-discovers every fetchFromGitHub block in the repo and updates its
+Auto-discovers every fetchFromGitHub/fetchFromGitLab block in the repo and updates its
 rev + hash to the latest commit.
 
   --dry-run   Show what would change without modifying files
@@ -61,8 +61,8 @@ preflight() {
 
 # ── Discovery ───────────────────────────────────────────────────────────
 # Walks every *.nix file under the repo and emits a TSV record for each
-# `fetchFromGitHub { ... }` block:
-#   file<TAB>start_line<TAB>end_line<TAB>owner<TAB>repo<TAB>rev<TAB>hash
+# `fetchFromGitHub/fetchFromGitLab { ... }` block:
+#   file<TAB>start_line<TAB>end_line<TAB>owner<TAB>repo<TAB>rev<TAB>hash<TAB>forge
 #
 # Block boundaries are tracked by brace depth so nested attrsets are
 # handled correctly. Blocks missing any of owner/repo/rev/hash are
@@ -101,7 +101,8 @@ discover_pins() {
       BEGIN { in_block = 0; depth = 0 }
       {
         if (!in_block) {
-          if (match($0, /fetchFromGitHub[ \t]*\{/)) {
+          if (match($0, /fetchFrom(GitHub|GitLab)[ \t]*\{/)) {
+            forge = ($0 ~ /fetchFromGitLab/) ? "gitlab" : "github"
             in_block = 1
             start_line = NR
             owner = ""; repo = ""; rev = ""; hashv = ""
@@ -122,8 +123,8 @@ discover_pins() {
           if (depth <= 0) {
             end_line = NR
             if (owner != "" && repo != "" && rev != "" && hashv != "")
-              printf "%s\t%d\t%d\t%s\t%s\t%s\t%s\n", \
-                FILE, start_line, end_line, owner, repo, rev, hashv
+              printf "%s\t%d\t%d\t%s\t%s\t%s\t%s\t%s\n", \
+                FILE, start_line, end_line, owner, repo, rev, hashv, forge
             in_block = 0
           }
         }
@@ -136,12 +137,17 @@ discover_pins() {
 # If `ref` is non-empty it's passed as --rev; otherwise prefetch follows
 # the repo's default branch (HEAD).
 prefetch() {
-  local owner="$1" repo="$2" ref="$3"
+  local owner="$1" repo="$2" ref="$3" forge="$4"
   local stderr; stderr=$(mktemp)
   local attempt result
   for attempt in 1 2 3; do
     : > "$stderr"
-    if [[ -n "$ref" ]]; then
+    if [[ "$forge" == gitlab ]]; then
+      # Git NAR hash == fetchFromGitLab's archive hash (no export-ignore).
+      result=$(nix run nixpkgs#nix-prefetch-git -- \
+        --url "https://gitlab.com/$owner/$repo.git" \
+        ${ref:+--rev "$ref"} --quiet 2>"$stderr") || result=""
+    elif [[ -n "$ref" ]]; then
       result=$(nix run nixpkgs#nix-prefetch-github -- \
         "$owner" "$repo" --rev "$ref" --json 2>"$stderr") || result=""
     else
@@ -157,7 +163,7 @@ prefetch() {
       sleep $((1 << (attempt - 1)))
     fi
   done
-  printf "%s    nix-prefetch-github failed after 3 attempts:%s\n" "$RED" "$NC" >&2
+  printf "%s    prefetch failed after 3 attempts:%s\n" "$RED" "$NC" >&2
   sed 's/^/      /' "$stderr" >&2
   rm -f "$stderr"
   return 1
@@ -197,7 +203,7 @@ replace_in_range() {
 #          2 = failed.
 update_pin() {
   local file="$1" start="$2" end="$3" owner="$4" repo="$5"
-  local cur_rev="$6" cur_hash="$7"
+  local cur_rev="$6" cur_hash="$7" forge="$8"
   local rel_file="${file#"$DOTFILES_DIR"/}"
 
   if [[ -n "$FILTER" && "$owner/$repo" != *"$FILTER"* ]]; then
@@ -215,7 +221,7 @@ update_pin() {
   fi
 
   local result
-  if ! result=$(prefetch "$owner" "$repo" "$ref"); then
+  if ! result=$(prefetch "$owner" "$repo" "$ref" "$forge"); then
     printf "%s  ✗ %s/%s: prefetch failed%s\n" "$RED" "$owner" "$repo" "$NC"
     SUMMARY+=("${owner}/${repo}"$'\t'"${cur_rev:0:12}"$'\t'"?"$'\t'"${rel_file}"$'\t'"failed")
     return 2
@@ -277,7 +283,7 @@ while IFS= read -r line; do
 done < <(discover_pins "$DOTFILES_DIR")
 
 if (( ${#PINS[@]} == 0 )); then
-  printf "%sNo fetchFromGitHub pins discovered.%s\n" "$YELLOW" "$NC"
+  printf "%sNo fetchFromGitHub/fetchFromGitLab pins discovered.%s\n" "$YELLOW" "$NC"
   exit 0
 fi
 
@@ -295,9 +301,9 @@ UPDATED=0
 UNCHANGED=0
 
 for entry in "${PINS[@]}"; do
-  IFS=$'\t' read -r file start end owner repo rev hashv <<< "$entry"
+  IFS=$'\t' read -r file start end owner repo rev hashv forge <<< "$entry"
   set +e
-  update_pin "$file" "$start" "$end" "$owner" "$repo" "$rev" "$hashv"
+  update_pin "$file" "$start" "$end" "$owner" "$repo" "$rev" "$hashv" "$forge"
   rc=$?
   set -e
   case $rc in
