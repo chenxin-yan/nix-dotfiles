@@ -6,8 +6,8 @@ REPO="$(cd "$(dirname "$0")/.." && pwd -P)"
 T="$(mktemp -d)"
 trap 'rm -rf "$T"' EXIT
 mkdir "$T/bin"
-cat >"$T/bin/stub" <<'STUB'
-#!/usr/bin/env bash
+# Shebang from the running bash: build sandboxes have no /usr/bin/env.
+{ printf '#!%s\n' "$BASH"; cat; } >"$T/bin/stub" <<'STUB'
 set -eu
 activate() {
   echo ACTIVATION >>"$MOCK/calls"
@@ -21,7 +21,6 @@ case "${0##*/}" in
   uname) case "$1" in -s) echo "$MOCK_OS" ;; -m) echo "$MOCK_ARCH" ;; esac ;;
   hostname) echo laptop ;;
   xcode-select) exit 0 ;;
-  nix-instantiate) echo true ;;
   sudo) activate ;;
   nixos-rebuild)
     case "$1" in
@@ -37,7 +36,7 @@ case "${0##*/}" in
         while [ "$1" != --out-link ]; do shift; done
         ln -s "$MOCK/system" "$2"
         exit "${FAIL_BUILD:-0}" ;;
-      *' --file '*) [ "$MOCK_NEW" = yes ] || printf 'laptop %s alice\n' "$MOCK_SYSTEM" ;;
+      *'/* inventory */'*) [ "$MOCK_NEW" = yes ] || printf 'laptop %s alice\n' "$MOCK_SYSTEM" ;;
       *release.json*) echo '26.11 7' ;;
       *type.check*) echo yes ;;
       *'#hosts.laptop '*) printf '%s\nalice\n1001\n%s/dotfiles\n' "$MOCK_SYSTEM" "$HOME" ;;
@@ -48,21 +47,18 @@ case "${0##*/}" in
 esac
 STUB
 chmod +x "$T/bin/stub"
-for tool in id uname hostname xcode-select nix-instantiate sudo nixos-rebuild nix; do
+for tool in id uname hostname xcode-select sudo nixos-rebuild nix; do
   ln -s stub "$T/bin/$tool"
 done
 
 fixture() {
   C="$T/$1" H="$T/$1/home" R="$T/$1/home/dotfiles"
   TEMP="$C/tmp"
-  mkdir -p "$R/scripts" "$R/profiles/nixos" "$R/hosts" "$C/root/etc/nixos" "$C/system" "$TEMP"
+  mkdir -p "$R/scripts" "$R/modules/hosts" "$C/root/etc/nixos" "$C/system" "$TEMP"
   cp "$REPO/scripts/onboard.sh" "$R/scripts/"
-  printf '{\n}\n' >"$R/hosts/default.nix"
-  echo '{}' >"$R/profiles/nixos/base.nix"
   if [ "$MOCK_NEW" = no ]; then
-    mkdir "$R/hosts/laptop"
-    echo '{}' >"$R/hosts/laptop/configuration.nix"
-    echo '{}' >"$R/hosts/laptop/home.nix"
+    mkdir "$R/modules/hosts/laptop"
+    echo '{}' >"$R/modules/hosts/laptop/default.nix"
   fi
   printf '{\n  imports = [ ./hardware-configuration.nix ];\n  system.stateVersion = "25.11";\n}\n' >"$C/root/etc/nixos/configuration.nix"
   echo '{}' >"$C/root/etc/nixos/hardware-configuration.nix"
@@ -104,7 +100,8 @@ run 'y\nlaptop\ny\n\ny\ny\ny\ny\nn\n'
 check grep -q 'built but not activated' "$C/out"
 check grep -q BUILD "$C/calls"
 clean_exit
-check cmp "$C/original.nix" "$R/hosts/laptop/installed/configuration.nix"
+check cmp "$C/original.nix" "$R/modules/hosts/laptop/_installed/configuration.nix"
+check grep -q 'hosts."laptop"' "$R/modules/hosts/laptop/default.nix"
 echo 'ok - new NixOS preserves originals without an extra backup; build files cleaned'
 
 MOCK_NEW=no

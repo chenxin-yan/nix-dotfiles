@@ -211,8 +211,7 @@ note "Evaluation may fetch locked inputs or build evaluation-time dependencies; 
 gate "Continue with these facts?" || declined "nothing was changed." "Rerun bash scripts/onboard.sh when ready."
 
 work="$(mktemp -d "${TMPDIR:-/tmp}/onboard.XXXXXX")"
-invtmp=""
-trap 'rm -rf "$work" ${invtmp:+"$invtmp"}' EXIT
+trap 'rm -rf "$work"' EXIT
 case "$(cd -P "$work" && pwd -P)/" in
   "$root"/*) die "temporary workspace is inside the checkout; set TMPDIR outside $root" ;;
 esac
@@ -220,11 +219,25 @@ esac
 # ── Stage 2 ───────────────────────────────────────────────────────────────
 stage "Select or register the target"
 
-# shellcheck disable=SC2016
-inventory="$(nixx eval --raw --file "$root/hosts/default.nix" --apply \
-  'h: builtins.concatStringsSep "" (map (n: "${n} ${h.${n}.system} ${h.${n}.login}\n") (builtins.attrNames h))')" \
-  || die "could not evaluate hosts/default.nix"
-say "Registered targets (hosts/default.nix):"
+# Registration is the host file itself. The files are read directly, not
+# through the flake, so a host written by an earlier run but not yet tracked
+# by Git still counts (stage 5 then offers the git add). Host files are
+# functions of the top-level config; only system and login are forced.
+# shellcheck disable=SC2016 # Nix interpolation, not shell
+inventory="$(ONBOARD_HOSTS_DIR="$root/modules/hosts" nixx eval --raw --impure --expr '/* inventory */
+  let
+    dir = /. + builtins.getEnv "ONBOARD_HOSTS_DIR";
+    entries = builtins.readDir dir;
+    file = n: if entries.${n} == "directory" then dir + "/${n}/default.nix" else dir + "/${n}";
+    isHost = n: builtins.match "_.*" n == null
+      && (if entries.${n} == "directory" then builtins.pathExists (file n) else builtins.match ".*\\.nix" n != null);
+    load = n: let m = import (file n); in
+      (if builtins.isFunction m then m { config = { features = { }; hosts = { }; }; } else m).hosts or { };
+  in builtins.concatStringsSep "" (builtins.concatMap
+    (n: let h = load n; in map (k: "${k} ${h.${k}.system} ${h.${k}.login}\n") (builtins.attrNames h))
+    (builtins.filter isHost (builtins.attrNames entries)))')" \
+  || die "could not read the host files in modules/hosts"
+say "Registered targets (modules/hosts/):"
 printf '%s\n' "$inventory" | indent
 note "A target is one machine; login and architecture alone do not identify it."
 
@@ -236,15 +249,14 @@ ask target "Target name for this machine${suggest:+ [Enter: $suggest]}:"
   || die "'$target' is not a valid target name (lowercase letters, digits, single hyphens)"
 
 entry="$(printf '%s\n' "$inventory" | grep "^$target " || true)"
-hostdir="$root/hosts/$target"
+hostrel="modules/hosts/$target"
+hostdir="$root/$hostrel"
 if [ -n "$entry" ]; then
   mode=existing
   # shellcheck disable=SC2086 # entry is "name system login", all validated
   set -- $entry
   [ "$2" = "$system" ] || die "target $target is $2 but this machine is $system; nothing was changed"
   [ "$3" = "$login" ] || die "target $target expects login '$3' but you are '$login'; nothing was changed"
-  [ -f "$hostdir/configuration.nix" ] && [ -f "$hostdir/home.nix" ] \
-    || die "$target is registered but hosts/$target/configuration.nix or home.nix is missing (partial earlier run?). Restore or remove the entry by hand, then rerun."
   say "Reusing registered target $target ($system, login $login)."
   if [ "$target" != "$host_now" ]; then
     warn "This machine is named '$host_now', not '$target'. Activating replaces its system configuration with $target's."
@@ -252,8 +264,8 @@ if [ -n "$entry" ]; then
   fi
 else
   mode=new
-  [ ! -e "$hostdir" ] && [ ! -L "$hostdir" ] \
-    || die "hosts/$target exists but is not in hosts/default.nix (partial earlier run?). Review it, then move it away or register it by hand; nothing was changed."
+  [ ! -e "$hostdir" ] && [ ! -L "$hostdir" ] && [ ! -e "$hostdir.nix" ] && [ ! -L "$hostdir.nix" ] \
+    || die "$hostrel exists but does not register hosts.$target (partial earlier run?). Review it, then move it away or fix it by hand; nothing was changed."
   [ "$root" = "$home/dotfiles" ] \
     || die "a new home uses the checkout at $home/dotfiles, but this is $root. Clone or move it there (without overwriting another checkout), then rerun."
   say "New target $target ($system, login $login). Nothing is written before stage 4."
@@ -266,18 +278,18 @@ automigrate=no
 installed_unfree=no
 src="$SYSROOT/etc/nixos"
 if [ "$mode" = existing ]; then
-  say "Reusing hosts/$target; the installed configuration is not re-imported or overwritten."
+  say "Reusing $hostrel; the installed configuration is not re-imported or overwritten."
 elif [ "$os" = nixos ]; then
   if [ -L "$src" ] || [ ! -d "$src" ] || [ ! -f "$src/configuration.nix" ]; then
     die "$src is not a plain directory with configuration.nix; only a conventional /etc/nixos is migrated. Register this machine by hand (README)."
   fi
   [ ! -e "$src/flake.nix" ] \
-    || die "$src/flake.nix is an independent flake with its own inputs; port it into hosts/$target by hand instead."
+    || die "$src/flake.nix is an independent flake with its own inputs; port it into $hostrel by hand instead."
   if ! check_nix_tree "$src"; then
     note "Nothing was copied. Only regular .nix files with relative imports are"
     note "migrated, and no password, key or token settings (even hashed or in a"
     note "file). Remove those from $src yourself (set passwords with passwd), or"
-    note "write hosts/$target by hand. Then rerun."
+    note "write $hostrel by hand. Then rerun."
     die "the configuration has files or lines that must not be copied into the repository unreviewed"
   fi
   installed_state="$(installed_state_version "$src")"
@@ -287,7 +299,7 @@ elif [ "$os" = nixos ]; then
   if (cd "$src" && grep -q -E '^[[:space:]]*nixpkgs\.config\.allowUnfree[[:space:]]*=[[:space:]]*true' $files); then
     installed_unfree=yes
   fi
-  say "Files to preserve verbatim under hosts/$target/installed/:"
+  say "Files to preserve verbatim under $hostrel/_installed/:"
   for rel in $files; do say "  $rel ($(wc -l <"$src/$rel" | tr -d ' ') lines)"; done
   say "Boot, disk, account, network and desktop lines they declare:"
   for rel in $files; do
@@ -301,7 +313,7 @@ elif [ "$os" = nixos ]; then
     || declined "nothing was copied or written." "Review $src, then rerun."
 else
   if [ -e "$SYSROOT/run/current-system" ] || [ -e "$SYSROOT/etc/nix-darwin" ]; then
-    die "an existing nix-darwin installation was found. It is not replaced automatically: port its configuration (and its system.stateVersion) into a hand-written hosts/$target, then rerun."
+    die "an existing nix-darwin installation was found. It is not replaced automatically: port its configuration (and its system.stateVersion) into a hand-written $hostrel, then rerun."
   fi
   brew=""
   for b in "$SYSROOT/opt/homebrew/bin/brew" "$SYSROOT/usr/local/bin/brew"; do
@@ -326,7 +338,7 @@ fi
 stage "Compose the Nix-owned baseline"
 
 if [ "$mode" = existing ]; then
-  say "hosts/$target already composes its baseline; nothing is written."
+  say "$hostrel already composes its baseline; nothing is written."
 else
   locked="$(nixx eval --raw --impure --no-update-lock-file --no-write-lock-file --expr "
     let
@@ -375,126 +387,81 @@ else
     if gate "Allow unfree packages on $target (nixpkgs.config.allowUnfree)?"; then unfree=yes; fi
   fi
 
+  # One file registers the host: inventory facts, features, and the system
+  # and home modules. The installed NixOS files go under _installed/, which
+  # import-tree skips (they are NixOS modules, not flake modules).
   mkdir "$work/host"
   if [ "$os" = nixos ]; then
     for rel in $files; do
-      mkdir -p "$work/host/installed/$(dirname "$rel")"
-      cp "$src/$rel" "$work/host/installed/$rel"
+      mkdir -p "$work/host/_installed/$(dirname "$rel")"
+      cp "$src/$rel" "$work/host/_installed/$rel"
     done
-    {
-      echo "# Generated by scripts/onboard.sh: the installed configuration (boot, disks,"
-      echo "# users, network, desktop, system.stateVersion) kept verbatim in ./installed,"
-      echo "# plus the onboarding prerequisites and this account's facts."
-      echo "{ host, ... }:"
-      echo
-      echo "{"
-      echo "  imports = ["
-      echo "    ./installed/configuration.nix"
-      echo "    ../../profiles/nixos/base.nix"
-      echo "  ];"
-      echo
-      echo "  users.users.\${host.login} = {"
-      echo "    uid = $uid;"
-      echo "    home = \"$home\";"
-      echo "  };"
-      [ "$unfree" = no ] || { echo; echo "  nixpkgs.config.allowUnfree = true;"; }
-      echo "}"
-    } >"$work/host/configuration.nix"
-    profiles="    ../../profiles/home/base.nix
-    ../../profiles/home/development.nix"
+    features="nixos-base base development"
   else
-    {
-      echo "# Generated by scripts/onboard.sh for a fresh nix-darwin install."
-      echo "{ host, ... }:"
-      echo
-      echo "{"
-      echo "  imports = ["
-      echo "    ../../profiles/darwin"
-      echo "  ];"
-      echo
-      echo "  # First nix-darwin release on this Mac; read the changelog before changing."
-      echo "  system.stateVersion = $darwin_state;"
-      echo
-      echo "  users.users.\${host.login} = {"
-      echo "    uid = $uid;"
-      echo "    home = \"$home\";"
-      echo "  };"
-      [ "$automigrate" = no ] || { echo; echo "  nix-homebrew.autoMigrate = true;"; }
-      echo "}"
-    } >"$work/host/configuration.nix"
-    profiles="    ../../profiles/home/darwin.nix"
+    features="mac"
   fi
   {
+    if [ "$os" = nixos ]; then
+      echo "# Generated by scripts/onboard.sh: the installed configuration (boot, disks,"
+      echo "# users, network, desktop, system.stateVersion) kept verbatim in ./_installed,"
+      echo "# plus the onboarding features and this account's facts."
+    else
+      echo "# Generated by scripts/onboard.sh for a fresh nix-darwin install."
+    fi
+    echo "{ config, ... }:"
     echo "{"
-    echo "  imports = ["
-    echo "$profiles"
-    echo "  ];"
+    echo "  hosts.\"$target\" = {"
+    echo "    system = \"$system\";"
+    echo "    login = \"$login\";"
+    echo "    features = with config.features; [ $features ];"
     echo
-    echo "  home.stateVersion = \"$hm_state\";"
+    echo "    configuration ="
+    echo "      { host, ... }:"
+    echo "      {"
+    if [ "$os" = nixos ]; then
+      echo "        imports = [ ./_installed/configuration.nix ];"
+    else
+      echo "        # First nix-darwin release on this Mac; read the changelog before changing."
+      echo "        system.stateVersion = $darwin_state;"
+    fi
+    echo
+    echo "        users.users.\${host.login} = {"
+    echo "          uid = $uid;"
+    echo "          home = \"$home\";"
+    echo "        };"
+    [ "$unfree" = no ] || { echo; echo "        nixpkgs.config.allowUnfree = true;"; }
+    [ "$automigrate" = no ] || { echo; echo "        nix-homebrew.autoMigrate = true;"; }
+    echo "      };"
+    echo
+    echo "    home.home.stateVersion = \"$hm_state\";"
+    echo "  };"
     echo "}"
-  } >"$work/host/home.nix"
+  } >"$work/host/default.nix"
 
-  # Inventory: append one entry before the closing brace of the literal
-  # attrset, then require Nix to agree the result is exactly old + entry.
-  inv="$root/hosts/default.nix"
-  cp "$inv" "$work/inventory.orig"
-  [ "$(head -n 1 "$inv")" = "{" ] && [ "$(tail -n 1 "$inv")" = "}" ] \
-    || die "hosts/default.nix is no longer a plain attrset ('{' ... '}'); add $target by hand. Nothing was written."
-  {
-    sed '$d' "$work/inventory.orig"
-    printf '  %s = {\n    system = "%s";\n    login = "%s";\n  };\n}\n' "$target" "$system" "$login"
-  } >"$work/inventory.new"
-  # shellcheck disable=SC2016 # ${name} is Nix interpolation
-  same="$(nix-instantiate --eval --argstr old "$work/inventory.orig" --argstr new "$work/inventory.new" \
-    --argstr name "$target" --argstr system "$system" --argstr login "$login" -E '
-    { old, new, name, system, login }:
-    let o = import old; n = import new; in
-    builtins.isAttrs o && !(o ? ${name}) && n == o // { ${name} = { inherit system login; }; }' </dev/null 2>/dev/null || true)"
-  [ "$same" = true ] \
-    || die "could not add $target to hosts/default.nix without changing other entries; add it by hand. Nothing was written."
-
-  say "hosts/$target/configuration.nix:"
-  indent <"$work/host/configuration.nix"
-  say "hosts/$target/home.nix:"
-  indent <"$work/host/home.nix"
-  [ "$os" = darwin ] || say "hosts/$target/installed/: $(printf '%s\n' "$files" | tr '\n' ' ')(verbatim copies)"
-  say "hosts/default.nix:"
-  diff -u "$work/inventory.orig" "$work/inventory.new" | tail -n +3 | indent || true
-  note "No packages are listed here: they come from the imported profiles."
-  gate "Write these files and the inventory entry?" \
+  say "$hostrel/default.nix:"
+  indent <"$work/host/default.nix"
+  [ "$os" = darwin ] || say "$hostrel/_installed/: $(printf '%s\n' "$files" | tr '\n' ' ')(verbatim copies)"
+  note "No packages are listed here: they come from the selected features."
+  gate "Write these files?" \
     || declined "nothing was written." "Rerun bash scripts/onboard.sh when ready."
 
-  mkdir "$hostdir" || die "hosts/$target appeared meanwhile; nothing was written"
+  mkdir "$hostdir" || die "$hostrel appeared meanwhile; nothing was written"
   cp -R "$work/host/." "$hostdir/"
-  cmp -s "$work/inventory.orig" "$inv" \
-    || die "hosts/default.nix changed during the wizard; hosts/$target was written but not registered. Review both, then rerun."
-  # Exclusive scratch directory beside the inventory, so the rename is atomic
-  # and no existing file or symlink is written through.
-  invtmp="$(mktemp -d "$root/hosts/.onboard.XXXXXX")" \
-    || die "cannot create a scratch directory in hosts/; hosts/$target was written but not registered"
-  cp "$work/inventory.new" "$invtmp/default.nix"
-  mv -f "$invtmp/default.nix" "$inv"
-  rmdir "$invtmp"
-  invtmp=""
-  say "Wrote hosts/$target and registered it in hosts/default.nix."
+  say "Wrote $hostrel, which registers $target."
 fi
 
 # ── Stage 5 ───────────────────────────────────────────────────────────────
 stage "Review and evaluate"
 
-if grep -q 'profiles/nixos/base.nix' "$hostdir/configuration.nix" \
-  && ! git -C "$root" ls-files --error-unmatch -- profiles/nixos/base.nix >/dev/null 2>&1; then
-  die "profiles/nixos/base.nix is not tracked by Git, so the flake cannot see it; commit the onboarding support first"
-fi
-untracked="$(git -C "$root" ls-files --others --exclude-standard -- "hosts/$target")"
+untracked="$(git -C "$root" ls-files --others --exclude-standard -- "$hostrel" "$hostrel.nix")"
 if [ -n "$untracked" ]; then
   # Offer only files this wizard generates, revalidated now: a resumed run may
   # find later edits, and anything else in the directory is left alone.
   unknown="" wrappers="" installed_untracked=no
   while IFS= read -r f; do
     case "$f" in
-      "hosts/$target/configuration.nix" | "hosts/$target/home.nix") wrappers="$wrappers $f" ;;
-      "hosts/$target/installed/"*.nix) installed_untracked=yes ;;
+      "$hostrel/default.nix" | "$hostrel.nix") wrappers="$wrappers $f" ;;
+      "$hostrel/_installed/"*.nix) installed_untracked=yes ;;
       *) unknown="$unknown$f
 " ;;
     esac
@@ -505,10 +472,10 @@ $untracked
 EOF
   if [ -n "$unknown" ]; then
     printf '%s' "$unknown" | sort -u | indent
-    die "hosts/$target has untracked paths this wizard does not generate; move them out of the checkout (or review and track them yourself), then rerun. Nothing was staged."
+    die "$hostrel has untracked paths this wizard does not generate; move them out of the checkout (or review and track them yourself), then rerun. Nothing was staged."
   fi
-  if [ "$installed_untracked" = yes ] && ! check_nix_tree "$hostdir/installed"; then
-    die "hosts/$target/installed has files or lines that must not be tracked unreviewed; fix them, then rerun. Nothing was staged."
+  if [ "$installed_untracked" = yes ] && ! check_nix_tree "$hostdir/_installed"; then
+    die "$hostrel/_installed has files or lines that must not be tracked unreviewed; fix them, then rerun. Nothing was staged."
   fi
   hits=""
   for f in $wrappers; do
@@ -517,7 +484,7 @@ EOF
   done
   if [ -n "$hits" ]; then
     printf '%s' "$hits" | indent
-    die "hosts/$target has lines that must not be tracked unreviewed; fix them, then rerun. Nothing was staged."
+    die "$hostrel has lines that must not be tracked unreviewed; fix them, then rerun. Nothing was staged."
   fi
   say "Git-backed flakes ignore untracked files. Not yet tracked:"
   printf '%s\n' "$untracked" | indent
@@ -534,7 +501,7 @@ say "Evaluating $target (no full-system build or activation)..."
 # shellcheck disable=SC2016
 facts="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#hosts.$target" \
   --apply 'h: "${h.system}\n${h.login}\n${toString h.uid}\n${h.dotfiles}"')" \
-  || die "evaluation failed (see above); nothing was built or activated. Fix hosts/$target, then rerun."
+  || die "evaluation failed (see above); nothing was built or activated. Fix $hostrel, then rerun."
 {
   IFS= read -r want_system
   IFS= read -r want_login
@@ -571,7 +538,7 @@ summary="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#$ki
     + builtins.concatStringsSep \"\" (map (f: (if f.recursive then \"r \" else \"f \") + f.target + \"\\n\")
         (builtins.filter (f: f.enable) (builtins.attrValues hm.home.file)))
     + \"@brewfile\\n\" + (if nixos then \"\" else cfg.homebrew.brewfile)")" \
-  || die "evaluation failed (see above); nothing was built or activated. Fix hosts/$target, then rerun."
+  || die "evaluation failed (see above); nothing was built or activated. Fix $hostrel, then rerun."
 
 ev_drv="" ev_stateVersion="" ev_hostName="" ev_home="" ev_hmStateVersion="" ev_nh="" ev_just=""
 ev_bootLoader="" ev_fileSystems="" ev_luks="" ev_networkmanager="" ev_graphical=""
@@ -602,13 +569,13 @@ say "  hostname $ev_hostName; system.stateVersion $ev_stateVersion; home.stateVe
 say "  NH $ev_nh, Just $ev_just; system derivation $ev_drv"
 [ "$want_system" = "$system" ] || die "evaluated platform $want_system is not $system"
 [ "$want_login" = "$login" ] || die "evaluated login $want_login is not $login"
-[ "$want_uid" = "$uid" ] || die "evaluated uid '$want_uid' is not your uid $uid; set users.users.<login>.uid in hosts/$target"
+[ "$want_uid" = "$uid" ] || die "evaluated uid '$want_uid' is not your uid $uid; set users.users.<login>.uid in $hostrel"
 [ "$ev_home" = "$home" ] || die "evaluated home $ev_home is not your home $home"
 [ "$want_dotfiles" = "$root" ] || die "evaluated checkout $want_dotfiles is not this checkout $root"
 [ "$ev_hostName" = "$target" ] || die "evaluated hostname $ev_hostName is not $target"
 [ "$ev_nh" = yes ] && [ "$ev_just" = yes ] || die "the evaluated baseline lacks NH or Just, so 'just switch' would not work"
-if [ -d "$hostdir/installed" ]; then
-  kept="$(installed_state_version "$hostdir/installed")"
+if [ -d "$hostdir/_installed" ]; then
+  kept="$(installed_state_version "$hostdir/_installed")"
   [ "$ev_stateVersion" = "$kept" ] \
     || die "evaluated system.stateVersion $ev_stateVersion differs from the installed configuration's $kept"
 fi
@@ -644,7 +611,7 @@ gate "Build $target now? (as $login; downloads/builds packages; activates nothin
   || declined "nothing was built or activated." "Rerun bash scripts/onboard.sh to build."
 if [ "$os" = nixos ]; then
   (cd "$work" && nixos-rebuild build --flake "$root#$target" --option builders '' --no-update-lock-file --no-write-lock-file) \
-    || die "build failed; nothing was activated and hosts/$target is kept. Fix it, then rerun."
+    || die "build failed; nothing was activated and $hostrel is kept. Fix it, then rerun."
   help="$(env MANPAGER=cat nixos-rebuild --help 2>/dev/null || true)"
   if printf '%s\n' "$help" | grep -q -E -- '(^|[^-a-z])--sudo([^-a-z]|$)'; then
     elevate=--sudo
@@ -661,7 +628,7 @@ if [ "$os" = nixos ]; then
   note "returns to it, but cannot undo data changes. Nothing reboots or garbage-collects."
 else
   nixx build --no-update-lock-file --no-write-lock-file --out-link "$work/result" "$root#darwinConfigurations.$target.system" \
-    || die "build failed; nothing was activated and hosts/$target is kept. Fix it, then rerun."
+    || die "build failed; nothing was activated and $hostrel is kept. Fix it, then rerun."
   out="$(readlink "$work/result")"
   activate="sudo $out/sw/bin/darwin-rebuild switch --flake $root#$target --option builders \"\" --no-update-lock-file --no-write-lock-file"
   say "Built. Activation runs: $activate"
@@ -683,10 +650,10 @@ gate "Activate $target on this machine now?" \
   || declined "built but not activated." "Rerun this wizard to activate later; temporary result links are removed on exit."
 if [ "$os" = nixos ]; then
   nixos-rebuild switch "$elevate" --flake "$root#$target" --option builders '' --no-update-lock-file --no-write-lock-file \
-    || die "activation failed: setup is NOT complete. hosts/$target is kept and the previous generation is still bootable; fix the error above, then rerun."
+    || die "activation failed: setup is NOT complete. $hostrel is kept and the previous generation is still bootable; fix the error above, then rerun."
 else
   sudo "$out/sw/bin/darwin-rebuild" switch --flake "$root#$target" --option builders '' --no-update-lock-file --no-write-lock-file \
-    || die "activation failed: setup is NOT complete. hosts/$target is kept; fix the error above, then rerun."
+    || die "activation failed: setup is NOT complete. $hostrel is kept; fix the error above, then rerun."
 fi
 
 # ── Stage 7 ───────────────────────────────────────────────────────────────
@@ -719,4 +686,4 @@ step "Reboot when convenient and check login and network (NixOS: also boot menu 
 if [ "$os" = nixos ] && [ "$mode" = new ]; then
   step "Keep /etc/nixos as your recovery copy; back it up yourself before deleting it."
 fi
-step "Commit hosts/$target and hosts/default.nix when you are satisfied (not done for you)."
+step "Commit $hostrel when you are satisfied (not done for you)."

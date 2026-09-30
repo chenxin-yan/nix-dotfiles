@@ -2,7 +2,12 @@
 # (they record the system's drvPath), so they are cheap and catch broken
 # configurations on the host's own platform; `nix flake check` does not
 # know darwinConfigurations by itself.
-{ config, lib, ... }:
+{
+  config,
+  inputs,
+  lib,
+  ...
+}:
 {
   perSystem =
     { pkgs, system, ... }:
@@ -23,6 +28,13 @@
             lib.filterAttrs (name: _: config.hosts.${name}.system == system) (
               config.flake.darwinConfigurations // config.flake.nixosConfigurations
             )
-          );
+          )
+        // {
+          # The onboarding wizard's lifecycle tests; Nix and system tools are stubbed.
+          onboard = pkgs.runCommand "onboard-test" { nativeBuildInputs = [ pkgs.git ]; } ''
+            bash ${inputs.self}/scripts/onboard.test.sh
+            touch $out
+          '';
+        };
     };
 }
