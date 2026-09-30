@@ -67,25 +67,33 @@ cd ~/dotfiles
 bash scripts/onboard.sh
 ```
 
-For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. The stages are described at the top of `scripts/onboard.sh`. Commit the new host files afterwards.
-
-### Bring up a registered Mac by hand
-
-For a Mac that already has a host file, before `just` is installed:
-
-```sh
-sudo nix --extra-experimental-features 'nix-command flakes' run --inputs-from ~/dotfiles \
-  nix-darwin#darwin-rebuild -- switch --flake ~/dotfiles#<target>
-```
+For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. Commit any new host files afterwards.
 
 ### After install
 
-Set up the things Nix doesn't manage:
+Nix doesn't manage secrets, logins or macOS permissions. Set these up on each machine.
 
-- SSH keys (`~/.ssh/id_ed25519`)
-- `gh auth login`
-- 1Password sign-in
-- Device approval in the Syncthing UI (`http://localhost:8384`)
+**Secrets and logins**
+
+- `~/.env`: private environment variables, sourced by every zsh session. Create it even if it's empty, or each shell starts with an error.
+- SSH: create `~/.ssh/id_ed25519`, add the public key to GitHub, and add it to `openssh.authorizedKeys.keys` in the host files of the machines that should accept it.
+- `gh auth login`, 1Password (app and `op`), and the coding agents' own logins (pi, Claude Code, Codex).
+- API keys read from files: `~/.wakatime.cfg` (`api_key`, for WakaTime in pi and Neovim) and `~/.config/pi/firecrawl-api-key` (mode 0600, for pi's web search).
+
+**Network and sync**
+
+- Tailscale: `sudo tailscale up` to join the tailnet.
+- Syncthing: devices are declared by ID in `modules/features/cli/syncthing.nix`. A new or reinstalled machine gets a new ID, so add it there and switch on the other machines. The Raspberry Pi isn't managed by this repo, so accept the new device in its Syncthing UI too.
+
+**macOS permissions** (approve in System Settings when prompted)
+
+- Karabiner driver extension (for kanata): *General → Login Items & Extensions*.
+- Input Monitoring for kanata, Accessibility for AeroSpace and espanso: *Privacy & Security*.
+- Background items for sketchybar and the other agents: *General → Login Items & Extensions*.
+
+**work-macbook**
+
+- `colima start` before using Docker; it uses colima instead of podman.
 
 ## Daily use
 
