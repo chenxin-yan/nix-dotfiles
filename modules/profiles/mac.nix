@@ -52,7 +52,6 @@ in
 
         fonts.packages = [
           pkgs.nerd-fonts.jetbrains-mono
-          pkgs.sketchybar-app-font
           pkgs.geist-font
         ];
 
@@ -62,9 +61,6 @@ in
           enable = true;
           brews = [
             "mole"
-          ];
-          casks = [
-            "font-sf-pro"
           ];
           onActivation = {
             cleanup = "zap";

@@ -33,6 +33,10 @@
     {
       services.sketchybar.enable = true;
 
+      # Icon fonts the bar's config uses: SF Pro (ICON_FONT) and the app-icon font.
+      homebrew.casks = [ "font-sf-pro" ];
+      fonts.packages = [ pkgs.sketchybar-app-font ];
+
       # Install the wrapper before `userLaunchd` runs: nix-darwin loads
       # user LaunchAgents during the `userLaunchd` activation slot, and the
       # sketchybar agent has `RunAtLoad = true`, so the executable must
