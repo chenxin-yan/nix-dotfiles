@@ -16,12 +16,12 @@ justfile             everyday commands (`just --list`)
 modules/
 ├── flake/           plumbing: the `features` and `hosts` options, system builders
 ├── hosts/           one file (or directory) per machine
-├── profiles/        bundles of features: base, development, desktop, mac, server, …
-└── features/        everything a host can select: core, cli, dev, desktop, system
+├── profiles/        what hosts select: platforms/, roles/, and the blocks/ they share
+└── features/        everything a host can have, grouped by kind
 scripts/             onboarding wizard and the helpers behind the justfile
 ```
 
-Under `features/`, `core/` holds the shared shell/editor setup, `cli/` command-line tools, `dev/` language tooling, `desktop/` desktop applications and window/input/bar integration, and `system/` services and policy. Use a single `.nix` file unless a feature has assets or helpers to keep beside it.
+Under `features/`: `shell/`, `editor/`, `vcs/`, `agents/`, `tools/` (command-line tools), `languages/`, `apps/` (GUI apps), `desktop/` (window, bar and input integration) and `system/` (services and policy). `paths.nix` and `theme.nix` sit at the top because many features use them. Folders are only for navigation: moving a file never changes what a host gets. Use a single `.nix` file unless a feature has assets or helpers to keep beside it.
 
 Every `.nix` file under `modules/` is a flake-parts module, loaded automatically by [import-tree](https://github.com/denful/import-tree). Paths containing `/_` are skipped; use them for assets and helpers.
 
@@ -33,7 +33,15 @@ A feature (`features.<name>`) keeps its `darwin`, `nixos` and `homeManager` part
 
 ### Profiles
 
-Profiles bundle features and can add shared settings. `mac` is what every Mac gets, and `server` is what the mini PC gets. Both build on `base` and `development`; `mac` also selects `desktop`. A NixOS desktop can select `desktop` too, alongside its own desktop environment or window manager—without selecting `mac`. The shared desktop profile includes 1Password (app and CLI); the server does not. Platform-specific features such as AeroSpace stay selected by `mac`, even though their files live in the same `features/desktop/` folder.
+Profiles are features that select other features and hold no settings of their own, except OS-only settings in a platform. A host is its platform plus any combination of roles:
+
+| Type                  | Profiles                           | Rule                                                        |
+| --------------------- | ---------------------------------- | ----------------------------------------------------------- |
+| `profiles/platforms/` | `darwin`, `nixos`                  | Added from `system`; may hold settings only that OS has     |
+| `profiles/roles/`     | `server`, `workstation`, `desktop` | Any combination: runs unattended, I work on it, I sit at it |
+| `profiles/blocks/`    | `base`, `fleet`, `development`     | Shared by roles; a host may add one directly                |
+
+Roles overlap through `fleet` (maintenance, Tailscale, sshd), and a feature is selected once however many profiles include it. `desktop` lists both the macOS and future Linux desktop features; each one does nothing on the other OS.
 
 ### Hosts
 
@@ -44,8 +52,8 @@ A host (`hosts.<name>`) sets its platform, login, selected features and any mach
 hosts.work-macbook = {
   system = "aarch64-darwin";
   login = "chenxin-yan";
-  features = with config.features; [ mac ];
-  exclude = with config.features; [ podman ]; # an exception to the profile
+  features = with config.features; [ workstation desktop ]; # + darwin, from system
+  exclude = with config.features; [ podman ]; # an exception to the roles
   darwin = { /* nix-darwin: state version, account */ };
   homeManager = { /* Home Manager: machine-only packages */ };
 };
@@ -84,7 +92,7 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 **Network and sync**
 
 - Tailscale: `sudo tailscale up` to join the tailnet.
-- Syncthing: devices are declared by ID in `modules/features/cli/syncthing.nix`. A new or reinstalled machine gets a new ID, so add it there and switch on the other machines. The Raspberry Pi isn't managed by this repo, so accept the new device in its Syncthing UI too.
+- Syncthing: devices are declared by ID in `modules/features/system/syncthing.nix`. A new or reinstalled machine gets a new ID, so add it there and switch on the other machines. The Raspberry Pi isn't managed by this repo, so accept the new device in its Syncthing UI too.
 
 **macOS permissions** (approve in System Settings when prompted)
 
@@ -109,7 +117,7 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 
 - **`git add` new files before switching.** Git-backed flakes don't see untracked files.
 - **Homebrew removes what isn't declared.** Activation runs with `cleanup = "zap"`, so declare casks in the feature they belong to (`darwin.homebrew.casks`).
-- **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/core/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/core/zsh/scripts/`) apply without a rebuild.
+- **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/editor/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/shell/zsh/scripts/`) apply without a rebuild.
 - **`nix flake check` only evaluates the NixOS hosts.** A broken Mac config shows up at `just switch`.
 
 ## Making changes
@@ -119,7 +127,7 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 Create a file under `modules/features/<group>/` with the parts it needs:
 
 ```nix
-# modules/features/desktop/todoist.nix
+# modules/features/apps/todoist.nix
 {
   features.todoist = {
     darwin.homebrew.casks = [ "todoist-app" ];
@@ -130,7 +138,7 @@ Create a file under `modules/features/<group>/` with the parts it needs:
 }
 ```
 
-Then add it to a profile's `includes` or a host's `features`. Related features can nest: `core/agents/` owns shared skills and agent tools, and includes the separate `pi` feature in `core/agents/pi/`. Selecting `base` brings in the full agent setup; `exclude = [ pi ]` leaves the other agents available.
+Then add it to a role's or block's `includes`, or to a host's `features`. Related features can nest: `agents/` owns shared skills and agent tools, and includes the separate `pi` feature in `agents/pi/`; `exclude = [ pi ]` leaves the other agents available.
 
 ### Leave a feature out on one host
 
@@ -142,4 +150,4 @@ Run the wizard, or copy an existing host file. Never reuse another machine's har
 
 ### Find where something is configured
 
-`features.<name>` is defined in the file with that name under `modules/features/`, e.g. `features.syncthing` → `cli/syncthing.nix`. The theme is in `core/theme.nix`, and shared paths and environment variables are in `core/paths.nix`.
+`features.<name>` is defined in the file with that name under `modules/features/`, e.g. `features.syncthing` → `system/syncthing.nix`. Profiles are the exception: `features.workstation` → `modules/profiles/roles/workstation.nix`. The theme is in `theme.nix`, and shared paths and environment variables are in `paths.nix`.
