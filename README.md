@@ -2,7 +2,7 @@
 
 Nix Flakes + Home Manager dotfiles for macOS and NixOS, built with [flake-parts](https://flake.parts) in the [dendritic pattern](https://github.com/mightyiam/dendritic) and themed with Catppuccin Mocha.
 
-Everything is declarative — no symlink managers, no install scripts, no imperative setup. A single `just switch` rebuilds the machine you run it on from this repo.
+Everything is declarative: no symlink managers, no install scripts, no imperative setup. A single `just switch` rebuilds the machine you run it on from this repo.
 
 ## Table of Contents
 
