@@ -24,7 +24,7 @@ in
 
   home.file = {
     ".local/bin/scripts".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/core/zsh/scripts";
+      config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/core/zsh/scripts";
   };
 
   programs.zsh = {

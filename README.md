@@ -59,18 +59,19 @@ dotfiles/
 │   │   └── minipc/            # + _hardware-configuration.nix
 │   ├── profiles/              # Features that bundle features: base, development, desktop, mac,
 │   │                          #   nixos-base, server
-│   ├── core/                  # Every home: paths, theme, agents, git, jj, nvim, zsh, nushell
-│   ├── cli/                   # Developer CLIs and services (pi, podman, syncthing, yazi, zellij, …)
-│   ├── dev/                   # Language toolchains and LSPs
-│   ├── apps/                  # GUI apps (1password, ghostty, vesktop, …)
-│   ├── desktop/               # macOS window management (aerospace, kanata, sketchybar)
-│   └── system/                # System services (bluetooth, mosh, nix-gc)
+│   └── features/              # Everything a host can select, grouped by area
+│       ├── core/              # Every home: paths, theme, agents, git, jj, nvim, zsh
+│       ├── cli/               # Developer CLIs and services (pi, podman, syncthing, yazi, zellij, …)
+│       ├── dev/               # Language toolchains and LSPs
+│       ├── apps/              # GUI apps (1password, ghostty, vesktop, …)
+│       ├── desktop/           # macOS window management (aerospace, kanata, sketchybar)
+│       └── system/            # System services (bluetooth, mosh, nix-gc)
 └── scripts/                   # Repo tooling, runnable before any configuration is applied
     ├── onboard.sh             # Onboarding wizard (+ onboard-inventory.nix)
     └── utils/                 # switch.sh, update-pins.sh (used by the justfile)
 ```
 
-Feature assets live next to their feature. Two are linked out of the store so edits apply without a rebuild: `modules/core/nvim/config/` (lazy.nvim writes `lazy-lock.json` there) and `modules/core/zsh/scripts/` (the personal shell tools behind the zsh aliases).
+Feature assets live next to their feature. Two are linked out of the store so edits apply without a rebuild: `modules/features/core/nvim/config/` (lazy.nvim writes `lazy-lock.json` there) and `modules/features/core/zsh/scripts/` (the personal shell tools behind the zsh aliases).
 
 ## Prerequisites
 
@@ -178,14 +179,14 @@ This runs `nh os switch --hostname <target>` after the same preflight checks as 
 | `just search <pkg>`    | Search nixpkgs for a package                                                                    |
 | `just show <pkg>`      | Show package information                                                                        |
 
-Native Nix cleanup is defined once in the `nix-gc` feature ([`modules/system/nix-gc.nix`](modules/system/nix-gc.nix), included by `mac` and `server`); `just clean` reads the retention from the host's evaluated `nix.gc.options`. All machines collect weekly with 14-day generation retention; the current generation is preserved, with no minimum-count guarantee. Store optimization runs separately (daily on MiniPC, weekly on Macs). `just clean` uses sudo to run native GC, then optimization; NH remains the rebuild CLI, not the collector. Retention protects profile generations, not arbitrary unreferenced build outputs.
+Native Nix cleanup is defined once in the `nix-gc` feature ([`modules/features/system/nix-gc.nix`](modules/features/system/nix-gc.nix), included by `mac` and `server`); `just clean` reads the retention from the host's evaluated `nix.gc.options`. All machines collect weekly with 14-day generation retention; the current generation is preserved, with no minimum-count guarantee. Store optimization runs separately (daily on MiniPC, weekly on Macs). `just clean` uses sudo to run native GC, then optimization; NH remains the rebuild CLI, not the collector. Retention protects profile generations, not arbitrary unreferenced build outputs.
 
 ## Module Architecture
 
 There are no enable flags: a feature is on for a host when the host selects it, directly or through another feature's `includes`.
 
 ```nix
-# modules/desktop/kanata/default.nix: one feature, every platform part in one file
+# modules/features/desktop/kanata/default.nix: one feature, every platform part in one file
 {
   features.kanata.darwin = { pkgs, ... }: { launchd.daemons.kanata = { /* … */ }; };
   features.kanata.homeManager = { xdg.configFile."kanata/kanata.kbd".source = ./kanata.kbd; };
@@ -215,7 +216,7 @@ There are no enable flags: a feature is on for a host when the host selects it, 
 - **Shared settings**: features that read another feature's options include it (`nvim` and `zsh` include `paths`). Values from outside a module, like flake inputs or another host's login, come from the top-level config by closure; the only module argument passed in is the host's own entry, `host`.
 - **Inspect**: `nix eval .#hosts.<name>.features --json` lists what a host runs.
 
-To add a feature, create a file (for example `modules/cli/foo.nix` defining `features.foo.homeManager`), `git add` it, and add `foo` to a profile's `includes` or a host's `features`.
+To add a feature, create a file (for example `modules/features/cli/foo.nix` defining `features.foo.homeManager`), `git add` it, and add `foo` to a profile's `includes` or a host's `features`.
 
 ### Switching
 
@@ -229,7 +230,7 @@ The goal is password-less SSH between all managed machines. Today the repo carri
 
 ### Features
 
-`h` = Home Manager, `d` = nix-darwin, `n` = NixOS part.
+Groups are directories under `modules/features/`. `h` = Home Manager, `d` = nix-darwin, `n` = NixOS part.
 
 | Group      | Feature                                                                                 | Parts | Purpose                                                                                           |
 | ---------- | --------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------- |
@@ -238,7 +239,7 @@ The goal is password-less SSH between all managed machines. Today the repo carri
 |            | `agents`                                                                                | h     | Shared agent instructions and `~/.agents/skills/`                                                 |
 |            | `git`                                                                                   | h     | Git config, difftastic, GitHub CLI, gh-dash, lazygit, hunk                                        |
 |            | `jj`                                                                                    | h     | Jujutsu and jjui                                                                                  |
-|            | `nvim`                                                                                  | h     | Neovim with out-of-store symlink to `modules/core/nvim/config/`                                   |
+|            | `nvim`                                                                                  | h     | Neovim with out-of-store symlink to `modules/features/core/nvim/config/`                                   |
 |            | `zsh`                                                                                   | h     | Zsh with vi keybindings, oh-my-posh prompt, fzf, direnv, modern CLI tools, script aliases         |
 | `cli/`     | `zellij`                                                                                | h     | Terminal multiplexer                                                                              |
 |            | `herdr`                                                                                 | h     | Terminal workspace manager                                                                        |
@@ -265,9 +266,9 @@ The goal is password-less SSH between all managed machines. Today the repo carri
 
 ## Neovim
 
-Lua-based configuration in `modules/core/nvim/config/` using [lazy.nvim](https://github.com/folke/lazy.nvim) as the plugin manager. Space is the leader key.
+Lua-based configuration in `modules/features/core/nvim/config/` using [lazy.nvim](https://github.com/folke/lazy.nvim) as the plugin manager. Space is the leader key.
 
-Vite+ integration lives in `modules/core/nvim/config/lua/cyan/plugins/languages/web/viteplus.lua`; `web/init.lua` wires its project detection, Oxlint configuration, and Conform override into the shared web setup. Vite+ projects use the workspace-local `node_modules/.bin/vp`: `vp lint --lsp` for diagnostics and `vp fmt --stdin-filepath` through Conform for formatting (including Markdown/MDX). Detection checks the package-manager workspace/lockfile root's `package.json` for a `vite-plus` dependency, falling back to the nearest package when there is no workspace marker. Install project dependencies first; keep shared lint/format settings in the root `vite.config.ts`. Plain Vite projects are not opted in. Other projects retain standalone Oxc, Biome, and Prettier selection. Oxfmt is configured only in Conform, not as an LSP server.
+Vite+ integration lives in `modules/features/core/nvim/config/lua/cyan/plugins/languages/web/viteplus.lua`; `web/init.lua` wires its project detection, Oxlint configuration, and Conform override into the shared web setup. Vite+ projects use the workspace-local `node_modules/.bin/vp`: `vp lint --lsp` for diagnostics and `vp fmt --stdin-filepath` through Conform for formatting (including Markdown/MDX). Detection checks the package-manager workspace/lockfile root's `package.json` for a `vite-plus` dependency, falling back to the nearest package when there is no workspace marker. Install project dependencies first; keep shared lint/format settings in the root `vite.config.ts`. Plain Vite projects are not opted in. Other projects retain standalone Oxc, Biome, and Prettier selection. Oxfmt is configured only in Conform, not as an LSP server.
 
 After changing this configuration, restart Neovim. `:ConformInfo` shows the formatter executable and `:checkhealth vim.lsp` shows attached servers.
 
@@ -386,7 +387,7 @@ Zsh with vi mode (`viins` keymap) and [oh-my-posh](https://ohmyposh.dev/) prompt
 
 ## Scripts
 
-These scripts live in `modules/core/zsh/scripts/` and are symlinked to `~/.local/bin/scripts`. Shell aliases are defined in `modules/core/zsh/_scripting.nix`.
+These scripts live in `modules/features/core/zsh/scripts/` and are symlinked to `~/.local/bin/scripts`. Shell aliases are defined in `modules/features/core/zsh/_scripting.nix`.
 
 | Alias    | Script                  | Purpose                                   |
 | -------- | ----------------------- | ----------------------------------------- |
@@ -403,7 +404,7 @@ Dev repos are organized as `~/dev/<host>/<owner>/<repo>` (e.g., `~/dev/github.co
 
 ## Syncthing
 
-File synchronization across three devices, managed declaratively in `modules/cli/syncthing.nix` and selected per host (`macbook`, `minipc`; the work Mac stays out).
+File synchronization across three devices, managed declaratively in `modules/features/cli/syncthing.nix` and selected per host (`macbook`, `minipc`; the work Mac stays out).
 
 | Folder   | macbook | minipc | raspberry-pi |
 | -------- | :-----: | :----: | :----------: |
@@ -416,11 +417,11 @@ The `.stignore` files are generated by Nix and exclude build artifacts (`node_mo
 
 ### macOS — Aerospace
 
-Tiling window manager configured in `modules/desktop/aerospace.nix`. Uses Alt-based keybindings (Alt+HJKL for focus, Alt+Shift+HJKL for move). Workspaces integrate with Sketchybar for visual indicators.
+Tiling window manager configured in `modules/features/desktop/aerospace.nix`. Uses Alt-based keybindings (Alt+HJKL for focus, Alt+Shift+HJKL for move). Workspaces integrate with Sketchybar for visual indicators.
 
 ## Keyboard
 
-[Kanata](https://github.com/jtroo/kanata) provides home-row modifiers on macOS (config at `modules/desktop/kanata/kanata.kbd`):
+[Kanata](https://github.com/jtroo/kanata) provides home-row modifiers on macOS (config at `modules/features/desktop/kanata/kanata.kbd`):
 
 | Key  | Tap | Hold        |
 | ---- | --- | ----------- |
@@ -453,7 +454,7 @@ The ZSA Voyager keyboard is excluded from Kanata remapping.
 
 ## Environment Variables
 
-Set in `modules/core/paths.nix` (`EDITOR`/`VISUAL` in `modules/core/nvim/default.nix`) and available in all shells:
+Set in `modules/features/core/paths.nix` (`EDITOR`/`VISUAL` in `modules/features/core/nvim/default.nix`) and available in all shells:
 
 | Variable        | Default              | Purpose                       |
 | --------------- | -------------------- | ----------------------------- |
@@ -481,8 +482,8 @@ Set in `modules/core/paths.nix` (`EDITOR`/`VISUAL` in `modules/core/nvim/default
 
 4. **Add a feature**: Create a file under the matching `modules/<group>/` that sets `features.<name>.<class>` (`homeManager`, `darwin`, `nixos`), `git add` it, and include it from a profile or host. No imports list to update.
 
-5. **Change the theme**: Modify the palette in `modules/core/theme.nix`
+5. **Change the theme**: Modify the palette in `modules/features/core/theme.nix`
 
-6. **Neovim plugins**: Add plugin specs under `modules/core/nvim/config/lua/cyan/plugins/` in the appropriate category directory
+6. **Neovim plugins**: Add plugin specs under `modules/features/core/nvim/config/lua/cyan/plugins/` in the appropriate category directory
 
-7. **Syncthing devices**: Update device IDs and folder config in `modules/cli/syncthing.nix`
+7. **Syncthing devices**: Update device IDs and folder config in `modules/features/cli/syncthing.nix`

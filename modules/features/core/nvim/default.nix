@@ -18,7 +18,7 @@
       ];
 
       xdg.configFile."nvim".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/core/nvim/config";
+        config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/core/nvim/config";
 
       programs.zsh.shellAliases = {
         v = "nvim";
