@@ -2,12 +2,6 @@
 
 Nix flake for my Macs (nix-darwin) and NixOS machines, with Home Manager for everything user-level. Built with [flake-parts](https://flake.parts) in the [dendritic pattern](https://github.com/mightyiam/dendritic) and themed with Catppuccin Mocha.
 
-- [Layout](#layout)
-- [How it works](#how-it-works)
-- [Setup](#setup)
-- [Daily use](#daily-use)
-- [Making changes](#making-changes)
-
 ## Layout
 
 ```
@@ -20,10 +14,6 @@ modules/
 └── features/        everything a host can have, grouped by kind
 scripts/             onboarding wizard and the helpers behind the justfile
 ```
-
-Under `features/`: `shell/`, `editor/`, `vcs/`, `agents/`, `tools/` (command-line tools), `languages/`, `apps/` (GUI apps), `desktop/` (window, bar and input integration) and `system/` (services and policy). `paths.nix` and `theme.nix` sit at the top because many features use them. Folders are only for navigation: moving a file never changes what a host gets. Use a single `.nix` file unless a feature has assets or helpers to keep beside it.
-
-Every `.nix` file under `modules/` is a flake-parts module, loaded automatically by [import-tree](https://github.com/denful/import-tree). Paths containing `/_` are skipped; use them for assets and helpers.
 
 ## How it works
 
