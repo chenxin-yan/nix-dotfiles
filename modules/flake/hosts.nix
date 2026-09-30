@@ -32,7 +32,10 @@ let
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;
-      sharedModules = [ catppuccin.homeModules.catppuccin ];
+      sharedModules = [
+        catppuccin.homeModules.catppuccin
+        config.flake.modules.homeManager.features
+      ];
       users.${host.login}.imports = [ config.hosts.${name}.home ];
       extraSpecialArgs = { inherit inputs hosts; };
     };
@@ -45,6 +48,7 @@ let
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
+        config.flake.modules.darwin.features
         config.hosts.${name}.configuration
         (hostModule name host)
         {
@@ -66,6 +70,7 @@ let
       modules = [
         catppuccin.nixosModules.catppuccin
         home-manager.nixosModules.home-manager
+        config.flake.modules.nixos.features
         config.hosts.${name}.configuration
         (hostModule name host)
       ];
@@ -77,6 +82,10 @@ let
   configurations = darwinConfigurations // nixosConfigurations;
 in
 {
+  # Every feature file adds its per-class half to flake.modules.<class>.features;
+  # all hosts import all features, and profiles pick them with enable flags.
+  imports = [ inputs.flake-parts.flakeModules.modules ];
+
   options.hosts = lib.mkOption {
     default = { };
     type = lib.types.attrsOf (

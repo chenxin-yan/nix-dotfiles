@@ -5,7 +5,6 @@
     ./mise
     ./pandoc
     ./pi
-    ./podman
     ./syncthing
     ./yazi
     ./zellij

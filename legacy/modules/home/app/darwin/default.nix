@@ -3,7 +3,5 @@
 {
   imports = [
     ./iina
-    ./kanata
-    ./sketchybar
   ];
 }
