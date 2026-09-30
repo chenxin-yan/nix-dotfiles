@@ -58,8 +58,8 @@
     };
 
   features.sketchybar.homeManager =
-    { pkgs, ... }:
-    {
+    { pkgs, lib, ... }:
+    lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
       xdg.configFile."sketchybar" = {
         source = ./config;
         recursive = true;

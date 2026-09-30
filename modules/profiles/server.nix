@@ -10,8 +10,9 @@
       unfree
       tailscale
       ssh
+      sshd
       bluetooth
-      mosh
+      mosh-server
     ];
 
   };

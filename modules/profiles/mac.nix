@@ -17,61 +17,28 @@ in
       unfree
       tailscale
       ssh
+      sshd
       mosh
+      homebrew
+      locale
+      fonts
+      keymapp
+      obsidian
+      wechat
       aerospace
       kanata
       sketchybar
       iina
     ];
 
-    darwin =
-      { pkgs, ... }:
-      {
-        # Fix macOS locale issue (BCP 47 format incompatible with Unix tools)
-        environment.variables = {
-          LANG = "en_US.UTF-8";
-          LC_ALL = "en_US.UTF-8";
-        };
-
-        # List packages installed in system profile. To search by name, run:
-        # $ nix-env -qaP | grep wget
-        environment.systemPackages = with pkgs; [
-          keymapp
-        ];
-
-        # Set Git commit hash for darwin-version.
-        system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
-
-        fonts.packages = [
-          pkgs.nerd-fonts.jetbrains-mono
-          pkgs.geist-font
-        ];
-
-        # Both Macs deliberately remove unlisted Homebrew packages and associated
-        # cask data; include everything to retain in the effective Homebrew config.
-        homebrew = {
-          enable = true;
-          brews = [
-            "mole"
-          ];
-          onActivation = {
-            cleanup = "zap";
-          };
-        };
-      };
+    darwin = {
+      # Set Git commit hash for darwin-version.
+      system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
+    };
 
     homeManager =
+      { config, ... }:
       {
-        config,
-        pkgs,
-        ...
-      }:
-      {
-        home.packages = with pkgs; [
-          wechat
-          obsidian
-        ];
-
         programs.ssh = {
           settings = {
             "cyan-minipc" = {

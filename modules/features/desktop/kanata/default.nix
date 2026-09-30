@@ -86,7 +86,9 @@
       };
     };
 
-  features.kanata.homeManager = {
-    xdg.configFile."kanata/kanata.kbd".source = ./kanata.kbd;
-  };
+  features.kanata.homeManager =
+    { pkgs, lib, ... }:
+    lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      xdg.configFile."kanata/kanata.kbd".source = ./kanata.kbd;
+    };
 }

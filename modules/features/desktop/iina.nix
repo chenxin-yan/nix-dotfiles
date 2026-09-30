@@ -1,7 +1,8 @@
 {
   features.iina.homeManager =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
     {
-      home.packages = [ pkgs.iina ];
+      # macOS-only app; selecting it elsewhere is a no-op.
+      home.packages = lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.iina ];
     };
 }

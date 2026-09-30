@@ -1,11 +1,6 @@
-let
-  server.services.openssh.enable = true;
-in
+# Client config; accepting connections is sshd.
 {
   features.ssh = {
-    darwin = server;
-    nixos = server;
-
     homeManager =
       {
         config,
