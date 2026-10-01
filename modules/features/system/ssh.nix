@@ -45,9 +45,6 @@ in
                 UseKeychain = "yes";
               };
 
-              "cyanpi" = {
-                User = "yanchenxin";
-              };
             };
         };
       };

@@ -66,6 +66,8 @@ let
   nixosHost =
     name: host:
     nixpkgs.lib.nixosSystem {
+      # Its board modules take the flake as a module argument.
+      specialArgs = { inherit (inputs) nixos-raspberrypi; };
       modules = [
         home-manager.nixosModules.home-manager
         (hostModule name host)
