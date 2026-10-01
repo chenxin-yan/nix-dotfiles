@@ -68,6 +68,12 @@ cd ~/dotfiles
 bash scripts/onboard.sh
 ```
 
+A fresh NixOS install has no Git, so clone with a temporary one:
+
+```sh
+nix-shell -p git --run 'git clone https://github.com/chenxin-yan/nix-dotfiles ~/dotfiles'
+```
+
 For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets only `base development`, so add its roles to the host file afterwards. Commit any new host files.
 
 ### After install
