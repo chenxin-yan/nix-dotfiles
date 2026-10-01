@@ -620,7 +620,7 @@ decrypts() {
 read_sops_files
 if [ -n "$sops_files" ]; then
   say "$target reads secrets, which this machine decrypts with its SSH host key."
-  if [ ! -e "$hostkey.pub" ]; then
+  if [ ! -e "$hostkey" ]; then
     say "This machine has no $hostkey yet; sshd would only create it after activation."
     gate "Create it now? (sudo ssh-keygen -t ed25519 -N \"\" -f $hostkey)" \
       || declined "nothing was built or activated." "Create the host key, then rerun."
@@ -634,11 +634,13 @@ if [ -n "$sops_files" ]; then
   }
   sops_bin="$(locked_pkg sops)/bin/sops" || die "could not build sops"
   ssh_to_age="$(locked_pkg ssh-to-age)/bin/ssh-to-age" || die "could not build ssh-to-age"
-  pubkey="$(cut -d' ' -f1,2 "$hostkey.pub")"
-  [[ "$pubkey" =~ ^ssh-ed25519\ [A-Za-z0-9+/=]+$ ]] || die "$hostkey.pub is not an ed25519 public key"
-  say "Its public host key: $pubkey"
   gate "Test-decrypt them now with sudo, using only the host key? (nothing is printed)" \
     || declined "nothing was built or activated." "Rerun when you're ready to check secrets access."
+  # From the private half, which is what decrypts; a stale .pub would enrol
+  # the wrong key.
+  pubkey="$(sudo ssh-keygen -y -f "$hostkey" </dev/null | cut -d' ' -f1,2)"
+  [[ "$pubkey" =~ ^ssh-ed25519\ [A-Za-z0-9+/=]+$ ]] || die "$hostkey is not a readable ed25519 key"
+  say "Its public host key: $pubkey"
   if ! decrypts; then
     warn "This machine can't decrypt $(printf '%s\n' "$sops_files" | sed 's|^/nix/store/[^/]*/||' | tr '\n' ' ')yet."
     say "Enrol it from a machine with 1Password and this repo, then commit and push:"
