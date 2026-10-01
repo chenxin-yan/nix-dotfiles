@@ -1,4 +1,22 @@
 {
+  # TODO: remove once nixpkgs-unstable has NixOS/nixpkgs#568618 (merged into
+  # master 2026-09-30), then `nix flake update nixpkgs`. Until then herdr
+  # 0.9.1 fails to link on Linux with GCC 16 (".eh_frame_hdr refers to
+  # overlapping FDEs"); this mirrors that fix. The fix is in when this prints
+  # "ahead" or "identical":
+  #   gh api repos/NixOS/nixpkgs/compare/ec04c0e4c949226f5d15f1a78c79461d1a3fa6fc...nixpkgs-unstable --jq .status
+  features.herdr.nixos.nixpkgs.overlays = [
+    (_: prev: {
+      herdr = prev.herdr.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace vendor/libghostty-vt/src/build/GhosttyLibVt.zig \
+            --replace-fail 'lib.bundle_compiler_rt = true;' 'lib.bundle_compiler_rt = false;' \
+            --replace-fail 'lib.bundle_ubsan_rt = true;' 'lib.bundle_ubsan_rt = false;'
+        '';
+      });
+    })
+  ];
+
   features.herdr.homeManager =
     {
       pkgs,
