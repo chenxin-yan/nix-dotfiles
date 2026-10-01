@@ -47,8 +47,9 @@ ask() {
 # Nix-owned baseline; review and evaluate; build, then activate; verify.
 # Every repo write, `git add`, build and activation has its own y/N gate();
 # anything but a complete "y..." line, including EOF, answers no. It never
-# resets, pulls or cleans the checkout, commits, pushes, updates flake.lock,
-# garbage-collects, reboots, or edits /etc/nixos.
+# resets or cleans the checkout, commits, pushes, updates flake.lock,
+# garbage-collects, reboots, or edits /etc/nixos; it pulls (fast-forward only)
+# only when you confirm an enrolment is pushed.
 # Reruns reuse a registered target and stop on partial or conflicting state.
 #
 # Keep runnable by macOS /bin/bash 3.2: no mapfile, ${v,,}, GNU-only tool
