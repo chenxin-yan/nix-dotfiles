@@ -4,7 +4,13 @@ in
 {
   features._1password = {
     darwin = app;
-    nixos = app;
+    nixos =
+      { host, ... }:
+      {
+        imports = [ app ];
+        # NixOS only: polkit lets this user unlock op and the browser through the app.
+        programs._1password-gui.polkitPolicyOwners = [ host.login ];
+      };
     # SSH and git use the keys in 1Password through its agent, so a desktop
     # needs no key file. The agent itself is switched on in 1Password →
     # Settings → Developer; that setting lives in the app, not in a file.
