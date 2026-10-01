@@ -1,4 +1,6 @@
-# Client config; accepting connections is sshd.
+# Client config; accepting connections is sshd. ssh offers ~/.ssh/id_ed25519
+# by default, which servers use; desktops use 1Password's agent instead (see
+# _1password).
 { config, ... }:
 let
   inherit (config) hosts;
@@ -13,7 +15,6 @@ in
         ...
       }:
       let
-        identity = "${config.home.homeDirectory}/.ssh/id_ed25519";
         inherit (pkgs.stdenv.hostPlatform) isDarwin;
       in
       {
@@ -23,7 +24,6 @@ in
           settings = {
             "github.com" = {
               AddKeysToAgent = "yes";
-              IdentityFile = identity;
             }
             // lib.optionalAttrs isDarwin {
               UseKeychain = "yes";
@@ -31,7 +31,6 @@ in
 
             "cyan-minipc" = {
               User = hosts.minipc.login;
-              IdentityFile = identity;
               ControlMaster = "auto";
               ControlPersist = "10m";
               ControlPath = "${config.home.homeDirectory}/.ssh/cm-%C";
@@ -39,7 +38,6 @@ in
 
             "cyanpi" = {
               User = "yanchenxin";
-              IdentityFile = identity;
             };
           };
         };

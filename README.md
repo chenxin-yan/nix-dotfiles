@@ -75,7 +75,8 @@ Nix doesn't manage logins or macOS permissions. Set these up on each machine.
 
 **Logins**
 
-- SSH: create `~/.ssh/id_ed25519`, add the public key to GitHub, and add it to `openssh.authorizedKeys.keys` in the host files of the machines that should accept it.
+- SSH on desktops: the key lives in 1Password's Personal vault, and every machine running sshd accepts it (`modules/features/system/sshd.nix`). Turn the agent on in _1Password → Settings → Developer_; Nix points ssh at it.
+- SSH on servers: `ssh-keygen -t ed25519` and add the public key to GitHub. The 1Password agent is part of the desktop app, so a headless machine keeps its own key.
 - `gh auth login`, 1Password (the app on desktops, `op` on every machine with a role), and the coding agents' own logins (pi, Claude Code, Codex).
 
 **Network and sync**
