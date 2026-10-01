@@ -1,6 +1,7 @@
 { inputs, ... }:
 let
   settings = {
+    defaultSopsFile = ../../../secrets/shared.yaml;
     # Explicit because the NixOS default is empty when sshd is off.
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     # Only the ed25519 key is a recipient; don't import the RSA one as GPG.

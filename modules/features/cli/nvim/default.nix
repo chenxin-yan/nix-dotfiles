@@ -1,7 +1,11 @@
-# Reads config.dotfiles, hence the paths include.
+# Reads config.dotfiles, hence the paths include. The config loads
+# vim-wakatime.
 { config, ... }:
 {
-  features.nvim.includes = with config.features; [ paths ];
+  features.nvim.includes = with config.features; [
+    paths
+    wakatime
+  ];
 
   features.nvim.homeManager =
     {

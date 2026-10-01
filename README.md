@@ -71,13 +71,12 @@ For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's ow
 
 ### After install
 
-Nix doesn't manage secrets, logins or macOS permissions. Set these up on each machine.
+Nix doesn't manage logins or macOS permissions. Set these up on each machine.
 
-**Secrets and logins**
+**Logins**
 
-- `~/.env`: API keys and other private environment variables, sourced by every zsh session. WakaTime (in pi and Neovim) reads `WAKATIME_API_KEY` from it. Create the file even if it's empty, or each shell starts with an error.
 - SSH: create `~/.ssh/id_ed25519`, add the public key to GitHub, and add it to `openssh.authorizedKeys.keys` in the host files of the machines that should accept it.
-- `gh auth login`, 1Password (app and `op`, on desktops), and the coding agents' own logins (pi, Claude Code, Codex).
+- `gh auth login`, 1Password (the app on desktops, `op` on every machine with a role), and the coding agents' own logins (pi, Claude Code, Codex).
 
 **Network and sync**
 
@@ -94,14 +93,26 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 
 ### Commands
 
-| Command                | What it does                                                          |
-| ---------------------- | --------------------------------------------------------------------- |
-| `just switch`          | Rebuild and activate this machine (checks it matches its host entry)  |
-| `just switch <target>` | Same, once, for a machine whose hostname doesn't match its target yet |
-| `just update`          | Update flake inputs                                                   |
-| `just update-pins`     | Update pinned `fetchFrom*` sources                                    |
-| `just clean`           | Garbage-collect with this host's retention, then optimise the store   |
-| `just fmt`             | Format Nix files                                                      |
+| Command                  | What it does                                                          |
+| ------------------------ | --------------------------------------------------------------------- |
+| `just switch`            | Rebuild and activate this machine (checks it matches its host entry)  |
+| `just switch <target>`   | Same, once, for a machine whose hostname doesn't match its target yet |
+| `just update`            | Update flake inputs                                                   |
+| `just update-pins`       | Update pinned `fetchFrom*` sources                                    |
+| `just clean`             | Garbage-collect with this host's retention, then optimise the store   |
+| `just fmt`               | Format Nix files                                                      |
+| `just secret-set <name>` | Set one secret from a hidden prompt                                   |
+| `just secrets-edit`      | Edit `secrets/shared.yaml` in `$EDITOR`                               |
+| `just secrets-rekey`     | Re-encrypt every secrets file for the keys in `.sops.yaml`            |
+
+### Secrets
+
+API keys are encrypted in `secrets/shared.yaml` and decrypted at activation into `/run/secrets/<name>`, readable only by the login user. Each machine decrypts with its own SSH host key. The `just secret*` recipes use the recovery key, the 1Password document `sops-recovery`, so `op` must be signed in (`eval $(op signin)` where there's no 1Password app).
+
+- **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine.
+- **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
+- **Enrol a machine:** add the output of `ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub` to `.sops.yaml`, run `just secrets-rekey`, and push before the machine's first switch. A machine that can't decrypt fails activation.
+- **A machine is lost:** remove its key from `.sops.yaml`, run `just secrets-rekey`, and rotate the API keys with their providers.
 
 ### Things to know
 
