@@ -209,12 +209,8 @@ keymap = [
   ], run = "cd ~/.config", desc = "Go ~/.config" },
   { on = [
     "g",
-    "p",
-  ], run = "cd $PROJECTS_PATH", desc = "Go to projects dir" },
-  { on = [
-    "g",
     "a",
-  ], run = "cd $AREAS_PATH", desc = "Go to Areas dir" },
+  ], run = "cd $ATLAS_PATH", desc = "Go to Atlas vault" },
   { on = [
     "g",
     "C",

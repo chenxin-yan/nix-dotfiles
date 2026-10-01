@@ -3,7 +3,6 @@
 source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
 
 mkdir -p "$DEV_PATH"
-mkdir -p "$PROJECTS_PATH"
 
 SELECTED=$(
   list_project_dirs | sort -u | while read -r dir; do
