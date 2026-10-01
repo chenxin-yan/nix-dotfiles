@@ -597,19 +597,11 @@ say "No unmanaged files in Home Manager's way."
 # activation. If it can't, it publishes none of them and the switch fails
 # partway (neither OS rolls back), so access is proven before building.
 hostkey=/etc/ssh/ssh_host_ed25519_key
-# sops_facts: "f FILE" for each sops file the target reads (store paths),
-# "s PATH" for each secret it publishes. Sets $sops_files and $secret_paths.
-sops_facts() {
-  local out
-  # shellcheck disable=SC2016
-  out="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#$kind.$target.config" --apply 'cfg: let
-      secrets = builtins.attrValues (cfg.sops.secrets or { });
-      files = builtins.attrNames (builtins.listToAttrs (map (s: { name = toString s.sopsFile; value = null; }) secrets));
-    in builtins.concatStringsSep "" (map (f: "f " + f + "\n") files ++ map (s: "s " + s.path + "\n") secrets)')" \
-    || die "could not evaluate $target's secrets; nothing was built or activated"
-  sops_files="$(printf '%s' "$out" | sed -n 's/^f //p')"
-  secret_paths="$(printf '%s' "$out" | sed -n 's/^s //p')"
-}
+# Each sops file the target reads (store paths), one per line.
+sops_files="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#$kind.$target.config" --apply 'cfg:
+    builtins.concatStringsSep "\n" (builtins.attrNames (builtins.listToAttrs (map
+      (s: { name = toString s.sopsFile; value = null; }) (builtins.attrValues (cfg.sops.secrets or { })))))')" \
+  || die "could not evaluate $target's secrets; nothing was built or activated"
 # decrypts: every file in $sops_files decrypts with the host key alone. sudo
 # reads the root-only key; env -i keeps the recovery key and any personal age
 # keys out of the test. Nothing decrypted is printed.
@@ -622,7 +614,6 @@ decrypts() {
       sh "$sops_bin" "$ssh_to_age" "$f" "$hostkey" || return 1
   done
 }
-sops_facts
 if [ -n "$sops_files" ]; then
   say "$target reads secrets, which this machine decrypts with its SSH host key."
   if [ ! -e "$hostkey.pub" ]; then
@@ -649,13 +640,7 @@ if [ -n "$sops_files" ]; then
     say "Enrol it from a machine with 1Password and this repo, then commit and push:"
     step "just secrets-enrol $target '$pubkey'"
     note "Copy the key from this screen or a trusted SSH session, not from ssh-keyscan."
-    while :; do
-      ask reply "Pull here (git pull --ff-only, in another shell), then press Enter to retest, or type q to stop:"
-      [ "$reply" != q ] || declined "nothing was built or activated." "Enrol $target, pull, then rerun."
-      sops_facts
-      ! decrypts || break
-      warn "Still can't decrypt. Check that the rekeyed files were pushed and pulled."
-    done
+    declined "nothing was built or activated." "Enrol $target, pull (git pull --ff-only), then rerun."
   fi
   say "This machine can decrypt every secrets file $target reads."
 fi
@@ -727,10 +712,6 @@ for tool in just nh; do
     problems="${problems}$tool is not in the new profile
 "
   fi
-done
-for p in $secret_paths; do
-  [ -e "$p" ] || problems="${problems}secret $p is missing; see sops-install-secrets in the activation output
-"
 done
 if [ -n "$problems" ]; then
   printf '%s' "$problems" | indent

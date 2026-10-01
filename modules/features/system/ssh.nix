@@ -7,10 +7,7 @@ let
   # Every enrolled machine is pinned by its host key, so connecting to one
   # never asks to trust it. Reached as cyan-<name> over Tailscale.
   knownHosts.programs.ssh.knownHosts = lib.mapAttrs (name: publicKey: {
-    hostNames = [
-      name
-      "cyan-${name}"
-    ];
+    hostNames = [ "cyan-${name}" ];
     inherit publicKey;
   }) config.hostKeys;
 in

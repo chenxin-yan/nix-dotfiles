@@ -4,13 +4,8 @@
 { lib, ... }:
 let
   dir = ../../secrets;
-  files = lib.optionals (builtins.pathExists dir) (lib.filesystem.listFilesRecursive dir);
-  encrypted =
-    file:
-    let
-      text = builtins.readFile file;
-    in
-    lib.hasInfix "\nsops:\n" text && lib.hasInfix "mac: ENC[" text;
+  files = lib.filesystem.listFilesRecursive dir;
+  encrypted = file: lib.hasInfix "mac: ENC[" (builtins.readFile file);
   plaintext = map (f: lib.removePrefix (toString dir + "/") (toString f)) (
     lib.filter (f: !encrypted f) files
   );

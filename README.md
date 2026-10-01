@@ -90,7 +90,7 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 
 **Network and sync**
 
-- Tailscale: `sudo tailscale up` to join the tailnet. A NixOS host can join on its first switch instead: create a one-off auth key in the Tailscale admin console, store it with `just secret-set tailscale-authkey secrets/hosts/<host>.yaml`, and declare `sops.secrets.tailscale-authkey.sopsFile` in the host's `nixos` module.
+- Tailscale: `sudo tailscale up` to join the tailnet.
 - Syncthing: devices are declared by ID in `modules/features/system/syncthing.nix`. A new or reinstalled machine gets a new ID, so add it there and switch on the other machines. The Raspberry Pi isn't managed by this repo, so accept the new device in its Syncthing UI too.
 
 **macOS permissions** (approve in System Settings when prompted)
@@ -98,8 +98,6 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 - Karabiner driver extension (for kanata): _General → Login Items & Extensions_.
 - Input Monitoring for kanata, Accessibility for AeroSpace and espanso: _Privacy & Security_.
 - Background items for sketchybar and the other agents: _General → Login Items & Extensions_.
-
-**Moving a machine from an older setup**: after its first switch, `just doctor` lists files the dotfiles no longer use (`~/.env`, old key files, and `~/.ssh/id_ed25519` on desktops). Delete them once everything works, and remove the old SSH key from GitHub.
 
 ### One-time setup
 
@@ -117,19 +115,19 @@ These exist already; redo them only to replace them.
 
 ### Commands
 
-| Command                           | What it does                                                              |
-| --------------------------------- | ------------------------------------------------------------------------- |
-| `just switch`                     | Rebuild and activate this machine (checks it matches its host entry)      |
-| `just switch <target>`            | Same, once, for a machine whose hostname doesn't match its target yet     |
-| `just update`                     | Update flake inputs                                                       |
-| `just update-pins`                | Update pinned `fetchFrom*` sources                                        |
-| `just clean`                      | Garbage-collect with this host's retention, then optimise the store       |
-| `just fmt`                        | Format Nix files                                                          |
-| `just doctor`                     | Check this machine's secrets, SSH agent and GitHub access; flag leftovers |
-| `just secret-set <name>`          | Set one secret from a hidden prompt                                       |
-| `just secrets-edit`               | Edit `secrets/shared.yaml` in `$EDITOR`                                   |
-| `just secrets-enrol <name> <key>` | Let a machine decrypt secrets and pin it in `known_hosts`                 |
-| `just secrets-rekey`              | Regenerate `.sops.yaml` and re-encrypt every secrets file                 |
+| Command                           | What it does                                                          |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `just switch`                     | Rebuild and activate this machine (checks it matches its host entry)  |
+| `just switch <target>`            | Same, once, for a machine whose hostname doesn't match its target yet |
+| `just update`                     | Update flake inputs                                                   |
+| `just update-pins`                | Update pinned `fetchFrom*` sources                                    |
+| `just clean`                      | Garbage-collect with this host's retention, then optimise the store   |
+| `just fmt`                        | Format Nix files                                                      |
+| `just doctor`                     | Check this machine's secrets, SSH agent and GitHub access             |
+| `just secret-set <name>`          | Set one secret from a hidden prompt                                   |
+| `just secrets-edit`               | Edit `secrets/shared.yaml` in `$EDITOR`                               |
+| `just secrets-enrol <name> <key>` | Let a machine decrypt secrets and pin it in `known_hosts`             |
+| `just secrets-rekey`              | Regenerate `.sops.yaml` and re-encrypt every secrets file             |
 
 ### Secrets
 
