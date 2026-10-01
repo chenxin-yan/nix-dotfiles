@@ -80,7 +80,7 @@ Nix doesn't manage logins or macOS permissions. Set these up on each machine.
 
 **Network and sync**
 
-- Tailscale: `sudo tailscale up` to join the tailnet.
+- Tailscale: `sudo tailscale up` to join the tailnet. A NixOS host can join on its first switch instead: create a one-off auth key in the Tailscale admin console, store it as `tailscale-authkey` in `secrets/hosts/<host>.yaml` (add a rule for that file to `.sops.yaml`), and declare `sops.secrets.tailscale-authkey.sopsFile` in the host's `nixos` module.
 - Syncthing: devices are declared by ID in `modules/features/system/syncthing.nix`. A new or reinstalled machine gets a new ID, so add it there and switch on the other machines. The Raspberry Pi isn't managed by this repo, so accept the new device in its Syncthing UI too.
 
 **macOS permissions** (approve in System Settings when prompted)
