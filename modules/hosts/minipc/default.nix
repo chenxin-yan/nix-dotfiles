@@ -1,11 +1,9 @@
 { config, ... }:
-let
-  inherit (config) hosts;
-in
 {
   hosts.minipc = {
     system = "x86_64-linux";
     login = "cyan";
+    sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFajA/D3AwQhbTCg+41FNno/28KYAjAKJd57R3n+dPD+";
 
     features = with config.features; [
       server
@@ -63,9 +61,6 @@ in
             "networkmanager"
             "wheel"
           ];
-          openssh.authorizedKeys.keys = [
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF4X1mHyGNSyyVqrWSIO/slGUBFPzcMOuDmP9UKI1FdN"
-          ];
           shell = pkgs.zsh;
           linger = true; # Keep user services running without active login session
         };
@@ -122,15 +117,6 @@ in
         ];
 
         services.ssh-agent.enable = true;
-
-        programs.ssh = {
-          settings = {
-            "cyan-macbook" = {
-              User = hosts.macbook.login;
-              CheckHostIP = false;
-            };
-          };
-        };
       };
   };
 }

@@ -5,9 +5,10 @@
 let
   inherit (config) hosts;
   # Every enrolled machine is pinned by its host key, so connecting to one
-  # never asks to trust it. Reached as cyan-<name> over Tailscale.
+  # never asks to trust it. Reached by its inventory name, which is also its
+  # hostname and so its Tailscale MagicDNS name.
   knownHosts.programs.ssh.knownHosts = lib.mapAttrs (name: publicKey: {
-    hostNames = [ "cyan-${name}" ];
+    hostNames = [ name ];
     inherit publicKey;
   }) config.hostKeys;
 in
@@ -29,25 +30,25 @@ in
         programs.ssh = {
           enable = true;
           enableDefaultConfig = false;
-          settings = {
-            "github.com" = {
-              AddKeysToAgent = "yes";
-            }
-            // lib.optionalAttrs isDarwin {
-              UseKeychain = "yes";
-            };
-
-            "cyan-minipc" = {
-              User = hosts.minipc.login;
+          settings =
+            lib.mapAttrs (_: host: {
+              User = host.login;
               ControlMaster = "auto";
               ControlPersist = "10m";
               ControlPath = "${config.home.homeDirectory}/.ssh/cm-%C";
-            };
+            }) hosts
+            // {
+              "github.com" = {
+                AddKeysToAgent = "yes";
+              }
+              // lib.optionalAttrs isDarwin {
+                UseKeychain = "yes";
+              };
 
-            "cyanpi" = {
-              User = "yanchenxin";
+              "cyanpi" = {
+                User = "yanchenxin";
+              };
             };
-          };
         };
       };
   };

@@ -77,12 +77,12 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 **Logins**
 
 - Desktops: sign in to 1Password, then in _Settings → Developer_ (on a Mac, `open onepassword://settings/developers`) turn on **Use the SSH agent** and **Integrate with 1Password CLI**.
-- Servers: `ssh-keygen -t ed25519` and add the public key to GitHub. To use `just secret*` there, run `op account add` once.
+- Servers: `ssh-keygen -t ed25519 -N ""`, put the public key (without its comment) in the host's `sshKey` so the fleet accepts it, and add it to GitHub. To use `just secret*` there, run `op account add` once.
 - `gh auth login` and the coding agents' own logins (pi, Claude Code, Codex).
 
 **Network**
 
-- Tailscale: `sudo tailscale up` to join the tailnet.
+- Tailscale: `sudo tailscale up` to join the tailnet. Keep the machine's Tailscale name auto-generated from its hostname; `ssh <name>` relies on it.
 
 **macOS permissions** (approve in System Settings when prompted)
 
@@ -134,7 +134,7 @@ API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at act
 ### Things to know
 
 - **`git add` new files before switching.** Git-backed flakes don't see untracked files.
-- **SSH accepts only keys declared in Nix.** No passwords, no root, and `~/.ssh/authorized_keys` is ignored. Add a key to `desktopKey` in `modules/features/system/sshd.nix` for every machine, or to `openssh.authorizedKeys.keys` in one host file.
+- **SSH accepts only keys declared in Nix.** No passwords, no root, and `~/.ssh/authorized_keys` is ignored. Every machine accepts `desktopKey` in `modules/features/system/sshd.nix` and each host's `sshKey`, so any fleet machine reaches any other as `ssh <name>`, with its host key pinned once enrolled.
 - **Homebrew removes what isn't declared.** Activation runs with `cleanup = "zap"`, so declare casks in the feature they belong to (`darwin.homebrew.casks`).
 - **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/cli/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/cli/zsh/scripts/`) apply without a rebuild.
 - **`nix flake check` only evaluates the NixOS hosts.** A broken Mac config shows up at `just switch`.

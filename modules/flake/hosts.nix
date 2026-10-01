@@ -92,6 +92,15 @@ in
             type = lib.types.str;
             description = "Primary user, managed by integrated Home Manager.";
           };
+          sshKey = lib.mkOption {
+            type = lib.types.nullOr (lib.types.strMatching "ssh-ed25519 [A-Za-z0-9+/=]+");
+            default = null;
+            description = ''
+              Public half of the login's own ~/.ssh/id_ed25519, without the comment;
+              every fleet machine accepts it (sshd feature). Unset on desktops,
+              which use the 1Password key instead.
+            '';
+          };
           darwin = lib.mkOption {
             type = lib.types.deferredModule;
             default = { };

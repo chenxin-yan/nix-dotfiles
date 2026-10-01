@@ -1,14 +1,21 @@
+{ config, lib, ... }:
 let
   # The desktop SSH key: its private half lives in 1Password and is used
-  # through its agent (see _1password). Every machine running sshd accepts it.
+  # through its agent (see _1password). Machines without 1Password declare
+  # their own key as `hosts.<name>.sshKey`. Every machine running sshd
+  # accepts all of them, so any fleet machine can reach any other.
   desktopKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFWnvoxNfnjA+u4YQy6/nmnpywOJeLngB4Jz1aB1Q1It";
-  # Keys only, no root, and only the keys declared here or in host files:
+  fleetKeys = [
+    desktopKey
+  ]
+  ++ lib.filter (k: k != null) (lib.mapAttrsToList (_: h: h.sshKey) config.hosts);
+  # Keys only, no root, and only the keys declared here:
   # a hand-added ~/.ssh/authorized_keys is ignored.
   server =
     { host, ... }:
     {
       services.openssh.enable = true;
-      users.users.${host.login}.openssh.authorizedKeys.keys = [ desktopKey ];
+      users.users.${host.login}.openssh.authorizedKeys.keys = fleetKeys;
     };
 in
 {
