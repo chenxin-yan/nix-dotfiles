@@ -58,6 +58,7 @@ The machinery is in `modules/flake/features.nix` and `modules/flake/hosts.nix`. 
 - **All machines**: [Nix](https://nixos.org/download/) with flakes enabled, and Git.
 - **macOS**: an Apple Silicon Mac and the Xcode Command Line Tools (`xcode-select --install`). Don't install Homebrew yourself: nix-homebrew manages it.
 - **NixOS**: already installed and booted, logged in as your normal user. Its `/etc/nixos` config is kept, not replaced.
+- **Enrolling**: a machine with 1Password and this repo, to let the new one decrypt secrets (see [Secrets](#secrets)).
 
 ### Onboard a machine
 
@@ -71,13 +72,21 @@ For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's ow
 
 ### After install
 
-Nix doesn't manage logins or macOS permissions. Set these up on each machine.
+Nix can't sign in to accounts, approve macOS permissions or join networks. Do these on each machine, then run `just doctor` to check the result.
 
-**Logins**
+**Desktops** (the 1Password app)
 
-- SSH on desktops: the key lives in 1Password's Personal vault, and every machine running sshd accepts it (`modules/features/system/sshd.nix`). Turn the agent on in _1Password → Settings → Developer_; Nix points ssh at it.
-- SSH on servers: `ssh-keygen -t ed25519` and add the public key to GitHub. The 1Password agent is part of the desktop app, so a headless machine keeps its own key.
-- `gh auth login`, 1Password (the app on desktops, `op` on every machine with a role), and the coding agents' own logins (pi, Claude Code, Codex).
+- Sign in to 1Password with your personal account. The SSH agent offers the keys in its Personal vault (`~/.config/1Password/ssh/agent.toml`).
+- In _1Password → Settings → Developer_, turn on **Use the SSH agent** and **Integrate with 1Password CLI**. The first lets ssh and git use the desktop key; the second lets `op`, and so the `just secret*` recipes, unlock through the app. How long an approval lasts is set there too.
+
+**Servers** (no 1Password app)
+
+- `ssh-keygen -t ed25519` and add the public key to GitHub. A headless machine can't use the 1Password agent, so it keeps its own key.
+- To run `just secret*` here, add your account once with `op account add`; the recipes then sign in when needed.
+
+**Every machine**
+
+- `gh auth login` and the coding agents' own logins (pi, Claude Code, Codex).
 
 **Network and sync**
 
@@ -89,6 +98,20 @@ Nix doesn't manage logins or macOS permissions. Set these up on each machine.
 - Karabiner driver extension (for kanata): _General → Login Items & Extensions_.
 - Input Monitoring for kanata, Accessibility for AeroSpace and espanso: _Privacy & Security_.
 - Background items for sketchybar and the other agents: _General → Login Items & Extensions_.
+
+**Moving a machine from an older setup**: after its first switch, `just doctor` lists files the dotfiles no longer use (`~/.env`, old key files, and `~/.ssh/id_ed25519` on desktops). Delete them once everything works, and remove the old SSH key from GitHub.
+
+### One-time setup
+
+These exist already; redo them only to replace them.
+
+- **Recovery key**, which edits and re-encrypts secrets. On a Mac with 1Password unlocked, this stores it as the document `sops-recovery` and prints only its public half, which goes in `recovery` in `modules/flake/sops.nix`. Never print or paste the private half.
+
+  ```sh
+  nix shell nixpkgs#age -c sh -c 'age-keygen 2>/dev/null | op document create - --title sops-recovery --file-name keys.txt >/dev/null && op document get sops-recovery | age-keygen -y'
+  ```
+
+- **Desktop SSH key**: in 1Password, _New Item → SSH Key → Generate a New Key_ (Ed25519) in the Personal vault. Add its public key to GitHub as an authentication key, and set it as `desktopKey` in `modules/features/system/sshd.nix`.
 
 ## Daily use
 
@@ -116,10 +139,19 @@ API keys are encrypted in `secrets/shared.yaml` and decrypted at activation into
 - **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
 - **Enrol a machine:** `just secrets-enrol <name> '<key>'` with the key from `cat /etc/ssh/ssh_host_ed25519_key.pub` on that machine (the onboarding wizard prints the exact command), then commit and push before the machine's first switch. A machine that can't decrypt fails activation. Enrolling a reinstalled machine replaces its old key.
 - **A machine is lost:** delete its line from `modules/hosts/_host-keys.json`, run `just secrets-rekey`, commit, and rotate the API keys with their providers.
+- **The recovery key is lost:** every enrolled machine can still decrypt with its host key. Create a new recovery key (see [One-time setup](#one-time-setup)), then on an enrolled machine re-encrypt with its host key in place of the old one:
+
+  ```sh
+  install -m 0644 "$(nix build --no-link --print-out-paths .#sops-config)" .sops.yaml
+  key="$(sudo "$(command -v ssh-to-age)" -private-key -i /etc/ssh/ssh_host_ed25519_key)"
+  for f in secrets/*.yaml secrets/hosts/*.yaml; do [ -e "$f" ] && SOPS_AGE_KEY="$key" sops updatekeys --yes "$f"; done
+  unset key
+  ```
 
 ### Things to know
 
 - **`git add` new files before switching.** Git-backed flakes don't see untracked files.
+- **SSH logins use declared keys only.** sshd refuses passwords and root and ignores `~/.ssh/authorized_keys`. To let a key in, add it to `desktopKey` in `modules/features/system/sshd.nix` (every machine) or to `openssh.authorizedKeys.keys` in a host file.
 - **Homebrew removes what isn't declared.** Activation runs with `cleanup = "zap"`, so declare casks in the feature they belong to (`darwin.homebrew.casks`).
 - **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/cli/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/cli/zsh/scripts/`) apply without a rebuild.
 - **`nix flake check` only evaluates the NixOS hosts.** A broken Mac config shows up at `just switch`.
