@@ -25,6 +25,8 @@
         ...
       }:
       {
+        # Its board modules take the flake as a module argument.
+        _module.args.nixos-raspberrypi = inputs.nixos-raspberrypi;
         imports = with inputs.nixos-raspberrypi.nixosModules; [
           inputs.nixos-raspberrypi.lib.inject-overlays
           nixpkgs-rpi
