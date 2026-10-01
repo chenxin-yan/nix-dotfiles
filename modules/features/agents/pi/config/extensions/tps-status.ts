@@ -2,7 +2,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const STATUS_KEY = "output-tps";
 
-export function calculateTps(outputTokens: number, startedAtMs: number, endedAtMs: number): number {
+function calculateTps(outputTokens: number, startedAtMs: number, endedAtMs: number): number {
   return (outputTokens * 1000) / Math.max(1, endedAtMs - startedAtMs);
 }
 
