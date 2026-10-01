@@ -70,6 +70,8 @@ bash scripts/onboard.sh
 
 For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets `workstation`, so add any other roles to the host file afterwards. Commit any new host files.
 
+**The Raspberry Pi (`pi`)** doesn't use the wizard: its host file builds a complete disk image, `nix build .#nixosConfigurations.pi.config.system.build.sdImage` (on an aarch64 machine, such as the Pi itself). Flash it to the drive, and before the first boot put its enrolled SSH host key in `/etc/ssh` so it can decrypt its secrets. Atlas sync starts once enrolled: `ob login`, `ob sync-setup --vault Atlas --path ~/atlas`, then `systemctl --user start atlas-sync`.
+
 ### After install
 
 Nix can't sign in to accounts, approve macOS permissions or join networks. Do these on each machine, then check with `just doctor`.
@@ -112,7 +114,7 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 
 API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at activation with its SSH host key; the `just secret*` recipes use the recovery key, stored in 1Password as `sops-recovery`.
 
-- **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine.
+- **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine. A key only one machine uses lives in its own file: `just secret-set <name> secrets/hosts/<host>.yaml` (e.g. the Pi's Hermes and Dokploy keys).
 - **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
 - **Enrol a machine:** the onboarding wizard prints the command. By hand: `just secrets-enrol <name> '<key>'` with that machine's `/etc/ssh/ssh_host_ed25519_key.pub`, then commit and push before its first switch. Re-enrolling replaces the old key.
 - **A machine is lost:** delete its line from `modules/hosts/_host-keys.json`, run `just secrets-rekey`, commit, and rotate the API keys with their providers.
