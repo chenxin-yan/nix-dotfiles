@@ -41,7 +41,8 @@ fi
 
 # Every declared secret is owned by the login, so each must be readable here.
 secrets="$(nix eval --raw --no-update-lock-file "$root#$kind.$target.config" --apply 'cfg:
-  builtins.concatStringsSep "\n" (map (s: s.path) (builtins.attrValues (cfg.sops.secrets or { })))' 2>/dev/null)"
+  builtins.concatStringsSep "\n" (map (s: s.path) (builtins.attrValues (cfg.sops.secrets or { })))' 2>/dev/null)" \
+  || bad "could not evaluate $target's secrets; run nix flake check to see why"
 while read -r path; do
   [ -n "$path" ] || continue
   if [ -r "$path" ]; then
