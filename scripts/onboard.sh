@@ -39,8 +39,9 @@ ask() {
 # Onboard this machine into the dotfiles flake: macOS, or NixOS that is
 # already installed and booted. Run from the intended ~/dotfiles checkout as
 # your normal user:  bash scripts/onboard.sh
-# Needs only Bash, Nix and Git (never Just or NH); sudo is used only for the
-# final, separately confirmed activation.
+# Needs only Bash, Nix and Git (never Just or NH); sudo is used for the final,
+# separately confirmed activation and, when the target reads secrets, to
+# create and read this machine's SSH host key.
 #
 # Stages: inspect; select/register; preserve the installation; compose the
 # Nix-owned baseline; review and evaluate; build, then activate; verify.
@@ -592,6 +593,74 @@ if [ -n "$collisions" ]; then
 fi
 say "No unmanaged files in Home Manager's way."
 
+# sops-nix decrypts the target's secrets with this machine's SSH host key at
+# activation. If it can't, it publishes none of them and the switch fails
+# partway (neither OS rolls back), so access is proven before building.
+hostkey=/etc/ssh/ssh_host_ed25519_key
+# sops_facts: "f FILE" for each sops file the target reads (store paths),
+# "s PATH" for each secret it publishes. Sets $sops_files and $secret_paths.
+sops_facts() {
+  local out
+  # shellcheck disable=SC2016
+  out="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#$kind.$target.config" --apply 'cfg: let
+      secrets = builtins.attrValues (cfg.sops.secrets or { });
+      files = builtins.attrNames (builtins.listToAttrs (map (s: { name = toString s.sopsFile; value = null; }) secrets));
+    in builtins.concatStringsSep "" (map (f: "f " + f + "\n") files ++ map (s: "s " + s.path + "\n") secrets)')" \
+    || die "could not evaluate $target's secrets; nothing was built or activated"
+  sops_files="$(printf '%s' "$out" | sed -n 's/^f //p')"
+  secret_paths="$(printf '%s' "$out" | sed -n 's/^s //p')"
+}
+# decrypts: every file in $sops_files decrypts with the host key alone. sudo
+# reads the root-only key; env -i keeps the recovery key and any personal age
+# keys out of the test. Nothing decrypted is printed.
+decrypts() {
+  local f
+  for f in $sops_files; do
+    # shellcheck disable=SC2016
+    sudo env -i HOME=/var/empty /bin/sh -c \
+      'SOPS_AGE_KEY="$("$2" -private-key -i "$4")" exec "$1" decrypt "$3" >/dev/null 2>&1' \
+      sh "$sops_bin" "$ssh_to_age" "$f" "$hostkey" || return 1
+  done
+}
+sops_facts
+if [ -n "$sops_files" ]; then
+  say "$target reads secrets, which this machine decrypts with its SSH host key."
+  if [ ! -e "$hostkey.pub" ]; then
+    say "This machine has no $hostkey yet; sshd would only create it after activation."
+    gate "Create it now? (sudo ssh-keygen -t ed25519 -N \"\" -f $hostkey)" \
+      || declined "nothing was built or activated." "Create the host key, then rerun."
+    command -v ssh-keygen >/dev/null 2>&1 || die "ssh-keygen not found"
+    sudo ssh-keygen -q -t ed25519 -N "" -C "" -f "$hostkey" </dev/null || die "could not create $hostkey"
+  fi
+  # From the flake's locked nixpkgs, built for this machine.
+  locked_pkg() {
+    nixx build --no-link --print-out-paths --impure --no-update-lock-file --no-write-lock-file --expr \
+      "(builtins.getFlake \"git+file://$root\").inputs.nixpkgs.legacyPackages.\${builtins.currentSystem}.$1"
+  }
+  sops_bin="$(locked_pkg sops)/bin/sops" || die "could not build sops"
+  ssh_to_age="$(locked_pkg ssh-to-age)/bin/ssh-to-age" || die "could not build ssh-to-age"
+  recipient="$("$ssh_to_age" <"$hostkey.pub")" || die "could not turn $hostkey.pub into an age recipient (ed25519 only)"
+  say "Its age recipient (public): $recipient"
+  gate "Test-decrypt them now with sudo, using only the host key? (nothing is printed)" \
+    || declined "nothing was built or activated." "Rerun when you're ready to check secrets access."
+  if ! decrypts; then
+    warn "This machine can't decrypt $(printf '%s\n' "$sops_files" | sed 's|^/nix/store/[^/]*/||' | tr '\n' ' ')yet."
+    say "Enrol it from a machine with 1Password and this repo:"
+    step "In .sops.yaml, add under keys:  - &$target $recipient"
+    step "and add *$target to the rule for each file above."
+    step "Run just secrets-rekey, then commit and push."
+    note "Copy the recipient from this screen or a trusted SSH session, not from ssh-keyscan."
+    while :; do
+      ask reply "Pull here (git pull --ff-only, in another shell), then press Enter to retest, or type q to stop:"
+      [ "$reply" != q ] || declined "nothing was built or activated." "Enrol $target, pull, then rerun."
+      sops_facts
+      ! decrypts || break
+      warn "Still can't decrypt. Check that the rekeyed files were pushed and pulled."
+    done
+  fi
+  say "This machine can decrypt every secrets file $target reads."
+fi
+
 # ── Stage 6 ───────────────────────────────────────────────────────────────
 stage "Build, then activate"
 
@@ -659,6 +728,10 @@ for tool in just nh; do
     problems="${problems}$tool is not in the new profile
 "
   fi
+done
+for p in $secret_paths; do
+  [ -e "$p" ] || problems="${problems}secret $p is missing; see sops-install-secrets in the activation output
+"
 done
 if [ -n "$problems" ]; then
   printf '%s' "$problems" | indent
