@@ -58,6 +58,7 @@ The machinery is in `modules/flake/features.nix` and `modules/flake/hosts.nix`. 
 - **All machines**: [Nix](https://nixos.org/download/) with flakes enabled, and Git.
 - **macOS**: an Apple Silicon Mac and the Xcode Command Line Tools (`xcode-select --install`). Don't install Homebrew yourself: nix-homebrew manages it.
 - **NixOS**: already installed and booted, logged in as your normal user. Its `/etc/nixos` config is kept, not replaced.
+- **Secrets**: an onboarded machine with 1Password, to enrol the new one.
 
 ### Onboard a machine
 
@@ -67,17 +68,17 @@ cd ~/dotfiles
 bash scripts/onboard.sh
 ```
 
-For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets only `base development`, so add its roles to the host file afterwards. Commit any new host files.
+For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets only `base development`, so add its roles to the host file afterwards. Commit any new host files.
 
 ### After install
 
-Nix doesn't manage secrets, logins or macOS permissions. Set these up on each machine.
+Nix can't sign in to accounts, approve macOS permissions or join networks. Do these on each machine, then check with `just doctor`.
 
-**Secrets and logins**
+**Logins**
 
-- `~/.env`: API keys and other private environment variables, sourced by every zsh session. WakaTime (in pi and Neovim) reads `WAKATIME_API_KEY` from it. Create the file even if it's empty, or each shell starts with an error.
-- SSH: create `~/.ssh/id_ed25519`, add the public key to GitHub, and add it to `openssh.authorizedKeys.keys` in the host files of the machines that should accept it.
-- `gh auth login`, 1Password (app and `op`, on desktops), and the coding agents' own logins (pi, Claude Code, Codex).
+- Desktops: sign in to 1Password, then in _Settings → Developer_ (on a Mac, `open onepassword://settings/developers`) turn on **Use the SSH agent** and **Integrate with 1Password CLI**.
+- Servers: `ssh-keygen -t ed25519` and add the public key to GitHub. To use `just secret*` there, run `op account add` once.
+- `gh auth login` and the coding agents' own logins (pi, Claude Code, Codex).
 
 **Network and sync**
 
@@ -94,18 +95,47 @@ Nix doesn't manage secrets, logins or macOS permissions. Set these up on each ma
 
 ### Commands
 
-| Command                | What it does                                                          |
-| ---------------------- | --------------------------------------------------------------------- |
-| `just switch`          | Rebuild and activate this machine (checks it matches its host entry)  |
-| `just switch <target>` | Same, once, for a machine whose hostname doesn't match its target yet |
-| `just update`          | Update flake inputs                                                   |
-| `just update-pins`     | Update pinned `fetchFrom*` sources                                    |
-| `just clean`           | Garbage-collect with this host's retention, then optimise the store   |
-| `just fmt`             | Format Nix files                                                      |
+| Command                           | What it does                                                          |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `just switch`                     | Rebuild and activate this machine (checks it matches its host entry)  |
+| `just switch <target>`            | Same, once, for a machine whose hostname doesn't match its target yet |
+| `just update`                     | Update flake inputs                                                   |
+| `just update-pins`                | Update pinned `fetchFrom*` sources                                    |
+| `just clean`                      | Garbage-collect with this host's retention, then optimise the store   |
+| `just fmt`                        | Format Nix files                                                      |
+| `just doctor`                     | Check this machine's secrets, SSH agent and GitHub access             |
+| `just secret-set <name>`          | Set one secret from a hidden prompt                                   |
+| `just secrets-edit`               | Edit `secrets/shared.yaml` in `$EDITOR`                               |
+| `just secrets-enrol <name> <key>` | Let a machine decrypt secrets                                         |
+| `just secrets-rekey`              | Re-encrypt every secrets file for the enrolled machines               |
+
+### Secrets
+
+API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at activation with its SSH host key; the `just secret*` recipes use the recovery key, stored in 1Password as `sops-recovery`.
+
+- **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine.
+- **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
+- **Enrol a machine:** the onboarding wizard prints the command. By hand: `just secrets-enrol <name> '<key>'` with that machine's `/etc/ssh/ssh_host_ed25519_key.pub`, then commit and push before its first switch. Re-enrolling replaces the old key.
+- **A machine is lost:** delete its line from `modules/hosts/_host-keys.json`, run `just secrets-rekey`, commit, and rotate the API keys with their providers.
+- **The recovery key is lost:** create a new one. This prints only its public half; put it in `recovery` in `modules/flake/sops.nix`.
+
+  ```sh
+  nix shell nixpkgs#age -c sh -c 'age-keygen 2>/dev/null | op document create - --title sops-recovery --file-name keys.txt >/dev/null && op document get sops-recovery | age-keygen -y'
+  ```
+
+  Then re-encrypt from an enrolled machine, using its host key:
+
+  ```sh
+  install -m 0644 "$(nix build --no-link --print-out-paths .#sops-config)" .sops.yaml
+  key="$(sudo "$(command -v ssh-to-age)" -private-key -i /etc/ssh/ssh_host_ed25519_key)"
+  for f in secrets/*.yaml secrets/hosts/*.yaml; do [ -e "$f" ] && SOPS_AGE_KEY="$key" sops updatekeys --yes "$f"; done
+  unset key
+  ```
 
 ### Things to know
 
 - **`git add` new files before switching.** Git-backed flakes don't see untracked files.
+- **SSH accepts only keys declared in Nix.** No passwords, no root, and `~/.ssh/authorized_keys` is ignored. Add a key to `desktopKey` in `modules/features/system/sshd.nix` for every machine, or to `openssh.authorizedKeys.keys` in one host file.
 - **Homebrew removes what isn't declared.** Activation runs with `cleanup = "zap"`, so declare casks in the feature they belong to (`darwin.homebrew.casks`).
 - **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/cli/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/cli/zsh/scripts/`) apply without a rebuild.
 - **`nix flake check` only evaluates the NixOS hosts.** A broken Mac config shows up at `just switch`.

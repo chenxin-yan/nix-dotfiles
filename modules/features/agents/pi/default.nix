@@ -1,8 +1,24 @@
-{ inputs, ... }:
+{ inputs, config, ... }:
+let
+  # Owned by the login: pi runs as the user.
+  declareSecret =
+    { host, ... }:
+    {
+      sops.secrets.firecrawl.owner = host.login;
+    };
+in
 {
+  features.pi.includes = with config.features; [
+    secrets
+    wakatime
+  ];
+  features.pi.darwin = declareSecret;
+  features.pi.nixos = declareSecret;
+
   features.pi.homeManager =
     {
       config,
+      osConfig,
       pkgs,
       lib,
       ...
@@ -29,8 +45,7 @@
         "pi-intercom"
         # Required by upstream researcher/evidence-auditor tool contracts.
         "pi-web-access"
-        # WakaTime time tracking, through the wakatime-cli binary added to
-        # home.packages below.
+        # WakaTime time tracking; see the wakatime feature.
         "pi-wakatime"
         # Todo list tracking with live overlay above the editor. Provides
         # the `todo` tool, `/todos` command, and `blockedBy` dependency
@@ -75,10 +90,6 @@
       home.packages = with pkgs; [
         pi-coding-agent
         hypa
-        # Invoked by pi-wakatime and vim-wakatime. Its key comes from
-        # WAKATIME_API_KEY in ~/.env; an api_key in ~/.wakatime.cfg would
-        # take precedence over it.
-        wakatime-cli
       ];
 
       # Disable pi's startup "new version available" toast. The pi binary
@@ -106,12 +117,12 @@
         PONYTAIL_DEFAULT_MODE = "full";
       };
 
-      # pi-web-access prefers this path when XDG_CONFIG_HOME is set.
-      # Keep the key in a private 0600 file on each host, never the Nix store.
+      # pi-web-access prefers this path when XDG_CONFIG_HOME is set. The key
+      # is read from the sops secret at use, so it never enters the store.
       xdg.configFile."pi/web-search.json".text = builtins.toJSON {
         provider = "firecrawl";
         firecrawlBaseUrl = "https://api.firecrawl.dev";
-        firecrawlApiKey = "!${pkgs.coreutils}/bin/cat ${lib.escapeShellArg "${config.xdg.configHome}/pi/firecrawl-api-key"}";
+        firecrawlApiKey = "!${pkgs.coreutils}/bin/cat ${lib.escapeShellArg osConfig.sops.secrets.firecrawl.path}";
       };
 
       # Seed global pi settings. Only values that diverge from upstream

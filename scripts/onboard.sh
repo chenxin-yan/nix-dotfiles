@@ -39,15 +39,17 @@ ask() {
 # Onboard this machine into the dotfiles flake: macOS, or NixOS that is
 # already installed and booted. Run from the intended ~/dotfiles checkout as
 # your normal user:  bash scripts/onboard.sh
-# Needs only Bash, Nix and Git (never Just or NH); sudo is used only for the
-# final, separately confirmed activation.
+# Needs only Bash, Nix and Git (never Just or NH); sudo is used for the final,
+# separately confirmed activation and, when the target reads secrets, to
+# create and read this machine's SSH host key.
 #
 # Stages: inspect; select/register; preserve the installation; compose the
 # Nix-owned baseline; review and evaluate; build, then activate; verify.
 # Every repo write, `git add`, build and activation has its own y/N gate();
 # anything but a complete "y..." line, including EOF, answers no. It never
-# resets, pulls or cleans the checkout, commits, pushes, updates flake.lock,
-# garbage-collects, reboots, or edits /etc/nixos.
+# resets or cleans the checkout, commits, pushes, updates flake.lock,
+# garbage-collects, reboots, or edits /etc/nixos; it pulls (fast-forward only)
+# only when you confirm an enrolment is pushed.
 # Reruns reuse a registered target and stop on partial or conflicting state.
 #
 # Keep runnable by macOS /bin/bash 3.2: no mapfile, ${v,,}, GNU-only tool
@@ -591,6 +593,72 @@ if [ -n "$collisions" ]; then
   die "existing files occupy paths Home Manager manages"
 fi
 say "No unmanaged files in Home Manager's way."
+
+# sops-nix decrypts the target's secrets with this machine's SSH host key at
+# activation. If it can't, it publishes none of them and the switch fails
+# partway (neither OS rolls back), so access is proven before building.
+hostkey=/etc/ssh/ssh_host_ed25519_key
+# read_sops_files: each sops file the target reads (store paths, so reread
+# after a pull), one per line, into $sops_files.
+read_sops_files() {
+  sops_files="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#$kind.$target.config" --apply 'cfg:
+      builtins.concatStringsSep "\n" (builtins.attrNames (builtins.listToAttrs (map
+        (s: { name = toString s.sopsFile; value = null; }) (builtins.attrValues (cfg.sops.secrets or { })))))')" \
+    || die "could not evaluate $target's secrets; nothing was built or activated"
+}
+# decrypts: every file in $sops_files decrypts with the host key alone. sudo
+# reads the root-only key; env -i keeps the recovery key and any personal age
+# keys out of the test. Nothing decrypted is printed.
+decrypts() {
+  local f
+  for f in $sops_files; do
+    # shellcheck disable=SC2016
+    sudo env -i HOME=/var/empty /bin/sh -c \
+      'SOPS_AGE_KEY="$("$2" -private-key -i "$4")" exec "$1" decrypt "$3" >/dev/null 2>&1' \
+      sh "$sops_bin" "$ssh_to_age" "$f" "$hostkey" || return 1
+  done
+}
+read_sops_files
+if [ -n "$sops_files" ]; then
+  say "$target reads secrets, which this machine decrypts with its SSH host key."
+  if [ ! -e "$hostkey" ]; then
+    say "This machine has no $hostkey yet; sshd would only create it after activation."
+    gate "Create it now? (sudo ssh-keygen -t ed25519 -N \"\" -f $hostkey)" \
+      || declined "nothing was built or activated." "Create the host key, then rerun."
+    command -v ssh-keygen >/dev/null 2>&1 || die "ssh-keygen not found"
+    sudo ssh-keygen -q -t ed25519 -N "" -C "" -f "$hostkey" </dev/null || die "could not create $hostkey"
+  fi
+  # From the flake's locked nixpkgs, built for this machine.
+  locked_pkg() {
+    nixx build --no-link --print-out-paths --impure --no-update-lock-file --no-write-lock-file --expr \
+      "(builtins.getFlake \"git+file://$root\").inputs.nixpkgs.legacyPackages.\${builtins.currentSystem}.$1"
+  }
+  sops_bin="$(locked_pkg sops)/bin/sops" || die "could not build sops"
+  ssh_to_age="$(locked_pkg ssh-to-age)/bin/ssh-to-age" || die "could not build ssh-to-age"
+  gate "Test-decrypt them now with sudo, using only the host key? (nothing is printed)" \
+    || declined "nothing was built or activated." "Rerun when you're ready to check secrets access."
+  # From the private half, which is what decrypts; a stale .pub would enrol
+  # the wrong key.
+  pubkey="$(sudo ssh-keygen -y -f "$hostkey" </dev/null | cut -d' ' -f1,2)"
+  [[ "$pubkey" =~ ^ssh-ed25519\ [A-Za-z0-9+/=]+$ ]] || die "$hostkey is not a readable ed25519 key"
+  say "Its public host key: $pubkey"
+  if ! decrypts; then
+    warn "This machine can't decrypt $(printf '%s\n' "$sops_files" | sed 's|^/nix/store/[^/]*/||' | tr '\n' ' ')yet."
+    say "Enrol it from a machine with 1Password and this repo, then commit and push:"
+    step "just secrets-enrol $target '$pubkey'"
+    note "Copy the key from this screen or a trusted SSH session, not from ssh-keyscan."
+    while :; do
+      ask reply "Press Enter once it's pushed to pull (git pull --ff-only) and retest, or type q to stop:"
+      [ "$reply" != q ] || declined "nothing was built or activated." "Enrol $target, then rerun."
+      # --no-rebase: a rebasing pull refuses the staged host files.
+      git -C "$root" pull --ff-only --no-rebase -q || warn "git pull failed; pull by hand, then press Enter."
+      read_sops_files
+      ! decrypts || break
+      warn "Still can't decrypt. Check that the enrolment was pushed."
+    done
+  fi
+  say "This machine can decrypt every secrets file $target reads."
+fi
 
 # ── Stage 6 ───────────────────────────────────────────────────────────────
 stage "Build, then activate"

@@ -7,5 +7,6 @@
     unfree
     tailscale
     sshd
+    _1password-cli
   ];
 }

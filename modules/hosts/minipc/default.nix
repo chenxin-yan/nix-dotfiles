@@ -87,8 +87,6 @@ in
 
         # List services that you want to enable:
 
-        services.openssh.settings.PermitRootLogin = "yes";
-
         # Firewall
         # - Trust all Tailscale traffic (no need to open ports for Tailscale-only services)
         # - Allow Tailscale UDP port for direct peer-to-peer connections (avoids DERP relay)
@@ -125,11 +123,7 @@ in
       };
 
     homeManager =
-      {
-        config,
-        pkgs,
-        ...
-      }:
+      { pkgs, ... }:
 
       {
         home.stateVersion = "25.05";
@@ -141,16 +135,11 @@ in
 
         services.ssh-agent.enable = true;
 
-        home.file.".ssh/known_hosts.d/cyan-macbook".text =
-          "cyan-macbook ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILWPwldEec8fXHXQVExXb+Wix89Sxs5fOxxYCrShl+aI";
-
         programs.ssh = {
           settings = {
             "cyan-macbook" = {
               User = hosts.macbook.login;
-              IdentityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
               CheckHostIP = false;
-              UserKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts.d/cyan-macbook ${config.home.homeDirectory}/.ssh/known_hosts";
             };
           };
         };

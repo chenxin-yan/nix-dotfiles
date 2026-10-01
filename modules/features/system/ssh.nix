@@ -1,10 +1,20 @@
-# Client config; accepting connections is sshd.
-{ config, ... }:
+# Client config; accepting connections is sshd. ssh offers ~/.ssh/id_ed25519
+# by default, which servers use; desktops use 1Password's agent instead (see
+# _1password).
+{ config, lib, ... }:
 let
   inherit (config) hosts;
+  # Every enrolled machine is pinned by its host key, so connecting to one
+  # never asks to trust it. Reached as cyan-<name> over Tailscale.
+  knownHosts.programs.ssh.knownHosts = lib.mapAttrs (name: publicKey: {
+    hostNames = [ "cyan-${name}" ];
+    inherit publicKey;
+  }) config.hostKeys;
 in
 {
   features.ssh = {
+    darwin = knownHosts;
+    nixos = knownHosts;
     homeManager =
       {
         config,
@@ -13,7 +23,6 @@ in
         ...
       }:
       let
-        identity = "${config.home.homeDirectory}/.ssh/id_ed25519";
         inherit (pkgs.stdenv.hostPlatform) isDarwin;
       in
       {
@@ -23,7 +32,6 @@ in
           settings = {
             "github.com" = {
               AddKeysToAgent = "yes";
-              IdentityFile = identity;
             }
             // lib.optionalAttrs isDarwin {
               UseKeychain = "yes";
@@ -31,7 +39,6 @@ in
 
             "cyan-minipc" = {
               User = hosts.minipc.login;
-              IdentityFile = identity;
               ControlMaster = "auto";
               ControlPersist = "10m";
               ControlPath = "${config.home.homeDirectory}/.ssh/cm-%C";
@@ -39,7 +46,6 @@ in
 
             "cyanpi" = {
               User = "yanchenxin";
-              IdentityFile = identity;
             };
           };
         };

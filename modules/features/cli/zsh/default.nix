@@ -47,8 +47,6 @@
           zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
         '';
         initContent = ''
-          source ~/.env
-
           # Shell behavior
           setopt auto_cd            # type a bare dir name to cd into it
           setopt numeric_glob_sort  # sort globs numerically (f1 f2 f10, not f1 f10 f2)
