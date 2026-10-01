@@ -1,4 +1,3 @@
-{ inputs, ... }:
 {
   features.herdr.homeManager =
     {
@@ -15,24 +14,12 @@
       };
     in
     {
-      imports = [ inputs.herdr-micro.homeManagerModules.default ];
-
       home.packages = [ pkgs.herdr ];
 
       # Herdr has no plugin discovery; registration is a CLI side effect.
       home.activation.herdrNavigation = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         run ${pkgs.herdr}/bin/herdr plugin link ${vim-herdr-navigation}
       '';
-
-      services.herdr-micro = {
-        enable = pkgs.stdenv.hostPlatform.isDarwin;
-        settings = {
-          targets = {
-            local.socket = "~/.config/herdr/herdr.sock";
-            minipc.ssh = "cyan-minipc";
-          };
-        };
-      };
 
       # Parity with the zellij setup: Ctrl+s leader, catppuccin, Alt-tab nav.
       # vim hjkl focus/resize, splits, and session persistence are herdr defaults.

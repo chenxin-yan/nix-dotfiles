@@ -55,26 +55,6 @@
         "type": "github"
       }
     },
-    "herdr-micro": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1788943670,
-        "narHash": "sha256-/KY15OSdAx+wOjC029wLVkSxgI5cTz7ddn4dfqCjwB0=",
-        "owner": "chenxin-yan",
-        "repo": "herdr-micro",
-        "rev": "dff6bf32580185fb26e0f4f0e27592e27fd14608",
-        "type": "github"
-      },
-      "original": {
-        "owner": "chenxin-yan",
-        "repo": "herdr-micro",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -82,11 +62,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790802803,
-        "narHash": "sha256-pna6bbbXEqnAWb3GuioIEKu+yFxSVFR0UX+2QjxI6eg=",
+        "lastModified": 1790819692,
+        "narHash": "sha256-rvubAPbh3QCliic3sAK+CXTrPCGgJstY52OTs/5H1J4=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "e4122ec2a3cf7fede335e5c9975639d1e84dc04d",
+        "rev": "c8ecc29e5175452bee4a2aa1ba2383856d795338",
         "type": "github"
       },
       "original": {
@@ -202,7 +182,6 @@
       "inputs": {
         "catppuccin": "catppuccin",
         "flake-parts": "flake-parts",
-        "herdr-micro": "herdr-micro",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
         "nix-darwin": "nix-darwin",
