@@ -261,7 +261,6 @@ fi
 stage "Preserve the current installation"
 
 automigrate=no
-installed_unfree=no
 src="/etc/nixos"
 if [ "$mode" = existing ]; then
   say "Reusing $hostrel; the installed configuration is not re-imported or overwritten."
@@ -281,10 +280,6 @@ elif [ "$os" = nixos ]; then
   installed_state="$(installed_state_version "$src")"
   [[ "$installed_state" =~ $VERSION_RE ]] \
     || die "expected exactly one literal system.stateVersion in $src, found '${installed_state:-none}'; register by hand"
-  # shellcheck disable=SC2086 # file names were restricted above
-  if (cd "$src" && grep -q -E '^[[:space:]]*nixpkgs\.config\.allowUnfree[[:space:]]*=[[:space:]]*true' $files); then
-    installed_unfree=yes
-  fi
   say "Files to preserve verbatim under $hostrel/_installed/:"
   for rel in $files; do say "  $rel ($(wc -l <"$src/$rel" | tr -d ' ') lines)"; done
   say "Boot, disk, account, network and desktop lines they declare:"
@@ -366,25 +361,18 @@ else
     || die "could not check home.stateVersion against the locked Home Manager"
   [ "$hm_ok" = yes ] || die "home.stateVersion $hm_state is not supported by the locked Home Manager"
 
-  unfree=no
-  if [ "$os" = nixos ] && [ "$installed_unfree" = no ]; then
-    say "The base + development home baseline includes unfree packages; without"
-    say "allowing them, evaluation stops at nixpkgs' unfree check."
-    if gate "Allow unfree packages on $target (nixpkgs.config.allowUnfree)?"; then unfree=yes; fi
-  fi
-
   # One file registers the host: inventory facts, features, and the system
-  # and home modules. A new Mac gets its roles; a NixOS machine gets only
-  # base + development until you pick roles, which bring unfree, Tailscale
-  # and sshd. The installed NixOS files go under _installed/, which
-  # import-tree skips (they are NixOS modules, not flake modules).
+  # and home modules. A new Mac gets workstation desktop; a NixOS machine
+  # gets workstation, and its other roles are added to the host file after.
+  # The installed NixOS files go under _installed/, which import-tree skips
+  # (they are NixOS modules, not flake modules).
   mkdir "$work/host"
   if [ "$os" = nixos ]; then
     for rel in $files; do
       mkdir -p "$work/host/_installed/$(dirname "$rel")"
       cp "$src/$rel" "$work/host/_installed/$rel"
     done
-    features="base development"
+    features="workstation"
   else
     features="workstation desktop"
   fi
@@ -417,7 +405,6 @@ else
     echo "          uid = $uid;"
     echo "          home = \"$home\";"
     echo "        };"
-    [ "$unfree" = no ] || { echo; echo "        nixpkgs.config.allowUnfree = true;"; }
     [ "$automigrate" = no ] || { echo; echo "        nix-homebrew.autoMigrate = true;"; }
     echo "      };"
     echo
@@ -701,6 +688,11 @@ else
   warn "cleanup = zap: activation removes undeclared Homebrew packages and may delete associated cask data."
   note "nix-darwin refuses to overwrite unrecognised /etc files and says which to rename."
   note "Rollback: sudo darwin-rebuild --rollback. Nothing reboots or garbage-collects."
+fi
+if [ -n "${SSH_CONNECTION:-}" ]; then
+  warn "You're onboarding over SSH. Once active, sshd accepts only the keys declared in"
+  warn "modules/features/system/sshd.nix and hosts' sshKey: no passwords. Make sure you"
+  warn "can log in with one of those, or keep this session open until you've checked."
 fi
 gate "Activate $target on this machine now?" \
   || declined "built but not activated." "Rerun this wizard to activate later; temporary result links are removed on exit."
