@@ -87,8 +87,6 @@ in
 
         # List services that you want to enable:
 
-        services.openssh.settings.PermitRootLogin = "yes";
-
         # Firewall
         # - Trust all Tailscale traffic (no need to open ports for Tailscale-only services)
         # - Allow Tailscale UDP port for direct peer-to-peer connections (avoids DERP relay)
