@@ -597,11 +597,14 @@ say "No unmanaged files in Home Manager's way."
 # activation. If it can't, it publishes none of them and the switch fails
 # partway (neither OS rolls back), so access is proven before building.
 hostkey=/etc/ssh/ssh_host_ed25519_key
-# Each sops file the target reads (store paths), one per line.
-sops_files="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#$kind.$target.config" --apply 'cfg:
-    builtins.concatStringsSep "\n" (builtins.attrNames (builtins.listToAttrs (map
-      (s: { name = toString s.sopsFile; value = null; }) (builtins.attrValues (cfg.sops.secrets or { })))))')" \
-  || die "could not evaluate $target's secrets; nothing was built or activated"
+# read_sops_files: each sops file the target reads (store paths, so reread
+# after a pull), one per line, into $sops_files.
+read_sops_files() {
+  sops_files="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#$kind.$target.config" --apply 'cfg:
+      builtins.concatStringsSep "\n" (builtins.attrNames (builtins.listToAttrs (map
+        (s: { name = toString s.sopsFile; value = null; }) (builtins.attrValues (cfg.sops.secrets or { })))))')" \
+    || die "could not evaluate $target's secrets; nothing was built or activated"
+}
 # decrypts: every file in $sops_files decrypts with the host key alone. sudo
 # reads the root-only key; env -i keeps the recovery key and any personal age
 # keys out of the test. Nothing decrypted is printed.
@@ -614,6 +617,7 @@ decrypts() {
       sh "$sops_bin" "$ssh_to_age" "$f" "$hostkey" || return 1
   done
 }
+read_sops_files
 if [ -n "$sops_files" ]; then
   say "$target reads secrets, which this machine decrypts with its SSH host key."
   if [ ! -e "$hostkey.pub" ]; then
@@ -640,7 +644,15 @@ if [ -n "$sops_files" ]; then
     say "Enrol it from a machine with 1Password and this repo, then commit and push:"
     step "just secrets-enrol $target '$pubkey'"
     note "Copy the key from this screen or a trusted SSH session, not from ssh-keyscan."
-    declined "nothing was built or activated." "Enrol $target, pull (git pull --ff-only), then rerun."
+    while :; do
+      ask reply "Press Enter once it's pushed to pull (git pull --ff-only) and retest, or type q to stop:"
+      [ "$reply" != q ] || declined "nothing was built or activated." "Enrol $target, then rerun."
+      # --no-rebase: a rebasing pull refuses the staged host files.
+      git -C "$root" pull --ff-only --no-rebase -q || warn "git pull failed; pull by hand, then press Enter."
+      read_sops_files
+      ! decrypts || break
+      warn "Still can't decrypt. Check that the enrolment was pushed."
+    done
   fi
   say "This machine can decrypt every secrets file $target reads."
 fi
