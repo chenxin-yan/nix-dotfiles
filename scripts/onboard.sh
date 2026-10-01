@@ -639,17 +639,16 @@ if [ -n "$sops_files" ]; then
   }
   sops_bin="$(locked_pkg sops)/bin/sops" || die "could not build sops"
   ssh_to_age="$(locked_pkg ssh-to-age)/bin/ssh-to-age" || die "could not build ssh-to-age"
-  recipient="$("$ssh_to_age" <"$hostkey.pub")" || die "could not turn $hostkey.pub into an age recipient (ed25519 only)"
-  say "Its age recipient (public): $recipient"
+  pubkey="$(cut -d' ' -f1,2 "$hostkey.pub")"
+  [[ "$pubkey" =~ ^ssh-ed25519\ [A-Za-z0-9+/=]+$ ]] || die "$hostkey.pub is not an ed25519 public key"
+  say "Its public host key: $pubkey"
   gate "Test-decrypt them now with sudo, using only the host key? (nothing is printed)" \
     || declined "nothing was built or activated." "Rerun when you're ready to check secrets access."
   if ! decrypts; then
     warn "This machine can't decrypt $(printf '%s\n' "$sops_files" | sed 's|^/nix/store/[^/]*/||' | tr '\n' ' ')yet."
-    say "Enrol it from a machine with 1Password and this repo:"
-    step "In .sops.yaml, add under keys:  - &$target $recipient"
-    step "and add *$target to the rule for each file above."
-    step "Run just secrets-rekey, then commit and push."
-    note "Copy the recipient from this screen or a trusted SSH session, not from ssh-keyscan."
+    say "Enrol it from a machine with 1Password and this repo, then commit and push:"
+    step "just secrets-enrol $target '$pubkey'"
+    note "Copy the key from this screen or a trusted SSH session, not from ssh-keyscan."
     while :; do
       ask reply "Pull here (git pull --ff-only, in another shell), then press Enter to retest, or type q to stop:"
       [ "$reply" != q ] || declined "nothing was built or activated." "Enrol $target, pull, then rerun."

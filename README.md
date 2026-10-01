@@ -67,7 +67,7 @@ cd ~/dotfiles
 bash scripts/onboard.sh
 ```
 
-For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Every machine reads secrets, so before building it prints this machine's age recipient and waits until you enrol it from a machine with 1Password (see [Secrets](#secrets)). On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets only `base development`, so add its roles to the host file afterwards. Commit any new host files.
+For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Every machine reads secrets, so before building it prints this machine's host key and waits until you enrol it from a machine with 1Password (see [Secrets](#secrets)). On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets only `base development`, so add its roles to the host file afterwards. Commit any new host files.
 
 ### After install
 
@@ -81,7 +81,7 @@ Nix doesn't manage logins or macOS permissions. Set these up on each machine.
 
 **Network and sync**
 
-- Tailscale: `sudo tailscale up` to join the tailnet. A NixOS host can join on its first switch instead: create a one-off auth key in the Tailscale admin console, store it as `tailscale-authkey` in `secrets/hosts/<host>.yaml` (add a rule for that file to `.sops.yaml`), and declare `sops.secrets.tailscale-authkey.sopsFile` in the host's `nixos` module.
+- Tailscale: `sudo tailscale up` to join the tailnet. A NixOS host can join on its first switch instead: create a one-off auth key in the Tailscale admin console, store it with `just secret-set tailscale-authkey secrets/hosts/<host>.yaml`, and declare `sops.secrets.tailscale-authkey.sopsFile` in the host's `nixos` module.
 - Syncthing: devices are declared by ID in `modules/features/system/syncthing.nix`. A new or reinstalled machine gets a new ID, so add it there and switch on the other machines. The Raspberry Pi isn't managed by this repo, so accept the new device in its Syncthing UI too.
 
 **macOS permissions** (approve in System Settings when prompted)
@@ -94,26 +94,27 @@ Nix doesn't manage logins or macOS permissions. Set these up on each machine.
 
 ### Commands
 
-| Command                  | What it does                                                          |
-| ------------------------ | --------------------------------------------------------------------- |
-| `just switch`            | Rebuild and activate this machine (checks it matches its host entry)  |
-| `just switch <target>`   | Same, once, for a machine whose hostname doesn't match its target yet |
-| `just update`            | Update flake inputs                                                   |
-| `just update-pins`       | Update pinned `fetchFrom*` sources                                    |
-| `just clean`             | Garbage-collect with this host's retention, then optimise the store   |
-| `just fmt`               | Format Nix files                                                      |
-| `just secret-set <name>` | Set one secret from a hidden prompt                                   |
-| `just secrets-edit`      | Edit `secrets/shared.yaml` in `$EDITOR`                               |
-| `just secrets-rekey`     | Re-encrypt every secrets file for the keys in `.sops.yaml`            |
+| Command                           | What it does                                                          |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `just switch`                     | Rebuild and activate this machine (checks it matches its host entry)  |
+| `just switch <target>`            | Same, once, for a machine whose hostname doesn't match its target yet |
+| `just update`                     | Update flake inputs                                                   |
+| `just update-pins`                | Update pinned `fetchFrom*` sources                                    |
+| `just clean`                      | Garbage-collect with this host's retention, then optimise the store   |
+| `just fmt`                        | Format Nix files                                                      |
+| `just secret-set <name>`          | Set one secret from a hidden prompt                                   |
+| `just secrets-edit`               | Edit `secrets/shared.yaml` in `$EDITOR`                               |
+| `just secrets-enrol <name> <key>` | Let a machine decrypt secrets and pin it in `known_hosts`             |
+| `just secrets-rekey`              | Regenerate `.sops.yaml` and re-encrypt every secrets file             |
 
 ### Secrets
 
-API keys are encrypted in `secrets/shared.yaml` and decrypted at activation into `/run/secrets/<name>`, readable only by the login user. Each machine decrypts with its own SSH host key. The `just secret*` recipes use the recovery key, the 1Password document `sops-recovery`, so `op` must be signed in (`eval $(op signin)` where there's no 1Password app).
+API keys are encrypted in `secrets/shared.yaml` and decrypted at activation into `/run/secrets/<name>`, readable only by the login user. Each machine decrypts with its own SSH host key; the enrolled keys are listed in `modules/hosts/_host-keys.json`, which also pins every machine in `known_hosts`, and `.sops.yaml` is generated from it. The `just secret*` recipes use the recovery key, the 1Password document `sops-recovery`, and sign `op` in when there's no 1Password app to unlock it.
 
 - **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine.
 - **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
-- **Enrol a machine:** add the output of `ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub` to `.sops.yaml`, run `just secrets-rekey`, and push before the machine's first switch. A machine that can't decrypt fails activation.
-- **A machine is lost:** remove its key from `.sops.yaml`, run `just secrets-rekey`, and rotate the API keys with their providers.
+- **Enrol a machine:** `just secrets-enrol <name> '<key>'` with the key from `cat /etc/ssh/ssh_host_ed25519_key.pub` on that machine (the onboarding wizard prints the exact command), then commit and push before the machine's first switch. A machine that can't decrypt fails activation. Enrolling a reinstalled machine replaces its old key.
+- **A machine is lost:** delete its line from `modules/hosts/_host-keys.json`, run `just secrets-rekey`, commit, and rotate the API keys with their providers.
 
 ### Things to know
 

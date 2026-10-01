@@ -32,12 +32,16 @@ clean:
 # only root can read those.
 export SOPS_AGE_KEY_CMD := "op document get sops-recovery"
 
+# The 1Password app unlocks op on desktops; elsewhere sign in for this recipe.
+op_signin := 'op whoami >/dev/null 2>&1 || eval "$(op signin)"'
+
 # Set one secret from a hidden prompt (FILE: secrets/shared.yaml or secrets/hosts/<host>.yaml)
 secret-set NAME FILE='secrets/shared.yaml':
     #!/usr/bin/env bash
     set -euo pipefail
     name={{ quote(NAME) }} file={{ quote(FILE) }}
     [[ $name =~ ^[a-z0-9_-]+$ ]] || { echo "secret names use a-z, 0-9, _ and -" >&2; exit 1; }
+    {{ op_signin }}
     if [ ! -e "$file" ]; then
       mkdir -p "$(dirname "$file")"
       printf '{}\n' > "$file"
@@ -50,16 +54,36 @@ secret-set NAME FILE='secrets/shared.yaml':
 
 # Edit an encrypted file in $EDITOR (sops keeps a plaintext temp copy while it is open)
 secrets-edit FILE='secrets/shared.yaml':
+    #!/usr/bin/env bash
+    set -euo pipefail
+    {{ op_signin }}
     sops edit {{ quote(FILE) }}
 
-# Re-encrypt every secrets file for the recipients now in .sops.yaml
+# Let a machine decrypt: record its host key (from `cat /etc/ssh/ssh_host_ed25519_key.pub` on it), then rekey
+secrets-enrol NAME KEY:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    name={{ quote(NAME) }} key="$(printf '%s' {{ quote(KEY) }} | cut -d' ' -f1,2)"
+    [[ $name =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || { echo "'$name' is not a host name" >&2; exit 1; }
+    [[ $key =~ ^ssh-ed25519\ [A-Za-z0-9+/=]+$ ]] || { echo "expected an ssh-ed25519 host public key" >&2; exit 1; }
+    f=modules/hosts/_host-keys.json
+    jq --sort-keys --arg n "$name" --arg k "$key" '.[$n] = $k' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+    {{ quote(just_executable()) }} secrets-rekey
+    echo "Enrolled $name. Commit and push $f, .sops.yaml and secrets/."
+
+# Regenerate .sops.yaml from modules/hosts/_host-keys.json and re-encrypt every secrets file for it
 secrets-rekey:
     #!/usr/bin/env bash
     set -euo pipefail
+    {{ op_signin }}
+    install -m 0644 "$(nix build --no-link --print-out-paths .#sops-config)" .sops.yaml
     shopt -s nullglob
-    # updatekeys doesn't search folders, so every file is named here.
+    # updatekeys doesn't search folders, so every file is named here. rotate
+    # gives each file a new data key, so a removed machine can't read later
+    # versions; rotate the API keys themselves if it may have seen them.
     for file in secrets/*.yaml secrets/hosts/*.yaml; do
       sops updatekeys --yes "$file"
+      sops rotate --in-place "$file"
     done
 
 # Format all nix files
