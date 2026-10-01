@@ -3,6 +3,5 @@
 {
   features.server.includes = with config.features; [
     fleet
-    mosh-server
   ];
 }

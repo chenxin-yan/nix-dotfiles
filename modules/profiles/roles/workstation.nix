@@ -4,5 +4,6 @@
   features.workstation.includes = with config.features; [
     fleet
     development
+    mosh-server
   ];
 }

@@ -6,7 +6,6 @@
     sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFajA/D3AwQhbTCg+41FNno/28KYAjAKJd57R3n+dPD+";
 
     features = with config.features; [
-      server
       workstation
     ];
 
