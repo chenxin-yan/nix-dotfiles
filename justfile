@@ -9,6 +9,10 @@ default:
 switch TARGET='':
     {{ quote(justfile_directory() / "scripts/utils/switch.sh") }} {{ if TARGET == '' { '' } else { quote(TARGET) } }}
 
+# Check that this machine's declared setup is in effect (read-only)
+doctor:
+    {{ quote(justfile_directory() / "scripts/utils/doctor.sh") }}
+
 # Update flake inputs
 update:
     nix flake update

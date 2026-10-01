@@ -94,18 +94,19 @@ Nix doesn't manage logins or macOS permissions. Set these up on each machine.
 
 ### Commands
 
-| Command                           | What it does                                                          |
-| --------------------------------- | --------------------------------------------------------------------- |
-| `just switch`                     | Rebuild and activate this machine (checks it matches its host entry)  |
-| `just switch <target>`            | Same, once, for a machine whose hostname doesn't match its target yet |
-| `just update`                     | Update flake inputs                                                   |
-| `just update-pins`                | Update pinned `fetchFrom*` sources                                    |
-| `just clean`                      | Garbage-collect with this host's retention, then optimise the store   |
-| `just fmt`                        | Format Nix files                                                      |
-| `just secret-set <name>`          | Set one secret from a hidden prompt                                   |
-| `just secrets-edit`               | Edit `secrets/shared.yaml` in `$EDITOR`                               |
-| `just secrets-enrol <name> <key>` | Let a machine decrypt secrets and pin it in `known_hosts`             |
-| `just secrets-rekey`              | Regenerate `.sops.yaml` and re-encrypt every secrets file             |
+| Command                           | What it does                                                              |
+| --------------------------------- | ------------------------------------------------------------------------- |
+| `just switch`                     | Rebuild and activate this machine (checks it matches its host entry)      |
+| `just switch <target>`            | Same, once, for a machine whose hostname doesn't match its target yet     |
+| `just update`                     | Update flake inputs                                                       |
+| `just update-pins`                | Update pinned `fetchFrom*` sources                                        |
+| `just clean`                      | Garbage-collect with this host's retention, then optimise the store       |
+| `just fmt`                        | Format Nix files                                                          |
+| `just doctor`                     | Check this machine's secrets, SSH agent and GitHub access; flag leftovers |
+| `just secret-set <name>`          | Set one secret from a hidden prompt                                       |
+| `just secrets-edit`               | Edit `secrets/shared.yaml` in `$EDITOR`                                   |
+| `just secrets-enrol <name> <key>` | Let a machine decrypt secrets and pin it in `known_hosts`                 |
+| `just secrets-rekey`              | Regenerate `.sops.yaml` and re-encrypt every secrets file                 |
 
 ### Secrets
 
