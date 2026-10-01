@@ -10,7 +10,6 @@ in
     features = with config.features; [
       server
       workstation
-      syncthing
     ];
 
     nixos =
@@ -91,21 +90,10 @@ in
         # - Trust all Tailscale traffic (no need to open ports for Tailscale-only services)
         # - Allow Tailscale UDP port for direct peer-to-peer connections (avoids DERP relay)
         # - Keep SSH open on LAN as emergency fallback
-        # - Syncthing ports open on LAN (localAnnounceEnabled = true)
-        #   8384: GUI, 22000: sync traffic, 21027: discovery
-        #   source: https://docs.syncthing.net/users/firewall.html
         networking.firewall = {
           trustedInterfaces = [ "tailscale0" ];
-          allowedTCPPorts = [
-            22
-            8384
-            22000
-          ];
-          allowedUDPPorts = [
-            config.services.tailscale.port
-            22000
-            21027
-          ];
+          allowedTCPPorts = [ 22 ];
+          allowedUDPPorts = [ config.services.tailscale.port ];
         };
 
         # This value determines the NixOS release from which the default

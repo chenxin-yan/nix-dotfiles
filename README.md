@@ -80,10 +80,9 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 - Servers: `ssh-keygen -t ed25519` and add the public key to GitHub. To use `just secret*` there, run `op account add` once.
 - `gh auth login` and the coding agents' own logins (pi, Claude Code, Codex).
 
-**Network and sync**
+**Network**
 
 - Tailscale: `sudo tailscale up` to join the tailnet.
-- Syncthing: devices are declared by ID in `modules/features/system/syncthing.nix`. A new or reinstalled machine gets a new ID, so add it there and switch on the other machines. The Raspberry Pi isn't managed by this repo, so accept the new device in its Syncthing UI too.
 
 **macOS permissions** (approve in System Settings when prompted)
 
@@ -170,4 +169,4 @@ Run the wizard, or copy an existing host file. Never reuse another machine's har
 
 ### Find where something is configured
 
-`features.<name>` is defined in the file with that name under `modules/features/`, e.g. `features.syncthing` → `system/syncthing.nix`. Profiles are the exception: `features.workstation` → `modules/profiles/roles/workstation.nix`. The theme is in `theme.nix`, and shared paths and environment variables are in `paths.nix`.
+`features.<name>` is defined in the file with that name under `modules/features/`, e.g. `features.tailscale` → `system/tailscale.nix`. Profiles are the exception: `features.workstation` → `modules/profiles/roles/workstation.nix`. The theme is in `theme.nix`, and shared paths and environment variables are in `paths.nix`.

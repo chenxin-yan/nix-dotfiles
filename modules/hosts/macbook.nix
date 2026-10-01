@@ -7,7 +7,6 @@
     features = with config.features; [
       workstation
       desktop
-      syncthing
     ];
 
     darwin =
