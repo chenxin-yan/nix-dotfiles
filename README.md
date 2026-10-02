@@ -70,7 +70,7 @@ bash scripts/onboard.sh
 
 For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets `workstation`, so add any other roles to the host file afterwards. Commit any new host files.
 
-**Raspberry Pi (`pi`):** NixOS's installers can't boot a Pi 5 from NVMe, so it is installed by flashing its own image: build `.#nixosConfigurations.pi.config.system.build.sdImage` on an aarch64 machine and write it to the drive. Before the first boot, with the drive still attached to the machine that flashed it, copy its enrolled host key pair to `/etc/ssh/ssh_host_ed25519_key{,.pub}` on the `NIXOS_SD` partition. Otherwise it generates a new key on boot and can't decrypt its secrets. Then onboard it like any other machine.
+**Raspberry Pi (`pi`):** NixOS's installers can't boot a Pi 5 from NVMe, so it is installed by flashing its own image: build `.#nixosConfigurations.pi.config.system.build.sdImage` on an `aarch64-linux` builder (an Apple Silicon Mac alone is `aarch64-darwin`) and write it to the drive. Trust the `nixos-raspberrypi.cachix.org` cache on that builder first, or it compiles the vendor kernel itself; the Pi only gets that cache after its first switch. Before the first boot, with the drive still attached to the machine that flashed it, copy its enrolled host key pair to `/etc/ssh/ssh_host_ed25519_key{,.pub}` on the `NIXOS_SD` partition. Otherwise it generates a new key on boot and can't decrypt its secrets. Then onboard it like any other machine.
 
 ### After install
 
@@ -89,7 +89,7 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 **macOS permissions** (approve in System Settings when prompted)
 
 - Karabiner driver extension (for kanata): _General → Login Items & Extensions_.
-- Input Monitoring for kanata, Accessibility for AeroSpace and espanso: _Privacy & Security_.
+- Input Monitoring and Accessibility for kanata, Accessibility for AeroSpace and espanso: _Privacy & Security_.
 - Background items for sketchybar and the other agents: _General → Login Items & Extensions_.
 
 ## Daily use
@@ -137,15 +137,15 @@ API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at act
 
 Nix doesn't update these; check them every few months.
 
-| Where            | What                                                       | How                                                                                                                                         |
-| ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Macs             | macOS and Mac firmware                                     | System Settings → Software Update                                                                                                           |
-| Macs             | Homebrew packages (activation installs but never upgrades) | `brew update && brew upgrade`                                                                                                               |
-| Machines with pi | pi's npm extensions, which aren't version-pinned           | `pi update --extensions`                                                                                                                    |
-| framework        | BIOS and device firmware, through fwupd                    | `fwupdmgr refresh && fwupdmgr update`                                                                                                       |
-| minipc           | BIOS (GEEKOM A6; not on fwupd)                             | Download from GEEKOM's support site and flash by hand                                                                                       |
-| pi               | Bootloader EEPROM, a flash chip outside any disk           | `nix shell nixpkgs#raspberrypi-eeprom -c sudo rpi-eeprom-update -a`, then reboot. Its images come from the locked nixpkgs, so they may lag. |
-| pi               | Apps deployed through Dokploy and their images             | Dokploy's UI. Dokploy, Traefik and PostgreSQL themselves are pinned by nix-dokploy.                                                         |
+| Where            | What                                                       | How                                                                                                                                                                                     |
+| ---------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Macs             | macOS and Mac firmware                                     | System Settings → Software Update                                                                                                                                                       |
+| Macs             | Homebrew packages (activation installs but never upgrades) | `brew update && brew upgrade`                                                                                                                                                           |
+| Machines with pi | pi's npm extensions, which aren't version-pinned           | `pi update --extensions`                                                                                                                                                                |
+| framework        | BIOS and device firmware, through fwupd                    | `fwupdmgr refresh && fwupdmgr update`                                                                                                                                                   |
+| minipc           | BIOS (GEEKOM A6; not on fwupd)                             | Download from GEEKOM's support site and flash by hand                                                                                                                                   |
+| pi               | Bootloader EEPROM, a flash chip outside any disk           | From the dotfiles checkout, `nix shell --inputs-from . nixpkgs#raspberrypi-eeprom -c sudo rpi-eeprom-update -a`, then reboot. Its images come from the locked nixpkgs, so they may lag. |
+| pi               | Apps deployed through Dokploy and their images             | Dokploy's UI. Dokploy, Traefik and PostgreSQL themselves are pinned by nix-dokploy.                                                                                                     |
 
 ### Things to know
 

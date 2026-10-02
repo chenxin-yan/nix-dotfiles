@@ -91,7 +91,8 @@
           allowedUDPPorts = [ config.services.tailscale.port ];
         };
 
-        # Tailscale MagicDNS needs resolved: https://github.com/tailscale/tailscale/issues/4254
+        # Let Tailscale (MagicDNS) manage DNS through resolved rather than
+        # rewriting resolv.conf: https://github.com/tailscale/tailscale/issues/4254
         services.resolved.enable = true;
 
         system.stateVersion = "26.11";
