@@ -1,0 +1,95 @@
+// Mod is Alt (config.kdl). Window management mirrors AeroSpace on the Mac
+// (modules/features/desktop/aerospace.nix); Super binds mirror macOS Cmd
+// shortcuts. Avoid Mod+F/I/O/D: zellij and zsh use those Alt combos. Avoid
+// Super+<key> and Alt+arrows: xremap turns those into Ctrl combos
+// (xremap/config.yml) before niri sees them.
+binds {
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    // Launcher and shell (Cmd+Space, Cmd+Q, Ctrl+Cmd+Q, Cmd+Shift+3/4/5).
+    Super+Space hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
+    Super+Shift+V hotkey-overlay-title="Clipboard history" { spawn "vicinae" "vicinae://extensions/vicinae/clipboard/history"; }
+    Super+Q repeat=false { close-window; }
+    Super+Ctrl+Q hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
+    Super+Shift+3 { screenshot-screen; }
+    Super+Shift+4 { screenshot; }
+    Super+Shift+5 { screenshot-window; }
+    Print { screenshot; }
+
+    Mod+Return hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
+    Mod+S hotkey-overlay-title="Control center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
+    Mod+Shift+Comma hotkey-overlay-title="Noctalia settings" { spawn "noctalia" "msg" "settings-toggle"; }
+    Mod+Space repeat=false { toggle-overview; }
+
+    // AeroSpace: focus and move.
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-down; }
+    Mod+K     { focus-window-up; }
+    Mod+L     { focus-column-right; }
+
+    Mod+Shift+H     { move-column-left; }
+    Mod+Shift+J     { move-window-down; }
+    Mod+Shift+K     { move-window-up; }
+    Mod+Shift+L     { move-column-right; }
+
+    // AeroSpace: alt-cmd-shift-hjkl resize.
+    Mod+Super+Shift+H { set-column-width "+10%"; }
+    Mod+Super+Shift+L { set-column-width "-10%"; }
+    Mod+Super+Shift+K { set-window-height "+10%"; }
+    Mod+Super+Shift+J { set-window-height "-10%"; }
+    Mod+Minus         { set-column-width "-10%"; }
+    Mod+Equal         { set-column-width "+10%"; }
+
+    // AeroSpace: workspaces 0–6, back-and-forth, send to the other monitor.
+    Mod+grave { focus-workspace "0"; }
+    Mod+1     { focus-workspace "1"; }
+    Mod+2     { focus-workspace "2"; }
+    Mod+3     { focus-workspace "3"; }
+    Mod+4     { focus-workspace "4"; }
+    Mod+5     { focus-workspace "5"; }
+    Mod+6     { focus-workspace "6"; }
+    Mod+Shift+grave { move-column-to-workspace "0"; }
+    Mod+Shift+1     { move-column-to-workspace "1"; }
+    Mod+Shift+2     { move-column-to-workspace "2"; }
+    Mod+Shift+3     { move-column-to-workspace "3"; }
+    Mod+Shift+4     { move-column-to-workspace "4"; }
+    Mod+Shift+5     { move-column-to-workspace "5"; }
+    Mod+Shift+6     { move-column-to-workspace "6"; }
+    Mod+Tab         { focus-workspace-previous; }
+    Mod+Shift+Tab   { move-workspace-to-monitor-next; }
+
+    // niri's own layout: AeroSpace's accordion is closest to a tabbed column.
+    Mod+Comma        { toggle-column-tabbed-display; }
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+R            { switch-preset-column-width; }
+    Mod+Shift+R      { switch-preset-column-width-back; }
+    Mod+M            { maximize-column; }
+    Mod+Shift+M      { fullscreen-window; }
+    Mod+C            { center-column; }
+    Mod+V            { toggle-window-floating; }
+    Mod+Shift+V      { switch-focus-between-floating-and-tiling; }
+
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+    Mod+WheelScrollRight { focus-column-right; }
+    Mod+WheelScrollLeft  { focus-column-left; }
+
+    // Hardware keys, with Noctalia's on-screen feedback.
+    XF86AudioRaiseVolume  allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
+    XF86AudioLowerVolume  allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
+    XF86AudioMute         allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
+    XF86AudioMicMute      allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "noctalia" "msg" "brightness-up"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down"; }
+    XF86AudioPlay         allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPause        allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPrev         allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioNext         allow-when-locked=true { spawn "playerctl" "next"; }
+
+    // Escape hatch if an app inhibits shortcuts (remote desktop, VMs).
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Shift+E { quit; }
+    Ctrl+Alt+Delete { quit; }
+    Mod+Shift+P { power-off-monitors; }
+}

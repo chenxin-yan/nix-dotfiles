@@ -30,7 +30,11 @@
           copy-on-select = "clipboard";
           shell-integration-features = "cursor,sudo,no-title";
 
+          # Mac (Cmd) shortcuts on both systems; on Linux xremap leaves Ghostty
+          # alone so these super binds reach it.
           keybind = [
+            "super+c=copy_to_clipboard"
+            "super+v=paste_from_clipboard"
             "super+w=close_surface"
             "super+t=new_tab"
             "ctrl+alt+h=previous_tab"
