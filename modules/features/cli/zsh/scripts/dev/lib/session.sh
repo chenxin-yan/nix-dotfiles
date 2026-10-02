@@ -169,10 +169,9 @@ mux_list_labels() {
   fi
 }
 
-# List all project directories (repos, local dirs, projects).
+# List all project directories (repos and local dirs).
 list_project_dirs() {
   fd --type d --hidden --max-depth 4 '^\.git$' "$DEV_PATH" --exclude local 2>/dev/null | xargs -I{} dirname {}
   fd --type d --max-depth 1 . "$DEV_PATH/local" 2>/dev/null
-  [[ -n "$PROJECTS_PATH" ]] && fd --type d --max-depth 1 . "$PROJECTS_PATH" 2>/dev/null
   true
 }

@@ -7,6 +7,7 @@
 
     features = with config.features; [
       workstation
+      obsidian-headless
     ];
 
     nixos =

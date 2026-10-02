@@ -70,6 +70,8 @@ bash scripts/onboard.sh
 
 For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets `workstation`, so add any other roles to the host file afterwards. Commit any new host files.
 
+**Raspberry Pi (`pi`):** NixOS's installers can't boot a Pi 5 from NVMe, so it is installed by flashing its own image: build `.#nixosConfigurations.pi.config.system.build.sdImage` on an aarch64 machine and write it to the drive. Before the first boot, with the drive still attached to the machine that flashed it, copy its enrolled host key pair to `/etc/ssh/ssh_host_ed25519_key{,.pub}` on the `NIXOS_SD` partition. Otherwise it generates a new key on boot and can't decrypt its secrets. Then onboard it like any other machine.
+
 ### After install
 
 Nix can't sign in to accounts, approve macOS permissions or join networks. Do these on each machine, then check with `just doctor`.
@@ -77,8 +79,8 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 **Logins**
 
 - Desktops: sign in to 1Password, then in _Settings → Developer_ (on a Mac, `open onepassword://settings/developers`) turn on **Use the SSH agent** and **Integrate with 1Password CLI**.
-- Servers: `ssh-keygen -t ed25519 -N ""`, put the public key (without its comment) in the host's `sshKey` so the fleet accepts it, and add it to GitHub. To use `just secret*` there, run `op account add` once.
-- `gh auth login` and the coding agents' own logins (pi, Claude Code, Codex).
+- Machines without 1Password's SSH agent: the wizard offers to give the login its own `~/.ssh/id_ed25519`, declare it as the host's `sshKey` so the fleet accepts it, and, after activation, sign in with `gh` and add it to GitHub. Commit and push the host file, then `just switch` the other machines. To use `just secret*` there, run `op account add` once.
+- `gh auth login` (unless the wizard did it) and the coding agents' own logins (pi, Claude Code, Codex).
 
 **Network**
 
@@ -110,16 +112,16 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 
 ### Secrets
 
-API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at activation with its SSH host key; the `just secret*` recipes use the recovery key, stored in 1Password as `sops-recovery`.
+API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at activation with its SSH host key; the `just secret*` recipes use the admin key, stored in 1Password as `sops-admin`.
 
-- **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine.
+- **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine. A key only one machine uses lives in its own file: `just secret-set <name> secrets/hosts/<host>.yaml` (e.g. the Pi's `hermes-env`). Dokploy's keys can't be changed this way; see `modules/features/services/dokploy.nix`.
 - **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
 - **Enrol a machine:** the onboarding wizard prints the command. By hand: `just secrets-enrol <name> '<key>'` with that machine's `/etc/ssh/ssh_host_ed25519_key.pub`, then commit and push before its first switch. Re-enrolling replaces the old key.
 - **A machine is lost:** delete its line from `modules/hosts/_host-keys.json`, run `just secrets-rekey`, commit, and rotate the API keys with their providers.
-- **The recovery key is lost:** create a new one. This prints only its public half; put it in `recovery` in `modules/flake/sops.nix`.
+- **The admin key is lost:** create a new one. This prints only its public half; put it in `admin` in `modules/flake/sops.nix`.
 
   ```sh
-  nix shell nixpkgs#age -c sh -c 'age-keygen 2>/dev/null | op document create - --title sops-recovery --file-name keys.txt >/dev/null && op document get sops-recovery | age-keygen -y'
+  nix shell nixpkgs#age -c sh -c 'age-keygen 2>/dev/null | op document create - --title sops-admin --file-name keys.txt >/dev/null && op document get sops-admin | age-keygen -y'
   ```
 
   Then re-encrypt from an enrolled machine, using its host key:
@@ -130,6 +132,20 @@ API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at act
   for f in secrets/*.yaml secrets/hosts/*.yaml; do [ -e "$f" ] && SOPS_AGE_KEY="$key" sops updatekeys --yes "$f"; done
   unset key
   ```
+
+### Outside Nix
+
+Nix doesn't update these; check them every few months.
+
+| Where            | What                                                       | How                                                                                                                                         |
+| ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Macs             | macOS and Mac firmware                                     | System Settings → Software Update                                                                                                           |
+| Macs             | Homebrew packages (activation installs but never upgrades) | `brew update && brew upgrade`                                                                                                               |
+| Machines with pi | pi's npm extensions, which aren't version-pinned           | `pi update --extensions`                                                                                                                    |
+| framework        | BIOS and device firmware, through fwupd                    | `fwupdmgr refresh && fwupdmgr update`                                                                                                       |
+| minipc           | BIOS (GEEKOM A6; not on fwupd)                             | Download from GEEKOM's support site and flash by hand                                                                                       |
+| pi               | Bootloader EEPROM, a flash chip outside any disk           | `nix shell nixpkgs#raspberrypi-eeprom -c sudo rpi-eeprom-update -a`, then reboot. Its images come from the locked nixpkgs, so they may lag. |
+| pi               | Apps deployed through Dokploy and their images             | Dokploy's UI. Dokploy, Traefik and PostgreSQL themselves are pinned by nix-dokploy.                                                         |
 
 ### Things to know
 

@@ -39,16 +39,24 @@ else
   bad "host key is not the enrolled one; from a machine with 1Password: just secrets-enrol $target '$(cut -d' ' -f1,2 "$hostkey")'"
 fi
 
-# Every declared secret is owned by the login, so each must be readable here.
+# A secret owned by the login must be readable here. Others (system services'
+# secrets; sops-nix makes an unset owner root) are only checked to exist,
+# without sudo.
 secrets="$(nix eval --raw --no-update-lock-file "$root#$kind.$target.config" --apply 'cfg:
-  builtins.concatStringsSep "\n" (map (s: s.path) (builtins.attrValues (cfg.sops.secrets or { })))' 2>/dev/null)" \
+  builtins.concatStringsSep "\n" (map (s: "${if s.owner == null then "root" else s.owner} ${s.path}") (builtins.attrValues (cfg.sops.secrets or { })))' 2>/dev/null)" \
   || bad "could not evaluate $target's secrets; run nix flake check to see why"
-while read -r path; do
+while read -r owner path; do
   [ -n "$path" ] || continue
-  if [ -r "$path" ]; then
-    ok "secret $path is readable"
+  if [ "$owner" = "$(id -un)" ]; then
+    if [ -r "$path" ]; then
+      ok "secret $path is readable"
+    else
+      bad "secret $path is not readable; check sops-install-secrets in the last switch"
+    fi
+  elif [ -e "$path" ]; then
+    ok "secret $path exists (owned by $owner)"
   else
-    bad "secret $path is not readable; check sops-install-secrets in the last switch"
+    bad "secret $path is missing; check sops-install-secrets in the last switch"
   fi
 done <<EOF
 $secrets
@@ -71,7 +79,13 @@ esac
 github="$(ssh -T -o BatchMode=yes -o ConnectTimeout=10 git@github.com 2>&1)"
 case "$github" in
   *"successfully authenticated"*) ok "GitHub accepts this machine's SSH key" ;;
-  *) bad "GitHub rejects SSH: ${github%%$'\n'*}" ;;
+  *)
+    if [ -f "$HOME/.ssh/id_ed25519.pub" ]; then
+      bad "GitHub rejects SSH: ${github%%$'\n'*}; add this machine's key: gh auth login -p ssh, or gh ssh-key add ~/.ssh/id_ed25519.pub --title $target"
+    else
+      bad "GitHub rejects SSH: ${github%%$'\n'*}"
+    fi
+    ;;
 esac
 
 exit "$failed"

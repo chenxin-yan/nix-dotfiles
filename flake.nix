@@ -37,6 +37,18 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Raspberry Pi 5 board support. Keeps its own nixpkgs: the board module
+    # takes the kernel and firmware from it, which nixos-raspberrypi.cachix.org
+    # has prebuilt. Its README recommends main as the stable branch.
+    nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
+
+    hermes-agent.url = "github:NousResearch/hermes-agent";
+
+    nix-dokploy = {
+      url = "github:el-kurto/nix-dokploy";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);

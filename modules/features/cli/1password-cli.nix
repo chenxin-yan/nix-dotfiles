@@ -1,5 +1,5 @@
 # op: unlocks through the 1Password app where there is one, otherwise with
-# `op signin`. The `just secret*` recipes read the sops recovery key with it.
+# `op signin`. The `just secret*` recipes read the sops admin key with it.
 let
   cli.programs._1password.enable = true;
 in
