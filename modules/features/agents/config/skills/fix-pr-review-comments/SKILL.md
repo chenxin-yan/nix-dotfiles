@@ -49,6 +49,11 @@ Gather every actionable item into one list:
   exist, pure approvals ("LGTM"), and comments you (the agent) authored.
 
 Number the items. This numbering is the skeleton of the final report.
+For inline comments, also fetch the PR's GraphQL `reviewThreads` via
+`gh api graphql`, paginating threads and their comments. Retain each
+thread's `id`, `isResolved`, and `viewerCanResolve`, and map comment URLs
+to thread IDs. Resolution uses the thread ID, not a comment ID; review
+bodies and general PR comments have no resolvable thread.
 
 ## Step 4: Evaluate each comment — the core discipline
 
@@ -108,4 +113,29 @@ Open questions: #2 — confirm with reviewer whether migrations should stay raw 
 ```
 
 Every comment gets a row — including the ones you didn't act on. The
-user decides what to relay back to reviewers; you don't reply on GitHub.
+user decides what to relay back to reviewers; don't post replies on
+GitHub unless asked. Resolving threads is a separate action below.
+
+## Step 7: Get approval and resolve addressed threads
+
+After reporting the fixes and gate results, list the addressed threads
+by report number and ask: "Approve these fixes and resolve their GitHub
+review threads?" State whether the fixes are still uncommitted/unpushed.
+Only propose threads whose actionable feedback is fully addressed and
+whose relevant checks passed; leave unclear, rejected, deferred, or
+partially addressed feedback open.
+
+When the user approves, continue immediately with the approved threads —
+no second confirmation or commit/push prerequisite. Approval to this
+request authorizes thread resolution even while fixes are local; it does
+not authorize committing, pushing, or posting replies. If approval covers
+only some items, resolve only those threads.
+
+Re-fetch the approved threads before resolving: skip already-resolved
+threads, and leave any with new unaddressed feedback open. For each
+remaining approved thread with `viewerCanResolve: true`.
+
+Confirm the returned thread has `isResolved: true` before reporting it
+resolved. Report resolved items and any still-open threads with reasons;
+permission/API failures are blockers, not successes. Keep local changes
+uncommitted and unpushed unless separately instructed.
