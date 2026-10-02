@@ -2,6 +2,9 @@
 # database, volumes and deployed apps are runtime state Dokploy owns.
 { inputs, config, ... }:
 let
+  # Copied into Docker secrets once and never updated, so changing them in
+  # sops alone does nothing. Rotate the first two with upstream's steps:
+  # https://github.com/el-kurto/nix-dokploy/blob/3dab3957c1c5c9a6cf2c8e9fcbf7dad5146a0207/README.md#rotating-secrets
   secrets = [
     "dokploy-db-password"
     "dokploy-auth-secret"

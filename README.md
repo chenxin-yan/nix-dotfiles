@@ -70,7 +70,7 @@ bash scripts/onboard.sh
 
 For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets `workstation`, so add any other roles to the host file afterwards. Commit any new host files.
 
-**Raspberry Pi (`pi`):** NixOS's installers can't boot a Pi 5 from NVMe, so it is installed by flashing its own image: build `.#nixosConfigurations.pi.config.system.build.sdImage` on an aarch64 machine and write it to the drive. Put its enrolled SSH host key in `/etc/ssh` before the first boot, so it can decrypt its secrets. Then onboard it like any other machine.
+**Raspberry Pi (`pi`):** NixOS's installers can't boot a Pi 5 from NVMe, so it is installed by flashing its own image: build `.#nixosConfigurations.pi.config.system.build.sdImage` on an aarch64 machine and write it to the drive. Before the first boot, with the drive still attached to the machine that flashed it, copy its enrolled host key pair to `/etc/ssh/ssh_host_ed25519_key{,.pub}` on the `NIXOS_SD` partition. Otherwise it generates a new key on boot and can't decrypt its secrets. Then onboard it like any other machine.
 
 ### After install
 
@@ -115,7 +115,7 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 
 API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at activation with its SSH host key; the `just secret*` recipes use the recovery key, stored in 1Password as `sops-recovery`.
 
-- **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine. A key only one machine uses lives in its own file: `just secret-set <name> secrets/hosts/<host>.yaml` (e.g. the Pi's Hermes and Dokploy keys).
+- **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine. A key only one machine uses lives in its own file: `just secret-set <name> secrets/hosts/<host>.yaml` (e.g. the Pi's `hermes-env`). Dokploy's keys can't be changed this way; see `modules/features/services/dokploy.nix`.
 - **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
 - **Enrol a machine:** the onboarding wizard prints the command. By hand: `just secrets-enrol <name> '<key>'` with that machine's `/etc/ssh/ssh_host_ed25519_key.pub`, then commit and push before its first switch. Re-enrolling replaces the old key.
 - **A machine is lost:** delete its line from `modules/hosts/_host-keys.json`, run `just secrets-rekey`, commit, and rotate the API keys with their providers.

@@ -16,6 +16,8 @@
           Unit = {
             Description = "Obsidian Sync for the Atlas vault";
             ConditionDirectoryNotEmpty = "${config.xdg.configHome}/obsidian-headless/sync";
+            # Without the vault, the chdir would fail and restart every 30s.
+            ConditionPathIsDirectory = config.atlasPath;
           };
           Service = {
             ExecStart = "${pkgs.obsidian-headless}/bin/ob sync --continuous";
