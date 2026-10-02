@@ -1,7 +1,7 @@
 # Kanata + Karabiner-DriverKit-VirtualHIDDevice (driver only, no GUI app).
 #
-# We replace the homebrew karabiner-elements cask with the standalone
-# pkgs.karabiner-dk driver and run its VHID daemon ourselves via launchd.
+# We replace the homebrew karabiner-elements cask with the karabiner-dk
+# driver and run its VHID daemon ourselves via launchd.
 # This drops the Karabiner-Elements GUI (which we never used) while
 # keeping the virtual HID device that kanata needs. The daemon reads the
 # keymap that the Home Manager half links into ~/.config/kanata.
@@ -20,7 +20,9 @@
     }:
     let
       userHome = "/Users/${config.system.primaryUser}";
-      karabinerDk = pkgs.karabiner-dk;
+      # The driver version kanata is built against; a newer standalone
+      # karabiner-dk isn't guaranteed to speak the same IPC.
+      karabinerDk = pkgs.kanata.darwinDriver;
 
       # System extensions (.dext) cannot live in /nix/store and cannot be
       # symlinked — sysextd verifies the parent .app's filesystem path. We
