@@ -170,11 +170,10 @@ prefetch() {
 }
 
 # ── In-place rewrite scoped to a line range ─────────────────────────────
-# Replaces the first occurrence of `key = "..."` inside [start, end].
-# Uses a temp file + mv so it works on macOS and Linux without `sed -i`.
+# Copies `in` to `out`, replacing the first `key = "..."` inside
+# [start, end]. Fails if awk fails or the key isn't in that range.
 replace_in_range() {
-  local file="$1" start="$2" end="$3" key="$4" new_value="$5"
-  local tmp; tmp=$(mktemp)
+  local in="$1" out="$2" start="$3" end="$4" key="$5" new_value="$6"
   KEY="$key" NEW="$new_value" awk \
     -v LO="$start" -v HI="$end" '
       BEGIN {
@@ -193,8 +192,8 @@ replace_in_range() {
         }
         print
       }
-    ' "$file" > "$tmp"
-  mv "$tmp" "$file"
+      END { exit !done }
+    ' "$in" > "$out"
 }
 
 # ── Update one pin ──────────────────────────────────────────────────────
@@ -258,8 +257,20 @@ update_pin() {
 
   # Replacements are scoped to [start, end] — even a literal "master"
   # rev cannot leak out of the block.
-  replace_in_range "$file" "$start" "$end" "rev"  "$new_rev"
-  replace_in_range "$file" "$start" "$end" "hash" "$new_hash"
+  # Both keys are rewritten in temp copies and the file is replaced once,
+  # so a failure can't leave a new rev paired with the old hash.
+  local tmp_rev tmp_both
+  tmp_rev=$(mktemp) && tmp_both=$(mktemp) || return 2
+  if ! replace_in_range "$file" "$tmp_rev" "$start" "$end" "rev" "$new_rev" \
+    || ! replace_in_range "$tmp_rev" "$tmp_both" "$start" "$end" "hash" "$new_hash" \
+    || ! cat "$tmp_both" > "$file"; then
+    rm -f "$tmp_rev" "$tmp_both"
+    printf "%s  ✗ %s/%s: could not rewrite rev/hash in %s%s\n" \
+      "$RED" "$owner" "$repo" "$rel_file" "$NC"
+    SUMMARY+=("${owner}/${repo}"$'\t'"${cur_rev:0:12}"$'\t'"${new_rev:0:12}"$'\t'"${rel_file}"$'\t'"failed")
+    return 2
+  fi
+  rm -f "$tmp_rev" "$tmp_both"
 
   printf "%s  ✓ Updated %s%s\n" "$GREEN" "$rel_file" "$NC"
   SUMMARY+=("${owner}/${repo}"$'\t'"${cur_rev:0:12}"$'\t'"${new_rev:0:12}"$'\t'"${rel_file}"$'\t'"updated")
