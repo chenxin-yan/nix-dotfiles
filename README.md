@@ -81,7 +81,6 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 - Desktops: sign in to 1Password, then in _Settings → Developer_ (on a Mac, `open onepassword://settings/developers`) turn on **Use the SSH agent** and **Integrate with 1Password CLI**.
 - Servers: `ssh-keygen -t ed25519 -N ""`, put the public key (without its comment) in the host's `sshKey` so the fleet accepts it, and add it to GitHub. To use `just secret*` there, run `op account add` once.
 - `gh auth login` and the coding agents' own logins (pi, Claude Code, Codex).
-- Obsidian Sync, on hosts with `obsidian-headless` (`pi`): `ob login`, `ob sync-setup --vault Atlas --path ~/atlas`, then `systemctl --user start atlas-sync`.
 
 **Network**
 
