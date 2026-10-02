@@ -40,10 +40,10 @@
 
     # Raspberry Pi 5 board support. Keeps its own nixpkgs: the board module
     # takes the kernel and firmware from it, which nixos-raspberrypi.cachix.org
-    # has prebuilt.
-    nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/v1.20260801.0";
+    # has prebuilt. Its README recommends main as the stable branch.
+    nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
 
-    hermes-agent.url = "github:NousResearch/hermes-agent/da2f473bdbfdac58ddebabd8bdf76ddb2b42fb35";
+    hermes-agent.url = "github:NousResearch/hermes-agent";
 
     nix-dokploy = {
       url = "github:el-kurto/nix-dokploy";

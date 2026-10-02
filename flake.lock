@@ -146,7 +146,6 @@
       "original": {
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "da2f473bdbfdac58ddebabd8bdf76ddb2b42fb35",
         "type": "github"
       }
     },
@@ -329,7 +328,7 @@
       },
       "original": {
         "owner": "nvmd",
-        "ref": "v1.20260801.0",
+        "ref": "main",
         "repo": "nixos-raspberrypi",
         "type": "github"
       }
