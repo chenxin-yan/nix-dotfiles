@@ -5,10 +5,11 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
 # Build set of valid workspace labels from all project directories
 declare -A valid_labels
 
+project_dirs=$(list_project_dirs) || { echo "Project discovery failed; closing nothing." >&2; exit 1; }
 while IFS= read -r dir; do
   [[ -z "$dir" ]] && continue
   valid_labels["$(get_session_name "$dir")"]=1
-done < <(list_project_dirs)
+done <<< "$project_dirs"
 
 # Close/kill any live session or workspace whose label is not in the valid set
 mux_list_labels | while IFS= read -r label; do

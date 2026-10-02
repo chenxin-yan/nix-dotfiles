@@ -169,9 +169,14 @@ mux_list_labels() {
   fi
 }
 
-# List all project directories (repos and local dirs).
+# List all project directories (repos and local dirs). Fails rather than
+# printing a partial list: cleanup closes every session missing from it.
 list_project_dirs() {
-  fd --type d --hidden --max-depth 4 '^\.git$' "$DEV_PATH" --exclude local 2>/dev/null | xargs -I{} dirname {}
-  fd --type d --max-depth 1 . "$DEV_PATH/local" 2>/dev/null
-  true
+  [[ -n "$DEV_PATH" && -d "$DEV_PATH" ]] || { echo "DEV_PATH is not a directory: $DEV_PATH" >&2; return 1; }
+  local git_dirs
+  git_dirs=$(fd --type d --hidden --max-depth 4 '^\.git$' "$DEV_PATH" --exclude local) || return 1
+  [[ -z "$git_dirs" ]] || printf '%s\n' "$git_dirs" | xargs -I{} dirname {}
+  if [[ -d "$DEV_PATH/local" ]]; then
+    fd --type d --max-depth 1 . "$DEV_PATH/local" || return 1
+  fi
 }
