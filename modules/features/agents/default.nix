@@ -136,8 +136,16 @@
           source = "${sources.mattpocockSkills}/skills/engineering/implement";
           recursive = true;
         };
+        ".agents/skills/implement-spec" = {
+          source = "${sources.mattpocockSkills}/skills/engineering/implement-spec";
+          recursive = true;
+        };
         ".agents/skills/improve-codebase-architecture" = {
           source = "${sources.mattpocockSkills}/skills/engineering/improve-codebase-architecture";
+          recursive = true;
+        };
+        ".agents/skills/pr" = {
+          source = "${sources.mattpocockSkills}/skills/engineering/pr";
           recursive = true;
         };
         ".agents/skills/prototype" = {
@@ -146,6 +154,10 @@
         };
         ".agents/skills/research" = {
           source = "${sources.mattpocockSkills}/skills/engineering/research";
+          recursive = true;
+        };
+        ".agents/skills/retro" = {
+          source = "${sources.mattpocockSkills}/skills/engineering/retro";
           recursive = true;
         };
         ".agents/skills/setup-matt-pocock-skills" = {
