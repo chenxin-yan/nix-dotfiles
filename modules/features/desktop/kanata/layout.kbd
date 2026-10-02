@@ -1,0 +1,116 @@
+;; Built-in laptop keyboards (MacBook, Framework). Mirrors the Voyager's Oryx
+;; layout (configure.zsa.io/voyager/layouts/NKKya); layer names match Oryx's.
+;; Shared by both OSes: default.nix prepends each OS's defcfg.
+
+(defsrc
+  f1   f2   f7   f8   f9   f10  f11  f12
+  grv  1    2    3    4    5
+  tab  q    w    e    r    t    y    u    i    o    p    [
+  caps a    s    d    f    g    h    j    k    l    ;    '
+       z    x    c    v    b    n    m    ,    .    /    rsft
+  lmet lalt ralt rmet rctl
+)
+
+;; Oryx tapping terms minus 20 ms on home-row mods, since laptop keys are
+;; shorter-travel; layer keys keep the Voyager's values.
+(defvar
+  hrm       170 ;; Oryx 190
+  hrm-index 150 ;; Oryx 170 (f, j)
+  sym-f     130 ;; Oryx 150 (& on the symbols layer)
+  caps-term 130 ;; Oryx 130
+  quot-term 170 ;; Oryx 190
+)
+
+(defalias
+  hyper (multi lctl lsft lalt lmet)
+  meh (multi lctl lsft lalt)
+
+  a (tap-hold $hrm $hrm a lmet)
+  s (tap-hold $hrm $hrm s lsft)
+  d (tap-hold $hrm $hrm d lalt)
+  f (tap-hold $hrm-index $hrm-index f lctl)
+  g (tap-hold $hrm $hrm g @hyper)
+  h (tap-hold $hrm $hrm h @hyper)
+  j (tap-hold $hrm-index $hrm-index j rctl)
+  k (tap-hold $hrm $hrm k ralt)
+  l (tap-hold $hrm $hrm l rsft)
+  ; (tap-hold $hrm $hrm ; rmet)
+
+  ;; Layer keys opt out of Flow Tap (as in QMK, where it covers only alphas),
+  ;; so a fast `foo(` still reaches the layer.
+  caps (tap-hold $caps-term $caps-term esc (layer-while-held super) (require-prior-idle 0))
+  quot (tap-hold $quot-term $quot-term ' (layer-while-held controls) (require-prior-idle 0))
+  sym (layer-while-held symbols)
+  idx (one-shot 2000 (layer-while-held index))
+
+  sat  (tap-hold $hrm $hrm S-2 lmet)
+  sast (tap-hold $hrm $hrm S-8 lsft)
+  sdlr (tap-hold $hrm $hrm S-4 lalt)
+  samp (tap-hold $sym-f $sym-f S-7 lctl)
+)
+
+;; Thumb keys by physical position: ⌘/Super beside the spacebar on both sides
+;; (right ⌘ stays plain: it's the dictation hotkey), ⌥/Alt one further out;
+;; the outer right modifier holds the symbols layer.
+(platform (macos)
+  (defalias
+    k1 brdn  k2 brup  k7 prev  k8 pp  k9 next  k10 mute  k11 vold  k12 volu
+    lm lmet  la lalt  ra @sym  rm rmet  rc rctl
+  )
+)
+
+;; Framework: the EC already turns the top row into media keys (F-keys arrive
+;; only with Fn-lock on), and its bottom row is reordered to match the Mac's.
+(platform (linux)
+  (defalias
+    k1 f1  k2 f2  k7 f7  k8 f8  k9 f9  k10 f10  k11 f11  k12 f12
+    lm lalt  la lmet  ra rmet  rm rmet  rc @sym
+  )
+)
+
+(deflayer base
+  @k1  @k2  @k7  @k8  @k9  @k10 @k11 @k12
+  _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  @caps @a  @s   @d   @f   @g   @h   @j   @k   @l   @;   @quot
+       _    _    _    _    _    _    _    _    _    _    @meh
+  @lm  @la  @ra  @rm  @rc
+)
+
+(deflayer super
+  _    _    _    _    _    _    _    _
+  A-grv A-1 A-2  A-3  A-4  A-5
+  _    _    _    _    _    A-6  _    _    _    _    _    _
+  _    _    @idx del  bspc _    left down up   right _    _
+       _    _    C-c  _    _    _    _    _    _    _    _
+  _    _    _    _    _
+)
+
+(deflayer symbols
+  _    _    _    _    _    _    _    _
+  _    _    _    _    _    _
+  _    S-1  S-grv S-6 S-3  _    del  S-min S-9 S-0  S-=  S-\
+  _    @sat @sast @sdlr @samp S-5 bspc =  S-[  S-]  S-;  S-'
+       _    _    _    _    _    _    S-,  [    ]    S-.  _
+  _    _    _    _    _
+)
+
+(deflayer controls
+  _    _    _    _    _    _    _    _
+  _    _    _    _    _    _
+  _    f1   f2   f3   f4   pgup _    _    vold volu _    _
+  _    f5   f6   f7   f8   pgdn prev pp   _    next _    _
+       f9   f10  f11  f12  home end  mute _    _    _    _
+  _    _    _    _    _
+)
+
+;; caps+s, then k: plain QWERTY with no home-row mods (gaming, or when mods
+;; misfire). Right shift goes back to index; j returns to base.
+(deflayermap (index)
+  j (layer-switch base)
+  k (layer-switch qwerty)
+)
+
+(deflayermap (qwerty)
+  rsft (layer-switch index)
+)

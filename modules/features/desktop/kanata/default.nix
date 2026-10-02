@@ -1,4 +1,8 @@
-# Kanata + Karabiner-DriverKit-VirtualHIDDevice (driver only, no GUI app).
+# Kanata on the built-in laptop keyboards; ./layout.kbd is shared, each OS
+# adds its own defcfg. The Voyager is left alone: it runs its layout in
+# firmware.
+#
+# macOS: Kanata + Karabiner-DriverKit-VirtualHIDDevice (driver only, no GUI app).
 #
 # We replace the homebrew karabiner-elements cask with the karabiner-dk
 # driver and run its VHID daemon ourselves via launchd.
@@ -10,6 +14,13 @@
 #   - jtroo/kanata Discussion #1537 (canonical macOS launchd recipe)
 #   - pqrs-org/Karabiner-DriverKit-VirtualHIDDevice README
 #   - nix-darwin services/karabiner-elements (pattern we mirror)
+let
+  # 65 ms matches the Voyager's Flow Tap.
+  sharedDefcfg = ''
+    process-unmapped-keys yes
+    tap-hold-require-prior-idle 65
+  '';
+in
 {
   features.kanata.darwin =
     {
@@ -91,6 +102,26 @@
   features.kanata.homeManager =
     { pkgs, lib, ... }:
     lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      xdg.configFile."kanata/kanata.kbd".source = ./kanata.kbd;
+      # Product name of every MacBook's built-in keyboard (`kanata --list`).
+      xdg.configFile."kanata/kanata.kbd".text = ''
+        (defcfg
+          ${sharedDefcfg}
+          macos-dev-names-include ("Apple Internal Keyboard / Trackpad"))
+      ''
+      + builtins.readFile ./layout.kbd;
     };
+
+  features.kanata.nixos = {
+    services.kanata = {
+      enable = true;
+      keyboards.internal = {
+        # The kernel's atkbd driver names a laptop's built-in (i8042)
+        # keyboard this, so external keyboards are never grabbed.
+        extraDefCfg = sharedDefcfg + ''
+          linux-dev-names-include ("AT Translated Set 2 keyboard")
+        '';
+        config = builtins.readFile ./layout.kbd;
+      };
+    };
+  };
 }
