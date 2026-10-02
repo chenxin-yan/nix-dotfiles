@@ -18,7 +18,7 @@
     aerospace
     iina
     kanata
-    keymapp
     sketchybar
+    zsa
   ];
 }
