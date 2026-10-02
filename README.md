@@ -112,16 +112,16 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 
 ### Secrets
 
-API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at activation with its SSH host key; the `just secret*` recipes use the recovery key, stored in 1Password as `sops-recovery`.
+API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at activation with its SSH host key; the `just secret*` recipes use the admin key, stored in 1Password as `sops-admin`.
 
 - **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine. A key only one machine uses lives in its own file: `just secret-set <name> secrets/hosts/<host>.yaml` (e.g. the Pi's `hermes-env`). Dokploy's keys can't be changed this way; see `modules/features/services/dokploy.nix`.
 - **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
 - **Enrol a machine:** the onboarding wizard prints the command. By hand: `just secrets-enrol <name> '<key>'` with that machine's `/etc/ssh/ssh_host_ed25519_key.pub`, then commit and push before its first switch. Re-enrolling replaces the old key.
 - **A machine is lost:** delete its line from `modules/hosts/_host-keys.json`, run `just secrets-rekey`, commit, and rotate the API keys with their providers.
-- **The recovery key is lost:** create a new one. This prints only its public half; put it in `recovery` in `modules/flake/sops.nix`.
+- **The admin key is lost:** create a new one. This prints only its public half; put it in `admin` in `modules/flake/sops.nix`.
 
   ```sh
-  nix shell nixpkgs#age -c sh -c 'age-keygen 2>/dev/null | op document create - --title sops-recovery --file-name keys.txt >/dev/null && op document get sops-recovery | age-keygen -y'
+  nix shell nixpkgs#age -c sh -c 'age-keygen 2>/dev/null | op document create - --title sops-admin --file-name keys.txt >/dev/null && op document get sops-admin | age-keygen -y'
   ```
 
   Then re-encrypt from an enrolled machine, using its host key:

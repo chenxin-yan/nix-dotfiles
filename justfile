@@ -31,10 +31,10 @@ clean:
     sudo -- "$(command -v nix-collect-garbage)" $args
     sudo -- "$(command -v nix-store)" --optimise
 
-# sops reads the recovery key from 1Password whenever it needs one; nothing
+# sops reads the admin key from 1Password whenever it needs one; nothing
 # is written to disk. Any enrolled host key works for decryption too, but
 # only root can read those.
-export SOPS_AGE_KEY_CMD := "op document get sops-recovery"
+export SOPS_AGE_KEY_CMD := "op document get sops-admin"
 
 # The 1Password app unlocks op on desktops; elsewhere sign in for this recipe.
 op_signin := 'op whoami >/dev/null 2>&1 || eval "$(op signin)"'

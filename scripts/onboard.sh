@@ -594,7 +594,7 @@ read_sops_files() {
     || die "could not evaluate $target's secrets; nothing was built or activated"
 }
 # decrypts: every file in $sops_files decrypts with the host key alone. sudo
-# reads the root-only key; env -i keeps the recovery key and any personal age
+# reads the root-only key; env -i keeps the admin key and any personal age
 # keys out of the test. Nothing decrypted is printed.
 decrypts() {
   local f
