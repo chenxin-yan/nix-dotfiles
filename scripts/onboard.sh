@@ -474,8 +474,19 @@ if gate "Give this machine its own key ($sshkey, created if missing) for the fle
   if [ "$current" = "$sshline" ]; then
     say "$hostrel already declares this key."
   elif [ -n "$current" ]; then
-    warn "$hostrel declares a different sshKey; left unchanged. To use this key instead, set:"
+    warn "$hostrel declares a different sshKey, likely from before a reinstall:"
+    note "$current"
+    say "Replaces it with this machine's key:"
     note "$sshline"
+    if gate "Replace it? (other machines stop accepting the old key once switched)"; then
+      awk -v add="$sshline" '/^[[:space:]]*sshKey[[:space:]]*=/ && !done { print add; done = 1; next } { print }' \
+        "$hostfile" >"$work/hostfile"
+      cat "$work/hostfile" >"$hostfile"
+      say "Replaced the key in $hostrel."
+      note "Remove the old key from GitHub too: gh ssh-key list, then gh ssh-key delete <id>."
+    else
+      note "Left unchanged; other machines won't accept this key until sshKey is updated."
+    fi
   else
     say "Adds to ${hostfile#"$root/"}, after its login line:"
     note "$sshline"
