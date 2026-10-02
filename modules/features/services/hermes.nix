@@ -36,8 +36,11 @@
           gateway.enable = true;
           environmentFiles = [ osConfig.sops.secrets.hermes-env.path ];
           environment.AGENT_BROWSER_EXECUTABLE_PATH = "${pkgs.chromium}/bin/chromium";
-          # Tools its skills call.
+          # Tools its skills call. agent-browser drives the local Chromium;
+          # without it on PATH, Hermes downloads a generic-Linux build that
+          # NixOS can't run.
           extraPackages = with pkgs; [
+            agent-browser
             gh
             gogcli
             git
