@@ -1,5 +1,4 @@
-# Hermes Agent: the messaging gateway and the web dashboard, as user services
-# of the login. State stays mutable in ~/.hermes; Nix owns the package, the
+# Hermes Agent: the messaging gateway, as a user service of the login. State stays mutable in ~/.hermes; Nix owns the package, the
 # units and .env.
 { inputs, config, ... }:
 {
@@ -20,31 +19,21 @@
 
     homeManager =
       { osConfig, pkgs, ... }:
-      let
-        # Activation copies the secret into ~/.hermes/.env, and a changed
-        # secret alone doesn't rerun it. Tying the units to the secrets file
-        # makes a new value reach .env and restarts both.
-        restartOnSecretChange.Unit.X-Restart-Triggers = [
-          osConfig.sops.secrets.hermes-env.sopsFileHash
-        ];
-      in
       {
         imports = [ inputs.hermes-agent.homeManagerModules.default ];
 
-        systemd.user.services.hermes-agent = restartOnSecretChange;
-        systemd.user.services.hermes-backend = restartOnSecretChange;
+        # Activation copies the secret into ~/.hermes/.env, and a changed
+        # secret alone doesn't rerun it. Tying the unit to the secrets file
+        # makes a new value reach .env and restarts it.
+        systemd.user.services.hermes-agent.Unit.X-Restart-Triggers = [
+          osConfig.sops.secrets.hermes-env.sopsFileHash
+        ];
 
         programs.hermes-agent.enable = true;
 
         services.hermes-agent = {
           enable = true;
           gateway.enable = true;
-          # Only on the tailnet: wait for tailscale0 and bind to its address.
-          backend = {
-            mode = "dashboard";
-            waitFor = "interface";
-            interfaceName = "tailscale0";
-          };
           environmentFiles = [ osConfig.sops.secrets.hermes-env.path ];
           environment.AGENT_BROWSER_EXECUTABLE_PATH = "${pkgs.chromium}/bin/chromium";
           # Tools its skills call.
