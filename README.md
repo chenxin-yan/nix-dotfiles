@@ -133,6 +133,20 @@ API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at act
   unset key
   ```
 
+### Outside Nix
+
+Nix doesn't update these; check them every few months.
+
+| Where            | What                                                       | How                                                                                                                                         |
+| ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Macs             | macOS and Mac firmware                                     | System Settings → Software Update                                                                                                           |
+| Macs             | Homebrew packages (activation installs but never upgrades) | `brew update && brew upgrade`                                                                                                               |
+| Machines with pi | pi's npm extensions, which aren't version-pinned           | `pi update --extensions`                                                                                                                    |
+| framework        | BIOS and device firmware, through fwupd                    | `fwupdmgr refresh && fwupdmgr update`                                                                                                       |
+| minipc           | BIOS (GEEKOM A6; not on fwupd)                             | Download from GEEKOM's support site and flash by hand                                                                                       |
+| pi               | Bootloader EEPROM, a flash chip outside any disk           | `nix shell nixpkgs#raspberrypi-eeprom -c sudo rpi-eeprom-update -a`, then reboot. Its images come from the locked nixpkgs, so they may lag. |
+| pi               | Apps deployed through Dokploy and their images             | Dokploy's UI. Dokploy, Traefik and PostgreSQL themselves are pinned by nix-dokploy.                                                         |
+
 ### Things to know
 
 - **`git add` new files before switching.** Git-backed flakes don't see untracked files.
