@@ -20,17 +20,17 @@
 
       services.displayManager.noctalia-greeter = {
         enable = true;
-        # Login screen picks up the shell's wallpaper and palette without a
-        # password prompt.
+        # Lets the shell copy its wallpaper and palette to the login screen
+        # without a password prompt ([shell.greeter_sync] in config.toml).
         passwordlessSyncUsers = [ host.login ];
       };
 
       # Noctalia's lock screen authenticates against the login stack and drives
       # the fingerprint reader itself over D-Bus; pam_fprintd in that stack
-      # would fight it for the sensor. Logging in takes the password, which
-      # also unlocks the keyring. sudo keeps fingerprint.
+      # would fight it for the sensor. greetd reuses the login stack, so logging
+      # in takes the password, which also unlocks the keyring. sudo keeps
+      # fingerprint.
       security.pam.services.login.fprintAuth = false;
-      security.pam.services.greetd.fprintAuth = false;
     };
 
   features.noctalia.homeManager =

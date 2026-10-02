@@ -15,7 +15,6 @@
       environment.systemPackages = with pkgs; [
         # niri spawns it on demand when an X11 client connects.
         xwayland-satellite
-        playerctl
       ];
 
       # Electron and Chromium apps run natively on Wayland.

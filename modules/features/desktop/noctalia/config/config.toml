@@ -5,13 +5,16 @@
 font_family = "Geist"
 # The shell answers polkit prompts (1Password, pkexec); niri ships no agent.
 polkit_agent = true
-telemetry_enabled = false
+
+# Keep the login screen's wallpaper and palette in step with the shell's
+# (allowed without a password by noctalia/default.nix).
+[shell.greeter_sync]
+auto_sync = true
 
 [theme]
-mode = "dark"
 # The fleet palette (modules/features/theme.nix). The built-in "Catppuccin"
-# uses Mauve; this catalog palette is Mocha with Lavender. Downloaded once,
-# then cached.
+# uses Mauve; this catalog palette is Mocha with Lavender. Downloaded and
+# cached; fetched again when the catalog changes.
 source = "community"
 community_palette = "Catppuccin Mocha Lavender"
 
@@ -24,24 +27,17 @@ enable_community_templates = false
 [backdrop]
 enabled = true
 
-[lockscreen]
-fingerprint = true
-lock_before_suspend = true
-
 [idle]
 behavior_order = ["lock", "screen-off", "suspend"]
 
 [idle.behavior.lock]
 timeout = 300
 action = "lock"
-enabled = true
 
 [idle.behavior.screen-off]
 timeout = 600
 action = "screen_off"
-enabled = true
 
 [idle.behavior.suspend]
 timeout = 1200
 action = "lock_and_suspend"
-enabled = true

@@ -7,10 +7,7 @@
     lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       programs.vicinae = {
         enable = true;
-        systemd = {
-          enable = true;
-          autoStart = true;
-        };
+        systemd.enable = true;
       };
     };
 }

@@ -32,9 +32,11 @@
 
           # Mac (Cmd) shortcuts on both systems; on Linux xremap leaves Ghostty
           # alone so these super binds reach it.
+          # performable: lets the key through when there's nothing to copy or
+          # paste, as Ghostty's own defaults do.
           keybind = [
-            "super+c=copy_to_clipboard"
-            "super+v=paste_from_clipboard"
+            "performable:super+c=copy_to_clipboard"
+            "performable:super+v=paste_from_clipboard"
             "super+w=close_surface"
             "super+t=new_tab"
             "ctrl+alt+h=previous_tab"

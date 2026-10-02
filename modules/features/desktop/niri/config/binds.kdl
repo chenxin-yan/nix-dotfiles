@@ -7,18 +7,18 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Launcher and shell (Cmd+Space, Cmd+Q, Ctrl+Cmd+Q, Cmd+Shift+3/4/5).
-    Super+Space hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
-    Super+Shift+V hotkey-overlay-title="Clipboard history" { spawn "vicinae" "vicinae://extensions/vicinae/clipboard/history"; }
+    Super+Space repeat=false hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
+    Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "vicinae://extensions/vicinae/clipboard/history"; }
     Super+Q repeat=false { close-window; }
-    Super+Ctrl+Q hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
+    Super+Ctrl+Q repeat=false hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
     Super+Shift+3 { screenshot-screen; }
     Super+Shift+4 { screenshot; }
     Super+Shift+5 { screenshot-window; }
     Print { screenshot; }
 
     Mod+Return hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
-    Mod+S hotkey-overlay-title="Control center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
-    Mod+Shift+Comma hotkey-overlay-title="Noctalia settings" { spawn "noctalia" "msg" "settings-toggle"; }
+    Mod+S repeat=false hotkey-overlay-title="Control center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
+    Mod+Shift+Comma repeat=false hotkey-overlay-title="Noctalia settings" { spawn "noctalia" "msg" "settings-toggle"; }
     Mod+Space repeat=false { toggle-overview; }
 
     // AeroSpace: focus and move.
@@ -78,14 +78,14 @@ binds {
     // Hardware keys, with Noctalia's on-screen feedback.
     XF86AudioRaiseVolume  allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
     XF86AudioLowerVolume  allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
-    XF86AudioMute         allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
-    XF86AudioMicMute      allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86AudioMute         allow-when-locked=true repeat=false { spawn "noctalia" "msg" "volume-mute"; }
+    XF86AudioMicMute      allow-when-locked=true repeat=false { spawn "noctalia" "msg" "mic-mute"; }
     XF86MonBrightnessUp   allow-when-locked=true { spawn "noctalia" "msg" "brightness-up"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down"; }
-    XF86AudioPlay         allow-when-locked=true { spawn "playerctl" "play-pause"; }
-    XF86AudioPause        allow-when-locked=true { spawn "playerctl" "play-pause"; }
-    XF86AudioPrev         allow-when-locked=true { spawn "playerctl" "previous"; }
-    XF86AudioNext         allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPlay         allow-when-locked=true repeat=false { spawn "noctalia" "msg" "media" "toggle"; }
+    XF86AudioPause        allow-when-locked=true repeat=false { spawn "noctalia" "msg" "media" "pause"; }
+    XF86AudioPrev         allow-when-locked=true { spawn "noctalia" "msg" "media" "previous"; }
+    XF86AudioNext         allow-when-locked=true { spawn "noctalia" "msg" "media" "next"; }
 
     // Escape hatch if an app inhibits shortcuts (remote desktop, VMs).
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
