@@ -67,3 +67,6 @@ sketchybar --add item cat center \
 
 sketchybar --update
 
+# AeroSpace only reports workspace changes, so seed the highlight on (re)start.
+sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$(aerospace list-workspaces --focused 2>/dev/null)"
+
