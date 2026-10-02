@@ -136,6 +136,10 @@ in
       #
       # Shared agent instructions and ~/.agents/skills live in the parent
       # agents feature; this module only keeps Pi runtime settings.
+      #
+      # settings.json is a read-only store symlink on purpose: Pi's own
+      # writes (/settings, Ctrl+S in the model picker, `pi install/remove`,
+      # changelog bookkeeping) don't persist. Change defaults here instead.
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
@@ -250,12 +254,12 @@ in
         #   matches tui.input.newLine and the editor inserts a newline.
         #   Same shape of bug as the reverted 295420d (zellij forwards a
         #   protocol response it can't honor for keys); pi has no env
-        #   var to skip the kitty probe. alt+j survives both legacy
-        #   (\x1bj inside zellij) and Kitty CSI-u (\x1b[106;3u in raw
-        #   ghostty), and isn't claimed by anything else in pi or by
-        #   zellij in its default locked mode. Keep alt+enter so the
-        #   binding works in raw ghostty and lights up automatically
-        #   once zellij fixes its kitty forwarding (zellij#4333, #5017).
+        #   var to skip the kitty probe. alt+j does NOT escape this:
+        #   with Kitty mode active pi-tui also rejects legacy alt+letter
+        #   (\x1bj), so inside zellij neither chord queues a follow-up
+        #   (checked against pi-tui 0.87.1 matchesKey). Both work in raw
+        #   ghostty (CSI-u). Re-check once zellij fixes its kitty
+        #   forwarding (zellij#4333, #5017) by testing the chord in zellij.
         ".pi/agent/keybindings.json".text = builtins.toJSON {
           "app.session.resume" = "ctrl+b";
           "app.session.fork" = "ctrl+f";

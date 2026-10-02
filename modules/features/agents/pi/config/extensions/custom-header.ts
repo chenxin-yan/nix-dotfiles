@@ -25,21 +25,22 @@
 
 import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";
 import { VERSION } from "@earendil-works/pi-coding-agent";
-import { visibleWidth } from "@earendil-works/pi-tui";
+import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 const NAME = "@chenxin-yan";
 
 // Center a single line against the terminal width. `visibleWidth()`
 // strips ANSI escapes so colouring before centering stays correct.
+// Lines must never exceed the width, so narrow panes truncate.
 function centerLine(line: string, terminalWidth: number): string {
   const w = visibleWidth(line);
-  if (w >= terminalWidth) return line;
+  if (w >= terminalWidth) return truncateToWidth(line, terminalWidth);
   return " ".repeat(Math.floor((terminalWidth - w) / 2)) + line;
 }
 
 export default function (pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
-    if (!ctx.hasUI) return;
+    if (ctx.mode !== "tui") return;
 
     ctx.ui.setHeader((_tui, theme: Theme) => ({
       render(width: number): string[] {

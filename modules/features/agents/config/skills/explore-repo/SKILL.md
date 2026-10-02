@@ -48,6 +48,8 @@ tag. Act on the first output line:
 - `ASK_REF:` — no tag matched the installed version (nearby tags are listed).
   Ask the user which ref to use, rerun with `--ref`. Don't default to `main`;
   a version mismatch is the staleness this skill exists to prevent.
+- `CONFLICT:` — the cached checkout is a different repo or has local edits.
+  Tell the user; don't delete or reset it yourself.
 
 ### 3. Trace with read-only subagents
 

@@ -10,6 +10,7 @@
 #   0  ready    -> source checked out at a version-matching ref (or user ref)
 #   3  ask-repo -> repo URL unknown, agent must ask the user
 #   4  ask-ref  -> no version-matching tag found, agent must ask the user
+#   5  conflict -> cached checkout is another repo or has local changes
 set -euo pipefail
 
 pkg=""
@@ -25,11 +26,12 @@ done
 
 root="$(git rev-parse --show-toplevel)"
 sources="$root/.agent-sources"
-exclude="$root/.git/info/exclude"
+# --git-path also resolves linked worktrees, where .git is a file.
+exclude="$(git -C "$root" rev-parse --path-format=absolute --git-path info/exclude)"
 
 # Keep .agent-sources untracked without touching the shared .gitignore.
-mkdir -p "$sources"
-if [[ -f "$exclude" ]] && ! grep -qxF ".agent-sources/" "$exclude"; then
+mkdir -p "$sources" "$(dirname "$exclude")"
+if ! grep -qxF ".agent-sources/" "$exclude" 2>/dev/null; then
   echo ".agent-sources/" >> "$exclude"
 fi
 
@@ -58,6 +60,17 @@ if [[ ! -d "$dir/.git" ]]; then
 fi
 
 cd "$dir"
+# The cache is keyed by repo name only, so same-named repos from other
+# owners would collide; never trace code from the wrong one.
+origin="$(git remote get-url origin)"
+if [[ "${origin%.git}" != "$repo_url" ]]; then
+  echo "CONFLICT: $dir is a clone of $origin, not $repo_url; move it aside and rerun"
+  exit 5
+fi
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "CONFLICT: $dir has local changes; they would leak into the traced source"
+  exit 5
+fi
 git fetch --tags --quiet origin 2>/dev/null || true
 
 checkout() { git checkout --quiet "$1" && echo "READY: $pkg @ $1 -> $dir"; }
