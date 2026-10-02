@@ -1,10 +1,5 @@
-# Dokploy on single-node Docker Swarm, reachable only over Tailscale. Its
-# database, volumes and deployed apps are runtime state Dokploy owns.
 { inputs, config, ... }:
 let
-  # Copied into Docker secrets once and never updated, so changing them in
-  # sops alone does nothing. Rotate the first two with upstream's steps:
-  # https://github.com/el-kurto/nix-dokploy/blob/3dab3957c1c5c9a6cf2c8e9fcbf7dad5146a0207/README.md#rotating-secrets
   secrets = [
     "dokploy-db-password"
     "dokploy-auth-secret"
@@ -29,7 +24,6 @@ in
       {
         imports = [ inputs.nix-dokploy.nixosModules.default ];
 
-        # Generated for this machine's instance, so in its own secrets file.
         sops.secrets = lib.genAttrs secrets (_: {
           sopsFile = ../../../secrets/hosts/${config.networking.hostName}.yaml;
         });
@@ -53,15 +47,12 @@ in
         systemd.services.dokploy-stack = {
           after = [ "tailscaled.service" ];
           wants = [ "tailscaled.service" ];
+          serviceConfig = {
+            Restart = "on-failure";
+            RestartSec = 30;
+          };
         };
 
-        # Docker publishes ports (3000, Traefik's 80/443) past the host
-        # firewall, through FORWARD. DOCKER-USER is the chain it leaves to
-        # us: refuse new connections arriving on a wired (e*) or wireless
-        # (wl*) NIC, so they're reachable over tailscale0 and locally.
-        # Docker keeps an existing chain, so creating it here first is safe.
-        # One restore rebuilds the chain at once; a flush followed by appends
-        # would leave it empty, and the ports open, while the firewall reloads.
         networking.firewall.extraCommands =
           let
             rules = pkgs.writeText "docker-user.rules" ''
