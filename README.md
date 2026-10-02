@@ -70,7 +70,7 @@ bash scripts/onboard.sh
 
 For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets `workstation`, so add any other roles to the host file afterwards. Commit any new host files.
 
-**The Raspberry Pi (`pi`)** doesn't use the wizard: its host file builds a complete disk image, `nix build .#nixosConfigurations.pi.config.system.build.sdImage` (on an aarch64 machine, such as the Pi itself). Flash it to the drive, and before the first boot put its enrolled SSH host key in `/etc/ssh` so it can decrypt its secrets. Atlas sync starts once enrolled: `ob login`, `ob sync-setup --vault Atlas --path ~/atlas`, then `systemctl --user start atlas-sync`.
+**Raspberry Pi (`pi`):** NixOS's installers can't boot a Pi 5 from NVMe, so it is installed by flashing its own image: build `.#nixosConfigurations.pi.config.system.build.sdImage` on an aarch64 machine and write it to the drive. Put its enrolled SSH host key in `/etc/ssh` before the first boot, so it can decrypt its secrets. Then onboard it like any other machine.
 
 ### After install
 
@@ -81,6 +81,7 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 - Desktops: sign in to 1Password, then in _Settings → Developer_ (on a Mac, `open onepassword://settings/developers`) turn on **Use the SSH agent** and **Integrate with 1Password CLI**.
 - Servers: `ssh-keygen -t ed25519 -N ""`, put the public key (without its comment) in the host's `sshKey` so the fleet accepts it, and add it to GitHub. To use `just secret*` there, run `op account add` once.
 - `gh auth login` and the coding agents' own logins (pi, Claude Code, Codex).
+- Obsidian Sync, on hosts with `obsidian-headless` (`pi`): `ob login`, `ob sync-setup --vault Atlas --path ~/atlas`, then `systemctl --user start atlas-sync`.
 
 **Network**
 
