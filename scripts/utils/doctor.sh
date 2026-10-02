@@ -79,7 +79,7 @@ esac
 github="$(ssh -T -o BatchMode=yes -o ConnectTimeout=10 git@github.com 2>&1)"
 case "$github" in
   *"successfully authenticated"*) ok "GitHub accepts this machine's SSH key" ;;
-  *) bad "GitHub rejects SSH: ${github%%$'\n'*}" ;;
+  *) bad "GitHub rejects SSH: ${github%%$'\n'*}; with its own key: gh ssh-key add ~/.ssh/id_ed25519.pub --title $target" ;;
 esac
 
 exit "$failed"

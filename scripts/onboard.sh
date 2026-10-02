@@ -41,7 +41,8 @@ ask() {
 # your normal user:  bash scripts/onboard.sh
 # Needs only Bash, Nix and Git (never Just or NH); sudo is used for the final,
 # separately confirmed activation and, when the target reads secrets, to
-# create and read this machine's SSH host key.
+# create and read this machine's SSH host key. If asked to, it gives the
+# login its own SSH key and, after activation, adds it to GitHub with gh.
 #
 # Stages: inspect; select/register; preserve the installation; compose the
 # Nix-owned baseline; review and evaluate; build, then activate; verify.
@@ -96,6 +97,24 @@ declined() {
 # never used silently.
 nixx() {
   nix --extra-experimental-features 'nix-command flakes' --option builders '' "$@"
+}
+
+# locked_pkg ATTR: a package from the flake's locked nixpkgs, built for this
+# machine; prints its store path.
+locked_pkg() {
+  nixx build --no-link --print-out-paths --impure --no-update-lock-file --no-write-lock-file --expr \
+    "(builtins.getFlake \"git+file://$root\").inputs.nixpkgs.legacyPackages.\${builtins.currentSystem}.$1"
+}
+
+# github_accepts KEY: GitHub authenticates the private key KEY alone.
+# accept-new trusts github.com's host key on first contact, as a first clone
+# would. ssh -T exits 1 even on success, so the output decides.
+github_accepts() {
+  local out
+  out="$(ssh -T -o BatchMode=yes -o ConnectTimeout=10 -o IdentitiesOnly=yes -o IdentityAgent=none \
+    -o StrictHostKeyChecking=accept-new -i "$1" git@github.com 2>&1 || true)"
+  case "$out" in *"successfully authenticated"*) return 0 ;; esac
+  return 1
 }
 
 indent() { sed 's/^/    /'; }
@@ -425,6 +444,52 @@ else
   say "Wrote $hostrel, which registers $target."
 fi
 
+# This login's own SSH key, for machines without 1Password's agent. Asked,
+# not inferred: a new host has only its bootstrap roles so far. sshKey is
+# written now so the host file is complete when committed; GitHub gets the
+# key after activation (stage 7), because a gh login before it would leave a
+# gh config file that Home Manager then refuses to replace.
+sshkey="$home/.ssh/id_ed25519"
+ssh_setup=no
+say "SSH key: Macs and desktops with 1Password use its agent's key; other machines need their own."
+if gate "Give this machine its own key ($sshkey, created if missing) for the fleet and GitHub?"; then
+  ssh_setup=yes
+  if [ ! -e "$sshkey" ]; then
+    command -v ssh-keygen >/dev/null 2>&1 || die "ssh-keygen not found"
+    [ -d "$home/.ssh" ] || mkdir -m 700 "$home/.ssh"
+    ssh-keygen -q -t ed25519 -N "" -C "$login@$target" -f "$sshkey" </dev/null || die "could not create $sshkey"
+  fi
+  # From the private half, like the host key: a stale .pub would publish the wrong key.
+  sshpub="$(ssh-keygen -y -f "$sshkey" | cut -d' ' -f1,2)"
+  [[ "$sshpub" =~ ^ssh-ed25519\ [A-Za-z0-9+/=]+$ ]] || die "$sshkey is not a readable ed25519 key"
+  [ -e "$sshkey.pub" ] || printf '%s %s\n' "$sshpub" "$login@$target" >"$sshkey.pub"
+  hostfile="$hostdir/default.nix"
+  [ -f "$hostfile" ] || hostfile="$hostdir.nix"
+  sshline="    sshKey = \"$sshpub\";"
+  current="$(grep -E '^[[:space:]]*sshKey[[:space:]]*=' "$hostfile" || true)"
+  if [ "$current" = "$sshline" ]; then
+    say "$hostrel already declares this key."
+  elif [ -n "$current" ]; then
+    warn "$hostrel declares a different sshKey; left unchanged. To use this key instead, set:"
+    note "$sshline"
+  else
+    say "Adds to ${hostfile#"$root/"}, after its login line:"
+    note "$sshline"
+    if gate "Write it?"; then
+      awk -v add="$sshline" -v after="    login = \"$login\";" \
+        '{ print } $0 == after && !done { print add; done = 1 }' "$hostfile" >"$work/hostfile"
+      if grep -qxF "$sshline" "$work/hostfile"; then
+        cat "$work/hostfile" >"$hostfile"
+        say "Declared the key in $hostrel."
+      else
+        warn "No '    login = \"$login\";' line in ${hostfile#"$root/"}; add the line above by hand."
+      fi
+    else
+      note "Not written; other machines won't accept this key until sshKey is set."
+    fi
+  fi
+fi
+
 # ── Stage 5 ───────────────────────────────────────────────────────────────
 stage "Review and evaluate"
 
@@ -615,11 +680,6 @@ if [ -n "$sops_files" ]; then
     command -v ssh-keygen >/dev/null 2>&1 || die "ssh-keygen not found"
     sudo ssh-keygen -q -t ed25519 -N "" -C "" -f "$hostkey" </dev/null || die "could not create $hostkey"
   fi
-  # From the flake's locked nixpkgs, built for this machine.
-  locked_pkg() {
-    nixx build --no-link --print-out-paths --impure --no-update-lock-file --no-write-lock-file --expr \
-      "(builtins.getFlake \"git+file://$root\").inputs.nixpkgs.legacyPackages.\${builtins.currentSystem}.$1"
-  }
   sops_bin="$(locked_pkg sops)/bin/sops" || die "could not build sops"
   ssh_to_age="$(locked_pkg ssh-to-age)/bin/ssh-to-age" || die "could not build ssh-to-age"
   gate "Test-decrypt them now with sudo, using only the host key? (nothing is printed)" \
@@ -725,6 +785,26 @@ if [ -n "$problems" ]; then
   die "activation ran but verification is incomplete; setup is NOT complete. Open a new login shell and check the items above, then rerun."
 fi
 
+# Failures here don't fail setup: the closing screen gives the commands.
+github=skip
+if [ "$ssh_setup" = yes ]; then
+  github=no
+  if github_accepts "$sshkey"; then
+    github=yes
+  elif gh="$(locked_pkg gh)/bin/gh"; then
+    say "Adding $sshkey to GitHub with gh..."
+    if ! "$gh" auth status -h github.com >/dev/null 2>&1; then
+      note "gh signs in through your browser, then offers to upload $sshkey.pub: accept that."
+      "$gh" auth login -h github.com -p ssh || true
+    elif ! "$gh" ssh-key add "$sshkey.pub" --title "$target"; then
+      # Logins without this scope can't add keys; refresh asks for it in the browser.
+      "$gh" auth refresh -h github.com -s admin:public_key \
+        && "$gh" ssh-key add "$sshkey.pub" --title "$target" || true
+    fi
+    ! github_accepts "$sshkey" || github=yes
+  fi
+fi
+
 _clear
 printf '\n%s%s  ✓ Setup complete%s\n\n' "$BOLD" "$GREEN" "$RESET"
 say "$target is active for $login. Next:"
@@ -734,4 +814,12 @@ step "Reboot when convenient and check login and network (NixOS: also boot menu 
 if [ "$os" = nixos ] && [ "$mode" = new ]; then
   step "Keep /etc/nixos as your recovery copy; back it up yourself before deleting it."
 fi
+if [ "$github" = yes ]; then
+  step "GitHub accepts $sshkey."
+elif [ "$github" = no ]; then
+  warn "GitHub doesn't accept $sshkey yet: gh auth login -p ssh, or gh ssh-key add $sshkey.pub --title $target"
+fi
 step "Commit $hostrel when you are satisfied (not done for you)."
+if [ "$ssh_setup" = yes ]; then
+  step "Once it's pushed, just switch the other machines so they accept this machine's key."
+fi
