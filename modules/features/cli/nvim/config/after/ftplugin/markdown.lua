@@ -8,3 +8,6 @@ vim.keymap.set('n', 'k', 'gk', { buffer = 0 })
 
 -- Spell check
 vim.opt_local.spell = true
+
+vim.b.undo_ftplugin = (vim.b.undo_ftplugin and vim.b.undo_ftplugin .. ' | ' or '')
+  .. 'setlocal wrap< linebreak< spell< | silent! nunmap <buffer> j | silent! nunmap <buffer> k'

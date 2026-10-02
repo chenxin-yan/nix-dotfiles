@@ -27,27 +27,8 @@ return {
       open_and_pick_window = '<c-p>',
     },
     integrations = {
-      --- What should be done when the user wants to grep in a directory
-      grep_in_directory = function(directory)
-        require('fzf-lua').live_grep { cwd = directory }
-      end,
-
-      grep_in_selected_files = function(selected_files)
-        local file_paths = {}
-        for _, file in ipairs(selected_files) do
-          table.insert(file_paths, type(file) == 'table' and file.name or file)
-        end
-
-        require('fzf-lua').live_grep {
-          rg_opts = table.concat(
-            vim.tbl_map(function(path)
-              return string.format("-g '%s'", path)
-            end, file_paths),
-            ' '
-          ) .. ' --column --line-number --no-heading --color=always --smart-case',
-          cwd = vim.fn.fnamemodify(file_paths[1], ':h'),
-        }
-      end,
+      grep_in_directory = 'fzf-lua',
+      grep_in_selected_files = 'fzf-lua',
     },
   },
 }

@@ -4,49 +4,15 @@ return {
     opts = { ensure_installed = { 'cpp' } },
   },
   {
-    'p00f/clangd_extensions.nvim',
-    lazy = true,
-    config = function() end,
-    opts = {
-      inlay_hints = {
-        inline = false,
-      },
-      ast = {
-        role_icons = {
-          type = '',
-          declaration = '',
-          expression = '',
-          specifier = '',
-          statement = '',
-          ['template argument'] = '',
-        },
-        kind_icons = {
-          Compound = '',
-          Recovery = '',
-          TranslationUnit = '',
-          PackExpansion = '',
-          TemplateTypeParm = '',
-          TemplateTemplateParm = '',
-          TemplateParamObject = '',
-        },
-      },
-    },
-  },
-  {
     'neovim/nvim-lspconfig',
     opts = {
       servers = {
-        -- Ensure mason installs the server
         clangd = {
-          keys = {
-            { '<leader>ch', '<cmd>LspClangdSwitchSourceHeader<cr>', desc = 'Switch Source/Header (C/C++)' },
-          },
           root_markers = {
             'compile_commands.json',
             'compile_flags.txt',
             'configure.ac', -- AutoTools
             'Makefile',
-            'configure.ac',
             'configure.in',
             'config.h.in',
             'meson.build',

@@ -2,24 +2,21 @@ return {
   {
     'mfussenegger/nvim-jdtls',
     lazy = true,
-    ft = 'java',
-    opts = {
-      settings = {
-        java = {
-          inlayHints = {
-            parameterNames = {
-              enabled = 'all',
-            },
-          },
-        },
-      },
-    },
   },
   {
     'neovim/nvim-lspconfig',
     opts = {
       servers = {
         jdtls = {
+          settings = {
+            java = {
+              inlayHints = {
+                parameterNames = {
+                  enabled = 'all',
+                },
+              },
+            },
+          },
           handlers = {
             ['$/progress'] = function(_, result, ctx) end,
           },
@@ -27,7 +24,7 @@ return {
             local jdtls = require 'jdtls'
             vim.keymap.set('n', '<leader>co', function()
               jdtls.organize_imports()
-            end, { desc = 'vtsls: [O]rganize imports', buffer = buffer })
+            end, { desc = 'jdtls: [O]rganize imports', buffer = buffer })
           end,
         },
       },

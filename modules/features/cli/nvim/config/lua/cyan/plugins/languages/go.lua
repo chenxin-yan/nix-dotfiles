@@ -33,7 +33,6 @@ return {
                 nilness = true,
                 unusedparams = true,
                 unusedwrite = true,
-                useany = true,
               },
               usePlaceholders = true,
               completeUnimported = true,
@@ -44,19 +43,6 @@ return {
           },
         },
       },
-      on_attach = function(client, buffer)
-        if not client.server_capabilities.semanticTokensProvider then
-          local semantic = client.config.capabilities.textDocument.semanticTokens
-          client.server_capabilities.semanticTokensProvider = {
-            full = true,
-            legend = {
-              tokenTypes = semantic.tokenTypes,
-              tokenModifiers = semantic.tokenModifiers,
-            },
-            range = true,
-          }
-        end
-      end,
     },
   },
   {

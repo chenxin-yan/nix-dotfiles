@@ -41,15 +41,16 @@ return {
       },
       explorer = {
         enabled = true,
-        layout = {
-          cycle = false,
-        },
-        Config = {
-          replace_netrw = true,
-        },
       },
       picker = {
         ui_select = true,
+        sources = {
+          explorer = {
+            layout = {
+              cycle = false,
+            },
+          },
+        },
       },
       dashboard = {
         enabled = true,

@@ -35,7 +35,7 @@ return {
     cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
     ft = { 'markdown', 'markdown.mdx' },
     build = function(plugin)
-      if vim.fn.executable 'npx' then
+      if vim.fn.executable 'npx' == 1 then
         vim.cmd('!cd ' .. plugin.dir .. ' && cd app && npx --yes yarn install')
       else
         vim.cmd [[Lazy load markdown-preview.nvim]]
@@ -43,7 +43,7 @@ return {
       end
     end,
     init = function()
-      if vim.fn.executable 'npx' then
+      if vim.fn.executable 'npx' == 1 then
         vim.g.mkdp_filetypes = { 'markdown', 'markdown.mdx' }
       end
     end,
@@ -91,7 +91,8 @@ return {
     opts = {
       linters = {
         ['markdownlint-cli2'] = {
-          args = { '--config', vim.fn.expand '~/.markdownlint.jsonc' },
+          -- `-` lints stdin; lists replace the default args by index, so keep it.
+          args = { '--config', vim.fn.expand '~/.markdownlint.json', '-' },
         },
       },
       linters_by_ft = {
@@ -125,8 +126,10 @@ return {
   {
     'stevearc/conform.nvim',
     opts = {
-      ['markdownlint-cli2'] = {
-        args = { '--fix', '$FILENAME', '--config', vim.fn.expand '~/.markdownlint.jsonc' },
+      formatters = {
+        ['markdownlint-cli2'] = {
+          args = { '--fix', '$FILENAME', '--config', vim.fn.expand '~/.markdownlint.json' },
+        },
       },
       formatters_by_ft = {
         markdown = { 'oxfmt', 'markdownlint-cli2' },

@@ -70,9 +70,8 @@ return {
         taplo = {}, -- toml lsp
         emmet_language_server = {}, -- emmet support
         jsonls = { -- JSON lsp
-          on_new_config = function(new_config)
-            new_config.settings.json.schemas = new_config.settings.json.schemas or {}
-            vim.list_extend(new_config.settings.json.schemas, require('schemastore').json.schemas())
+          before_init = function(_, config)
+            config.settings.json.schemas = require('schemastore').json.schemas()
           end,
           settings = {
             json = {
@@ -93,9 +92,8 @@ return {
               },
             },
           },
-          -- lazy-load schemastore when needed
-          on_new_config = function(new_config)
-            new_config.settings.yaml.schemas = vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
+          before_init = function(_, config)
+            config.settings.yaml.schemas = require('schemastore').yaml.schemas()
           end,
           settings = {
             redhat = { telemetry = { enabled = false } },
@@ -115,16 +113,7 @@ return {
             },
           },
         }, -- YAML lsp
-        eslint = { -- linter for javascript
-          settings = {
-            -- helps eslint find the eslintrc when it's placed in a subfolder instead of the cwd root
-            workingDirectories = { mode = 'auto' },
-            format = true,
-          },
-          on_attach = function(_, buffer)
-            vim.keymap.set('n', '<leader>cF', '<cmd>EslintFixAll<cr>', { desc = 'Eslint: [F]ix all', buffer = buffer })
-          end,
-        },
+        eslint = {}, -- linter for javascript
         biome = {},
         tailwindcss = {},
         ---@type lspconfig.settings.oxlint

@@ -64,7 +64,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
       map('<leader>uh', function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }, { bufnr = event.buf })
       end, 'Toggle Inlay [H]ints')
-      vim.lsp.inlay_hint.enable(true, { buffer = event.buf })
+      vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+    end
+
+    -- Commands created by nvim-lspconfig's own on_attach. Map them here: a
+    -- custom on_attach would replace upstream's and the commands would vanish.
+    if client and client.name == 'eslint' then
+      map('<leader>cF', '<cmd>LspEslintFixAll<cr>', 'Eslint: [F]ix all')
+    elseif client and client.name == 'clangd' then
+      map('<leader>ch', '<cmd>LspClangdSwitchSourceHeader<cr>', 'Switch Source/Header (C/C++)')
     end
 
     -- lsp codelens

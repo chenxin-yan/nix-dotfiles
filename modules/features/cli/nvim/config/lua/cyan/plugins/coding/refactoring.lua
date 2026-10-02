@@ -1,69 +1,24 @@
+-- Operator API: each mapping returns `g@`, so it takes a motion in normal
+-- mode or acts on the selection in visual mode.
+local function op(name)
+  return function()
+    return require('refactoring')[name]()
+  end
+end
+
 return {
   'ThePrimeagen/refactoring.nvim',
   cmd = 'Refactor',
-  keys = {
-    {
-      '<leader>rf',
-      "<cmd>lua require('refactoring').refactor('Extract Function')<cr>",
-      desc = 'Extract [F]unction',
-      mode = 'x',
-    },
-    {
-      '<leader>rF',
-      '<cmd>lua require("refactoring").refactor("Extract Function To File")<cr>',
-      mode = 'x',
-      desc = 'Extract [F]unction to file',
-    },
-    {
-      '<leader>rv',
-      '<cmd>lua require("refactoring").refactor("Extract Variable")<cr>',
-      mode = 'x',
-      desc = 'Extract [V]ariable',
-    },
-    {
-      '<leader>rI',
-      '<cmd>lua require("refactoring").refactor("Inline Function")<cr>',
-      mode = 'n',
-      desc = '[I]nline function',
-    },
-    {
-      '<leader>ri',
-      '<cmd>lua require("refactoring").refactor("Inline Variable")<cr>',
-      mode = { 'n', 'x' },
-      desc = '[I]nline variable',
-    },
-    {
-      '<leader>rb',
-      '<cmd>lua require("refactoring").refactor("Extract Block")<cr>',
-      mode = 'n',
-      desc = 'Extract [B]lock',
-    },
-    {
-      '<leader>rB',
-      '<cmd>lua require("refactoring").refactor("Extract Block To File")<cr>',
-      mode = 'n',
-      desc = 'Extract [B]lock to file',
-    },
-  },
   dependencies = {
-    'nvim-lua/plenary.nvim',
+    -- Only needed on Neovim 0.12; 0.13 ships vim.async.
+    'lewis6991/async.nvim',
     'romus204/tree-sitter-manager.nvim',
   },
-  opts = {
-    -- prompt for return type
-    prompt_func_return_type = {
-      go = true,
-      cpp = true,
-      c = true,
-      java = true,
-    },
-    -- prompt for function parameters
-    prompt_func_param_type = {
-      go = true,
-      cpp = true,
-      c = true,
-      java = true,
-    },
+  keys = {
+    { '<leader>rf', op 'extract_func', mode = { 'n', 'x' }, expr = true, desc = 'Extract [F]unction' },
+    { '<leader>rF', op 'extract_func_to_file', mode = { 'n', 'x' }, expr = true, desc = 'Extract [F]unction to file' },
+    { '<leader>rv', op 'extract_var', mode = { 'n', 'x' }, expr = true, desc = 'Extract [V]ariable' },
+    { '<leader>rI', op 'inline_func', mode = { 'n', 'x' }, expr = true, desc = '[I]nline function' },
+    { '<leader>ri', op 'inline_var', mode = { 'n', 'x' }, expr = true, desc = '[I]nline variable' },
   },
 }
-

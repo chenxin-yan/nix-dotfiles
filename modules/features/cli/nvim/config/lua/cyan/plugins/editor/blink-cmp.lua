@@ -82,7 +82,7 @@ return {
         dependencies = { 'nvim-lua/plenary.nvim' },
       },
     },
-    event = 'InsertEnter',
+    event = { 'InsertEnter', 'CmdlineEnter' },
     version = '*',
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -290,8 +290,5 @@ return {
       },
     },
     opts_extend = { 'sources.default', 'sources.providers' },
-
-    -- Experimental signature help support
-    signature = { enabled = true },
   },
 }
