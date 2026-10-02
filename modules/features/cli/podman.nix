@@ -35,7 +35,10 @@
         useDefaultMachine = true;
       };
 
-      programs.lazydocker.enable = true;
+      programs.lazydocker = {
+        enable = true;
+        settings.commandTemplates.dockerCompose = "docker-compose";
+      };
 
       programs.zsh = {
         shellAliases = {
@@ -45,8 +48,6 @@
           docker = "podman";
         };
 
-        # mkAfter: runs after the zsh feature's `source ~/.env`, so this
-        # DOCKER_HOST wins over one set there.
         initContent = lib.mkIf isDarwin (
           lib.mkAfter ''
             # Set DOCKER_HOST for Podman machine on macOS.

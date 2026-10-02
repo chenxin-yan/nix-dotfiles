@@ -5,7 +5,6 @@
 
       settings = {
         arRPC = true;
-        checkUpdates = false;
         customTitleBar = true;
         disableMinSize = true;
         minimizeToTray = true;
@@ -20,7 +19,6 @@
         settings = {
           autoUpdate = false;
           autoUpdateNotification = false;
-          notifyAboutUpdates = false;
           useQuickCss = true;
           disableMinSize = true;
           plugins = {

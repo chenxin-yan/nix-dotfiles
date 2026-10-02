@@ -10,7 +10,9 @@
           # Identity lives in the git module; requires core.git.enable.
           user = config.programs.git.settings.user;
           ui.default-command = "log";
-          git.push-new-bookmarks = true;
+          # Locally created bookmarks track origin, so they push without
+          # `jj bookmark track`.
+          remotes.origin.auto-track-created-bookmarks = "*";
         };
       };
 

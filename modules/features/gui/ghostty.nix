@@ -15,7 +15,8 @@
 
           mouse-hide-while-typing = true;
 
-          cursor-invert-fg-bg = true;
+          cursor-color = "cell-foreground";
+          cursor-text = "cell-background";
           background-opacity = 0.98;
           background-blur = 30;
           window-theme = "ghostty";

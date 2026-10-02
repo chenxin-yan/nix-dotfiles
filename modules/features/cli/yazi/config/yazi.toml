@@ -12,7 +12,6 @@ show_hidden = false
 show_symlink = true
 scrolloff = 5
 mouse_events = ["click", "scroll"]
-title_format = "Yazi: {cwd}"
 
 [preview]
 wrap = "no"
@@ -111,8 +110,6 @@ rules = [
 ]
 
 [tasks]
-micro_workers = 10
-macro_workers = 10
 bizarre_retry = 3
 image_alloc = 536870912    # 512MB
 image_bound = [5000, 5000]

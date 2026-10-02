@@ -41,7 +41,7 @@
         enableCompletion = true;
         completionInit = ''
           autoload -Uz compinit
-          compinit -C
+          compinit
           zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
           zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
           zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
