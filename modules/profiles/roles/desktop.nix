@@ -4,10 +4,11 @@
 {
   features.desktop.includes = with config.features; [
     fleet
-    fonts
 
+    # Apps
     _1password
     espanso
+    fonts
     ghostty
     obsidian
     telegram
@@ -15,10 +16,13 @@
     vesktop
     wechat
 
+    # Keyboards
+    kanata # built-in laptop keyboard
+    zsa # Voyager: Keymapp (+ udev rules on NixOS)
+
+    # macOS only
     aerospace
     iina
-    kanata
     sketchybar
-    zsa
   ];
 }

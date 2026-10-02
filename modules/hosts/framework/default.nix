@@ -6,6 +6,7 @@
 
     features = with config.features; [
       workstation
+      desktop
     ];
 
     nixos =
