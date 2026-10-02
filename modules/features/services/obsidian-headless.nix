@@ -39,10 +39,12 @@
           vault=${lib.escapeShellArg config.atlasPath}
           mkdir -p "$vault"
           # Link once; after a new remote vault, `ob sync-unlink` relinks it.
+          # Without --password, ob reads it from non-TTY stdin (trailing
+          # whitespace trimmed), which keeps it out of the process's argv.
           if ! ${ob} sync-status --path "$vault" --json >/dev/null 2>&1; then
             ${ob} sync-setup --vault atlas --path "$vault" \
               --device-name ${lib.escapeShellArg osConfig.networking.hostName} \
-              --password "$(cat ${secret "obsidian-vault-password"})"
+              < ${secret "obsidian-vault-password"}
           fi
           exec ${ob} sync --path "$vault" --continuous
         '';
