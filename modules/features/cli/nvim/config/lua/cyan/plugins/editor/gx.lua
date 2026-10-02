@@ -9,4 +9,3 @@ return {
   config = true, -- default settings
   submodules = false, -- not needed, submodules are required only for tests
 }
-

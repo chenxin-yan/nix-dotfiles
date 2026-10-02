@@ -93,4 +93,3 @@ return {
     hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
   end,
 }
-
