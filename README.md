@@ -79,7 +79,7 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 **Logins**
 
 - Desktops: sign in to 1Password, then in _Settings → Developer_ (on a Mac, `open onepassword://settings/developers`) turn on **Use the SSH agent** and **Integrate with 1Password CLI**.
-- Machines without 1Password: the wizard offers to give the login its own `~/.ssh/id_ed25519`, declare it as the host's `sshKey` so the fleet accepts it, and, after activation, sign in with `gh` and add it to GitHub. Commit and push the host file, then `just switch` the other machines. To use `just secret*` there, run `op account add` once.
+- Machines without 1Password's SSH agent: the wizard offers to give the login its own `~/.ssh/id_ed25519`, declare it as the host's `sshKey` so the fleet accepts it, and, after activation, sign in with `gh` and add it to GitHub. Commit and push the host file, then `just switch` the other machines. To use `just secret*` there, run `op account add` once.
 - `gh auth login` (unless the wizard did it) and the coding agents' own logins (pi, Claude Code, Codex).
 
 **Network**

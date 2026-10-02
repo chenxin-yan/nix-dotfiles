@@ -107,11 +107,13 @@ locked_pkg() {
 }
 
 # github_accepts KEY: GitHub authenticates the private key KEY alone.
-# accept-new trusts github.com's host key on first contact, as a first clone
-# would. ssh -T exits 1 even on success, so the output decides.
+# IdentitiesOnly offers only KEY, from an agent holding it or the file, which
+# may ask for its passphrase. accept-new trusts github.com's host key on first
+# contact, as a first clone would. ssh -T exits 1 even on success, so the
+# output decides.
 github_accepts() {
   local out
-  out="$(ssh -T -o BatchMode=yes -o ConnectTimeout=10 -o IdentitiesOnly=yes -o IdentityAgent=none \
+  out="$(ssh -T -o ConnectTimeout=10 -o IdentitiesOnly=yes \
     -o StrictHostKeyChecking=accept-new -i "$1" git@github.com 2>&1 || true)"
   case "$out" in *"successfully authenticated"*) return 0 ;; esac
   return 1
@@ -462,7 +464,9 @@ if gate "Give this machine its own key ($sshkey, created if missing) for the fle
   # From the private half, like the host key: a stale .pub would publish the wrong key.
   sshpub="$(ssh-keygen -y -f "$sshkey" | cut -d' ' -f1,2)"
   [[ "$sshpub" =~ ^ssh-ed25519\ [A-Za-z0-9+/=]+$ ]] || die "$sshkey is not a readable ed25519 key"
-  [ -e "$sshkey.pub" ] || printf '%s %s\n' "$sshpub" "$login@$target" >"$sshkey.pub"
+  # gh uploads the .pub, so a missing or stale one is rewritten.
+  [ "$(cut -d' ' -f1,2 "$sshkey.pub" 2>/dev/null)" = "$sshpub" ] \
+    || printf '%s %s\n' "$sshpub" "$login@$target" >"$sshkey.pub"
   hostfile="$hostdir/default.nix"
   [ -f "$hostfile" ] || hostfile="$hostdir.nix"
   sshline="    sshKey = \"$sshpub\";"
