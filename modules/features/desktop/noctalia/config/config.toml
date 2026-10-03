@@ -41,3 +41,20 @@ action = "screen_off"
 [idle.behavior.suspend]
 timeout = 1200
 action = "lock_and_suspend"
+
+[bar.default]
+position = "left"
+thickness = 32
+margin_edge = 8
+margin_ends = 8
+radius = 10
+start = ["workspaces"]
+center = ["clock"]
+end = ["media", "tray", "notifications", "battery", "control-center"]
+
+[widget.clock]
+format = "{:%I:%M}"
+
+[widget.workspaces]
+style = "regular"
+empty_color = "surface_variant"
