@@ -1,81 +1,138 @@
-// Mod is Alt (config.kdl). Window management mirrors AeroSpace on the Mac
-// (modules/features/desktop/aerospace.nix); Super binds mirror macOS Cmd
-// shortcuts. Avoid Mod+F/I/O/D: zellij and zsh use those Alt combos. Avoid
-// Super+<key> and Alt+arrows: xremap turns those into Ctrl combos
-// (xremap/config.yml) before niri sees them.
+// niri's default binds (resources/default-config.kdl, v26.04) with Mod = Alt
+// (config.kdl), plus the AeroSpace binds that have a niri action
+// (desktop/aerospace.nix) and Super binds that copy macOS shortcuts.
+// One swap, matching AeroSpace: Shift moves windows (niri: Ctrl), Ctrl acts
+// on monitors and whole workspaces (niri: Shift). The mouse wheel follows it.
+// Left out:
+//   - Mod+D (launcher): zsh's fzf cd is Alt+D; Vicinae is on Super+Space.
+//   - Mod+Q (close): Cmd+Q/Cmd+W habits cover it (Super+Q below).
+//   - Mod+-/= and Mod+Shift+-/= (resize): AeroSpace's Mod+Super+Shift+hjkl
+//     is the one resize key on both machines.
+//   - arrow-key variants: xremap turns Alt+Left/Right into word jumps before
+//     niri sees them (xremap/config.yml); hjkl covers them.
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
-    // Launcher and shell (Cmd+Space, Cmd+Q, Ctrl+Cmd+Q, Cmd+Shift+3/4/5).
+    // Apps and session.
+    Mod+T hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
+    // Default Mod+D (zsh). Cmd+Space, like Raycast on the Mac.
     Super+Space repeat=false hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
     Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "vicinae://extensions/vicinae/clipboard/history"; }
-    Super+Q repeat=false { close-window; }
-    Super+Ctrl+Q repeat=false hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
-    Super+Shift+3 { screenshot-screen; }
-    Super+Shift+4 { screenshot; }
-    Super+Shift+5 { screenshot-window; }
-    Print { screenshot; }
-
-    Mod+Return hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
+    Super+Alt+L repeat=false hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
+    Super+Ctrl+Q repeat=false hotkey-overlay-title=null { spawn "noctalia" "msg" "session" "lock"; }
+    // Noctalia's suggested binds; its Mod+Comma settings bind would take
+    // niri's consume-window-into-column, hence Shift.
     Mod+S repeat=false hotkey-overlay-title="Control center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
     Mod+Shift+Comma repeat=false hotkey-overlay-title="Noctalia settings" { spawn "noctalia" "msg" "settings-toggle"; }
-    Mod+Space repeat=false { toggle-overview; }
 
-    // AeroSpace: focus and move.
-    Mod+H     { focus-column-left; }
-    Mod+J     { focus-window-down; }
-    Mod+K     { focus-window-up; }
-    Mod+L     { focus-column-right; }
+    // Also: top-left hot corner, four-finger swipe up.
+    Mod+O repeat=false { toggle-overview; }
+    // Cmd+Q on the Mac; Cmd+W (Super+W) reaches apps as Ctrl+W via xremap.
+    Super+Q repeat=false hotkey-overlay-title="Close window" { close-window; }
 
-    Mod+Shift+H     { move-column-left; }
-    Mod+Shift+J     { move-window-down; }
-    Mod+Shift+K     { move-window-up; }
-    Mod+Shift+L     { move-column-right; }
+    // Columns left/right, windows within a column up/down.
+    Mod+H { focus-column-left; }
+    Mod+J { focus-window-down; }
+    Mod+K { focus-window-up; }
+    Mod+L { focus-column-right; }
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+J { move-window-down; }
+    Mod+Shift+K { move-window-up; }
+    Mod+Shift+L { move-column-right; }
 
-    // AeroSpace: alt-cmd-shift-hjkl resize.
+    Mod+Home       { focus-column-first; }
+    Mod+End        { focus-column-last; }
+    Mod+Shift+Home { move-column-to-first; }
+    Mod+Shift+End  { move-column-to-last; }
+
+    Mod+Ctrl+H       { focus-monitor-left; }
+    Mod+Ctrl+J       { focus-monitor-down; }
+    Mod+Ctrl+K       { focus-monitor-up; }
+    Mod+Ctrl+L       { focus-monitor-right; }
+    Mod+Shift+Ctrl+H { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+J { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+K { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+L { move-column-to-monitor-right; }
+
+    // Workspaces are a vertical, dynamic stack per monitor (an empty one is
+    // always at the bottom). Numbers go by position.
+    Mod+U               { focus-workspace-down; }
+    Mod+I               { focus-workspace-up; }
+    Mod+Shift+U         { move-column-to-workspace-down; }
+    Mod+Shift+I         { move-column-to-workspace-up; }
+    Mod+Ctrl+U          { move-workspace-down; }
+    Mod+Ctrl+I          { move-workspace-up; }
+    Mod+Tab             { focus-workspace-previous; }
+    Mod+Shift+Tab       { move-workspace-to-monitor-next; }
+
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+    Mod+Shift+6 { move-column-to-workspace 6; }
+    Mod+Shift+7 { move-column-to-workspace 7; }
+    Mod+Shift+8 { move-column-to-workspace 8; }
+    Mod+Shift+9 { move-column-to-workspace 9; }
+
+    // Same modifiers as the keys above: Shift moves, Ctrl moves the workspace.
+    // niri's Shift+wheel-as-horizontal binds are dropped since Shift moves;
+    // tilt the wheel or swipe three fingers sideways instead.
+    Mod+WheelScrollDown        cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp          cooldown-ms=150 { focus-workspace-up; }
+    Mod+Shift+WheelScrollDown  cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Shift+WheelScrollUp    cooldown-ms=150 { move-column-to-workspace-up; }
+    Mod+Ctrl+WheelScrollDown   cooldown-ms=150 { move-workspace-down; }
+    Mod+Ctrl+WheelScrollUp     cooldown-ms=150 { move-workspace-up; }
+    Mod+WheelScrollRight       { focus-column-right; }
+    Mod+WheelScrollLeft        { focus-column-left; }
+    Mod+Shift+WheelScrollRight { move-column-right; }
+    Mod+Shift+WheelScrollLeft  { move-column-left; }
+
+    // Columns: stacking, widths, heights.
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+Comma        { consume-window-into-column; }
+    Mod+Period       { expel-window-from-column; }
+    Mod+W            { toggle-column-tabbed-display; }
+
+    Mod+R            { switch-preset-column-width; }
+    Mod+Shift+R      { switch-preset-column-width-back; }
+    Mod+Ctrl+Shift+R { switch-preset-window-height; }
+    Mod+Ctrl+R       { reset-window-height; }
+    // AeroSpace's alt-cmd-shift-hjkl resize (Super is Cmd).
     Mod+Super+Shift+H { set-column-width "+10%"; }
     Mod+Super+Shift+L { set-column-width "-10%"; }
     Mod+Super+Shift+K { set-window-height "+10%"; }
     Mod+Super+Shift+J { set-window-height "-10%"; }
-    Mod+Minus         { set-column-width "-10%"; }
-    Mod+Equal         { set-column-width "+10%"; }
 
-    // AeroSpace: workspaces 0–6, back-and-forth, send to the other monitor.
-    Mod+grave { focus-workspace "0"; }
-    Mod+1     { focus-workspace "1"; }
-    Mod+2     { focus-workspace "2"; }
-    Mod+3     { focus-workspace "3"; }
-    Mod+4     { focus-workspace "4"; }
-    Mod+5     { focus-workspace "5"; }
-    Mod+6     { focus-workspace "6"; }
-    Mod+Shift+grave { move-column-to-workspace "0"; }
-    Mod+Shift+1     { move-column-to-workspace "1"; }
-    Mod+Shift+2     { move-column-to-workspace "2"; }
-    Mod+Shift+3     { move-column-to-workspace "3"; }
-    Mod+Shift+4     { move-column-to-workspace "4"; }
-    Mod+Shift+5     { move-column-to-workspace "5"; }
-    Mod+Shift+6     { move-column-to-workspace "6"; }
-    Mod+Tab         { focus-workspace-previous; }
-    Mod+Shift+Tab   { move-workspace-to-monitor-next; }
+    Mod+F       { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F  { expand-column-to-available-width; }
+    Mod+M       { maximize-window-to-edges; }
+    Mod+C       { center-column; }
+    Mod+Ctrl+C  { center-visible-columns; }
 
-    // niri's own layout: AeroSpace's accordion is closest to a tabbed column.
-    Mod+Comma        { toggle-column-tabbed-display; }
-    Mod+BracketLeft  { consume-or-expel-window-left; }
-    Mod+BracketRight { consume-or-expel-window-right; }
-    Mod+R            { switch-preset-column-width; }
-    Mod+Shift+R      { switch-preset-column-width-back; }
-    Mod+M            { maximize-column; }
-    Mod+Shift+M      { fullscreen-window; }
-    Mod+C            { center-column; }
-    Mod+V            { toggle-window-floating; }
-    Mod+Shift+V      { switch-focus-between-floating-and-tiling; }
+    Mod+V       { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
 
-    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
-    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
-    Mod+WheelScrollRight { focus-column-right; }
-    Mod+WheelScrollLeft  { focus-column-left; }
+    // Screenshots go to the clipboard and ~/Pictures/Screenshots.
+    // Super+Shift+X is the Mac's Cmd+Shift+X.
+    Print         { screenshot; }
+    Ctrl+Print    { screenshot-screen; }
+    Alt+Print     { screenshot-window; }
+    Super+Shift+X { screenshot; }
 
-    // Hardware keys, with Noctalia's on-screen feedback.
+    // Hardware keys, through Noctalia for its on-screen feedback.
     XF86AudioRaiseVolume  allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
     XF86AudioLowerVolume  allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
     XF86AudioMute         allow-when-locked=true repeat=false { spawn "noctalia" "msg" "volume-mute"; }
@@ -84,6 +141,7 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down"; }
     XF86AudioPlay         allow-when-locked=true repeat=false { spawn "noctalia" "msg" "media" "toggle"; }
     XF86AudioPause        allow-when-locked=true repeat=false { spawn "noctalia" "msg" "media" "pause"; }
+    XF86AudioStop         allow-when-locked=true repeat=false { spawn "noctalia" "msg" "media" "stop"; }
     XF86AudioPrev         allow-when-locked=true { spawn "noctalia" "msg" "media" "previous"; }
     XF86AudioNext         allow-when-locked=true { spawn "noctalia" "msg" "media" "next"; }
 

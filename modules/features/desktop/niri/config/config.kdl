@@ -22,6 +22,9 @@ input {
         map-to-output "eDP-1"
     }
 
+    // Alt is the window key on the Mac too (AeroSpace), and the Voyager's and
+    // kanata's Esc-hold layer sends Alt+1…6 for workspaces. Super stays free
+    // for the Cmd-style app shortcuts xremap translates.
     mod-key "Alt"
 }
 

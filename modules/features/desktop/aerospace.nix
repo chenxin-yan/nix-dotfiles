@@ -78,9 +78,6 @@
               alt-4 = "workspace 4";
               alt-5 = "workspace 5";
               alt-6 = "workspace 6";
-              alt-7 = "workspace 7";
-              alt-8 = "workspace 8";
-              alt-9 = "workspace 9";
 
               alt-shift-backtick = "move-node-to-workspace 0";
               alt-shift-1 = "move-node-to-workspace 1";
@@ -89,9 +86,6 @@
               alt-shift-4 = "move-node-to-workspace 4";
               alt-shift-5 = "move-node-to-workspace 5";
               alt-shift-6 = "move-node-to-workspace 6";
-              alt-shift-7 = "move-node-to-workspace 7";
-              alt-shift-8 = "move-node-to-workspace 8";
-              alt-shift-9 = "move-node-to-workspace 9";
 
               alt-tab = "workspace-back-and-forth";
               alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
@@ -119,10 +113,6 @@
                 "join-with right"
                 "mode main"
               ];
-              minus = "resize width -50";
-              equal = "resize width +50";
-              shift-minus = "resize height -50";
-              shift-equal = "resize height +50";
             };
           };
           on-window-detected = [

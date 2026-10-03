@@ -40,8 +40,8 @@
             "performable:super+v=paste_from_clipboard"
             "super+w=close_surface"
             "super+t=new_tab"
-            # Ghostty's macOS tab keys; Ctrl+Alt+H/L belong to the window
-            # manager (niri and AeroSpace move windows with them).
+            # Ghostty's macOS tab keys; Ctrl+Alt+hjkl belong to the window
+            # manager (niri and AeroSpace focus monitors with them).
             "super+shift+bracket_left=previous_tab"
             "super+shift+bracket_right=next_tab"
             # Linux defaults (save screen, new window, command palette) that would
