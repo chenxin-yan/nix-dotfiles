@@ -7,10 +7,17 @@ let
   # Every enrolled machine is pinned by its host key, so connecting to one
   # never asks to trust it. Reached by its inventory name, which is also its
   # hostname and so its Tailscale MagicDNS name.
-  knownHosts.programs.ssh.knownHosts = lib.mapAttrs (name: publicKey: {
-    hostNames = [ name ];
-    inherit publicKey;
-  }) config.hostKeys;
+  knownHosts.programs.ssh.knownHosts =
+    lib.mapAttrs (name: publicKey: {
+      hostNames = [ name ];
+      inherit publicKey;
+    }) config.hostKeys
+    // {
+      # GitHub's published key (api.github.com/meta, SHA256:+DiY3wvv…), so a
+      # new machine can push over SSH without a trust prompt.
+      "github.com".publicKey =
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
+    };
 in
 {
   features.ssh = {
