@@ -53,9 +53,9 @@ in
           };
         };
 
-        # GitHub can't reach the tailnet, so Funnel publishes only the deploy
-        # webhooks (/api/deploy/github checks GitHub's signature, the others a
-        # per-app token); the UI and API stay tailnet-only. Port 8443 because
+        # GitHub can't reach the tailnet, so Funnel publishes only the GitHub
+        # App webhook, which checks GitHub's signature. The per-app token
+        # webhooks, the UI and the API stay tailnet-only. Port 8443 because
         # Traefik holds 443. Needs the tailnet policy to grant this node the
         # funnel attribute.
         systemd.services.dokploy-webhook-funnel = {
@@ -72,8 +72,8 @@ in
             Restart = "on-failure";
             RestartSec = 30;
           };
-          script = "tailscale funnel --bg --yes --https=8443 --set-path=/api/deploy http://127.0.0.1:3000/api/deploy";
-          preStop = "tailscale funnel --https=8443 --set-path=/api/deploy off";
+          script = "tailscale funnel --bg --yes --https=8443 --set-path=/api/deploy/github http://127.0.0.1:3000/api/deploy/github";
+          preStop = "tailscale funnel --https=8443 --set-path=/api/deploy/github off";
         };
 
         networking.firewall.extraCommands =
