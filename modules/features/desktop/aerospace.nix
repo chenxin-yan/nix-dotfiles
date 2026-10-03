@@ -68,6 +68,9 @@
               alt-cmd-shift-j = "resize height -30";
 
               alt-shift-f = "fullscreen";
+              # Hyper (home-row g/h) + Space: Ghostty, opened or focused. niri
+              # binds the same key.
+              alt-ctrl-shift-cmd-space = "exec-and-forget open -a Ghostty";
               alt-comma = "layout accordion horizontal vertical";
               alt-slash = "layout tiles horizontal vertical";
 

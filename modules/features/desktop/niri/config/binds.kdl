@@ -6,6 +6,7 @@
 // Left out:
 //   - Mod+D (launcher): zsh's fzf cd is Alt+D; Vicinae is on Super+Space.
 //   - Mod+Q (close): Cmd+Q/Cmd+W habits cover it (Super+Q below).
+//   - Mod+T (terminal): Hyper+Space, the same key as on the Mac.
 //   - Mod+-/= and Mod+Shift+-/= (resize): AeroSpace's Mod+Super+Shift+hjkl
 //     is the one resize key on both machines.
 //   - arrow-key variants: xremap turns Alt+Left/Right into word jumps before
@@ -14,7 +15,8 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Apps and session.
-    Mod+T hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
+    // Hyper (home-row g/h) + Space, as in AeroSpace.
+    Mod+Super+Ctrl+Shift+Space hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
     // Default Mod+D (zsh). Cmd+Space, like Raycast on the Mac.
     Super+Space repeat=false hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
     Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "vicinae://extensions/vicinae/clipboard/history"; }
