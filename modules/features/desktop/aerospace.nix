@@ -42,9 +42,6 @@
           };
           mode = {
             main.binding = {
-              alt-slash = "layout tiles horizontal vertical";
-              alt-comma = "layout accordion horizontal vertical";
-
               alt-h = "focus left";
               alt-j = "focus down";
               alt-k = "focus up";
@@ -55,10 +52,24 @@
               alt-shift-k = "move up";
               alt-shift-l = "move right";
 
+              alt-ctrl-h = "focus-monitor left";
+              alt-ctrl-j = "focus-monitor down";
+              alt-ctrl-k = "focus-monitor up";
+              alt-ctrl-l = "focus-monitor right";
+
+              alt-shift-ctrl-h = "move-node-to-monitor left";
+              alt-shift-ctrl-j = "move-node-to-monitor down";
+              alt-shift-ctrl-k = "move-node-to-monitor up";
+              alt-shift-ctrl-l = "move-node-to-monitor right";
+
               alt-cmd-shift-h = "resize width +30";
               alt-cmd-shift-l = "resize width -30";
               alt-cmd-shift-k = "resize height +30";
               alt-cmd-shift-j = "resize height -30";
+
+              alt-shift-f = "fullscreen";
+              alt-comma = "layout accordion horizontal vertical";
+              alt-slash = "layout tiles horizontal vertical";
 
               alt-backtick = "workspace 0";
               alt-1 = "workspace 1";
@@ -67,6 +78,9 @@
               alt-4 = "workspace 4";
               alt-5 = "workspace 5";
               alt-6 = "workspace 6";
+              alt-7 = "workspace 7";
+              alt-8 = "workspace 8";
+              alt-9 = "workspace 9";
 
               alt-shift-backtick = "move-node-to-workspace 0";
               alt-shift-1 = "move-node-to-workspace 1";
@@ -75,9 +89,11 @@
               alt-shift-4 = "move-node-to-workspace 4";
               alt-shift-5 = "move-node-to-workspace 5";
               alt-shift-6 = "move-node-to-workspace 6";
+              alt-shift-7 = "move-node-to-workspace 7";
+              alt-shift-8 = "move-node-to-workspace 8";
+              alt-shift-9 = "move-node-to-workspace 9";
 
               alt-tab = "workspace-back-and-forth";
-
               alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
 
               alt-shift-semicolon = "mode service";
@@ -95,26 +111,18 @@
                 "layout floating tiling"
                 "mode main"
               ];
-              backspace = [
-                "close-all-windows-but-current"
-                "mode main"
-              ];
-              alt-shift-h = [
+              leftSquareBracket = [
                 "join-with left"
                 "mode main"
               ];
-              alt-shift-j = [
-                "join-with down"
-                "mode main"
-              ];
-              alt-shift-k = [
-                "join-with up"
-                "mode main"
-              ];
-              alt-shift-l = [
+              rightSquareBracket = [
                 "join-with right"
                 "mode main"
               ];
+              minus = "resize width -50";
+              equal = "resize width +50";
+              shift-minus = "resize height -50";
+              shift-equal = "resize height +50";
             };
           };
           on-window-detected = [

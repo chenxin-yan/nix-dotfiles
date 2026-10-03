@@ -39,8 +39,6 @@
         run ${pkgs.herdr}/bin/herdr plugin link ${vim-herdr-navigation}
       '';
 
-      # Parity with the zellij setup: Ctrl+s leader, catppuccin, Alt-tab nav.
-      # vim hjkl focus/resize, splits, and session persistence are herdr defaults.
       xdg.configFile."herdr/config.toml".text = ''
         onboarding = false
 
@@ -48,16 +46,15 @@
         prefix = "ctrl+s"
         detach = "prefix+d"
         new_tab = "prefix+n"
-        previous_tab = "alt+i"
-        next_tab = "alt+o"
+        previous_tab = "ctrl+shift+h"
+        next_tab = "ctrl+shift+l"
         switch_tab = "ctrl+1..9"
-        # Workspaces: Alt+Shift+P/N cycle prefix-free; prefix+arrow kept as
-        # fallback and prefix+1..9 jumps direct.
         previous_workspace = ["prefix+up", "ctrl+shift+p"]
         next_workspace = ["prefix+down", "ctrl+shift+n"]
         switch_workspace = "prefix+1..9"
-        previous_agent = "ctrl+shift+h"
-        next_agent = "ctrl+shift+l"
+        # The sidebar lists agents top to bottom.
+        previous_agent = "ctrl+shift+k"
+        next_agent = "ctrl+shift+j"
         open_worktree = "prefix+shift+o"
         remove_worktree = "prefix+shift+c"
 

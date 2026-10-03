@@ -40,8 +40,18 @@
             "performable:super+v=paste_from_clipboard"
             "super+w=close_surface"
             "super+t=new_tab"
-            "ctrl+alt+h=previous_tab"
-            "ctrl+alt+l=next_tab"
+            # Ghostty's macOS tab keys; Ctrl+Alt+H/L belong to the window
+            # manager (niri and AeroSpace move windows with them).
+            "super+shift+bracket_left=previous_tab"
+            "super+shift+bracket_right=next_tab"
+            # Linux defaults (save screen, new window, command palette) that would
+            # swallow herdr's Ctrl+Shift+J/N/P before it sees them.
+            "ctrl+shift+j=unbind"
+            "ctrl+shift+n=unbind"
+            "ctrl+shift+p=unbind"
+            # Their Mac keys instead.
+            "super+n=new_window"
+            "super+shift+p=toggle_command_palette"
           ]
           ++ map (n: "super+${toString n}=goto_tab:${toString n}") (lib.range 1 9);
         };
