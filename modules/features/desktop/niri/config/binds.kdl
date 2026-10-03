@@ -17,7 +17,7 @@ binds {
     Mod+Super+Ctrl+Shift+Space hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
     // Default Mod+D (zsh). Cmd+Space, like Raycast on the Mac.
     Super+Space repeat=false hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
-    Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "vicinae://extensions/vicinae/clipboard/history"; }
+    Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "deeplink" "vicinae://launch/clipboard/history"; }
     Super+Alt+L repeat=false hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
     Super+Ctrl+Q repeat=false hotkey-overlay-title=null { spawn "noctalia" "msg" "session" "lock"; }
     // Noctalia's suggested binds; its Mod+Comma settings bind would take
