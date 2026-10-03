@@ -5,11 +5,25 @@ in
   features._1password = {
     darwin = app;
     nixos =
-      { host, ... }:
+      {
+        host,
+        config,
+        lib,
+        ...
+      }:
       {
         imports = [ app ];
         # NixOS only: polkit lets this user unlock op and the browser through the app.
         programs._1password-gui.polkitPolicyOwners = [ host.login ];
+
+        # Start hidden in the tray at login so the SSH agent and op unlock are
+        # ready. systemd's xdg-autostart generator reads /etc/xdg/autostart.
+        environment.etc."xdg/autostart/1password.desktop".text = ''
+          [Desktop Entry]
+          Type=Application
+          Name=1Password
+          Exec=${lib.getExe config.programs._1password-gui.package} --silent
+        '';
       };
     # SSH and git use the keys in 1Password through its agent, so a desktop
     # needs no key file. The agent itself is switched on in 1Password →
