@@ -44,6 +44,15 @@
             chromium
             ffmpeg
             nodejs
+            # The Google skills read google_token.json; this picks the account.
+            (writeShellScriptBin "gswitch" ''
+              set -eu
+              dir="''${HERMES_HOME:-$HOME/.hermes}"
+              src="$dir/google_token.''${1:?usage: gswitch <account>}.json"
+              [ -f "$src" ] || { echo "gswitch: no $src" >&2; exit 1; }
+              install -m 600 "$src" "$dir/google_token.json"
+              echo "active Google account: $1"
+            '')
           ];
         };
       };
