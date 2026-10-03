@@ -5,8 +5,9 @@
 #     keeps). On macOS, user defaults only count as "recommended" (Helium
 #     applies them, but the UI can change them); mandatory ones need an MDM
 #     profile.
-#   - Extensions: External Extensions files, installed from the Chrome Web
-#     Store on first launch (Chromium asks once to enable each).
+#   - Extensions: External Extensions files, which Helium installs through
+#     its own Web Store proxy at startup (needs Helium's services, on by
+#     default).
 #   - Surfingkeys reads its keymap from ./surfingkeys.js through its native
 #     host (headless Neovim running the project's server.lua).
 #   - Everything else (layout, toolbar, theme, Helium's own shortcuts) lives in
@@ -195,7 +196,10 @@ in
         // lib.mapAttrs' (
           id: _:
           lib.nameValuePair "${dataDir}/External Extensions/${id}.json" {
-            text = builtins.toJSON { external_update_url = "https://clients2.google.com/service/update2/crx"; };
+            # Helium's stand-in for the Web Store's update URL: only that host is
+            # rewritten to its proxy (services.helium.imput.net/ext). Google's own
+            # URL answers "no update", since Helium leaves out the Chrome version.
+            text = builtins.toJSON { external_update_url = "https://update-url-to-be-replaced.qjz9zk"; };
           }
         ) extensions;
 
