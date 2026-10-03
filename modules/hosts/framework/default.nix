@@ -23,12 +23,6 @@
         boot.kernelPackages = pkgs.linuxPackages_latest;
 
         networking.networkmanager.enable = true;
-
-        # Stop charging at 80% to slow battery wear (kernel cros_charge_control).
-        # udev re-checks on every battery event and writes only when it differs.
-        services.udev.extraRules = ''
-          SUBSYSTEM=="power_supply", KERNEL=="BAT1", ATTR{charge_control_end_threshold}!="80", ATTR{charge_control_end_threshold}="80"
-        '';
         time.timeZone = "America/Los_Angeles";
 
         users.users.${host.login} = {
