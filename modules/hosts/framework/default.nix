@@ -18,6 +18,14 @@
         ];
 
         boot.loader.systemd-boot.enable = true;
+        # The root partition is LUKS2, encrypted in place; the ext4 inside keeps
+        # its UUID, so fileSystems."/" is unchanged. systemd's initrd prompts
+        # for the passphrase, or unlocks with the TPM once one is enrolled.
+        boot.initrd.systemd.enable = true;
+        boot.initrd.luks.devices.cryptroot = {
+          device = "/dev/disk/by-partuuid/0644c44e-5125-4041-86ec-81fc78a64f1b";
+          crypttabExtraOpts = [ "tpm2-device=auto" ];
+        };
         boot.loader.efi.canTouchEfiVariables = true;
         # Ryzen AI 300 support keeps improving upstream; Framework recommends the latest kernel.
         boot.kernelPackages = pkgs.linuxPackages_latest;
