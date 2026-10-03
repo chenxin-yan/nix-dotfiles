@@ -45,6 +45,14 @@
 
     hermes-agent.url = "github:NousResearch/hermes-agent";
 
+    # nixpkgs has 0.7.0, which predates the agent features; Neovim pane
+    # navigation is on main only (after v0.8.5).
+    tuios = {
+      url = "github:Gaurav-Gosain/tuios";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
+
     nix-dokploy = {
       url = "github:el-kurto/nix-dokploy";
       inputs.nixpkgs.follows = "nixpkgs";

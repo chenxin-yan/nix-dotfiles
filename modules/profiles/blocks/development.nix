@@ -7,6 +7,7 @@
     mise
     pandoc
     podman
+    tuios
     yazi
 
     bash
