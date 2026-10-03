@@ -1,0 +1,121 @@
+// niri reloads this file on save. Reference:
+// https://niri-wm.github.io/niri/Configuration:-Introduction
+// Colors are Catppuccin Mocha with the Lavender accent, like the rest of the
+// fleet (modules/features/theme.nix); catppuccin/nix has no niri module.
+
+include "binds.kdl"
+
+input {
+    keyboard {
+        numlock
+    }
+
+    touchpad {
+        tap
+        dwt
+        natural-scroll
+        // Two-finger click is a right click, like a MacBook trackpad.
+        click-method "clickfinger"
+    }
+
+    touch {
+        map-to-output "eDP-1"
+    }
+
+    // Alt is the window key on the Mac too (AeroSpace), and the Voyager's and
+    // kanata's Esc-hold layer sends Alt+1…6 for workspaces. Super stays free
+    // for the Cmd-style app shortcuts xremap translates.
+    mod-key "Alt"
+}
+
+// The theme Home Manager installs (catppuccin.cursors in niri/default.nix).
+cursor {
+    xcursor-theme "catppuccin-mocha-lavender-cursors"
+}
+
+// Framework Laptop 13 Pro: 13.5" 2880x1920, 30–120 Hz. Try other scales live
+// with `niri msg output eDP-1 scale 2`.
+output "eDP-1" {
+    mode "2880x1920"
+    scale 1.75
+    variable-refresh-rate
+}
+
+layout {
+    gaps 12
+
+    focus-ring {
+        width 2
+        active-color "#b4befe"
+        inactive-color "#45475a"
+        urgent-color "#f38ba8"
+    }
+
+    shadow {
+        on
+        color "#11111b70"
+    }
+
+    tab-indicator {
+        hide-when-single-tab
+        place-within-column
+        active-color "#b4befe"
+        inactive-color "#585b70"
+        urgent-color "#f38ba8"
+    }
+
+    insert-hint {
+        color "#b4befe80"
+    }
+}
+
+// Noctalia's blurred wallpaper copy shows behind the overview.
+layer-rule {
+    match namespace="^noctalia-backdrop"
+    place-within-backdrop true
+}
+
+recent-windows {
+    highlight {
+        active-color "#b4befe"
+        urgent-color "#f38ba8"
+        corner-radius 12
+    }
+
+    binds {
+        Super+Tab         { next-window; }
+        Super+Shift+Tab   { previous-window; }
+        Super+grave       { next-window     filter="app-id"; }
+        Super+Shift+grave { previous-window filter="app-id"; }
+    }
+}
+
+// Let windows drop their own titlebars so the focus ring wraps them.
+prefer-no-csd
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+window-rule {
+    match app-id=r#"^dev\.noctalia\.Noctalia$"#
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
+}
+
+window-rule {
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"(?i)^1password$"#
+    block-out-from "screen-capture"
+}
+
+debug {
+    // Lets Noctalia notifications activate and focus their windows.
+    honor-xdg-activation-with-invalid-serial
+}

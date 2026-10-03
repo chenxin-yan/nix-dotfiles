@@ -1,0 +1,43 @@
+# Noctalia v5. Reference: https://docs.noctalia.dev/noctalia/configuration/
+# Check edits with `noctalia config validate`.
+
+# font_family defaults to fontconfig's sans-serif: Geist (fonts feature).
+[shell]
+# The shell answers polkit prompts (1Password, pkexec); niri ships no agent.
+polkit_agent = true
+
+# Keep the login screen's wallpaper and palette in step with the shell's
+# (allowed without a password by noctalia/default.nix).
+[shell.greeter_sync]
+auto_sync = true
+
+[theme]
+# The fleet palette (modules/features/theme.nix). The built-in "Catppuccin"
+# uses Mauve; this catalog palette is Mocha with Lavender. Downloaded and
+# cached; fetched again when the catalog changes.
+source = "community"
+community_palette = "Catppuccin Mocha Lavender"
+
+# Apps are themed by catppuccin/nix; two theming systems would fight.
+[theme.templates]
+enable_builtin_templates = false
+enable_community_templates = false
+
+# Blurred wallpaper behind niri's overview (layer-rule in niri's config.kdl).
+[backdrop]
+enabled = true
+
+[idle]
+behavior_order = ["lock", "screen-off", "suspend"]
+
+[idle.behavior.lock]
+timeout = 300
+action = "lock"
+
+[idle.behavior.screen-off]
+timeout = 600
+action = "screen_off"
+
+[idle.behavior.suspend]
+timeout = 1200
+action = "lock_and_suspend"

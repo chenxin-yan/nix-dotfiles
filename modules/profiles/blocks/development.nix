@@ -8,7 +8,6 @@
     pandoc
     podman
     yazi
-    zellij
 
     bash
     go

@@ -19,6 +19,12 @@
     # Keyboards
     kanata # built-in laptop keyboard
     zsa # Voyager: Keymapp (+ udev rules on NixOS)
+    xremap # Linux: Mac-style Super shortcuts
+
+    # Linux only: the niri desktop
+    niri
+    noctalia
+    vicinae
 
     # macOS only
     aerospace

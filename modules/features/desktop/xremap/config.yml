@@ -1,0 +1,64 @@
+# Super acts as Cmd: the same physical chord (home-row `a` + key) copies,
+# pastes, opens tabs, … on the Mac (Cmd) and in Linux GUI apps (Ctrl).
+# Reloaded on save (--watch=config). List app IDs with `niri msg windows`.
+#
+# Ghostty is excluded: its super+ binds (modules/features/gui/ghostty.nix)
+# already behave like the Mac, and Ctrl+C has to stay an interrupt there.
+# exact_match passes every unlisted combo through untouched, e.g. niri's
+# Alt+Super+Shift+hjkl resize and Super+Space for Vicinae. niri never sees
+# the combos listed here, so keep its Super binds off these keys.
+keymap:
+  - name: Cmd shortcuts
+    application:
+      not: [com.mitchellh.ghostty]
+    exact_match: true
+    remap:
+      Super-a: C-a
+      Super-c: C-c
+      Super-v: C-v
+      Super-x: C-x
+      Super-z: C-z
+      Super-Shift-z: C-Shift-z
+      Super-s: C-s
+      Super-Shift-s: C-Shift-s
+      Super-f: C-f
+      Super-n: C-n
+      Super-Shift-n: C-Shift-n
+      Super-o: C-o
+      Super-p: C-p
+      Super-Shift-p: C-Shift-p
+      Super-k: C-k
+      Super-t: C-t
+      Super-Shift-t: C-Shift-t
+      Super-w: C-w
+      Super-r: C-r
+      Super-l: C-l
+      Super-b: C-b
+      Super-i: C-i
+      Super-u: C-u
+      Super-e: C-e
+      Super-comma: C-comma
+      Super-slash: C-slash
+      Super-enter: C-enter
+      Super-equal: C-equal
+      Super-minus: C-minus
+      Super-0: C-0
+      Super-left: home
+      Super-right: end
+      Super-Shift-left: Shift-home
+      Super-Shift-right: Shift-end
+      Super-up: C-home
+      Super-down: C-end
+      Super-backspace: [Shift-home, backspace]
+
+  # Option+arrows jump by word on the Mac.
+  - name: Option word motion
+    application:
+      not: [com.mitchellh.ghostty]
+    exact_match: true
+    remap:
+      Alt-left: C-left
+      Alt-right: C-right
+      Alt-Shift-left: C-Shift-left
+      Alt-Shift-right: C-Shift-right
+      Alt-backspace: C-backspace

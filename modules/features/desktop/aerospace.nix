@@ -42,9 +42,6 @@
           };
           mode = {
             main.binding = {
-              alt-slash = "layout tiles horizontal vertical";
-              alt-comma = "layout accordion horizontal vertical";
-
               alt-h = "focus left";
               alt-j = "focus down";
               alt-k = "focus up";
@@ -55,10 +52,27 @@
               alt-shift-k = "move up";
               alt-shift-l = "move right";
 
+              alt-ctrl-h = "focus-monitor left";
+              alt-ctrl-j = "focus-monitor down";
+              alt-ctrl-k = "focus-monitor up";
+              alt-ctrl-l = "focus-monitor right";
+
+              alt-shift-ctrl-h = "move-node-to-monitor left";
+              alt-shift-ctrl-j = "move-node-to-monitor down";
+              alt-shift-ctrl-k = "move-node-to-monitor up";
+              alt-shift-ctrl-l = "move-node-to-monitor right";
+
               alt-cmd-shift-h = "resize width +30";
               alt-cmd-shift-l = "resize width -30";
               alt-cmd-shift-k = "resize height +30";
               alt-cmd-shift-j = "resize height -30";
+
+              alt-shift-f = "fullscreen";
+              # Hyper (home-row g/h) + Space: Ghostty, opened or focused. niri
+              # binds the same key.
+              alt-ctrl-shift-cmd-space = "exec-and-forget open -a Ghostty";
+              alt-comma = "layout accordion horizontal vertical";
+              alt-slash = "layout tiles horizontal vertical";
 
               alt-backtick = "workspace 0";
               alt-1 = "workspace 1";
@@ -77,7 +91,6 @@
               alt-shift-6 = "move-node-to-workspace 6";
 
               alt-tab = "workspace-back-and-forth";
-
               alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
 
               alt-shift-semicolon = "mode service";
@@ -95,23 +108,11 @@
                 "layout floating tiling"
                 "mode main"
               ];
-              backspace = [
-                "close-all-windows-but-current"
-                "mode main"
-              ];
-              alt-shift-h = [
+              leftSquareBracket = [
                 "join-with left"
                 "mode main"
               ];
-              alt-shift-j = [
-                "join-with down"
-                "mode main"
-              ];
-              alt-shift-k = [
-                "join-with up"
-                "mode main"
-              ];
-              alt-shift-l = [
+              rightSquareBracket = [
                 "join-with right"
                 "mode main"
               ];

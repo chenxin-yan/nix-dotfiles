@@ -240,35 +240,11 @@ in
         #   navigator. ctrl+t was app.thinking.toggle upstream — we move
         #   that to shift+ctrl+t (capital T = "manage Thinking") so we
         #   keep both behaviors.
-        # - app.message.followUp: keep upstream's alt+enter and add
-        #   alt+j. Inside zellij, pressing alt+enter inserts a newline
-        #   instead of queueing a follow-up. Mechanism: pi probes the
-        #   Kitty keyboard protocol on startup; zellij forwards the probe
-        #   to ghostty and forwards ghostty's positive reply back to pi,
-        #   so pi sets _kittyProtocolActive = true. But zellij itself
-        #   does NOT translate keys into Kitty CSI-u — keys arrive in
-        #   legacy xterm form. Alt+enter then arrives as \x1b\r, which
-        #   pi-tui (keys.ts:1266) maps to "shift+enter" because in real
-        #   Kitty terminals \x1b\r is the conventional shift+enter
-        #   encoding (alt+enter would arrive as CSI-u \x1b[13;3u). That
-        #   matches tui.input.newLine and the editor inserts a newline.
-        #   Same shape of bug as the reverted 295420d (zellij forwards a
-        #   protocol response it can't honor for keys); pi has no env
-        #   var to skip the kitty probe. alt+j does NOT escape this:
-        #   with Kitty mode active pi-tui also rejects legacy alt+letter
-        #   (\x1bj), so inside zellij neither chord queues a follow-up
-        #   (checked against pi-tui 0.87.1 matchesKey). Both work in raw
-        #   ghostty (CSI-u). Re-check once zellij fixes its kitty
-        #   forwarding (zellij#4333, #5017) by testing the chord in zellij.
         ".pi/agent/keybindings.json".text = builtins.toJSON {
           "app.session.resume" = "ctrl+b";
           "app.session.fork" = "ctrl+f";
           "app.session.tree" = "ctrl+t";
           "app.thinking.toggle" = "shift+ctrl+t";
-          "app.message.followUp" = [
-            "alt+enter"
-            "alt+j"
-          ];
         };
 
         # Custom startup header. Replaces pi's built-in logo + keybinding
