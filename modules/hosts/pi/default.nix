@@ -6,6 +6,7 @@
   hosts.pi = {
     system = "aarch64-linux";
     login = "cyan";
+    sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEA9KJWsS/AqxAP1FJ86E4OkiYszggB7mKtyoMxqE5Th";
 
     features = with config.features; [
       server
