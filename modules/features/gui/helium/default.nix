@@ -7,10 +7,12 @@
 #     profile.
 #   - Extensions: External Extensions files, installed from the Chrome Web
 #     Store on first launch (Chromium asks once to enable each).
+#   - Surfingkeys reads its keymap from ./surfingkeys.js through its native
+#     host (headless Neovim running the project's server.lua).
 #   - Everything else (layout, toolbar, theme, Helium's own shortcuts) lives in
 #     the profile's Preferences file. Each switch merges `preferences` into it
 #     while Helium is closed; a UI change lasts until the next switch.
-{ inputs, ... }:
+{ config, inputs, ... }:
 let
   # Chrome Web Store ID → name.
   extensions = {
@@ -20,7 +22,9 @@ let
     hlepfoohegkhhmjieoechaddaejaokhf = "Refined GitHub";
     mnjggcdmjocbbbhaepdhchncahnbgone = "SponsorBlock";
     clngdbkpkpeebahjckkjfobafhncgmne = "Stylus";
+    gfbliohnnapiefjpjlpjnehglfpaknnc = "Surfingkeys";
   };
+  surfingkeysId = "gfbliohnnapiefjpjlpjnehglfpaknnc";
 
   # Only what differs from Helium's defaults (registered in its source,
   # imputnet/helium patches/helium). None of these keys is a Chromium
@@ -52,11 +56,28 @@ let
     vertical_tabs.uncollapsed_width = 200;
   };
 
-  # Ctrl+S/D: back/forward. macOS only; Linux does it in xremap, where Cmd+S
-  # arrives as Ctrl+S and must keep saving.
-  darwinPreferences.helium.browser.custom_accelerators = {
-    "33000".added = [ "Control+KeyS" ]; # IDC_BACK
-    "33001".added = [ "Control+KeyD" ]; # IDC_FORWARD
+  # Shortcuts per OS, since the stored keys name Ctrl or Cmd (Meta). Cmd+O is
+  # tab search, taken from "Open file"; Cmd+Shift+A is left free.
+  accelerators = {
+    linux = {
+      "52500" = {
+        # IDC_TAB_SEARCH; xremap turns Cmd+O into Ctrl+O.
+        added = [ "Control+KeyO" ];
+        removed = [ "Control+Shift+KeyA" ];
+      };
+      "40000".removed = [ "Control+KeyO" ]; # IDC_OPEN_FILE
+    };
+    darwin = {
+      "52500" = {
+        added = [ "Meta+KeyO" ];
+        removed = [ "Shift+Meta+KeyA" ];
+      };
+      "40000".removed = [ "Meta+KeyO" ];
+      # Ctrl+S/D: back/forward. Linux does these in xremap, where Cmd+S
+      # arrives as Ctrl+S and must keep saving.
+      "33000".added = [ "Control+KeyS" ]; # IDC_BACK
+      "33001".added = [ "Control+KeyD" ]; # IDC_FORWARD
+    };
   };
 
   # https://chromeenterprise.google/policies/
@@ -71,6 +92,8 @@ let
 in
 {
   features.helium = {
+    includes = with config.features; [ paths ];
+
     nixos =
       { pkgs, ... }:
       {
@@ -90,11 +113,26 @@ in
     };
 
     homeManager =
-      { lib, pkgs, ... }:
+      {
+        config,
+        lib,
+        pkgs,
+        ...
+      }:
       let
         inherit (pkgs.stdenv.hostPlatform) isLinux;
         dataDir =
           if isLinux then ".config/net.imput.helium" else "Library/Application Support/net.imput.helium";
+
+        surfingkeysServer = pkgs.fetchurl {
+          url = "https://raw.githubusercontent.com/brookhong/Surfingkeys/1812ec78e7b074d71f41fb19789135a65780339c/src/nvim/server/server.lua";
+          hash = "sha256-aGGZXwjSHw08xolg0z3TblNYNbWV/DDkWxgMIiH9eww=";
+        };
+        # --clean: the host only serves the settings file, so skip loading the
+        # whole Neovim config on every page load.
+        surfingkeysHost = pkgs.writeShellScript "surfingkeys-host" ''
+          exec ${lib.getExe pkgs.neovim} --clean --headless -c "luafile ${surfingkeysServer}"
+        '';
       in
       {
         home.activation.heliumPreferences =
@@ -103,7 +141,11 @@ in
             pgrep = if isLinux then lib.getExe' pkgs.procps "pgrep" else "/usr/bin/pgrep";
             jq = lib.getExe pkgs.jq;
             fragment = pkgs.writeText "helium-preferences.json" (
-              builtins.toJSON (if isLinux then preferences else lib.recursiveUpdate preferences darwinPreferences)
+              builtins.toJSON (
+                lib.recursiveUpdate preferences {
+                  helium.browser.custom_accelerators = accelerators.${if isLinux then "linux" else "darwin"};
+                }
+              )
             );
           in
           lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -126,7 +168,18 @@ in
           ''
         );
 
-        home.file = lib.mapAttrs' (
+        home.file = {
+          ".surfingkeys.js".source =
+            config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/gui/helium/surfingkeys.js";
+          "${dataDir}/NativeMessagingHosts/surfingkeys.json".text = builtins.toJSON {
+            name = "surfingkeys";
+            description = "Surfingkeys settings from ~/.surfingkeys.js";
+            path = "${surfingkeysHost}";
+            type = "stdio";
+            allowed_origins = [ "chrome-extension://${surfingkeysId}/" ];
+          };
+        }
+        // lib.mapAttrs' (
           id: _:
           lib.nameValuePair "${dataDir}/External Extensions/${id}.json" {
             text = builtins.toJSON { external_update_url = "https://clients2.google.com/service/update2/crx"; };

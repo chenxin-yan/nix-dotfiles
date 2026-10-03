@@ -39,6 +39,7 @@ keymap:
       Super-o: C-o
       Super-p: C-p
       Super-Shift-p: C-Shift-p
+      Super-Shift-m: C-Shift-m
       Super-k: C-k
       Super-t: C-t
       Super-Shift-t: C-Shift-t
