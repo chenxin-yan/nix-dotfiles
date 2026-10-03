@@ -18,7 +18,6 @@ let
   # Chrome Web Store ID → name.
   extensions = {
     aeblfdkhhhdcdjpifhhbdiojplfjncoa = "1Password";
-    bgnkhhnnamicmpeenaelnjfhikgbkllg = "AdGuard AdBlocker";
     lnjaiaapbakfhlbjenjkhffcdpoompki = "Catppuccin for Web File Explorer Icons";
     hlepfoohegkhhmjieoechaddaejaokhf = "Refined GitHub";
     mnjggcdmjocbbbhaepdhchncahnbgone = "SponsorBlock";
