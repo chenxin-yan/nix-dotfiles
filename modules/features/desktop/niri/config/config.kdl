@@ -92,6 +92,11 @@ recent-windows {
     }
 }
 
+// Mod+Shift+Slash still opens it on demand.
+hotkey-overlay {
+    skip-at-startup
+}
+
 // Let windows drop their own titlebars so the focus ring wraps them.
 prefer-no-csd
 
