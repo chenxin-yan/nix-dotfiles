@@ -99,8 +99,15 @@
         system.stateVersion = "26.11";
       };
 
-    homeManager = {
-      home.stateVersion = "26.11";
-    };
+    homeManager =
+      { pkgs, ... }:
+      {
+        home.stateVersion = "26.11";
+
+        home.packages = with pkgs; [
+          # terminfo for xterm-ghostty so SSH sessions from Ghostty clients work
+          ghostty.terminfo
+        ];
+      };
   };
 }
