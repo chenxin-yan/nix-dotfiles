@@ -56,16 +56,32 @@ let
     vertical_tabs.uncollapsed_width = 200;
   };
 
-  # Shortcuts per OS, since the stored keys name Ctrl or Cmd (Meta). Cmd+O is
-  # tab search, taken from "Open file"; Cmd+Shift+A is left free.
+  # Shortcuts (Settings → Keyboard shortcuts), keyed by Chromium command id
+  # (chrome/app/chrome_command_ids.h). Ctrl+S/D go back/forward on both
+  # systems; Cmd+O is tab search, freeing Cmd+Shift+A.
   accelerators = {
+    "33000".added = [ "Control+KeyS" ]; # IDC_BACK
+    "33001".added = [ "Control+KeyD" ]; # IDC_FORWARD
+  };
+  # The rest names Ctrl or Cmd (Meta) per OS.
+  platformAccelerators = {
+    # xremap turns Cmd+<key> into Ctrl+<key> here, so Cmd+O arrives as Ctrl+O
+    # and Cmd+S as Ctrl+S: on Linux Cmd+S goes back, except in web apps that
+    # handle it themselves (pages see the key before Helium). Cmd+D isn't
+    # translated, so it can stay Bookmark as on the Mac.
     linux = {
       "52500" = {
-        # IDC_TAB_SEARCH; xremap turns Cmd+O into Ctrl+O.
+        # IDC_TAB_SEARCH
         added = [ "Control+KeyO" ];
         removed = [ "Control+Shift+KeyA" ];
       };
       "40000".removed = [ "Control+KeyO" ]; # IDC_OPEN_FILE
+      "35004".removed = [ "Control+KeyS" ]; # IDC_SAVE_PAGE
+      "35000" = {
+        # IDC_BOOKMARK_THIS_TAB
+        added = [ "Meta+KeyD" ];
+        removed = [ "Control+KeyD" ];
+      };
     };
     darwin = {
       "52500" = {
@@ -73,10 +89,6 @@ let
         removed = [ "Shift+Meta+KeyA" ];
       };
       "40000".removed = [ "Meta+KeyO" ];
-      # Ctrl+S/D: back/forward. Linux does these in xremap, where Cmd+S
-      # arrives as Ctrl+S and must keep saving.
-      "33000".added = [ "Control+KeyS" ]; # IDC_BACK
-      "33001".added = [ "Control+KeyD" ]; # IDC_FORWARD
     };
   };
 
@@ -143,7 +155,8 @@ in
             fragment = pkgs.writeText "helium-preferences.json" (
               builtins.toJSON (
                 lib.recursiveUpdate preferences {
-                  helium.browser.custom_accelerators = accelerators.${if isLinux then "linux" else "darwin"};
+                  helium.browser.custom_accelerators =
+                    accelerators // platformAccelerators.${if isLinux then "linux" else "darwin"};
                 }
               )
             );
