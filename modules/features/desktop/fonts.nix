@@ -3,6 +3,10 @@
 # for icons in UI and monospace text on Linux). Ghostty bundles its own Nerd
 # Font symbols, so it uses plain JetBrains Mono.
 let
+  sans = "Geist";
+  mono = "JetBrains Mono";
+  icons = "JetBrainsMono Nerd Font";
+
   fonts =
     { pkgs, ... }:
     {
@@ -25,26 +29,23 @@ in
       # Font icons, come from the next entry.
       fonts.fontconfig.defaultFonts = {
         sansSerif = [
-          "Geist"
-          "JetBrainsMono Nerd Font"
+          sans
+          icons
         ];
         monospace = [
-          "JetBrains Mono"
-          "JetBrainsMono Nerd Font"
+          mono
+          icons
         ];
       };
     };
 
-    # GTK and libadwaita read their fonts from GTK settings/dconf, not the
-    # fontconfig aliases.
+    # GTK and libadwaita ask for their own defaults (Adwaita Sans/Mono), not
+    # the fontconfig aliases; uninstalled, Adwaita Sans resolves to a CJK font.
     homeManager =
       { lib, pkgs, ... }:
       lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-        gtk.font = {
-          name = "Geist";
-          size = 11;
-        };
-        dconf.settings."org/gnome/desktop/interface".monospace-font-name = "JetBrains Mono 11";
+        gtk.font.name = sans;
+        dconf.settings."org/gnome/desktop/interface".monospace-font-name = "${mono} 11";
       };
   };
 }
