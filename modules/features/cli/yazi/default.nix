@@ -7,7 +7,7 @@
   # the nixpkgs locked before 301655f. The Macs build with clang and are
   # unaffected. Try it with:
   #   nix build .#nixosConfigurations.framework.pkgs.clipboard-jh --override-input nixpkgs-clipboard-jh nixpkgs
-  features.yazi-clipboard.nixos.nixpkgs.overlays = [
+  features.yazi.nixos.nixpkgs.overlays = [
     (final: _: {
       inherit (inputs.nixpkgs-clipboard-jh.legacyPackages.${final.stdenv.hostPlatform.system})
         clipboard-jh
@@ -15,17 +15,14 @@
     })
   ];
 
-  # cb backs the system-clipboard plugin (<C-y>), which copies files for GUI
-  # apps to paste, so only the desktop role selects it. Without cb the plugin
-  # just reports the failure.
-  features.yazi-clipboard.homeManager =
-    { pkgs, ... }:
-    {
-      home.packages = [ pkgs.clipboard-jh ];
-    };
-
   features.yazi.homeManager =
-    { config, pkgs, ... }:
+    {
+      config,
+      lib,
+      osConfig,
+      pkgs,
+      ...
+    }:
     let
       yazi-plugins = pkgs.fetchFromGitHub {
         owner = "yazi-rs";
@@ -39,6 +36,13 @@
         ".config/yazi/yazi.toml".source = ./config/yazi.toml;
         ".config/yazi/keymap.toml".source = ./config/keymap.toml;
       };
+
+      # cb backs the system-clipboard plugin (<C-y>), which copies files for
+      # GUI apps to paste, so headless machines skip it; there the plugin just
+      # reports the failure. Every Mac has a desktop.
+      home.packages = lib.optional (
+        pkgs.stdenv.hostPlatform.isDarwin || osConfig.services.graphical-desktop.enable
+      ) pkgs.clipboard-jh;
 
       programs.yazi = {
         enable = true;
