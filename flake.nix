@@ -57,6 +57,13 @@
       url = "github:el-kurto/nix-dokploy";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Helium isn't in nixpkgs; this repackages its official Linux .deb and is
+    # bumped by a bot. The Mac gets the Homebrew cask instead.
+    helium = {
+      url = "github:oxcl/nix-flake-helium-browser";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);

@@ -4,10 +4,22 @@
 #
 # Ghostty is excluded: its super+ binds (modules/features/gui/ghostty.nix)
 # already behave like the Mac, and Ctrl+C has to stay an interrupt there.
-# exact_match passes every unlisted combo through untouched, e.g. niri's
-# Alt+Super+Shift+hjkl resize and Super+Space for Vicinae. niri never sees
+# exact_match passes every unlisted combo through untouched, e.g.
+# Super+Space for Vicinae and Super+Shift+X for screenshots. niri never sees
 # the combos listed here, so keep its Super binds off these keys.
 keymap:
+  # Physical Ctrl+S/D go back/forward in Helium (as on the Mac, where Helium's
+  # own shortcut settings do it: features/gui/helium.nix). Remapped output
+  # isn't matched again, so Super+S still saves via the rule below and
+  # Super+D bookmarks like Cmd+D.
+  - name: Helium navigation
+    application:
+      only: [helium]
+    exact_match: true
+    remap:
+      C-s: Alt-left
+      C-d: Alt-right
+      Super-d: C-d
   - name: Cmd shortcuts
     application:
       not: [com.mitchellh.ghostty]

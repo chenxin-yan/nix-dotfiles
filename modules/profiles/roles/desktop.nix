@@ -10,6 +10,7 @@
     espanso
     fonts
     ghostty
+    helium
     obsidian
     telegram
     todoist
