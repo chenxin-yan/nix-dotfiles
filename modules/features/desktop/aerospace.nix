@@ -62,10 +62,12 @@
               alt-shift-ctrl-k = "move-node-to-monitor up";
               alt-shift-ctrl-l = "move-node-to-monitor right";
 
-              alt-cmd-shift-h = "resize width +30";
-              alt-cmd-shift-l = "resize width -30";
-              alt-cmd-shift-k = "resize height +30";
-              alt-cmd-shift-j = "resize height -30";
+              # niri's Mod+-/= (width) and Mod+Shift+-/= (height). Option+-/=
+              # no longer type – — ≠ ±.
+              alt-minus = "resize width -50";
+              alt-equal = "resize width +50";
+              alt-shift-minus = "resize height -50";
+              alt-shift-equal = "resize height +50";
 
               alt-shift-f = "fullscreen";
               # Hyper (home-row g/h) + Space: Ghostty, opened or focused. niri

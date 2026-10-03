@@ -7,8 +7,6 @@
 //   - Mod+D (launcher): zsh's fzf cd is Alt+D; Vicinae is on Super+Space.
 //   - Mod+Q (close): Cmd+Q/Cmd+W habits cover it (Super+Q below).
 //   - Mod+T (terminal): Hyper+Space, the same key as on the Mac.
-//   - Mod+-/= and Mod+Shift+-/= (resize): AeroSpace's Mod+Super+Shift+hjkl
-//     is the one resize key on both machines.
 //   - arrow-key variants: xremap turns Alt+Left/Right into word jumps before
 //     niri sees them (xremap/config.yml); hjkl covers them.
 binds {
@@ -111,11 +109,10 @@ binds {
     Mod+Shift+R      { switch-preset-column-width-back; }
     Mod+Ctrl+Shift+R { switch-preset-window-height; }
     Mod+Ctrl+R       { reset-window-height; }
-    // AeroSpace's alt-cmd-shift-hjkl resize (Super is Cmd).
-    Mod+Super+Shift+H { set-column-width "+10%"; }
-    Mod+Super+Shift+L { set-column-width "-10%"; }
-    Mod+Super+Shift+K { set-window-height "+10%"; }
-    Mod+Super+Shift+J { set-window-height "-10%"; }
+    Mod+Minus        { set-column-width "-10%"; }
+    Mod+Equal        { set-column-width "+10%"; }
+    Mod+Shift+Minus  { set-window-height "-10%"; }
+    Mod+Shift+Equal  { set-window-height "+10%"; }
 
     Mod+F       { maximize-column; }
     Mod+Shift+F { fullscreen-window; }
