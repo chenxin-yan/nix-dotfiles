@@ -17,7 +17,7 @@ input {
         // Two-finger click is a right click, like a MacBook trackpad.
         click-method "clickfinger"
         // libinput default is 0.0; range -1.0..1.0. 
-        accel-speed 0.7
+        accel-speed 0.6
     }
 
     touch {
