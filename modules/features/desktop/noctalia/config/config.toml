@@ -1,8 +1,8 @@
 # Noctalia v5. Reference: https://docs.noctalia.dev/noctalia/configuration/
 # Check edits with `noctalia config validate`.
 
+# font_family defaults to fontconfig's sans-serif: Geist (fonts feature).
 [shell]
-font_family = "Geist"
 # The shell answers polkit prompts (1Password, pkexec); niri ships no agent.
 polkit_agent = true
 

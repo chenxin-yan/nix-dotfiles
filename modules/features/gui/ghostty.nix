@@ -8,7 +8,8 @@
         # needs Xcode/Swift); ghostty-bin repackages the official signed .dmg.
         package = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
         settings = {
-          font-family = "JetBrainsMono Nerd Font";
+          # Icons come from Ghostty's bundled Nerd Font symbols.
+          font-family = "JetBrains Mono";
           # Compensate for 2x Wayland scaling on Linux
           font-size = if pkgs.stdenv.hostPlatform.isLinux then 12 else 14;
           adjust-underline-position = 4;

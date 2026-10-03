@@ -8,6 +8,8 @@
       programs.vicinae = {
         enable = true;
         systemd.enable = true;
+        # The system UI font (fonts feature) instead of its bundled Inter.
+        settings.font.normal.family = "system";
       };
     };
 }
