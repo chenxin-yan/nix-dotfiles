@@ -15,6 +15,8 @@
       environment.systemPackages = with pkgs; [
         # niri spawns it on demand when an X11 client connects.
         xwayland-satellite
+        # wl-copy/wl-paste: Neovim's "+ register and CLI tools use them.
+        wl-clipboard
       ];
 
       # Electron and Chromium apps run natively on Wayland.

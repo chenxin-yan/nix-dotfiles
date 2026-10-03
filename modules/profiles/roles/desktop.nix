@@ -16,6 +16,7 @@
     todoist
     vesktop
     wechat
+    yazi-clipboard
 
     # Keyboards
     kanata # built-in laptop keyboard
