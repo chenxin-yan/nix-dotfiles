@@ -53,6 +53,29 @@ in
           };
         };
 
+        # GitHub can't reach the tailnet, so Funnel publishes only the deploy
+        # webhooks (/api/deploy/github checks GitHub's signature, the others a
+        # per-app token); the UI and API stay tailnet-only. Port 8443 because
+        # Traefik holds 443. Needs the tailnet policy to grant this node the
+        # funnel attribute.
+        systemd.services.dokploy-webhook-funnel = {
+          after = [
+            "tailscaled.service"
+            "dokploy-stack.service"
+          ];
+          wants = [ "tailscaled.service" ];
+          wantedBy = [ "multi-user.target" ];
+          path = [ pkgs.tailscale ];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            Restart = "on-failure";
+            RestartSec = 30;
+          };
+          script = "tailscale funnel --bg --yes --https=8443 --set-path=/api/deploy http://127.0.0.1:3000/api/deploy";
+          preStop = "tailscale funnel --https=8443 --set-path=/api/deploy off";
+        };
+
         networking.firewall.extraCommands =
           let
             rules = pkgs.writeText "docker-user.rules" ''
