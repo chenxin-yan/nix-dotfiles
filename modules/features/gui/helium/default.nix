@@ -21,7 +21,6 @@ let
     lnjaiaapbakfhlbjenjkhffcdpoompki = "Catppuccin for Web File Explorer Icons";
     hlepfoohegkhhmjieoechaddaejaokhf = "Refined GitHub";
     mnjggcdmjocbbbhaepdhchncahnbgone = "SponsorBlock";
-    clngdbkpkpeebahjckkjfobafhncgmne = "Stylus";
     gfbliohnnapiefjpjlpjnehglfpaknnc = "Surfingkeys";
   };
   surfingkeysId = "gfbliohnnapiefjpjlpjnehglfpaknnc";
