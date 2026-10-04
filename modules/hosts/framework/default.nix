@@ -129,6 +129,15 @@
           shell = pkgs.zsh;
         };
 
+        # The default system service re-runs Home Manager only when its
+        # generation changes, so a switch that changes nothing skipped steps
+        # that sync app-owned state (Helium's Preferences). As a user service,
+        # Home Manager restarts it on every switch, like nix-darwin's
+        # activation. Headless hosts keep the default, which activates before
+        # logins at boot. Drop once the default mode re-runs on every switch:
+        # https://github.com/nix-community/home-manager/issues/10030
+        home-manager.startAsUserService = true;
+
         # The NixOS release this machine was installed with; read the release notes before changing.
         system.stateVersion = "26.05";
       };
