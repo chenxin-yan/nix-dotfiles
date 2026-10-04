@@ -28,6 +28,11 @@ community_palette = "Catppuccin Mocha Lavender"
 enable_builtin_templates = false
 enable_community_templates = false
 
+# Installed by noctalia/default.nix. Picking another in the wallpaper panel
+# saves to settings.toml, which overrides this.
+[wallpaper.default]
+path = "~/Pictures/Wallpapers/jungle-cats-hideaway.jpg"
+
 # Blurred wallpaper behind niri's overview (layer-rule in niri's config.kdl).
 [backdrop]
 enabled = true

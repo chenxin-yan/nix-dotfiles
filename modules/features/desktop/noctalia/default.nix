@@ -60,5 +60,25 @@
     lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       xdg.configFile."noctalia".source =
         config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/desktop/noctalia/config";
+
+      # Catppuccin Mocha recolours from wallppuccin, fetched at a pinned commit
+      # rather than copied in: the repo has no licence and most images are
+      # third-party art. ~/Pictures is the folder Noctalia's picker browses;
+      # config/config.toml picks the default.
+      home.file =
+        lib.mapAttrs'
+          (
+            name: hash:
+            lib.nameValuePair "Pictures/Wallpapers/${name}" {
+              source = pkgs.fetchurl {
+                url = "https://raw.githubusercontent.com/imanubdesigner/wallppuccin/84408d96a3be131c4097bda7b20b8cec2b3b07cd/wallpapers/${name}";
+                inherit hash;
+              };
+            }
+          )
+          {
+            "jungle-cats-hideaway.jpg" = "sha256-GZ9QETKe4XV+LGW3KUU4fudb3/1Rj0FVgOKxiU53li4=";
+            "jupiter.png" = "sha256-fGVRjdjaGgdAoSvwGCY+/EC+oBeBnODF6JGx7xTtQdQ=";
+          };
     };
 }
