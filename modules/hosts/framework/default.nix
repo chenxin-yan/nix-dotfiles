@@ -76,6 +76,9 @@
         boot.initrd.systemd.enable = true;
         boot.initrd.luks.devices.cryptroot = {
           device = "/dev/disk/by-partuuid/0644c44e-5125-4041-86ec-81fc78a64f1b";
+          # Lets fstrim reach the SSD. The tradeoff: someone holding the disk
+          # can tell which blocks are free, never what the others contain.
+          allowDiscards = true;
           crypttabExtraOpts = [
             "tpm2-device=auto"
             "tpm2-measure-pcr=yes"
@@ -84,6 +87,9 @@
         fileSystems."/".device = lib.mkForce "/dev/mapper/cryptroot";
         boot.resumeDevice = "/dev/mapper/cryptroot";
         boot.loader.efi.canTouchEfiVariables = true;
+        # Skip the boot menu; hold Space at power-on to show it (older
+        # generations, firmware setup).
+        boot.loader.timeout = 0;
 
         # Room for a hibernation image of all 64 GB of RAM, on the encrypted
         # root so the image is encrypted too. The offset is the swapfile's
