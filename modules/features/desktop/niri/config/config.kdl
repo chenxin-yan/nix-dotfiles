@@ -136,8 +136,9 @@ window-rule {
     default-window-height { fixed 920; }
 }
 
+// Firefox titles it "Picture-in-Picture", Chromium (Helium) "Picture in picture".
 window-rule {
-    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    match title=r#"^Picture[- ]in[- ][Pp]icture$"#
     open-floating true
 }
 

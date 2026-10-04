@@ -24,6 +24,8 @@
       ];
       # Trash, mounted drives and network places in Nautilus and the dialogs.
       services.gvfs.enable = true;
+      # Space previews the selected file in Nautilus, like Quick Look.
+      services.gnome.sushi.enable = true;
 
       # Electron and Chromium apps run natively on Wayland.
       environment.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -43,6 +45,19 @@
       # catppuccin/nix applies its Papirus icons and cursors through GTK.
       gtk.enable = true;
       catppuccin.cursors.enable = true;
+      # Qt apps: catppuccin/nix themes Kvantum once Qt is on. qtct carries the
+      # style and GTK's icon theme to Qt5 and Qt6 alike.
+      qt = {
+        enable = true;
+        platformTheme.name = "qtct";
+        style.name = "kvantum";
+      }
+      // lib.genAttrs [ "qt5ctSettings" "qt6ctSettings" ] (_: {
+        Appearance = {
+          style = "kvantum";
+          icon_theme = config.gtk.iconTheme.name;
+        };
+      });
       home.pointerCursor = {
         enable = true;
         gtk.enable = true;
