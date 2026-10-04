@@ -46,10 +46,31 @@ cursor {
 
 // Framework Laptop 13 Pro: 13.5" 2880x1920, 30–120 Hz. Try other scales live
 // with `niri msg output eDP-1 scale 2`.
+// Sits centred below the Dell. Positions are logical px, rounded as niri
+// rounds them: the Dell is 3840/1.75 x 2160/1.75 = 2194x1234, this 1646 wide.
 output "eDP-1" {
     mode "2880x1920"
     scale 1.75
     variable-refresh-rate
+    position x=274 y=1234
+}
+
+// 27" 4K desk monitor. Its preferred mode is 60 Hz; the same scale as the
+// laptop keeps windows the same size on both.
+output "Dell Inc. DELL S2725QC 9GSKS84" {
+    mode "3840x2160@120.000"
+    scale 1.75
+    position x=0 y=0
+    focus-at-startup
+}
+
+// With the lid closed, niri moves the laptop's workspaces onto the monitor,
+// below the monitor's own, and the monitor stays where it was. Jump to the
+// window last used: niri updates focus timestamps only after 750 ms of focus,
+// so right after the lid closes this is still the laptop's window. Opening the
+// lid moves the workspaces back by itself.
+switch-events {
+    lid-close { spawn "sh" "-c" r#"id=$(niri msg -j windows | jq -r 'max_by([.focus_timestamp.secs, .focus_timestamp.nanos]) | .id // empty'); [ -n "$id" ] && niri msg action focus-window --id "$id""#; }
 }
 
 layout {
