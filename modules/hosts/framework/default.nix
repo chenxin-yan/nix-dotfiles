@@ -35,9 +35,13 @@
           };
           # The TPM releases the disk key only when firmware (PCR 0), the
           # signed boot chain (4) and the Secure Boot state (7) match; every
-          # rebuild updates the policy. Lanzaboote calls PCRs 1-3 flaky. No TPM
-          # PIN, so the greeter is the only password; the LUKS passphrase in
-          # 1Password is the fallback when the TPM refuses (e.g. BIOS update).
+          # rebuild and boot updates the policy. Lanzaboote calls PCRs 1-3
+          # flaky. No TPM PIN, so the greeter is the only password. After a
+          # BIOS update the TPM refuses once: unlock with the LUKS passphrase
+          # in 1Password, and that boot re-seals for the new firmware. Only
+          # re-enroll (systemd-cryptenroll --wipe-slot=tpm2 --tpm2-device=auto
+          # --tpm2-pcrlock=/var/lib/systemd/pcrlock.json) if pcrlock.json is
+          # deleted.
           measuredBoot = {
             enable = true;
             pcrs = [
