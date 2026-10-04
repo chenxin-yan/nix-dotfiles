@@ -54,11 +54,13 @@ action = "screen_off"
 timeout = 1200
 action = "lock_and_suspend"
 
+# Flush to the edge and full height: niri draws scrolled-off columns into the
+# bar's strip, and a floating bar let slivers of them show around it.
 [bar.default]
 position = "left"
 thickness = 32
-margin_edge = 8
-margin_ends = 8
+margin_edge = 0
+margin_ends = 0
 radius = 10
 start = ["workspaces"]
 center = ["clock"]
