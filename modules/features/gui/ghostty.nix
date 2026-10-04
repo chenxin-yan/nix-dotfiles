@@ -18,7 +18,7 @@
 
           cursor-color = "cell-foreground";
           cursor-text = "cell-background";
-          background-opacity = 0.98;
+          background-opacity = 0.95;
           background-blur = 30;
           window-theme = "ghostty";
 
