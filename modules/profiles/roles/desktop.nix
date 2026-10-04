@@ -29,7 +29,7 @@
     # Linux only: the niri desktop
     niri
     noctalia
-    plymouth
+    quiet-boot
     vicinae
 
     # macOS only
