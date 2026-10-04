@@ -5,7 +5,7 @@
 default:
     @just --list
 
-# Rebuild and switch this host's registered configuration; TARGET only for one-time bootstrap
+# Pull, rebuild and switch this host's registered configuration; TARGET only for one-time bootstrap
 switch TARGET='':
     {{ quote(justfile_directory() / "scripts/utils/switch.sh") }} {{ if TARGET == '' { '' } else { quote(TARGET) } }}
 

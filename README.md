@@ -98,7 +98,7 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 
 | Command                           | What it does                                                          |
 | --------------------------------- | --------------------------------------------------------------------- |
-| `just switch`                     | Rebuild and activate this machine (checks it matches its host entry)  |
+| `just switch`                     | Pull, rebuild and activate this machine (checks its host entry)       |
 | `just switch <target>`            | Same, once, for a machine whose hostname doesn't match its target yet |
 | `just update`                     | Update flake inputs                                                   |
 | `just update-pins`                | Update pinned `fetchFrom*` sources                                    |

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Activate this machine's registered configuration with nh.
+# Pull, then activate this machine's registered configuration with nh.
 #
 # Usage: ./scripts/utils/switch.sh [TARGET]
 #   (none)  The local hostname must be a target registered in modules/hosts/.
@@ -45,6 +45,11 @@ if [ "$os" = darwin ]; then system="$arch-darwin"; else system="$arch-linux"; fi
 uid="$(id -u)"
 login="$(id -un)"
 [ "$uid" != 0 ] || die "run as the normal login user; nh elevates itself"
+
+# Pull first so a switch activates what's pushed, not a stale checkout.
+# --ff-only never merges; offline or diverged warns and switches what's local.
+git -C "$root" pull --ff-only --quiet \
+  || printf 'switch: git pull failed; switching the local checkout as-is\n' >&2
 
 if [ $# -eq 1 ]; then
   target="$1"
