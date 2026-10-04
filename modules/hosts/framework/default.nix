@@ -10,7 +10,12 @@
     ];
 
     nixos =
-      { host, pkgs, ... }:
+      {
+        host,
+        lib,
+        pkgs,
+        ...
+      }:
       {
         imports = [
           ./_hardware-configuration.nix
@@ -39,9 +44,12 @@
           # flaky. No TPM PIN, so the greeter is the only password. After a
           # BIOS update the TPM refuses once: unlock with the LUKS passphrase
           # in 1Password, and that boot re-seals for the new firmware. Only
-          # re-enroll (systemd-cryptenroll --wipe-slot=tpm2 --tpm2-device=auto
-          # --tpm2-pcrlock=/var/lib/systemd/pcrlock.json) if pcrlock.json is
-          # deleted.
+          # re-enroll if pcrlock.json is deleted:
+          #   systemd-cryptenroll --wipe-slot=tpm2 --tpm2-device=auto \
+          #     --tpm2-pcrlock=/var/lib/systemd/pcrlock.json \
+          #     --tpm2-pcrs=15:sha256=0000000000000000000000000000000000000000000000000000000000000000 \
+          #     /dev/nvme0n1p2
+          # (PCR 15 at zero: see cryptroot below.)
           measuredBoot = {
             enable = true;
             pcrs = [
@@ -52,20 +60,38 @@
           };
         };
         environment.systemPackages = [ pkgs.sbctl ];
-        # The root partition is LUKS2, encrypted in place; the ext4 inside keeps
-        # its UUID, so fileSystems."/" is unchanged. systemd's initrd prompts
-        # for the passphrase, or unlocks with the TPM once one is enrolled.
+        # The root partition is LUKS2, encrypted in place. systemd's initrd
+        # unlocks it with the TPM, or prompts for the passphrase.
+        #
+        # A TPM that unlocks without a PIN must only ever hand the key to our
+        # own root. Otherwise an attacker swaps in a partition they control,
+        # our signed initrd boots it with PCRs 0/4/7 intact, and their code
+        # asks the TPM for the real key (oddlama.org/blog/bypassing-disk-
+        # encryption-with-tpm2-unlock). So: the key is also bound to PCR 15
+        # being zero, which tpm2-measure-pcr extends as soon as any volume is
+        # unlocked; and root and resume name the mapper device, so nothing
+        # that skipped the unlock (a plain ext4 or a planted hibernation image
+        # with our UUID) can be used. tpm2-device=auto is still needed: the
+        # measure option turns off the token plugin that would imply it.
         boot.initrd.systemd.enable = true;
         boot.initrd.luks.devices.cryptroot = {
           device = "/dev/disk/by-partuuid/0644c44e-5125-4041-86ec-81fc78a64f1b";
-          crypttabExtraOpts = [ "tpm2-device=auto" ];
+          crypttabExtraOpts = [
+            "tpm2-device=auto"
+            "tpm2-measure-pcr=yes"
+          ];
         };
+        fileSystems."/".device = lib.mkForce "/dev/mapper/cryptroot";
+        boot.resumeDevice = "/dev/mapper/cryptroot";
         boot.loader.efi.canTouchEfiVariables = true;
 
         # Room for a hibernation image of all 64 GB of RAM, on the encrypted
-        # root so the image is encrypted too. No resume=/resume_offset: systemd
-        # stores the image's location in the HibernateLocation EFI variable,
-        # and the initrd resumes from it once the TPM has unlocked the disk.
+        # root so the image is encrypted too. The offset is the swapfile's
+        # first block, as systemd reports it at boot ("Reported hibernation
+        # image: ... offset="); it changes only if the swapfile is recreated.
+        # The resume= above outranks the HibernateLocation EFI variable, which
+        # anything that boots could rewrite.
+        boot.kernelParams = [ "resume_offset=78739456" ];
         swapDevices = [
           {
             device = "/var/lib/swapfile";
