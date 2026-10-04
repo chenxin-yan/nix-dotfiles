@@ -20,6 +20,13 @@ input {
         accel-speed 0.5
     }
 
+    mouse {
+        natural-scroll
+        // libinput default is 0.0; range -1.0..1.0.
+        // accel-speed 0.0
+        // accel-profile "flat"
+    }
+
     touch {
         map-to-output "eDP-1"
     }

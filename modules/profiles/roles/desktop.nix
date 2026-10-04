@@ -22,6 +22,9 @@
     zsa # Voyager: Keymapp (+ udev rules on NixOS)
     xremap # Linux: Mac-style Super shortcuts
 
+    # Mice
+    logitech # Linux: Solaar for MX mice
+
     # Linux only: the niri desktop
     niri
     noctalia
