@@ -5,7 +5,10 @@
 // on monitors and whole workspaces (niri: Shift). The mouse wheel follows it.
 // Left out:
 //   - Mod+D (launcher): zsh's fzf cd is Alt+D; Vicinae is on Super+Space.
-//   - Mod+Q (close): Cmd+Q/Cmd+W habits cover it (Super+Q below).
+//   - Mod+Q (close): Cmd+W closes windows and Cmd+Q quits apps, as on the
+//     Mac (xremap turns them into Ctrl+W/Ctrl+Q; Ghostty binds them itself).
+//     Mod+Shift+Q (i3/sway's key) closes any window; plain Alt+Q stays
+//     zsh's push-line.
 //   - Mod+T (terminal): Hyper+Space, the same key as on the Mac.
 //   - arrow-key variants: xremap turns Alt+Left/Right into word jumps before
 //     niri sees them (xremap/config.yml); hjkl covers them.
@@ -31,8 +34,7 @@ binds {
 
     // Also: top-left hot corner, four-finger swipe up.
     Mod+O repeat=false { toggle-overview; }
-    // Cmd+Q on the Mac; Cmd+W (Super+W) reaches apps as Ctrl+W via xremap.
-    Super+Q repeat=false hotkey-overlay-title="Close window" { close-window; }
+    Mod+Shift+Q repeat=false hotkey-overlay-title="Close window" { close-window; }
 
     // Columns left/right, windows within a column up/down.
     Mod+H { focus-column-left; }

@@ -39,6 +39,7 @@
             "performable:super+c=copy_to_clipboard"
             "performable:super+v=paste_from_clipboard"
             "super+w=close_surface"
+            "super+q=quit"
             "super+t=new_tab"
             # Ghostty's macOS tab keys; Ctrl+Alt+hjkl belong to the window
             # manager (niri and AeroSpace focus monitors with them).

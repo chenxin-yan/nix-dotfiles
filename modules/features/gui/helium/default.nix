@@ -85,6 +85,10 @@ let
         added = [ "Meta+KeyD" ];
         removed = [ "Control+KeyD" ];
       };
+      # Cmd+Q arrives as Ctrl+Q, the Linux quit key; Chromium only has
+      # Ctrl+Shift+Q. Quitting (not closing windows one by one) is what lets
+      # RestoreOnStartup bring every window back.
+      "34031".added = [ "Control+KeyQ" ]; # IDC_EXIT
     };
     darwin = {
       "52500" = {
@@ -99,6 +103,7 @@ let
   policies = {
     BrowserSignin = 0;
     SyncDisabled = true;
+    RestoreOnStartup = 1; # continue where you left off
     # 1Password owns passwords and autofill.
     PasswordManagerEnabled = false;
     AutofillAddressEnabled = false;

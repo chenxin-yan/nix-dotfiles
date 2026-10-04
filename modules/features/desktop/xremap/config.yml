@@ -32,6 +32,8 @@ keymap:
       Super-t: C-t
       Super-Shift-t: C-Shift-t
       Super-w: C-w
+      # Quit, the Linux convention for the whole app (Helium maps it to Exit).
+      Super-q: C-q
       Super-r: C-r
       Super-l: C-l
       Super-b: C-b
