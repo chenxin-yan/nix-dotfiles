@@ -23,6 +23,7 @@ binds {
     Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "deeplink" "vicinae://launch/clipboard/history"; }
     Super+Alt+L repeat=false hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
     Super+Ctrl+Q repeat=false hotkey-overlay-title=null { spawn "noctalia" "msg" "session" "lock"; }
+    Super+Alt+P repeat=false { power-off-monitors; }
     // Noctalia's suggested binds; its Mod+Comma settings bind would take
     // niri's consume-window-into-column, hence Shift.
     Mod+S repeat=false hotkey-overlay-title="Control center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
@@ -58,13 +59,14 @@ binds {
     Mod+Shift+Ctrl+L { move-column-to-monitor-right; }
 
     // Workspaces are a vertical, dynamic stack per monitor (an empty one is
-    // always at the bottom). Numbers go by position.
-    Mod+U               { focus-workspace-down; }
-    Mod+I               { focus-workspace-up; }
-    Mod+Shift+U         { move-column-to-workspace-down; }
-    Mod+Shift+I         { move-column-to-workspace-up; }
-    Mod+Ctrl+U          { move-workspace-down; }
-    Mod+Ctrl+I          { move-workspace-up; }
+    // always at the bottom). Numbers go by position. N/P (next/previous, like
+    // Ctrl+N/P in zsh and Vim) instead of niri's default U/I.
+    Mod+N               { focus-workspace-down; }
+    Mod+P               { focus-workspace-up; }
+    Mod+Shift+N         { move-column-to-workspace-down; }
+    Mod+Shift+P         { move-column-to-workspace-up; }
+    Mod+Ctrl+N          { move-workspace-down; }
+    Mod+Ctrl+P          { move-workspace-up; }
     Mod+Tab             { focus-workspace-previous; }
     Mod+Shift+Tab       { move-workspace-to-monitor-next; }
 
@@ -151,5 +153,4 @@ binds {
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
     Mod+Shift+E { quit; }
     Ctrl+Alt+Delete { quit; }
-    Mod+Shift+P { power-off-monitors; }
 }
