@@ -11,8 +11,11 @@
 #   - Surfingkeys reads its keymap from ./surfingkeys.js through its native
 #     host (headless Neovim running the project's server.lua).
 #   - Everything else (layout, toolbar, theme, Helium's own shortcuts) lives in
-#     the profile's Preferences file. Each switch merges `preferences` into it
+#     each profile's Preferences file. Each switch merges `preferences` into it
 #     while Helium is closed; a UI change lasts until the next switch.
+#   - Profiles are registered in Local State's profile.info_cache, also merged
+#     on each switch; Helium creates a new profile's data when it's first
+#     opened. Policies and extensions apply to every profile.
 { config, inputs, ... }:
 let
   # Chrome Web Store ID → name.
@@ -24,6 +27,13 @@ let
     gfbliohnnapiefjpjlpjnehglfpaknnc = "Surfingkeys";
   };
   surfingkeysId = "gfbliohnnapiefjpjlpjnehglfpaknnc";
+
+  # Profile directory → display name. Removing one here only stops managing
+  # it; delete it in Helium to drop its data.
+  profiles = {
+    Default = "Personal";
+    NYU = "NYU";
+  };
 
   # Only what differs from Helium's defaults (registered in its source,
   # imputnet/helium patches/helium). None of these keys is a Chromium
@@ -148,10 +158,9 @@ in
       {
         home.activation.heliumPreferences =
           let
-            prefs = "$HOME/${dataDir}/Default/Preferences";
             pgrep = if isLinux then lib.getExe' pkgs.procps "pgrep" else "/usr/bin/pgrep";
             jq = lib.getExe pkgs.jq;
-            fragment = pkgs.writeText "helium-preferences.json" (
+            preferencesFragment = pkgs.writeText "helium-preferences.json" (
               builtins.toJSON (
                 lib.recursiveUpdate preferences {
                   helium.browser.custom_accelerators =
@@ -159,14 +168,28 @@ in
                 }
               )
             );
+            localStateFragment = pkgs.writeText "helium-local-state.json" (
+              builtins.toJSON {
+                profile.info_cache = lib.mapAttrs (_: name: {
+                  inherit name;
+                  is_using_default_name = false;
+                }) profiles;
+              }
+            );
+            merge = file: fragment: ''
+              run mkdir -p "$(dirname "${file}")"
+              [ -f "${file}" ] || run sh -c 'echo "{}" > "${file}"'
+              run sh -c '${jq} -s ".[0] * .[1]" "${file}" ${fragment} > "${file}.nix-tmp" && mv "${file}.nix-tmp" "${file}"'
+            '';
           in
           lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             if ${pgrep} -x '${if isLinux then "helium" else "Helium"}' >/dev/null; then
               warnEcho "Helium is running; quit it and switch again to apply its preferences."
             else
-              run mkdir -p "$(dirname "${prefs}")"
-              [ -f "${prefs}" ] || run sh -c 'echo "{}" > "${prefs}"'
-              run sh -c '${jq} -s ".[0] * .[1]" "${prefs}" ${fragment} > "${prefs}.nix-tmp" && mv "${prefs}.nix-tmp" "${prefs}"'
+              ${merge "$HOME/${dataDir}/Local State" localStateFragment}
+              ${lib.concatMapStrings (dir: merge "$HOME/${dataDir}/${dir}/Preferences" preferencesFragment) (
+                lib.attrNames profiles
+              )}
             fi
           '';
 
