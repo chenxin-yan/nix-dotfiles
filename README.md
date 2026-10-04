@@ -150,6 +150,7 @@ Nix doesn't update these; check them every few months.
 ### Things to know
 
 - **`git add` new files before switching.** Git-backed flakes don't see untracked files.
+- **Servers switch themselves.** NixOS hosts with `auto-upgrade` (the `server` role) pull their `~/dotfiles` and rebuild from `main` on GitHub nightly at 04:40, so a switch of unpushed changes lasts until then. `sudo systemctl start nixos-upgrade` runs it now.
 - **SSH accepts only keys declared in Nix.** No passwords, no root, and `~/.ssh/authorized_keys` is ignored. Every machine accepts `desktopKey` in `modules/features/system/sshd.nix` and each host's `sshKey`, so any fleet machine reaches any other as `ssh <name>`, with its host key pinned once enrolled.
 - **Homebrew removes what isn't declared.** Activation runs with `cleanup = "zap"`, so declare casks in the feature they belong to (`darwin.homebrew.casks`).
 - **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/cli/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/cli/zsh/scripts/`) apply without a rebuild.

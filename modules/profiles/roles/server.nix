@@ -3,5 +3,7 @@
 {
   features.server.includes = with config.features; [
     fleet
+    auto-upgrade
+    obsidian-headless
   ];
 }

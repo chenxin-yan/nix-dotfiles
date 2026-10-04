@@ -12,7 +12,6 @@
       server
       secrets
       hermes
-      obsidian-headless
       dokploy
     ];
 
