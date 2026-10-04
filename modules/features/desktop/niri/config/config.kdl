@@ -84,6 +84,15 @@ layer-rule {
     place-within-backdrop true
 }
 
+// Noctalia asks for blur itself (ext-background-effect); blur what's really
+// behind its surfaces rather than only the wallpaper.
+layer-rule {
+    match namespace=r#"^noctalia-(bar-[^"]+|notification|dock|panel|attached-panel|osd)$"#
+    background-effect {
+        xray false
+    }
+}
+
 recent-windows {
     highlight {
         active-color "#b4befe"
@@ -107,9 +116,15 @@ hotkey-overlay {
 // Let windows drop their own titlebars so the focus ring wraps them.
 prefer-no-csd
 
+// Blur shows only behind translucent windows (Ghostty). Non-xray blur is
+// experimental in niri: it drops out during open/close animations.
 window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
+    background-effect {
+        blur true
+        xray false
+    }
 }
 
 window-rule {
