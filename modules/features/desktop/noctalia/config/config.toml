@@ -5,6 +5,8 @@
 [shell]
 # The shell answers polkit prompts (1Password, pkexec); niri ships no agent.
 polkit_agent = true
+# This file is the setup; don't open the first-run wizard on a fresh profile.
+setup_wizard_enabled = false
 
 # Keep the login screen's wallpaper and palette in step with the shell's
 # (allowed without a password by noctalia/default.nix).
