@@ -42,6 +42,14 @@
       xdg.configFile."niri".source =
         config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/desktop/niri/config";
 
+      # Opening a folder (xdg-open, yazi's own opener) lands in yazi, in
+      # Ghostty (xdg.terminal-exec in gui/ghostty.nix). Explicit because
+      # Nautilus, installed above for the file dialogs, also claims folders.
+      xdg.mimeApps = {
+        enable = true;
+        defaultApplications."inode/directory" = "yazi.desktop";
+      };
+
       # catppuccin/nix applies its Papirus icons and cursors through GTK.
       gtk.enable = true;
       catppuccin.cursors.enable = true;
