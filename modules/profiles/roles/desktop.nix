@@ -29,6 +29,7 @@
     # Linux only: the niri desktop
     niri
     noctalia
+    plymouth
     vicinae
 
     # macOS only
