@@ -15,6 +15,7 @@
     telegram
     todoist
     vesktop
+    viewers # Linux: mpv, imv, zathura
     wechat
 
     # Keyboards
