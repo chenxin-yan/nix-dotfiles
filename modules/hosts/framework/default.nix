@@ -115,6 +115,23 @@
         # Ryzen AI 300 support keeps improving upstream; Framework recommends the latest kernel.
         boot.kernelPackages = pkgs.linuxPackages_latest;
 
+        # Prefer the desk monitor over the laptop speakers (priority 1009).
+        # Keep sink priority below 1500 so its monitor doesn't become the mic:
+        # https://pipewire.pages.freedesktop.org/wireplumber/daemon/configuration/alsa.html#node-properties
+        services.pipewire.wireplumber.extraConfig."51-dell-audio" = {
+          "monitor.alsa.rules" = [
+            {
+              matches = [
+                {
+                  "media.class" = "Audio/Sink";
+                  "alsa.name" = "DELL S2725QC";
+                }
+              ];
+              actions.update-props."priority.session" = 1200;
+            }
+          ];
+        };
+
         networking.networkmanager.enable = true;
         time.timeZone = "America/Los_Angeles";
 
