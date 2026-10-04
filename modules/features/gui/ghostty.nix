@@ -56,5 +56,13 @@
           ++ map (n: "super+${toString n}=goto_tab:${toString n}") (lib.range 1 9);
         };
       };
+
+      # The terminal that GLib (Nautilus, xdg-open, launchers) runs
+      # Terminal=true apps such as yazi.desktop in. Without it GLib only tries
+      # gnome-terminal, kgx and xterm, and the launch silently fails.
+      xdg.terminal-exec = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        enable = true;
+        settings.default = [ "com.mitchellh.ghostty.desktop" ];
+      };
     };
 }

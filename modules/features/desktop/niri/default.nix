@@ -17,7 +17,13 @@
         xwayland-satellite
         # wl-copy/wl-paste: Neovim's "+ register and CLI tools use them.
         wl-clipboard
+        # The GNOME portal's file chooser (Open/Save dialogs) is Nautilus
+        # since xdg-desktop-portal-gnome 47 (niri's "Important Software").
+        # Also a Finder-like file manager, and "Show in folder" target.
+        nautilus
       ];
+      # Trash, mounted drives and network places in Nautilus and the dialogs.
+      services.gvfs.enable = true;
 
       # Electron and Chromium apps run natively on Wayland.
       environment.sessionVariables.NIXOS_OZONE_WL = "1";

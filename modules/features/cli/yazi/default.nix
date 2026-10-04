@@ -82,6 +82,14 @@
         '';
       };
 
+      # Opening a folder (xdg-open, yazi's own opener) lands in yazi, in
+      # Ghostty (xdg.terminal-exec in gui/ghostty.nix). Explicit because
+      # Nautilus, installed for niri's file dialogs, also claims folders.
+      xdg.mimeApps = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        enable = true;
+        defaultApplications."inode/directory" = "yazi.desktop";
+      };
+
       programs.zsh.initContent = ''
         yazi-widget() {
           local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
