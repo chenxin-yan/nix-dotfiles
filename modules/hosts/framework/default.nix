@@ -26,12 +26,25 @@
         boot.lanzaboote = {
           enable = true;
           pkiBundle = "/var/lib/sbctl";
-          # Measured boot (next stage) allows at most 4.
+          # systemd-pcrlock, behind measured boot, allows at most 4.
           configurationLimit = 4;
           autoGenerateKeys.enable = true;
           autoEnrollKeys = {
             enable = true;
             includeFirmwareBuiltinKeys = true;
+          };
+          # The TPM releases the disk key only when firmware (PCR 0), the
+          # signed boot chain (4) and the Secure Boot state (7) match; every
+          # rebuild updates the policy. Lanzaboote calls PCRs 1-3 flaky. No TPM
+          # PIN, so the greeter is the only password; the LUKS passphrase in
+          # 1Password is the fallback when the TPM refuses (e.g. BIOS update).
+          measuredBoot = {
+            enable = true;
+            pcrs = [
+              0
+              4
+              7
+            ];
           };
         };
         environment.systemPackages = [ pkgs.sbctl ];
