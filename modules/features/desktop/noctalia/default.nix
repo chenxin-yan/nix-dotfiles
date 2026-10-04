@@ -61,31 +61,37 @@
       xdg.configFile."noctalia".source =
         config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/desktop/noctalia/config";
 
-      # Catppuccin Mocha recolours from abhishekpaul724/catppuccin-mocha-wallpapers,
-      # fetched at a pinned commit rather than copied in: the repo has no
-      # licence. Upstream names contain spaces, which store paths reject, so
-      # each gets a local name. ~/Pictures is the folder Noctalia's picker
-      # browses; config/config.toml picks the default.
+      # Catppuccin Mocha wallpapers from abhishekpaul724/catppuccin-mocha-wallpapers
+      # and orangci/walls-catppuccin-mocha, fetched at pinned commits rather
+      # than copied in: neither repo has a licence. Some upstream names contain
+      # spaces, which store paths reject, so each gets a local name.
+      # ~/Pictures is the folder Noctalia's picker browses; config/config.toml
+      # picks the default.
       home.file =
+        let
+          abhishekpaul724 = "https://raw.githubusercontent.com/abhishekpaul724/catppuccin-mocha-wallpapers/92ed6972477babf92040e2a7179825a9897906e2/pc-catppuccin-mocha-wallpapers";
+          orangci = "https://raw.githubusercontent.com/orangci/walls-catppuccin-mocha/7bfdf10d16ad3a689f9f0cf3a0930da3d1a245a8";
+        in
         lib.mapAttrs'
           (
             name:
-            { file, hash }:
+            { url, hash }:
             lib.nameValuePair "Pictures/Wallpapers/${name}" {
-              source = pkgs.fetchurl {
-                inherit name hash;
-                url = "https://raw.githubusercontent.com/abhishekpaul724/catppuccin-mocha-wallpapers/92ed6972477babf92040e2a7179825a9897906e2/pc-catppuccin-mocha-wallpapers/${file}";
-              };
+              source = pkgs.fetchurl { inherit name url hash; };
             }
           )
           {
             "city-bedroom.png" = {
-              file = "Screenshot%202025-06-16%20000024-catppuccin-mocha.png";
+              url = "${abhishekpaul724}/Screenshot%202025-06-16%20000024-catppuccin-mocha.png";
               hash = "sha256-WMzuv+u5WJhVRkGPlul0oEDSaliutpGLNuJ1YXla68w=";
             };
             "neon-street.png" = {
-              file = "Screenshot%202025-07-20%20121133-catppuccin-mocha.png";
+              url = "${abhishekpaul724}/Screenshot%202025-07-20%20121133-catppuccin-mocha.png";
               hash = "sha256-wD/kUMqbJU1lLuKrLxOIDzM63DQhrAXrjb6pmktoaUM=";
+            };
+            "flowers-16.jpg" = {
+              url = "${orangci}/flowers-16.jpg";
+              hash = "sha256-6SnEvVnsq8vXKcv7tXQ796xpbtegAwy1D4m3f9EF71I=";
             };
           };
     };

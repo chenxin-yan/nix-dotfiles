@@ -33,7 +33,7 @@ enable_community_templates = false
 # Installed by noctalia/default.nix. Picking another in the wallpaper panel
 # saves to settings.toml, which overrides this.
 [wallpaper.default]
-path = "~/Pictures/Wallpapers/city-bedroom.png"
+path = "~/Pictures/Wallpapers/neon-street.png"
 
 # Blurred wallpaper behind niri's overview (layer-rule in niri's config.kdl).
 [backdrop]
