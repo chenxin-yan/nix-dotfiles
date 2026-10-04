@@ -61,6 +61,20 @@
           crypttabExtraOpts = [ "tpm2-device=auto" ];
         };
         boot.loader.efi.canTouchEfiVariables = true;
+
+        # Room for a hibernation image of all 64 GB of RAM, on the encrypted
+        # root so the image is encrypted too. No resume=/resume_offset: systemd
+        # stores the image's location in the HibernateLocation EFI variable,
+        # and the initrd resumes from it once the TPM has unlocked the disk.
+        swapDevices = [
+          {
+            device = "/var/lib/swapfile";
+            size = 64 * 1024;
+          }
+        ];
+        # With no HibernateDelaySec, systemd hibernates only when the battery
+        # runs low; Noctalia's suspend uses the same mode (noctalia/config).
+        services.logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";
         # Ryzen AI 300 support keeps improving upstream; Framework recommends the latest kernel.
         boot.kernelPackages = pkgs.linuxPackages_latest;
 

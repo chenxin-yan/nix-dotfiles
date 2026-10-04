@@ -11,6 +11,11 @@ polkit_agent = true
 [shell.greeter_sync]
 auto_sync = true
 
+# Idle, the session menu and IPC suspend like the lid does (logind, in
+# hosts/framework): hibernate before the battery runs out.
+[shell.session.power]
+suspend = "systemctl suspend-then-hibernate"
+
 [theme]
 # The fleet palette (modules/features/theme.nix). The built-in "Catppuccin"
 # uses Mauve; this catalog palette is Mocha with Lavender. Downloaded and
