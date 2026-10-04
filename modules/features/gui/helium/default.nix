@@ -8,8 +8,6 @@
 #   - Extensions: External Extensions files, which Helium installs through
 #     its own Web Store proxy at startup (needs Helium's services, on by
 #     default).
-#   - Surfingkeys reads its keymap from ./surfingkeys.js through its native
-#     host (headless Neovim running the project's server.lua).
 #   - Everything else (layout, toolbar, theme, Helium's own shortcuts) lives in
 #     each profile's Preferences file. Each switch merges `preferences` into it
 #     while Helium is closed; a UI change lasts until the next switch.
@@ -25,9 +23,7 @@ let
     lnjaiaapbakfhlbjenjkhffcdpoompki = "Catppuccin for Web File Explorer Icons";
     hlepfoohegkhhmjieoechaddaejaokhf = "Refined GitHub";
     mnjggcdmjocbbbhaepdhchncahnbgone = "SponsorBlock";
-    gfbliohnnapiefjpjlpjnehglfpaknnc = "Surfingkeys";
   };
-  surfingkeysId = "gfbliohnnapiefjpjlpjnehglfpaknnc";
 
   # Profile directory → display name. Removing one here only stops managing
   # it; delete it in Helium to drop its data.
@@ -133,7 +129,6 @@ in
 
     homeManager =
       {
-        config,
         lib,
         pkgs,
         ...
@@ -142,16 +137,6 @@ in
         inherit (pkgs.stdenv.hostPlatform) isLinux;
         dataDir =
           if isLinux then ".config/net.imput.helium" else "Library/Application Support/net.imput.helium";
-
-        surfingkeysServer = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/brookhong/Surfingkeys/1812ec78e7b074d71f41fb19789135a65780339c/src/nvim/server/server.lua";
-          hash = "sha256-aGGZXwjSHw08xolg0z3TblNYNbWV/DDkWxgMIiH9eww=";
-        };
-        # --clean: the host only serves the settings file, so skip loading the
-        # whole Neovim config on every page load.
-        surfingkeysHost = pkgs.writeShellScript "surfingkeys-host" ''
-          exec ${lib.getExe pkgs.neovim} --clean --headless -c "luafile ${surfingkeysServer}"
-        '';
       in
       {
         home.activation.heliumPreferences =
@@ -201,18 +186,7 @@ in
           ''
         );
 
-        home.file = {
-          ".surfingkeys.js".source =
-            config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/gui/helium/surfingkeys.js";
-          "${dataDir}/NativeMessagingHosts/surfingkeys.json".text = builtins.toJSON {
-            name = "surfingkeys";
-            description = "Surfingkeys settings from ~/.surfingkeys.js";
-            path = "${surfingkeysHost}";
-            type = "stdio";
-            allowed_origins = [ "chrome-extension://${surfingkeysId}/" ];
-          };
-        }
-        // lib.mapAttrs' (
+        home.file = lib.mapAttrs' (
           id: _:
           lib.nameValuePair "${dataDir}/External Extensions/${id}.json" {
             # Helium's stand-in for the Web Store's update URL: only that host is
