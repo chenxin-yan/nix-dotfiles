@@ -15,9 +15,26 @@
         imports = [
           ./_hardware-configuration.nix
           inputs.nixos-hardware.nixosModules.framework-amd-ai-300-series
+          inputs.lanzaboote.nixosModules.lanzaboote
         ];
 
-        boot.loader.systemd-boot.enable = true;
+        # Secure Boot with our own keys: lanzaboote signs every boot entry.
+        # Keys are generated on first boot into /var/lib/sbctl (on the
+        # encrypted root) and written to the firmware by systemd-boot once the
+        # BIOS is put in setup mode. Microsoft's and Framework's built-in keys
+        # are kept: option ROMs and Framework's firmware updates need them.
+        boot.lanzaboote = {
+          enable = true;
+          pkiBundle = "/var/lib/sbctl";
+          # Measured boot (next stage) allows at most 4.
+          configurationLimit = 4;
+          autoGenerateKeys.enable = true;
+          autoEnrollKeys = {
+            enable = true;
+            includeFirmwareBuiltinKeys = true;
+          };
+        };
+        environment.systemPackages = [ pkgs.sbctl ];
         # The root partition is LUKS2, encrypted in place; the ext4 inside keeps
         # its UUID, so fileSystems."/" is unchanged. systemd's initrd prompts
         # for the passphrase, or unlocks with the TPM once one is enrolled.
