@@ -17,7 +17,7 @@
 
       vencord = {
         settings = {
-          autoUpdate = false;
+          autoUpdate = true;
           autoUpdateNotification = false;
           useQuickCss = true;
           disableMinSize = true;
@@ -35,7 +35,8 @@
             };
           };
         };
-        useSystem = true;
+        # Discord updates independently of Nix; keep Vencord's compatibility fixes current.
+        useSystem = false;
       };
     };
   };
