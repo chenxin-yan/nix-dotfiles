@@ -15,6 +15,8 @@ binds {
     // Apps and session.
     // Hyper (home-row g/h) + Space, as in AeroSpace.
     Mod+Super+Ctrl+Shift+Space hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
+    // Hyper+B: focus Helium's most recent window, or launch it.
+    Mod+Super+Ctrl+Shift+B repeat=false hotkey-overlay-title="Browser: Helium" { spawn-sh r#"id=$(niri msg -j windows | jq -r '[.[] | select((.app_id // "") | test("helium"; "i"))] | max_by([.focus_timestamp.secs, .focus_timestamp.nanos]) | .id // empty'); if [ -n "$id" ]; then niri msg action focus-window --id "$id"; else helium; fi"#; }
     // Default Mod+D (zsh). Cmd+Space, like Raycast on the Mac.
     Super+Space repeat=false hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
     Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "deeplink" "vicinae://launch/clipboard/history"; }
