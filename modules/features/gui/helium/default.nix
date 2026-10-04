@@ -21,6 +21,7 @@ let
   # Chrome Web Store ID → name.
   extensions = {
     aeblfdkhhhdcdjpifhhbdiojplfjncoa = "1Password";
+    bkkmolkhemgaeaeggcmfbghljjjoofoh = "Catppuccin Chrome Theme - Mocha";
     lnjaiaapbakfhlbjenjkhffcdpoompki = "Catppuccin for Web File Explorer Icons";
     hlepfoohegkhhmjieoechaddaejaokhf = "Refined GitHub";
     mnjggcdmjocbbbhaepdhchncahnbgone = "SponsorBlock";
@@ -58,10 +59,7 @@ let
       show_dynamic_new_tab_button = false;
       show_vertical_tabs_collapse_button = false;
     };
-    browser = {
-      show_forward_button = false;
-      theme.is_grayscale2 = true;
-    };
+    browser.show_forward_button = false;
     vertical_tabs.uncollapsed_width = 200;
   };
 
