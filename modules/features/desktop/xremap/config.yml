@@ -15,6 +15,8 @@ keymap:
     remap:
       Super-a: C-a
       Super-c: C-c
+      # Copy URL in Helium (Cmd+Shift+C on the Mac).
+      Super-Shift-c: C-Shift-c
       Super-v: C-v
       Super-x: C-x
       Super-z: C-z

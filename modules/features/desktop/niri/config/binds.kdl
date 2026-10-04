@@ -25,7 +25,6 @@ binds {
     Super+Space repeat=false hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
     Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "deeplink" "vicinae://launch/clipboard/history"; }
     Super+Alt+L repeat=false hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
-    Super+Ctrl+Q repeat=false hotkey-overlay-title=null { spawn "noctalia" "msg" "session" "lock"; }
     Super+Alt+P repeat=false { power-off-monitors; }
     // Noctalia's suggested binds; its Mod+Comma settings bind would take
     // niri's consume-window-into-column, hence Shift.
