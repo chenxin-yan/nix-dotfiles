@@ -61,24 +61,32 @@
       xdg.configFile."noctalia".source =
         config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/desktop/noctalia/config";
 
-      # Catppuccin Mocha recolours from wallppuccin, fetched at a pinned commit
-      # rather than copied in: the repo has no licence and most images are
-      # third-party art. ~/Pictures is the folder Noctalia's picker browses;
-      # config/config.toml picks the default.
+      # Catppuccin Mocha recolours from abhishekpaul724/catppuccin-mocha-wallpapers,
+      # fetched at a pinned commit rather than copied in: the repo has no
+      # licence. Upstream names contain spaces, which store paths reject, so
+      # each gets a local name. ~/Pictures is the folder Noctalia's picker
+      # browses; config/config.toml picks the default.
       home.file =
         lib.mapAttrs'
           (
-            name: hash:
+            name:
+            { file, hash }:
             lib.nameValuePair "Pictures/Wallpapers/${name}" {
               source = pkgs.fetchurl {
-                url = "https://raw.githubusercontent.com/imanubdesigner/wallppuccin/84408d96a3be131c4097bda7b20b8cec2b3b07cd/wallpapers/${name}";
-                inherit hash;
+                inherit name hash;
+                url = "https://raw.githubusercontent.com/abhishekpaul724/catppuccin-mocha-wallpapers/92ed6972477babf92040e2a7179825a9897906e2/pc-catppuccin-mocha-wallpapers/${file}";
               };
             }
           )
           {
-            "jungle-cats-hideaway.jpg" = "sha256-GZ9QETKe4XV+LGW3KUU4fudb3/1Rj0FVgOKxiU53li4=";
-            "jupiter.png" = "sha256-fGVRjdjaGgdAoSvwGCY+/EC+oBeBnODF6JGx7xTtQdQ=";
+            "city-bedroom.png" = {
+              file = "Screenshot%202025-06-16%20000024-catppuccin-mocha.png";
+              hash = "sha256-WMzuv+u5WJhVRkGPlul0oEDSaliutpGLNuJ1YXla68w=";
+            };
+            "neon-street.png" = {
+              file = "Screenshot%202025-07-20%20121133-catppuccin-mocha.png";
+              hash = "sha256-wD/kUMqbJU1lLuKrLxOIDzM63DQhrAXrjb6pmktoaUM=";
+            };
           };
     };
 }
