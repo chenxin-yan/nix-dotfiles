@@ -58,3 +58,65 @@ format = "{:%I:%M}"
 [widget.workspaces]
 style = "regular"
 empty_color = "surface_variant"
+
+# Lock screen: a large clock, the date, and a bare password field over the
+# blurred wallpaper. The noctalia-greeter settings in default.nix match it.
+# Positions are logical px on eDP-1 (1646x1097). Leaving the lock screen
+# widget editor saves its whole layout to settings.toml, which then overrides
+# this section; delete [lockscreen_widgets] there after using it.
+[lockscreen]
+transition = ["fade"]
+transition_duration = 500
+blur_intensity = 0.8
+tint_intensity = 0.45
+
+[lockscreen_widgets]
+enabled = true
+widget_order = ["lock-time", "lock-date", "lockscreen-login-box@eDP-1"]
+
+[lockscreen_widgets.widget.lock-time]
+type = "clock"
+output = "eDP-1"
+cx = 823.0
+cy = 400.0
+box_width = 520.0
+box_height = 170.0
+
+[lockscreen_widgets.widget.lock-time.settings]
+format = "{:%-I:%M}"
+center_text = true
+background = false
+shadow = false
+color = "on_surface"
+
+[lockscreen_widgets.widget.lock-date]
+type = "clock"
+output = "eDP-1"
+cx = 823.0
+cy = 500.0
+box_width = 360.0
+box_height = 36.0
+
+[lockscreen_widgets.widget.lock-date.settings]
+format = "{:%A, %B %-d}"
+center_text = true
+background = false
+shadow = false
+color = "on_surface_variant"
+
+[lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+type = "login_box"
+output = "eDP-1"
+cx = 823.0
+cy = 860.0
+
+[lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
+# Compact drops the media, weather and session-button rows.
+layout = "compact"
+show_login_button = false
+show_keyboard_layout = false
+center_password_text = true
+# The "type your password" card above the field; errors and Caps Lock still
+# show.
+show_unlock_hint = false
+background_opacity = 0.6

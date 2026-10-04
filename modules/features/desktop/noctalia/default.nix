@@ -8,7 +8,7 @@
   features.noctalia.includes = with config.features; [ paths ];
 
   features.noctalia.nixos =
-    { host, ... }:
+    { host, pkgs, ... }:
     {
       programs.noctalia = {
         enable = true;
@@ -23,6 +23,23 @@
         # Lets the shell copy its wallpaper and palette to the login screen
         # without a password prompt ([shell.greeter_sync] in config.toml).
         passwordlessSyncUsers = [ host.login ];
+        # The desktop's cursor (niri/default.nix), not the greeter's default.
+        cursorTheme = {
+          package = pkgs.catppuccin-cursors.mochaLavender;
+          name = "catppuccin-mocha-lavender-cursors";
+        };
+        # Sync brings the wallpaper and palette; these trim the rest to the
+        # clock and the password box, like the lock screen.
+        settings = {
+          appearance = {
+            hide_logo = true;
+            scheme_selector_position = "hidden";
+          };
+          clock = {
+            time_format = "{:%-I:%M}";
+            date_format = "%A, %B %-d";
+          };
+        };
       };
 
       # Noctalia's lock screen authenticates against the login stack and drives
