@@ -75,6 +75,11 @@
         # With no HibernateDelaySec, systemd hibernates only when the battery
         # runs low; Noctalia's suspend uses the same mode (noctalia/config).
         services.logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";
+        # The default "platform" mode enters ACPI S4 after writing the image; a
+        # spurious wakeup event there makes the kernel roll back, and amdgpu
+        # doesn't survive the rollback (black screen, niri crashes). Plain
+        # power-off skips that check; nothing needs to wake the laptop from S4.
+        systemd.sleep.settings.Sleep.HibernateMode = "shutdown";
         # Ryzen AI 300 support keeps improving upstream; Framework recommends the latest kernel.
         boot.kernelPackages = pkgs.linuxPackages_latest;
 
