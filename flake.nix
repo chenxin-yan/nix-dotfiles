@@ -69,6 +69,14 @@
       url = "github:oxcl/nix-flake-helium-browser";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # nixpkgs has a stale 0.6.x with no NixOS module; upstream's flake ships
+    # the package, udev rules and the agent user service. Linux only: the
+    # Mac gets the Homebrew cask instead.
+    openlogi = {
+      url = "github:AprilNEA/OpenLogi";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
