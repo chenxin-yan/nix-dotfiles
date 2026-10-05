@@ -22,6 +22,13 @@ in
 {
   features.tuios.includes = with config.features; [ paths ];
 
+  # Lets the ssh client's NO_MULTIPLEXER through to the login block below.
+  features.tuios.nixos =
+    { config, ... }:
+    lib.mkIf (lib.elem config.networking.hostName tuiosServers) {
+      services.openssh.settings.AcceptEnv = [ "NO_MULTIPLEXER" ];
+    };
+
   features.tuios.homeManager =
     {
       config,
@@ -70,6 +77,41 @@ in
         set -- -s "$session" --name pi
         [ -z "$task" ] || set -- "$@" --prompt "$task"
         out=$(tuios start-agent pi "$@" 2>&1) || fail "$out"
+      '';
+
+      # Daily: closes project sessions (owner.repo, local.name) whose repo is
+      # gone, the one rule that can't kill live work. Not main, not worktree
+      # sessions (`tuios worktree rm` stashes their work), not attached ones,
+      # and not one with a window whose directory still exists.
+      cleanupSessions = pkgs.writeShellScript "tuios-cleanup-sessions" ''
+        set -eu
+        export PATH=${
+          lib.makeBinPath [
+            pkgs.coreutils
+            pkgs.jq
+            tuios
+          ]
+        }:$PATH
+        dev=''${DEV_PATH:-${config.devPath}}
+        # Exit 3 means no daemon: nothing to clean, and none is started.
+        list=$(tuios ls --json 2>/dev/null) || exit 0
+        printf '%s' "$list" \
+          | jq -r '.[] | select((.attached | not) and .worktree == null) | .name' \
+          | while IFS= read -r name; do
+            case $name in
+              main) continue ;;
+              local.*) set -- "$dev/local/''${name#local.}" ;;
+              *.*) set -- "$dev"/*/"''${name%%.*}"/"''${name#*.}" ;;
+              *) continue ;;
+            esac
+            [ ! -d "$1" ] || continue
+            # The while exits 1 at the first window in a live directory.
+            if tuios list-windows -s "$name" --json \
+              | jq -r '.. | objects | select(has("cwd")) | .cwd' \
+              | while IFS= read -r cwd; do [ ! -d "$cwd" ] || exit 1; done; then
+              tuios kill-session "$name" >/dev/null && echo "closed $name: its repo is gone"
+            fi
+          done
       '';
 
       # Ctrl+s u and `ts`: fzf over $DEV_PATH repos, then the project's session
@@ -151,6 +193,55 @@ in
       programs.zsh.shellAliases = {
         t = "tuios attach main -c";
         ts = "${pickProject}";
+      };
+
+      # A shell in a multiplexer pane says so, and ssh passes it on, so an
+      # ssh to a tuios server from here doesn't open a tuios inside this one.
+      # `NO_MULTIPLEXER=1 ssh minipc` gets a plain shell on purpose.
+      programs.zsh.initContent = ''
+        if [[ -n ''${TUIOS_ENV-}''${HERDR_ENV-} ]]; then export NO_MULTIPLEXER=1; fi
+      '';
+      programs.ssh.settings = lib.genAttrs tuiosServers (_: {
+        SendEnv = "NO_MULTIPLEXER";
+      });
+
+      # On a server, a terminal login lands in main: interactive with a tty,
+      # so ssh commands, scp and rsync never reach it. Detaching (Ctrl+s d)
+      # returns to this shell.
+      programs.zsh.profileExtra = lib.mkIf (lib.elem hostName tuiosServers) ''
+        if [[ -o interactive && -t 0 && -t 1 && ''${TERM:-dumb} != dumb &&
+              -z ''${TUIOS_ENV-}''${HERDR_ENV-}''${TMUX-}''${ZELLIJ-}''${NO_MULTIPLEXER-} ]]; then
+          tuios attach main -c
+        fi
+      '';
+
+      systemd.user.services.tuios-cleanup = lib.mkIf pkgs.stdenv.isLinux {
+        Unit.Description = "Close tuios sessions whose repo is gone";
+        Service = {
+          Type = "oneshot";
+          ExecStart = "${cleanupSessions}";
+        };
+      };
+      systemd.user.timers.tuios-cleanup = lib.mkIf pkgs.stdenv.isLinux {
+        Unit.Description = "Close tuios sessions whose repo is gone";
+        Timer = {
+          OnCalendar = "daily";
+          Persistent = true;
+          RandomizedDelaySec = "1h";
+        };
+        Install.WantedBy = [ "timers.target" ];
+      };
+      launchd.agents.tuios-cleanup = lib.mkIf pkgs.stdenv.isDarwin {
+        enable = true;
+        config = {
+          ProgramArguments = [ "${cleanupSessions}" ];
+          StartCalendarInterval = [
+            {
+              Hour = 4;
+              Minute = 0;
+            }
+          ];
+        };
       };
 
       # Keeps a server's sessions and agents alive with nobody logged in, for
