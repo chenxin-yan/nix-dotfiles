@@ -1,5 +1,6 @@
 # Trial alongside herdr: same Ctrl+s leader, catppuccin and Ctrl+hjkl nav;
-# everything else stays at tuios defaults to judge them as shipped.
+# everything else stays at tuios defaults to judge them as shipped, except
+# keys the defaults can't have here (see the comments below).
 { inputs, ... }:
 {
   features.tuios.homeManager =
@@ -16,6 +17,16 @@
         # Hands Ctrl+hjkl to nvim when tuios-nvim-navigator is active there.
         nvim_navigation = true
 
+        # Type straight into the shell, as in herdr; Ctrl+s Esc reaches window
+        # mode, since niri's Mod+Escape takes Alt+Esc.
+        [startup]
+        start_in_terminal_mode = true
+        # Shipped on, but tuios reads both as false when an existing config
+        # omits them (internal/config/startup.go), leaving floating panes and
+        # standalone sessions that die with the terminal.
+        tiled = true
+        daemon = true
+
         [keybindings]
         leader_key = "ctrl+s"
 
@@ -24,6 +35,32 @@
         terminal_focus_down = ["ctrl+j"]
         terminal_focus_up = ["ctrl+k"]
         terminal_focus_right = ["ctrl+l"]
+
+        # The palette stays on Ctrl+s P; Ctrl+p goes back to nvim, fzf and zsh.
+        [keybindings.global]
+        command_palette = []
+
+        # niri's mod key and AeroSpace both take Alt+1..9 before tuios sees
+        # them (and Alt+Shift+1..9); Ctrl+1..9 were herdr's tab keys.
+        [keybindings.workspaces]
+        switch_workspace_1 = ["ctrl+1"]
+        switch_workspace_2 = ["ctrl+2"]
+        switch_workspace_3 = ["ctrl+3"]
+        switch_workspace_4 = ["ctrl+4"]
+        switch_workspace_5 = ["ctrl+5"]
+        switch_workspace_6 = ["ctrl+6"]
+        switch_workspace_7 = ["ctrl+7"]
+        switch_workspace_8 = ["ctrl+8"]
+        switch_workspace_9 = ["ctrl+9"]
+        move_and_follow_1 = ["ctrl+shift+1"]
+        move_and_follow_2 = ["ctrl+shift+2"]
+        move_and_follow_3 = ["ctrl+shift+3"]
+        move_and_follow_4 = ["ctrl+shift+4"]
+        move_and_follow_5 = ["ctrl+shift+5"]
+        move_and_follow_6 = ["ctrl+shift+6"]
+        move_and_follow_7 = ["ctrl+shift+7"]
+        move_and_follow_8 = ["ctrl+shift+8"]
+        move_and_follow_9 = ["ctrl+shift+9"]
       '';
     };
 }
