@@ -23,6 +23,7 @@ let
     lnjaiaapbakfhlbjenjkhffcdpoompki = "Catppuccin for Web File Explorer Icons";
     hlepfoohegkhhmjieoechaddaejaokhf = "Refined GitHub";
     mnjggcdmjocbbbhaepdhchncahnbgone = "SponsorBlock";
+    dbepggeogbaibhgnhhndojpepiihcmeb = "Vimium";
   };
 
   # Profile directory → display name. Removing one here only stops managing
