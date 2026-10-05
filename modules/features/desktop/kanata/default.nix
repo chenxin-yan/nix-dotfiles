@@ -14,6 +14,7 @@
 #   - jtroo/kanata Discussion #1537 (canonical macOS launchd recipe)
 #   - pqrs-org/Karabiner-DriverKit-VirtualHIDDevice README
 #   - nix-darwin services/karabiner-elements (pattern we mirror)
+#   - https://nick-liu.com/posts/tcc-cdhash-trap/ (why kanata is re-signed)
 let
   # 65 ms matches the Voyager's Flow Tap.
   sharedDefcfg = ''
@@ -42,6 +43,18 @@ in
       # `parentAppDir` pattern.
       managerParentDir = "/Applications/.Nix-Karabiner-DriverKit";
       managerApp = "${managerParentDir}/.Karabiner-VirtualHIDDevice-Manager.app";
+
+      # TCC pins Input Monitoring + Accessibility grants to a path and a
+      # code-signing requirement. Nix's ad-hoc signature makes that
+      # requirement the binary's cdhash, which changes on every rebuild. We
+      # run kanata from a fixed path, re-signed with a host-local
+      # self-signed key, so the requirement becomes `identifier
+      # "org.nixos.kanata" and certificate root = H"…"` and survives updates.
+      # Grant both permissions to `stableKanata` once per machine (again
+      # only if `signingDir` is lost).
+      kanataExe = lib.getExe pkgs.kanata;
+      stableKanata = "/usr/local/libexec/nix-kanata/kanata";
+      signingDir = "/var/db/nix-kanata";
     in
     {
       environment.systemPackages = [
@@ -56,12 +69,32 @@ in
         rm -rf ${managerParentDir}
         mkdir -p ${managerParentDir}
         cp -R "${karabinerDk}/Applications/.Karabiner-VirtualHIDDevice-Manager.app" ${managerParentDir}/
+
+        if [ ! -s ${signingDir}/key.pem ]; then
+          install -d -m 0700 ${signingDir}
+          # Code signing rejects certs without keyUsage=digitalSignature.
+          ${lib.getExe pkgs.openssl} req -x509 -newkey rsa:2048 -nodes -days 36500 \
+            -subj "/CN=nix-kanata-codesign" \
+            -addext "keyUsage=critical,digitalSignature" \
+            -addext "extendedKeyUsage=critical,codeSigning" \
+            -keyout ${signingDir}/key.pem -out ${signingDir}/cert.pem 2>/dev/null
+          chmod 0600 ${signingDir}/key.pem
+        fi
+        mkdir -p "$(dirname ${stableKanata})"
+        install -m 0755 ${kanataExe} ${stableKanata}.new
+        # rcodesign logs to stderr on success; surface it only on failure.
+        # No timestamp server, so activation works offline.
+        out=$(${lib.getExe pkgs.rcodesign} sign --timestamp-url none \
+          --pem-file ${signingDir}/key.pem --pem-file ${signingDir}/cert.pem \
+          --binary-identifier org.nixos.kanata ${stableKanata}.new 2>&1) \
+          || { echo "$out" >&2; exit 1; }
+        mv -f ${stableKanata}.new ${stableKanata}
       '';
 
       launchd.daemons.kanata = {
         serviceConfig = {
           ProgramArguments = [
-            "/run/current-system/sw/bin/kanata"
+            stableKanata
             "--cfg"
             "${userHome}/.config/kanata/kanata.kbd"
           ];
@@ -70,6 +103,9 @@ in
           UserName = "root";
           StandardOutPath = "${userHome}/Library/Logs/kanata.log";
           StandardErrorPath = "${userHome}/Library/Logs/kanata.error.log";
+          # Unused by kanata: it changes the plist whenever the package does,
+          # so activation restarts the daemon onto the new binary.
+          EnvironmentVariables.KANATA_STORE_PATH = kanataExe;
         };
       };
 
