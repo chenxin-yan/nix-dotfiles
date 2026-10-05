@@ -159,7 +159,8 @@ binds {
     XF86AudioNext         allow-when-locked=true { spawn "noctalia" "msg" "media" "next"; }
 
     // Escape hatch if an app inhibits shortcuts (remote desktop, VMs).
-    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    // Shifted off niri's Mod+Escape so Alt+Esc reaches tuios (window mode).
+    Mod+Shift+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
     Mod+Shift+E { quit; }
     Ctrl+Alt+Delete { quit; }
 }

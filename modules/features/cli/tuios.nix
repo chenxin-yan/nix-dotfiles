@@ -17,13 +17,9 @@
         # Hands Ctrl+hjkl to nvim when tuios-nvim-navigator is active there.
         nvim_navigation = true
 
-        # Type straight into the shell, as in herdr; Ctrl+s Esc reaches window
-        # mode, since niri's Mod+Escape takes Alt+Esc.
+        # Type straight into the shell, as in herdr; Alt+Esc reaches window mode.
         [startup]
         start_in_terminal_mode = true
-        # Shipped on, but tuios reads both as false when an existing config
-        # omits them (internal/config/startup.go), leaving floating panes and
-        # standalone sessions that die with the terminal.
         tiled = true
         daemon = true
 
@@ -35,6 +31,21 @@
         terminal_focus_down = ["ctrl+j"]
         terminal_focus_up = ["ctrl+k"]
         terminal_focus_right = ["ctrl+l"]
+
+        # niri's resize keys without Mod: -/= width, Shift for height. Splitting
+        # stays on Ctrl+s _ |. A bare "+" fails tuios's key validation, hence
+        # only the chord spelling for it.
+        [keybindings.layout]
+        resize_master_shrink = ["-"]
+        resize_master_grow = ["="]
+        resize_height_shrink = ["_", "shift+-"]
+        resize_height_grow = ["shift+="]
+        split_horizontal = []
+        equalize_splits = ["0"]
+
+        # herdr's split key.
+        [keybindings.prefix_mode]
+        prefix_split_horizontal = ["_"]
 
         # The palette stays on Ctrl+s P; Ctrl+p goes back to nvim, fzf and zsh.
         [keybindings.global]
