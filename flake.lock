@@ -861,11 +861,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1791174598,
-        "narHash": "sha256-Ge3DJfYB8g0rISIXNnQq6skrXA1M+0J+0twkiiNLLVM=",
+        "lastModified": 1791219263,
+        "narHash": "sha256-Fi/8d+g3HUNPJ7byJ6azn3NcJC1/WU5GIQKCLtoxysU=",
         "owner": "Gaurav-Gosain",
         "repo": "tuios",
-        "rev": "1e0b4c8961428b30e25bf0baea445f61a188d8de",
+        "rev": "64cc96f0a5a928d02a5f47360e9be0230ef6080d",
         "type": "github"
       },
       "original": {

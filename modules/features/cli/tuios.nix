@@ -136,13 +136,9 @@ in
       '';
 
       # Ctrl+s u and `ts`: fzf over the projects, then the project's session,
-      # created in the repo first. In a tuios pane
-      # the client switches to it; in any other shell `tuios attach` opens it.
-      # tuios 0.8.5's CLI can neither start a session in a given directory
-      # (`tuios new` takes the daemon's cwd) nor switch the client from a pane,
-      # so this uses the new-session verb (docs/protocol.md) and the switch
-      # behind herdr's workspace focus, which tuios answers itself through
-      # $HERDR_BIN_PATH. Drop both once tuios ships them natively.
+      # created in the repo first. In a tuios pane the client switches to it;
+      # in any other shell it's attached. Both only use --cwd when they create
+      # the session, so a reopened one keeps its directory and layout.
       pickProject = pkgs.writeShellScript "tuios-pick-project" ''
         set -eu
         export PATH=${
@@ -153,45 +149,20 @@ in
               fd
               fzf
               gnused
-              jq
-              socat
               tuios
             ]
           )
         }:$PATH
         ${projectsLib}
-        # The socket tuios itself reaches (internal/session/manager_unix.go);
-        # $TUIOS_SOCKET only reports it (socket_env.go).
-        sock=''${XDG_RUNTIME_DIR:+$XDG_RUNTIME_DIR/tuios/tuios.sock}
-        sock=''${sock:-/tmp/tuios-$(id -u)/tuios.sock}
-        # `ls` exits 3 with no live daemon, a stale socket included.
-        rc=0
-        tuios ls >/dev/null 2>&1 || rc=$?
-        [ "$rc" -ne 3 ] || tuios start-server >/dev/null
         rel=$(list_projects | fzf --prompt 'project> ') || exit 0
         name=$(session_name "$rel")
-        res=$(jq -nc --arg n "$name" --arg c "$dev/$rel" \
-          '{id: 1, verb: "new-session", params: {name: $n, cwd: $c}}' \
-          | socat -t2 - "UNIX-CONNECT:$sock") || res=
-        # session_exists is the reopen case; anything else is a real failure.
-        err=$(printf '%s' "''${res:-{\}}" | jq -r \
-          'if .result then empty elif .error.code == "session_exists" then empty
-           else .error.message // "no answer from the tuios daemon" end')
-        if [ -n "$err" ]; then
-          printf '%s\nPress Enter to close.' "$err"
+        # `tuios new` attaches a session that exists, and starts the daemon.
+        [ "''${TUIOS_ENV:-}" = 1 ] || exec tuios new "$name" --cwd "$dev/$rel"
+        # The popup closes on exit, so an error waits to be read.
+        if ! out=$(tuios switch-session --create --cwd "$dev/$rel" "$name" 2>&1); then
+          printf '%s\nPress Enter to close.' "$out"
           read -r _
           exit 1
-        fi
-        [ "''${TUIOS_ENV:-}" = 1 ] || exec tuios attach "$name"
-        id=$("$HERDR_BIN_PATH" workspace list | jq -r --arg n "$name" \
-          'first(.result.workspaces[] | select(.label == $n) | .workspace_id) // empty')
-        [ -n "$id" ] || exit 0
-        "$HERDR_BIN_PATH" workspace focus "$id" >/dev/null
-        # A switch doesn't apply [startup] tiled, only a first attach does
-        # (tuios#452), so tile the session made just now; a reopened one keeps
-        # its layout.
-        if printf '%s' "$res" | jq -e .result >/dev/null; then
-          tuios set-layout -s "$name" --tiling true >/dev/null
         fi
       '';
     in
