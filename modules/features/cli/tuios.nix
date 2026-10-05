@@ -234,14 +234,14 @@ in
         fi
       '';
 
-      systemd.user.services.tuios-cleanup = lib.mkIf pkgs.stdenv.isLinux {
+      systemd.user.services.tuios-cleanup = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         Unit.Description = "Close tuios sessions whose repo is gone";
         Service = {
           Type = "oneshot";
           ExecStart = "${cleanupSessions}";
         };
       };
-      systemd.user.timers.tuios-cleanup = lib.mkIf pkgs.stdenv.isLinux {
+      systemd.user.timers.tuios-cleanup = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         Unit.Description = "Close tuios sessions whose repo is gone";
         Timer = {
           OnCalendar = "daily";
@@ -250,7 +250,7 @@ in
         };
         Install.WantedBy = [ "timers.target" ];
       };
-      launchd.agents.tuios-cleanup = lib.mkIf pkgs.stdenv.isDarwin {
+      launchd.agents.tuios-cleanup = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
         enable = true;
         config = {
           ProgramArguments = [ "${cleanupSessions}" ];
