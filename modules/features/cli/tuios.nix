@@ -1,6 +1,6 @@
-# Trial alongside herdr: same Ctrl+s leader, catppuccin and Ctrl+hjkl nav;
-# everything else stays at tuios defaults to judge them as shipped, except
-# keys the defaults can't have here (see the comments below).
+# tuios, on trial to replace herdr: herdr's Ctrl+s leader and Ctrl+hjkl nav,
+# keys moved off what niri and AeroSpace take, and a project/agent workflow on
+# built-ins (sessions, worktrees, scratch groups, the Inbox, [hosts]).
 {
   inputs,
   config,
@@ -20,6 +20,8 @@ let
   ) (lib.attrNames config.hosts);
 in
 {
+  features.tuios.includes = with config.features; [ paths ];
+
   features.tuios.homeManager =
     {
       config,
@@ -75,8 +77,9 @@ in
       # the client switches to it; in any other shell `tuios attach` opens it.
       # tuios 0.8.5's CLI can neither start a session in a given directory
       # (`tuios new` takes the daemon's cwd) nor switch the client from a pane,
-      # so this uses the new-session verb (docs/protocol.md) and herdr's
-      # workspace focus. Drop both once tuios ships them natively.
+      # so this uses the new-session verb (docs/protocol.md) and the switch
+      # behind herdr's workspace focus, which tuios answers itself through
+      # $HERDR_BIN_PATH. Drop both once tuios ships them natively.
       pickProject = pkgs.writeShellScript "tuios-pick-project" ''
         set -eu
         export PATH=${
@@ -93,14 +96,18 @@ in
             ]
           )
         }:$PATH
-        # Where tuios puts its socket (internal/session/manager_unix.go).
-        sock=''${TUIOS_SOCKET:-''${XDG_RUNTIME_DIR:+$XDG_RUNTIME_DIR/tuios/tuios.sock}}
+        # The socket tuios itself reaches (internal/session/manager_unix.go);
+        # $TUIOS_SOCKET only reports it (socket_env.go).
+        sock=''${XDG_RUNTIME_DIR:+$XDG_RUNTIME_DIR/tuios/tuios.sock}
         sock=''${sock:-/tmp/tuios-$(id -u)/tuios.sock}
-        [ -S "$sock" ] || tuios start-server >/dev/null
-        dev=''${DEV_PATH:-$HOME/dev}
+        # `ls` exits 3 with no live daemon, a stale socket included.
+        rc=0
+        tuios ls >/dev/null 2>&1 || rc=$?
+        [ "$rc" -ne 3 ] || tuios start-server >/dev/null
+        dev=''${DEV_PATH:-${config.devPath}}
         rel=$(
           {
-            fd -H -t d -d 4 '^\.git$' "$dev" -E local -x dirname {}
+            fd -H -I -t d -d 4 '^\.git$' "$dev" -E local -x dirname {}
             [ ! -d "$dev/local" ] || fd -t d -d 1 . "$dev/local"
           } | sed -e 's|/$||' -e "s|^$dev/||" | sort -u | fzf --prompt 'project> '
         ) || exit 0
@@ -109,10 +116,18 @@ in
           */*/*) name=$(echo "$rel" | cut -d/ -f2).$(echo "$rel" | cut -d/ -f3) ;;
           *) name=$(basename "$rel") ;;
         esac
-        # An existing session answers session_exists; the focus below still runs.
-        jq -nc --arg n "$name" --arg c "$dev/$rel" \
+        res=$(jq -nc --arg n "$name" --arg c "$dev/$rel" \
           '{id: 1, verb: "new-session", params: {name: $n, cwd: $c}}' \
-          | socat -t2 - "UNIX-CONNECT:$sock" >/dev/null
+          | socat -t2 - "UNIX-CONNECT:$sock") || res=
+        # session_exists is the reopen case; anything else is a real failure.
+        err=$(printf '%s' "''${res:-{\}}" | jq -r \
+          'if .result then empty elif .error.code == "session_exists" then empty
+           else .error.message // "no answer from the tuios daemon" end')
+        if [ -n "$err" ]; then
+          printf '%s\nPress Enter to close.' "$err"
+          read -r _
+          exit 1
+        fi
         [ "''${TUIOS_ENV:-}" = 1 ] || exec tuios attach "$name"
         id=$("$HERDR_BIN_PATH" workspace list | jq -r --arg n "$name" \
           'first(.result.workspaces[] | select(.label == $n) | .workspace_id) // empty')
@@ -140,8 +155,10 @@ in
 
       # Keeps a server's sessions and agents alive with nobody logged in, for
       # the machines that link to it. keep-old: a switch must not restart it
-      # and kill every pane; `tuios kill-server` saves state and Restart brings
-      # up the current binary, which restores the sessions.
+      # and kill every pane. To run a new binary, `tuios kill-server` (or
+      # `systemctl --user restart tuios-daemon`): sessions come back with their
+      # layout, directories and scrollback, but every running program, editor
+      # and agent process ends (docs/SESSIONS.md, What Survives).
       systemd.user.services.tuios-daemon = lib.mkIf (lib.elem hostName tuiosServers) {
         Unit = {
           Description = "tuios daemon";
@@ -151,11 +168,18 @@ in
           ExecStart = "${tuios}/bin/tuios daemon";
           Restart = "always";
           RestartSec = 1;
-          # Panes, popups and agents inherit these; systemd sets neither.
+          # Everything the daemon starts inherits these. Pane shells read the
+          # rest from zshenv, but popups, scratch commands, agents and hooks
+          # are exec'd without a shell, so they need them from here.
           Environment = [
             "PATH=/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin:/run/wrappers/bin"
             "SHELL=${config.programs.zsh.package}/bin/zsh"
-          ];
+            "DEV_PATH=${config.devPath}"
+          ]
+          ++ lib.optional (
+            config.home.sessionVariables ? EDITOR
+          ) "EDITOR=${config.home.sessionVariables.EDITOR}"
+          ++ lib.optional config.services.ssh-agent.enable "SSH_AUTH_SOCK=%t/${config.services.ssh-agent.socket}";
         };
         Install.WantedBy = [ "default.target" ];
       };
