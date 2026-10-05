@@ -322,6 +322,9 @@ in
         window_title_position = "hidden"
         hide_window_buttons = true
         motion = "basic"
+        # No hairline under the dock: a shared divider hooks toward the focused
+        # pane where it meets that rule, leaving a gap in it.
+        dock_compact = true
 
         # Beside noctalia's bar, which is on the left edge too.
         [appearance.sidebar]
