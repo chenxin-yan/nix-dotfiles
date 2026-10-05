@@ -89,7 +89,8 @@ Nix can't sign in to accounts, approve macOS permissions or join networks. Do th
 **macOS permissions** (approve in System Settings when prompted)
 
 - Karabiner driver extension (for kanata): _General → Login Items & Extensions_.
-- Input Monitoring and Accessibility for kanata, Accessibility for AeroSpace and espanso: _Privacy & Security_.
+- kanata: _Privacy & Security → Input Monitoring_ and _→ Accessibility_. It runs as a root daemon, so don't wait for a prompt: click **+**, press ⌘⇧G, enter `/usr/local/libexec/nix-kanata/kanata` and switch it on in both lists. Grant that path, never a `/nix/store` one, which changes on every rebuild. launchd retries kanata every 10 s, so it starts on its own; `~/Library/Logs/kanata.error.log` says which permission is still missing. Grants survive rebuilds; redo them only if `/var/db/nix-kanata` (its signing key) is lost.
+- Accessibility for AeroSpace and espanso: _Privacy & Security_.
 - Background items for sketchybar and the other agents: _General → Login Items & Extensions_.
 
 ## Daily use

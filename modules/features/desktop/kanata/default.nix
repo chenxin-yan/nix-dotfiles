@@ -51,7 +51,7 @@ in
       # self-signed key, so the requirement becomes `identifier
       # "org.nixos.kanata" and certificate root = H"…"` and survives updates.
       # Grant both permissions to `stableKanata` once per machine (again
-      # only if `signingDir` is lost).
+      # only if `signingDir` is lost); steps in README → macOS permissions.
       kanataExe = lib.getExe pkgs.kanata;
       stableKanata = "/usr/local/libexec/nix-kanata/kanata";
       signingDir = "/var/db/nix-kanata";
