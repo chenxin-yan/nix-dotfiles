@@ -11,6 +11,7 @@
 
     nixos =
       {
+        config,
         host,
         lib,
         pkgs,
@@ -107,6 +108,26 @@
         # With no HibernateDelaySec, systemd hibernates only when the battery
         # runs low; Noctalia's suspend uses the same mode (noctalia/config).
         services.logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";
+        # Docked with the lid shut, the fingerprint reader in the power button
+        # is out of reach, yet pam_fprintd waits for it before sudo and polkit
+        # fall back to the password. Skip it while the lid is closed.
+        # TODO: drop once fprintd checks the lid itself and that release is in
+        # nixpkgs: https://gitlab.freedesktop.org/libfprint/fprintd/-/work_items/208
+        security.pam.services = lib.genAttrs [ "sudo" "polkit-1" ] (name: {
+          rules.auth.fprintd-skip-lid-closed = {
+            order = config.security.pam.services.${name}.rules.auth.fprintd.order - 1;
+            # On success, skip the one module after this: pam_fprintd.
+            control = "[success=1 default=ignore]";
+            modulePath = "${pkgs.linux-pam}/lib/security/pam_exec.so";
+            args = [
+              "quiet"
+              "quiet_log"
+              (toString (
+                pkgs.writeShellScript "lid-closed" "${lib.getExe pkgs.gnugrep} -q closed /proc/acpi/button/lid/*/state"
+              ))
+            ];
+          };
+        });
         # The default "platform" mode enters ACPI S4 after writing the image; a
         # spurious wakeup event there makes the kernel roll back, and amdgpu
         # doesn't survive the rollback (black screen, niri crashes). Plain
