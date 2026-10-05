@@ -39,6 +39,9 @@ in
     let
       tuios = inputs.tuios.packages.${pkgs.stdenv.hostPlatform.system}.default;
       hostName = osConfig.networking.hostName;
+      # The servers this machine links to: its [hosts] table and the
+      # machines the project picker also lists.
+      linkedHosts = lib.remove hostName tuiosServers;
 
       # What `tuios integration install pi` writes, rendered at build time so
       # it stays declarative and matches this tuios. The hook finds tuios on
@@ -99,6 +102,27 @@ in
         }
       '';
 
+      # `tuios-projects`: one "session name<TAB>directory" line per project,
+      # on every machine, so a picker elsewhere can list this one's over ssh.
+      projects = pkgs.writeShellScriptBin "tuios-projects" ''
+        set -eu
+        export PATH=${
+          lib.makeBinPath (
+            with pkgs;
+            [
+              coreutils
+              fd
+              gnused
+            ]
+          )
+        }:$PATH
+        ${projectsLib}
+        [ -d "$dev" ] || exit 0
+        list_projects | while IFS= read -r rel; do
+          printf '%s\t%s\n' "$(session_name "$rel")" "$dev/$rel"
+        done
+      '';
+
       # Daily: only main, project sessions and worktree sessions whose
       # directory exists are kept. Any other session (one made by hand, a
       # deleted repo's, a removed worktree's) is closed once it's detached and
@@ -135,10 +159,12 @@ in
         done
       '';
 
-      # Ctrl+s u and `ts`: fzf over the projects, then the project's session,
-      # created in the repo first. In a tuios pane the client switches to it;
-      # in any other shell it's attached. Both only use --cwd when they create
-      # the session, so a reopened one keeps its directory and layout.
+      # Ctrl+s u and `ts`: fzf over the projects here and on each linked
+      # host, one row per machine ("name @ host" for a remote copy), then
+      # that project's session, created in the repo first. In a tuios pane the
+      # client switches to it; in any other shell it's attached, a remote one
+      # through ssh. Both only use --cwd when they create the session, so a
+      # reopened one keeps its directory and layout.
       pickProject = pkgs.writeShellScript "tuios-pick-project" ''
         set -eu
         export PATH=${
@@ -146,20 +172,34 @@ in
             with pkgs;
             [
               coreutils
-              fd
               fzf
-              gnused
+              gawk
+              projects
               tuios
             ]
           )
         }:$PATH
-        ${projectsLib}
-        rel=$(list_projects | fzf --prompt 'project> ') || exit 0
-        name=$(session_name "$rel")
-        # `tuios new` attaches a session that exists, and starts the daemon.
-        [ "''${TUIOS_ENV:-}" = 1 ] || exec tuios new "$name" --cwd "$dev/$rel"
+        # Hosts stream in after the local rows; one that's asleep times out
+        # silently. -n keeps ssh off the tty fzf reads keys from.
+        sel=$({
+          tuios-projects
+          for h in ${lib.escapeShellArgs linkedHosts}; do
+            timeout 5 ssh -n -o BatchMode=yes "$h" tuios-projects 2>/dev/null |
+              awk -F '\t' -v h="$h" '{ print $1 " @ " h "\t" $2 }' &
+          done
+          wait
+        } | fzf --prompt 'project> ' --delimiter '\t' --with-nth 1) || exit 0
+        IFS=$'\t' read -r label dir <<<"$sel"
+        name=''${label% @ *}
+        host=
+        [ "$name" = "$label" ] || host=''${label##* @ }
+        if [ "''${TUIOS_ENV:-}" != 1 ]; then
+          # `tuios new` attaches a session that exists, and starts the daemon.
+          [ -z "$host" ] || exec ssh -t "$host" "tuios new $(printf %q "$name") --cwd $(printf %q "$dir")"
+          exec tuios new "$name" --cwd "$dir"
+        fi
         # The popup closes on exit, so an error waits to be read.
-        if ! out=$(tuios switch-session --create --cwd "$dev/$rel" "$name" 2>&1); then
+        if ! out=$(tuios switch-session --create --cwd "$dir" "''${host:+$host:}$name" 2>&1); then
           printf '%s\nPress Enter to close.' "$out"
           read -r _
           exit 1
@@ -167,7 +207,10 @@ in
       '';
     in
     {
-      home.packages = [ tuios ];
+      home.packages = [
+        tuios
+        projects
+      ];
 
       # Agent state for pi panes (the rail, the Inbox, resume after a restart).
       home.file.".pi/agent/extensions/tuios-agent-state.ts".source = piExtension;
@@ -387,6 +430,6 @@ in
 
         [hosts.${name}]
         addr = "${name}"
-      '') (lib.remove hostName tuiosServers);
+      '') linkedHosts;
     };
 }
