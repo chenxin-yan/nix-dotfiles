@@ -79,43 +79,64 @@ in
         out=$(tuios start-agent pi "$@" 2>&1) || fail "$out"
       '';
 
-      # Daily: closes project sessions (owner.repo, local.name) whose repo is
-      # gone, the one rule that can't kill live work. Not main, not worktree
-      # sessions (`tuios worktree rm` stashes their work), not attached ones,
-      # and not one with a window whose directory still exists.
-      cleanupSessions = pkgs.writeShellScript "tuios-cleanup-sessions" ''
-        set -eu
-        export PATH=${
-          lib.makeBinPath [
-            pkgs.coreutils
-            pkgs.jq
-            tuios
-          ]
-        }:$PATH
+      # What a project is, for the picker and the cleanup alike: each repo
+      # under $DEV_PATH and each directory in $DEV_PATH/local, named
+      # owner.repo or local.name.
+      projectsLib = ''
         dev=''${DEV_PATH:-${config.devPath}}
-        # Exit 3 means no daemon: nothing to clean, and none is started.
-        list=$(tuios ls --json 2>/dev/null) || exit 0
-        printf '%s' "$list" \
-          | jq -r '.[] | select((.attached | not) and .worktree == null) | .name' \
-          | while IFS= read -r name; do
-            case $name in
-              main) continue ;;
-              local.*) set -- "$dev/local/''${name#local.}" ;;
-              *.*) set -- "$dev"/*/"''${name%%.*}"/"''${name#*.}" ;;
-              *) continue ;;
-            esac
-            [ ! -d "$1" ] || continue
-            # The while exits 1 at the first window in a live directory.
-            if tuios list-windows -s "$name" --json \
-              | jq -r '.. | objects | select(has("cwd")) | .cwd' \
-              | while IFS= read -r cwd; do [ ! -d "$cwd" ] || exit 1; done; then
-              tuios kill-session "$name" >/dev/null && echo "closed $name: its repo is gone"
-            fi
-          done
+        list_projects() {
+          {
+            fd -H -I -t d -d 4 '^\.git$' "$dev" -E local -x dirname {} &&
+              { [ ! -d "$dev/local" ] || fd -t d -d 1 . "$dev/local"; }
+          } | sed -e 's|/$||' -e "s|^$dev/||" | sort -u
+        }
+        session_name() {
+          case $1 in
+            local/*) echo "local.''${1#local/}" ;;
+            */*/*) echo "$(echo "$1" | cut -d/ -f2).$(echo "$1" | cut -d/ -f3)" ;;
+            *) basename "$1" ;;
+          esac
+        }
       '';
 
-      # Ctrl+s u and `ts`: fzf over $DEV_PATH repos, then the project's session
-      # (owner.repo, local.name), created in the repo first. In a tuios pane
+      # Daily: only main, project sessions and worktree sessions whose
+      # directory exists are kept. Any other session (one made by hand, a
+      # deleted repo's, a removed worktree's) is closed once it's detached and
+      # nobody has typed in it for a day; closing ends its programs.
+      cleanupSessions = pkgs.writeShellScript "tuios-cleanup-sessions" ''
+        set -euo pipefail
+        export PATH=${
+          lib.makeBinPath (
+            with pkgs;
+            [
+              coreutils
+              fd
+              gnused
+              jq
+              tuios
+            ]
+          )
+        }:$PATH
+        ${projectsLib}
+        # Without $dev every project would look unlisted.
+        [ -d "$dev" ] || exit 0
+        # Exit 3 means no daemon: nothing to clean, and none is started.
+        list=$(tuios ls --json 2>/dev/null) || exit 0
+        keep=$(list_projects | while IFS= read -r rel; do session_name "$rel"; done)
+        printf '%s' "$list" | jq -r --arg keep "$keep" --argjson now "$(date +%s)" '
+          ($keep | split("\n")) as $k
+          | .[]
+          | select((.attached | not) and .name != "main")
+          | select(.name as $n | any($k[]; . == $n) | not)
+          | select(.worktree == null or .worktree.gone == true)
+          | select($now - (.last_active // $now) >= 86400)
+          | .name' | while IFS= read -r name; do
+          tuios kill-session "$name" >/dev/null && echo "closed $name"
+        done
+      '';
+
+      # Ctrl+s u and `ts`: fzf over the projects, then the project's session,
+      # created in the repo first. In a tuios pane
       # the client switches to it; in any other shell `tuios attach` opens it.
       # tuios 0.8.5's CLI can neither start a session in a given directory
       # (`tuios new` takes the daemon's cwd) nor switch the client from a pane,
@@ -138,6 +159,7 @@ in
             ]
           )
         }:$PATH
+        ${projectsLib}
         # The socket tuios itself reaches (internal/session/manager_unix.go);
         # $TUIOS_SOCKET only reports it (socket_env.go).
         sock=''${XDG_RUNTIME_DIR:+$XDG_RUNTIME_DIR/tuios/tuios.sock}
@@ -146,18 +168,8 @@ in
         rc=0
         tuios ls >/dev/null 2>&1 || rc=$?
         [ "$rc" -ne 3 ] || tuios start-server >/dev/null
-        dev=''${DEV_PATH:-${config.devPath}}
-        rel=$(
-          {
-            fd -H -I -t d -d 4 '^\.git$' "$dev" -E local -x dirname {}
-            [ ! -d "$dev/local" ] || fd -t d -d 1 . "$dev/local"
-          } | sed -e 's|/$||' -e "s|^$dev/||" | sort -u | fzf --prompt 'project> '
-        ) || exit 0
-        case $rel in
-          local/*) name=local.''${rel#local/} ;;
-          */*/*) name=$(echo "$rel" | cut -d/ -f2).$(echo "$rel" | cut -d/ -f3) ;;
-          *) name=$(basename "$rel") ;;
-        esac
+        rel=$(list_projects | fzf --prompt 'project> ') || exit 0
+        name=$(session_name "$rel")
         res=$(jq -nc --arg n "$name" --arg c "$dev/$rel" \
           '{id: 1, verb: "new-session", params: {name: $n, cwd: $c}}' \
           | socat -t2 - "UNIX-CONNECT:$sock") || res=
