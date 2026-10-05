@@ -64,13 +64,30 @@ margin_ends = 0
 radius = 10
 start = ["workspaces"]
 center = ["clock"]
-end = ["media", "tray", "notifications", "battery", "control-center"]
+end = ["media", "privacy", "tray", "network", "volume", "notifications", "battery", "control-center"]
+
+# Media and privacy only appear while something is playing or being captured.
+[widget.media]
+hide_when_no_media = true
+
+[widget.privacy]
+hide_inactive = true
+
+# Icons only; the SSID and percentage are a hover or click away.
+[widget.network]
+show_label = false
+
+[widget.volume]
+show_label = false
 
 [widget.clock]
 format = "{:%I:%M}"
 
+# Muted numbered pills; only the active workspace takes the accent colour.
 [widget.workspaces]
 style = "regular"
+hide_when_empty = true
+occupied_color = "surface_variant"
 empty_color = "surface_variant"
 
 # Lock screen: a large clock, the date, and a bare password field over the
