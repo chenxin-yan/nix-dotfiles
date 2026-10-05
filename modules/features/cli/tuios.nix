@@ -347,9 +347,10 @@ in
         window_prefix_cancel = ["esc"]
         prefix_split_horizontal = ["_"]
 
-        # The palette stays on Ctrl+s P; Ctrl+p goes back to nvim, fzf and zsh.
+        # Ctrl+p goes back to nvim, fzf and zsh; Ctrl+Shift+P is only told apart
+        # from it under the kitty protocol, and Ghostty unbinds its own use of it.
         [keybindings.global]
-        command_palette = []
+        command_palette = ["ctrl+shift+p"]
 
         # niri's mod key and AeroSpace both take Alt+1..9 before tuios sees
         # them (and Alt+Shift+1..9); Ctrl+1..9 were herdr's tab keys.
