@@ -44,7 +44,7 @@
             "super+q=quit"
             "super+t=new_tab"
             # Ghostty's macOS tab keys; Ctrl+Alt+hjkl belong to the window
-            # manager (niri and AeroSpace focus monitors with them).
+            # manager (niri and Rift focus monitors with them).
             "super+shift+bracket_left=previous_tab"
             "super+shift+bracket_right=next_tab"
             # Linux defaults (save screen, new window, command palette) that would

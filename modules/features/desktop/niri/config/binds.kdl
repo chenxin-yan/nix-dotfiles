@@ -1,7 +1,8 @@
 // niri's default binds (resources/default-config.kdl, v26.04) with Mod = Alt
-// (config.kdl), plus the AeroSpace binds that have a niri action
-// (desktop/aerospace.nix) and Super binds that copy macOS shortcuts.
-// One swap, matching AeroSpace: Shift moves windows (niri: Ctrl), Ctrl acts
+// (config.kdl), a few binds shared with Rift on the Mac
+// (desktop/rift/config.toml, which copies these on the same keys), and Super
+// binds that copy macOS shortcuts.
+// One swap, matching the Mac: Shift moves windows (niri: Ctrl), Ctrl acts
 // on monitors and whole workspaces (niri: Shift). The mouse wheel follows it.
 // Left out:
 //   - Mod+D (launcher): zsh's fzf cd is Alt+D; Vicinae is on Super+Space.
@@ -16,7 +17,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Apps and session.
-    // Hyper (home-row g/h) + Space, as in AeroSpace.
+    // Hyper (home-row g/h) + Space, as in Rift.
     Mod+Super+Ctrl+Shift+Space hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
     // Hyper+letter opens a new window beside the focused one, like Hyper+Space;
     // Super+grave (recent-windows in config.kdl) reaches an existing one.

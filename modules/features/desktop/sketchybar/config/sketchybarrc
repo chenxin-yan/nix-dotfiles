@@ -67,6 +67,6 @@ sketchybar --add item cat center \
 
 sketchybar --update
 
-# AeroSpace only reports workspace changes, so seed the highlight on (re)start.
-sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$(aerospace list-workspaces --focused 2>/dev/null)"
+# Rift only reports workspace changes, so seed the highlight on (re)start.
+sketchybar --trigger rift_workspace_change FOCUSED_WORKSPACE="$(rift-cli query workspaces 2>/dev/null | jq -r '.[] | select(.is_active) | .name')"
 

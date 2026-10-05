@@ -1,0 +1,148 @@
+# Rift reloads this file on save. Reference: rift.default.toml in the Rift
+# repo (acsandmann/rift, v0.6.7), the docs at https://acsandmann.github.io/rift-docs/.
+# Unknown keys make the whole file fail to load, so check the log after an edit.
+
+[settings]
+# Rift otherwise leaves every space unmanaged until toggled.
+default_disable = false
+focus_follows_mouse = false
+mouse_follows_focus = true
+mouse_hides_on_focus = false
+# Subscriptions live in Rift's memory, so each start re-registers them, and
+# seeds the bar in case sketchybar started first (sketchybarrc seeds the
+# other order).
+run_on_start = [
+  "rift-cli subscribe cli --event workspace_changed --command sh --args -c --args 'sketchybar --trigger rift_workspace_change FOCUSED_WORKSPACE=\"$RIFT_WORKSPACE_NAME\"'",
+  "sh -c 'sketchybar --trigger rift_workspace_change FOCUSED_WORKSPACE=\"$(rift-cli query workspaces | jq -r \".[] | select(.is_active) | .name\")\"'",
+]
+
+[settings.layout]
+# niri's layout on every workspace. Column widths stay Rift's defaults; its
+# presets (Alt+R) are niri's 1/3, 1/2 and 2/3.
+mode = "scrolling"
+
+[settings.layout.gaps.outer]
+top = 12
+left = 6
+bottom = 6
+right = 6
+
+[settings.layout.gaps.inner]
+horizontal = 6
+vertical = 6
+
+# The external displays (LG, DELL S2725QC) get top = 44. Overrides are keyed
+# by display UUID (`rift-cli query displays`) and replace all four outer
+# gaps; one block per display.
+# [settings.layout.gaps.per_display."DISPLAY-UUID".outer]
+# top = 44
+# left = 6
+# bottom = 6
+# right = 6
+
+# Alt+O, like niri's overview.
+[settings.ui.mission_control]
+enabled = true
+
+[virtual_workspaces]
+default_workspace_count = 7
+# Named by index: workspace_changed reports only the name, and sketchybar's
+# space.0…space.6 items match it.
+workspace_names = ["0", "1", "2", "3", "4", "5", "6"]
+# niri's workspaces stop at the ends.
+prevent_wrapping = true
+app_rules = [
+  { app_id = "com.apple.mail", workspace = 0 },
+  { app_id = "com.microsoft.VSCode", workspace = 1 },
+  { app_id = "app.zen-browser.zen", workspace = 2 },
+  { app_id = "com.vivaldi.Vivaldi", workspace = 2 },
+  { app_id = "com.flexibits.fantastical2.mac", workspace = 3 },
+  { app_id = "com.lukilabs.lukiapp-setapp", workspace = 4 },
+  { app_id = "com.electron.logseq", workspace = 4 },
+  { app_id = "dev.vencord.vesktop", workspace = 5 },
+  { app_id = "com.tencent.xinWeChat", workspace = 5 },
+  { app_id = "com.tinyspeck.slackmacgap", workspace = 5 },
+  { app_id = "com.apple.Music", workspace = 6 },
+]
+
+# niri's binds (niri/config/binds.kdl) on the same keys, Mod = Alt: Shift
+# moves windows, Ctrl acts on displays. Workspaces 0–6, Grave = 0, as
+# kanata and the Voyager send them.
+[keys]
+# Columns left/right, windows within a column up/down.
+"Alt + H" = { move_focus = "left" }
+"Alt + J" = { move_focus = "down" }
+"Alt + K" = { move_focus = "up" }
+"Alt + L" = { move_focus = "right" }
+"Alt + Shift + H" = { move_node = "left" }
+"Alt + Shift + J" = { move_node = "down" }
+"Alt + Shift + K" = { move_node = "up" }
+"Alt + Shift + L" = { move_node = "right" }
+
+"Alt + Ctrl + H" = { focus_display = "left" }
+"Alt + Ctrl + J" = { focus_display = "down" }
+"Alt + Ctrl + K" = { focus_display = "up" }
+"Alt + Ctrl + L" = { focus_display = "right" }
+"Alt + Shift + Ctrl + H" = { move_window_to_display = { selector = "left" } }
+"Alt + Shift + Ctrl + J" = { move_window_to_display = { selector = "down" } }
+"Alt + Shift + Ctrl + K" = { move_window_to_display = { selector = "up" } }
+"Alt + Shift + Ctrl + L" = { move_window_to_display = { selector = "right" } }
+
+# Hyper (home-row g/h) + Space: Ghostty, opened or focused. niri binds the
+# same key.
+"Alt + Ctrl + Shift + Meta + Space" = { exec = ["/usr/bin/open", "-a", "Ghostty"] }
+"Alt + Shift + Q" = "close_window"
+"Alt + O" = "show_mission_control_all"
+
+"Alt + Grave" = { switch_to_workspace = 0 }
+"Alt + 1" = { switch_to_workspace = 1 }
+"Alt + 2" = { switch_to_workspace = 2 }
+"Alt + 3" = { switch_to_workspace = 3 }
+"Alt + 4" = { switch_to_workspace = 4 }
+"Alt + 5" = { switch_to_workspace = 5 }
+"Alt + 6" = { switch_to_workspace = 6 }
+# Focus goes along with the window, as in niri.
+"Alt + Shift + Grave" = { move_window_to_workspace = { workspace = 0, follow = true } }
+"Alt + Shift + 1" = { move_window_to_workspace = { workspace = 1, follow = true } }
+"Alt + Shift + 2" = { move_window_to_workspace = { workspace = 2, follow = true } }
+"Alt + Shift + 3" = { move_window_to_workspace = { workspace = 3, follow = true } }
+"Alt + Shift + 4" = { move_window_to_workspace = { workspace = 4, follow = true } }
+"Alt + Shift + 5" = { move_window_to_workspace = { workspace = 5, follow = true } }
+"Alt + Shift + 6" = { move_window_to_workspace = { workspace = 6, follow = true } }
+
+"Alt + N" = "next_workspace"
+"Alt + P" = "prev_workspace"
+"Alt + Shift + N" = { move_window_to_workspace = { workspace = "next", follow = true } }
+"Alt + Shift + P" = { move_window_to_workspace = { workspace = "prev", follow = true } }
+"Alt + Tab" = "switch_to_last_workspace"
+# Rift has no "next display"; with wrap_around, "down" cycles displays
+# stacked vertically (the monitor above the laptop, as in niri's config.kdl).
+# Side by side, it would need "right".
+"Alt + Shift + Tab" = { move_workspace_to_display = { selector = "down", wrap_around = true } }
+
+# Columns: stacking, widths, heights.
+"Alt + BracketLeft" = { consume_or_expel_window = "left" }
+"Alt + BracketRight" = { consume_or_expel_window = "right" }
+# Pulls the next column into this one; on a stacked column it splits it up.
+"Alt + Comma" = "toggle_stack"
+"Alt + Period" = "unjoin_windows"
+
+"Alt + R" = "switch_preset_column_width"
+"Alt + Shift + R" = { switch_preset_column_width = { backwards = true } }
+# Option+-/= no longer type – — ≠ ±. Heights apply within a stacked column,
+# in Rift's fixed 5% steps.
+"Alt + Minus" = { resize_window_by = { amount = -0.1 } }
+"Alt + Equal" = { resize_window_by = { amount = 0.1 } }
+"Alt + Shift + Minus" = { resize_window_shrink = "vertical" }
+"Alt + Shift + Equal" = { resize_window_grow = "vertical" }
+
+# Rift's fullscreen fills the display without leaving the space, like niri's
+# maximize-window-to-edges. within_gaps is the closest to niri's
+# maximize-column, but it maximizes only the focused window of a stack.
+"Alt + F" = "toggle_fullscreen_within_gaps"
+"Alt + Shift + F" = "toggle_fullscreen"
+"Alt + M" = "toggle_fullscreen"
+"Alt + C" = "center_selection"
+
+"Alt + V" = "toggle_window_floating"
+"Alt + Shift + V" = "toggle_focus_floating"

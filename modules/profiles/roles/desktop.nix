@@ -34,7 +34,7 @@
     voxtype # dictation on right ⌘
 
     # macOS only
-    aerospace
+    rift
     iina
     sketchybar
   ];

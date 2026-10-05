@@ -18,17 +18,17 @@ SPACE=(
   label.drawing=off
 )
 
-sketchybar --add event aerospace_workspace_change
+sketchybar --add event rift_workspace_change
 
 sid=0
 for i in "${!SPACE_ICONS[@]}"
 do
   sid=$(($i))
   sketchybar --add item space.$sid left \
-             --subscribe space.$sid aerospace_workspace_change \
+             --subscribe space.$sid rift_workspace_change \
              --set space.$sid "${SPACE[@]}" \
                   script="$PLUGIN_DIR/space.sh $sid" \
-                  click_script="aerospace workspace $sid" \
+                  click_script="rift-cli execute workspace switch $sid" \
              --set space.$sid icon=${SPACE_ICONS[i]}
 done
 
