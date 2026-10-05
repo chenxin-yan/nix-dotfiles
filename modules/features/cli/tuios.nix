@@ -1,12 +1,35 @@
 # Trial alongside herdr: same Ctrl+s leader, catppuccin and Ctrl+hjkl nav;
 # everything else stays at tuios defaults to judge them as shipped, except
 # keys the defaults can't have here (see the comments below).
-{ inputs, ... }:
+{
+  inputs,
+  config,
+  lib,
+  ...
+}:
+let
+  # Always-on machines running tuios: every other machine links to these, so
+  # their sessions and agents show in its rail, switcher and Inbox. Laptops
+  # aren't linked to; asleep, they'd only show as unreachable.
+  tuiosServers = lib.filter (
+    name:
+    lib.all (f: lib.elem f (map (s: s.name) config.hosts.${name}.selected)) [
+      "server"
+      "tuios"
+    ]
+  ) (lib.attrNames config.hosts);
+in
 {
   features.tuios.homeManager =
-    { pkgs, lib, ... }:
+    {
+      config,
+      osConfig,
+      pkgs,
+      ...
+    }:
     let
       tuios = inputs.tuios.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      hostName = osConfig.networking.hostName;
 
       # What `tuios integration install pi` writes, rendered at build time so
       # it stays declarative and matches this tuios. The hook finds tuios on
@@ -115,9 +138,31 @@
         ts = "${pickProject}";
       };
 
+      # Keeps a server's sessions and agents alive with nobody logged in, for
+      # the machines that link to it. keep-old: a switch must not restart it
+      # and kill every pane; `tuios kill-server` saves state and Restart brings
+      # up the current binary, which restores the sessions.
+      systemd.user.services.tuios-daemon = lib.mkIf (lib.elem hostName tuiosServers) {
+        Unit = {
+          Description = "tuios daemon";
+          X-SwitchMethod = "keep-old";
+        };
+        Service = {
+          ExecStart = "${tuios}/bin/tuios daemon";
+          Restart = "always";
+          RestartSec = 1;
+          # Panes, popups and agents inherit these; systemd sets neither.
+          Environment = [
+            "PATH=/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin:/run/wrappers/bin"
+            "SHELL=${config.programs.zsh.package}/bin/zsh"
+          ];
+        };
+        Install.WantedBy = [ "default.target" ];
+      };
+
       # tuios merges this over its defaults and leaves a read-only file alone,
-      # but writers like `tuios hosts add` and the settings page can't persist:
-      # add hosts here as [hosts.<name>] addr = "...".
+      # but writers like `tuios hosts add` and the settings page can't persist,
+      # so hosts come from the inventory below.
       xdg.configFile."tuios/config.toml".text = ''
         [appearance]
         theme = "catppuccin_mocha"
@@ -217,6 +262,11 @@
         type = "scratch"
         name = "servers"
         description = "Servers and logs"
-      '';
+      ''
+      + lib.concatMapStrings (name: ''
+
+        [hosts.${name}]
+        addr = "${name}"
+      '') (lib.remove hostName tuiosServers);
     };
 }
