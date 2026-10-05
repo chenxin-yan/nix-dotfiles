@@ -62,6 +62,14 @@
           source = "${sources.pstack}/skills/unslop";
           recursive = true;
         };
+        ".agents/skills/benchmark-checklist" = {
+          source = "${sources.pstack}/skills/benchmark-checklist";
+          recursive = true;
+        };
+        ".agents/skills/principle-explain-the-number" = {
+          source = "${sources.pstack}/skills/principle-explain-the-number";
+          recursive = true;
+        };
         ".agents/skills/grill-me" = {
           source = "${sources.mattpocockSkills}/skills/productivity/grill-me";
           recursive = true;

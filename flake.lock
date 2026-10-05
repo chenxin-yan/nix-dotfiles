@@ -264,11 +264,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1791152418,
-        "narHash": "sha256-r1UOx/UpB+fiT/EF9Zc7mQ6tw97jKXe3Y9EEvZ3phWQ=",
+        "lastModified": 1791184067,
+        "narHash": "sha256-QNcyea47r4drB3jVxJSQM40EOXNaxGrjrKSKHM00fEQ=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "af8839df1038cc026075fb254afa22edc19d911d",
+        "rev": "131b005c14f87df425655687d157a5f87a5eca50",
         "type": "github"
       },
       "original": {
@@ -305,11 +305,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791152050,
-        "narHash": "sha256-nahRxMuRZ7KC5cNh68qK7xGtUvQbeRqgoZziacR+87M=",
+        "lastModified": 1791163078,
+        "narHash": "sha256-DiuwfdoZtEqVRsWuAhXcHa+cfvkr0t/xWW8ugkcxNyI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "bf72b2ad29b9253f0808b37d7b67fc12c66fbdf3",
+        "rev": "f53f3267f5d009dd8f99443505e609389d7ff267",
         "type": "github"
       },
       "original": {
@@ -861,11 +861,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1791149479,
-        "narHash": "sha256-GLwD/s579UTggfbFL8bU7Mw0fcmCDxEAegBW9h3E5EY=",
+        "lastModified": 1791174598,
+        "narHash": "sha256-Ge3DJfYB8g0rISIXNnQq6skrXA1M+0J+0twkiiNLLVM=",
         "owner": "Gaurav-Gosain",
         "repo": "tuios",
-        "rev": "0835b46b02dbdc390f5afc942c9a576a0682c379",
+        "rev": "1e0b4c8961428b30e25bf0baea445f61a188d8de",
         "type": "github"
       },
       "original": {

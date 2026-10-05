@@ -94,13 +94,13 @@ in
 
       # Disable pi's startup "new version available" toast. The pi binary
       # itself is pinned by Nix, so the upstream npm-registry version check
-      # at interactive-mode.js:checkForNewVersion() is pure noise and would
-      # nudge us toward `npm i -g` updates that fight the read-only Nix
+      # (utils/version-check.js checkForNewPiVersion()) is pure noise and
+      # would nudge us toward `npm i -g` updates that fight the read-only Nix
       # store. We deliberately do NOT set PI_OFFLINE here: that would also
       # silence checkForPackageUpdates() for the npm extensions in
       # `packages` below, and those updates are still useful as a signal
-      # to bump our declarative list. Gate logic:
-      # interactive-mode.js:528 `if (PI_SKIP_VERSION_CHECK || PI_OFFLINE)`.
+      # to bump our declarative list (PI_OFFLINE gates
+      # core/package-manager.js).
       home.sessionVariables = {
         PI_SKIP_VERSION_CHECK = "1";
         # Ponytail default mode. `full` keeps the lazy-dev ruleset injected
@@ -156,7 +156,19 @@ in
           # loads extensions/skills/prompts/themes from each manifest. The
           # `npm:` prefix is required so parseSource() treats these as npm
           # packages rather than local paths.
-          packages = map (p: "npm:${p}") piPackages;
+          #
+          # Ponytail is a local package: its package.json `pi` manifest points
+          # pi at the pinned store path, so the extension's relative
+          # `../hooks` requires resolve in place (commands /ponytail*,
+          # per-turn lazy-dev prompt). `skills = []` because the agents
+          # feature already installs them into ~/.agents/skills; loading both
+          # would trip pi's name-collision warning.
+          packages = map (p: "npm:${p}") piPackages ++ [
+            {
+              source = "${ponytail}";
+              skills = [ ];
+            }
+          ];
           # Pin routing independently of the parent: cheap recon/research,
           # Opus implementation, Astra cross-family review and oracle.
           # Upstream returns provider failures; another model needs an explicit launch.
@@ -197,8 +209,8 @@ in
           theme = "catppuccin-mocha";
           # Suppress the built-in logo + keybinding-hints block and the
           # "loaded resources" listing at session start
-          # (interactive-mode.js:409, :979). The header container itself is
-          # untouched, so the custom-header.ts extension below still renders
+          # (interactive-mode.js startup header/details getters). The header
+          # container itself is untouched, so the custom-header.ts extension below still renders
           # via setHeader. Net effect: a clean text-only startup header
           # without the wall of keybinding hints. `pi --verbose` overrides
           # this on demand; `/builtin-header` restores upstream header for
@@ -209,12 +221,12 @@ in
           # see only your own messages in /tree without having to toggle it
           # every time. Other options: "default", "no-tools", "labeled-only", "all".
           treeFilterMode = "user-only";
-          # Disable install telemetry. Pi otherwise sends a single GET to
-          # https://pi.dev/install?version=X on the first run after a version
-          # change (interactive-mode.js:631). We deliberately do NOT set
-          # PI_OFFLINE (it would also silence the useful extension-update
-          # checks), so this explicit flag is what actually suppresses the
-          # ping.
+          # Disable install telemetry and provider attribution headers. Pi
+          # otherwise sends a GET to https://pi.dev/api/report-install after
+          # a version change (interactive-mode.js reportInstallTelemetry()).
+          # We deliberately do NOT set PI_OFFLINE (it would also silence the
+          # useful extension-update checks), so this explicit flag is what
+          # actually suppresses the ping.
           enableInstallTelemetry = false;
         };
 
@@ -258,21 +270,6 @@ in
         # message and wall-clock time spent in the current agent run.
         ".pi/agent/extensions/tps-status.ts".source = ./config/extensions/tps-status.ts;
         ".pi/agent/extensions/agent-time.ts".source = ./config/extensions/agent-time.ts;
-
-        # Ponytail pi extension (commands /ponytail, /ponytail-review,
-        # /ponytail-audit, /ponytail-debt, /ponytail-gain, /ponytail-help;
-        # injects the lazy-dev system prompt per turn when
-        # mode != off). A re-export wrapper rather than a direct symlink:
-        # ponytail/pi-extension/index.js does `require("../hooks/…")`, so it
-        # must be loaded from its real store path for that relative resolve
-        # to land on ponytail/hooks/. Symlinking the dir into extensions/
-        # would resolve `../hooks` to ~/.pi/agent/extensions/hooks and also
-        # tempt pi to load loose hook .js files as extensions. Importing the
-        # absolute store path sidesteps both.
-        ".pi/agent/extensions/ponytail.js".text = ''
-          import ext from "${ponytail}/pi-extension/index.js";
-          export default ext;
-        '';
 
         ".pi/agent/AGENTS.md".source = ../config/AGENTS.md;
 
