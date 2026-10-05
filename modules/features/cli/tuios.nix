@@ -302,6 +302,16 @@ in
         theme = "catppuccin_mocha"
         # Hands Ctrl+hjkl to nvim when tuios-nvim-navigator is active there.
         nvim_navigation = true
+        # Minimal chrome: one line between tiles, no titles or buttons.
+        shared_borders = true
+        border_style = "normal"
+        window_title_position = "hidden"
+        hide_window_buttons = true
+        motion = "basic"
+
+        # Beside noctalia's bar, which is on the left edge too.
+        [appearance.sidebar]
+        position = "left"
 
         # Type straight into the shell, as in herdr; Alt+Esc reaches window mode.
         [startup]
