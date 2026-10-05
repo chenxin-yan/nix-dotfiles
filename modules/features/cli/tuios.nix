@@ -185,7 +185,14 @@ in
         [ "''${TUIOS_ENV:-}" = 1 ] || exec tuios attach "$name"
         id=$("$HERDR_BIN_PATH" workspace list | jq -r --arg n "$name" \
           'first(.result.workspaces[] | select(.label == $n) | .workspace_id) // empty')
-        [ -n "$id" ] && "$HERDR_BIN_PATH" workspace focus "$id" >/dev/null
+        [ -n "$id" ] || exit 0
+        "$HERDR_BIN_PATH" workspace focus "$id" >/dev/null
+        # A switch doesn't apply [startup] tiled, only a first attach does
+        # (tuios#452), so tile the session made just now; a reopened one keeps
+        # its layout.
+        if printf '%s' "$res" | jq -e .result >/dev/null; then
+          tuios set-layout -s "$name" --tiling true >/dev/null
+        fi
       '';
     in
     {
@@ -322,8 +329,12 @@ in
         split_horizontal = []
         equalize_splits = ["0"]
 
-        # herdr's split key.
+        # herdr's split key. Ctrl+s Esc only cancels the prefix: an unbound key
+        # would reach the pane, so it takes the no-op the sub-prefixes cancel
+        # with (input/prefix_actions.go). Alt+Esc is the one way to window mode.
         [keybindings.prefix_mode]
+        prefix_exit_mode = []
+        window_prefix_cancel = ["esc"]
         prefix_split_horizontal = ["_"]
 
         # The palette stays on Ctrl+s P; Ctrl+p goes back to nvim, fzf and zsh.
