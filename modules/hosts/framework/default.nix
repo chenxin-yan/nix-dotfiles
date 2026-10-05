@@ -111,8 +111,8 @@
         # Docked with the lid shut, the fingerprint reader in the power button
         # is out of reach, yet pam_fprintd waits for it before sudo and polkit
         # fall back to the password. Skip it while the lid is closed.
-        # TODO: drop once fprintd checks the lid itself and that release is in
-        # nixpkgs: https://gitlab.freedesktop.org/libfprint/fprintd/-/work_items/208
+        # TODO: drop once this fprintd MR is merged and released in nixpkgs:
+        # https://gitlab.freedesktop.org/libfprint/fprintd/-/merge_requests/256
         security.pam.services = lib.genAttrs [ "sudo" "polkit-1" ] (name: {
           rules.auth.fprintd-skip-lid-closed = {
             order = config.security.pam.services.${name}.rules.auth.fprintd.order - 1;
