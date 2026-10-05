@@ -17,6 +17,8 @@
         xwayland-satellite
         # wl-copy/wl-paste: Neovim's "+ register and CLI tools use them.
         wl-clipboard
+        # Clicks with the keyboard (Mod+G in binds.kdl); built with OpenCV.
+        wl-kbptr
         # The GNOME portal's file chooser (Open/Save dialogs) is Nautilus
         # since xdg-desktop-portal-gnome 47 (niri's "Important Software").
         # Also a Finder-like file manager, and "Show in folder" target.

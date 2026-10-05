@@ -35,6 +35,14 @@ binds {
     Mod+O repeat=false { toggle-overview; }
     Mod+Shift+Q repeat=false hotkey-overlay-title="Close window" { close-window; }
 
+    // Click with the keyboard (wl-kbptr; Vimium does web pages). Mod+G labels
+    // what OpenCV spots as clickable; Mod+Shift+G is a grid that reaches any
+    // point (g/h/b: left/right/middle click). Both cover the whole output:
+    // niri's IPC has no screen position for tiled windows (niri#2381), so
+    // they can't be limited to the focused one as on Sway.
+    Mod+G repeat=false hotkey-overlay-title="Click a detected target" { spawn "wl-kbptr" "-o" "modes=floating,click" "-o" "mode_floating.source=detect"; }
+    Mod+Shift+G repeat=false hotkey-overlay-title="Click anywhere (grid)" { spawn "wl-kbptr" "-o" "modes=tile,bisect"; }
+
     // Columns left/right, windows within a column up/down.
     Mod+H { focus-column-left; }
     Mod+J { focus-window-down; }
