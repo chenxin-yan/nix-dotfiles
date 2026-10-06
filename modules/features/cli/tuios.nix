@@ -22,13 +22,6 @@ in
 {
   features.tuios.includes = with config.features; [ paths ];
 
-  # Lets the ssh client's NO_MULTIPLEXER through to the login block below.
-  features.tuios.nixos =
-    { config, ... }:
-    lib.mkIf (lib.elem config.networking.hostName tuiosServers) {
-      services.openssh.settings.AcceptEnv = [ "NO_MULTIPLEXER" ];
-    };
-
   features.tuios.homeManager =
     {
       config,
@@ -45,8 +38,7 @@ in
 
       # What `tuios integration install pi` writes, rendered at build time so
       # it stays declarative and matches this tuios. The hook finds tuios on
-      # PATH, as shipped: pinning --command makes `tuios integration status`
-      # report the file out of date.
+      # PATH, as shipped.
       piExtension = pkgs.runCommand "tuios-pi-agent-state.ts" { } ''
         export HOME=$TMPDIR
         mkdir -p $HOME/.pi/agent
@@ -123,7 +115,7 @@ in
         done
       '';
 
-      # Daily: only main, project sessions and worktree sessions whose
+      # Daily: only project sessions and worktree sessions whose
       # directory exists are kept. Any other session (one made by hand, a
       # deleted repo's, a removed worktree's) is closed once it's detached and
       # nobody has typed in it for a day; closing ends its programs.
@@ -150,7 +142,7 @@ in
         printf '%s' "$list" | jq -r --arg keep "$keep" --argjson now "$(date +%s)" '
           ($keep | split("\n")) as $k
           | .[]
-          | select((.attached | not) and .name != "main")
+          | select(.attached | not)
           | select(.name as $n | any($k[]; . == $n) | not)
           | select(.worktree == null or .worktree.gone == true)
           | select($now - (.last_active // $now) >= 86400)
@@ -222,31 +214,7 @@ in
         recursive = true;
       };
 
-      # The entry point: one fixed session, the same on every machine.
-      programs.zsh.shellAliases = {
-        t = "tuios attach main -c";
-        ts = "${pickProject}";
-      };
-
-      # A shell in a multiplexer pane says so, and ssh passes it on, so an
-      # ssh to a tuios server from here doesn't open a tuios inside this one.
-      # `NO_MULTIPLEXER=1 ssh minipc` gets a plain shell on purpose.
-      programs.zsh.initContent = ''
-        if [[ -n ''${TUIOS_ENV-}''${HERDR_ENV-} ]]; then export NO_MULTIPLEXER=1; fi
-      '';
-      programs.ssh.settings = lib.genAttrs tuiosServers (_: {
-        SendEnv = "NO_MULTIPLEXER";
-      });
-
-      # On a server, a terminal login lands in main: interactive with a tty,
-      # so ssh commands, scp and rsync never reach it. Detaching (Ctrl+s d)
-      # returns to this shell.
-      programs.zsh.profileExtra = lib.mkIf (lib.elem hostName tuiosServers) ''
-        if [[ -o interactive && -t 0 && -t 1 && ''${TERM:-dumb} != dumb &&
-              -z ''${TUIOS_ENV-}''${HERDR_ENV-}''${TMUX-}''${ZELLIJ-}''${NO_MULTIPLEXER-} ]]; then
-          tuios attach main -c
-        fi
-      '';
+      programs.zsh.shellAliases.ts = "${pickProject}";
 
       systemd.user.services.tuios-cleanup = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         Unit.Description = "Close tuios sessions whose repo is gone";
@@ -326,6 +294,10 @@ in
         # Beside noctalia's bar, which is on the left edge too.
         [appearance.sidebar]
         position = "left"
+        # The default stack without files.
+        sections = "sessions:25,terminals,agents:34"
+        # Every agent keeps its row, not "+N at rest" after an idle hour.
+        agent_rest_fold = "off"
 
         # Type straight into the shell, as in herdr; Alt+Esc reaches window mode.
         [startup]
@@ -356,8 +328,12 @@ in
         # herdr's split key. Ctrl+s Esc only cancels the prefix: an unbound key
         # would reach the pane, so it takes the no-op the sub-prefixes cancel
         # with (input/prefix_actions.go). Alt+Esc is the one way to window mode.
+        # The Agents settings tab gives up A to the agent task below; its
+        # installs can't write the store-linked files anyway, and the palette
+        # still opens it.
         [keybindings.prefix_mode]
         prefix_exit_mode = []
+        prefix_agents_settings = []
         window_prefix_cancel = ["esc"]
         prefix_split_horizontal = ["_"]
 
