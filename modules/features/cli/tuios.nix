@@ -115,11 +115,11 @@ in
         done
       '';
 
-      # Daily: only project sessions and worktree sessions whose
-      # directory exists are kept. Any other session (one made by hand, a
-      # deleted repo's, a removed worktree's) is closed once it's detached and
-      # nobody has typed in it for a day; closing ends its programs.
-      cleanupSessions = pkgs.writeShellScript "tuios-cleanup-sessions" ''
+      # `tuios-stale-sessions`: this machine's detached sessions that are
+      # neither a project's nor a worktree's whose directory exists (one made
+      # by hand, a deleted repo's, a removed worktree's). It only lists them,
+      # so Ctrl+s K can ask first, here and over ssh.
+      staleSessions = pkgs.writeShellScriptBin "tuios-stale-sessions" ''
         set -euo pipefail
         export PATH=${
           lib.makeBinPath (
@@ -136,19 +136,65 @@ in
         ${projectsLib}
         # Without $dev every project would look unlisted.
         [ -d "$dev" ] || exit 0
-        # Exit 3 means no daemon: nothing to clean, and none is started.
+        # Exit 3 means no daemon: no sessions, and none is started.
         list=$(tuios ls --json 2>/dev/null) || exit 0
         keep=$(list_projects | while IFS= read -r rel; do session_name "$rel"; done)
-        printf '%s' "$list" | jq -r --arg keep "$keep" --argjson now "$(date +%s)" '
+        printf '%s' "$list" | jq -r --arg keep "$keep" '
           ($keep | split("\n")) as $k
           | .[]
           | select(.attached | not)
           | select(.name as $n | any($k[]; . == $n) | not)
           | select(.worktree == null or .worktree.gone == true)
-          | select($now - (.last_active // $now) >= 86400)
-          | .name' | while IFS= read -r name; do
-          tuios kill-session "$name" >/dev/null && echo "closed $name"
-        done
+          | .name'
+      '';
+
+      # Ctrl+s K: the stale sessions here and on each linked host, all ticked
+      # in fzf; untick the ones to keep, Enter closes the rest and ends their
+      # programs. Each machine lists its own, over ssh, since only it knows
+      # its projects and worktrees; closing goes over the daemon's link.
+      cleanSessions = pkgs.writeShellScript "tuios-clean-sessions" ''
+        set -u
+        export PATH=${
+          lib.makeBinPath (
+            with pkgs;
+            [
+              coreutils
+              fzf
+              gawk
+              staleSessions
+              tuios
+            ]
+          )
+        }:$PATH
+        # local: keeps a name with a colon from reading as a host.
+        rows=$({
+          tuios-stale-sessions | awk '{ print $0 "\tlocal:" $0 }'
+          for h in ${lib.escapeShellArgs linkedHosts}; do
+            timeout 5 ssh -n -o BatchMode=yes "$h" tuios-stale-sessions 2>/dev/null |
+              awk -v h="$h" '{ print $0 " @ " h "\t" h ":" $0 }' &
+          done
+          wait
+        })
+        if [ -z "$rows" ]; then
+          printf 'No stale sessions.\nPress Enter to close.'
+          read -r _
+          exit 0
+        fi
+        # With none ticked, fzf's accept would return the highlighted row.
+        sel=$(printf '%s\n' "$rows" | fzf --multi --sync --prompt 'close> ' \
+          --header 'Tab: keep or close. Enter: close the ticked.' \
+          --delimiter '\t' --with-nth 1 --bind load:select-all \
+          --bind 'enter:transform:[ "$FZF_SELECT_COUNT" -eq 0 ] && echo abort || echo accept') ||
+          exit 0
+        failed=
+        while IFS=$'\t' read -r _ target; do
+          out=$(tuios kill-session "$target" 2>&1) || failed+="$out"$'\n'
+        done <<<"$sel"
+        # The popup closes on exit, so an error waits to be read.
+        if [ -n "$failed" ]; then
+          printf '%sPress Enter to close.' "$failed"
+          read -r _
+        fi
       '';
 
       # Ctrl+s u and `ts`: fzf over the projects here and on each linked
@@ -202,6 +248,7 @@ in
       home.packages = [
         tuios
         projects
+        staleSessions
       ];
 
       # Agent state for pi panes (the rail, the Inbox, resume after a restart).
@@ -215,35 +262,6 @@ in
       };
 
       programs.zsh.shellAliases.ts = "${pickProject}";
-
-      systemd.user.services.tuios-cleanup = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-        Unit.Description = "Close tuios sessions whose repo is gone";
-        Service = {
-          Type = "oneshot";
-          ExecStart = "${cleanupSessions}";
-        };
-      };
-      systemd.user.timers.tuios-cleanup = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-        Unit.Description = "Close tuios sessions whose repo is gone";
-        Timer = {
-          OnCalendar = "daily";
-          Persistent = true;
-          RandomizedDelaySec = "1h";
-        };
-        Install.WantedBy = [ "timers.target" ];
-      };
-      launchd.agents.tuios-cleanup = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-        enable = true;
-        config = {
-          ProgramArguments = [ "${cleanupSessions}" ];
-          StartCalendarInterval = [
-            {
-              Hour = 4;
-              Minute = 0;
-            }
-          ];
-        };
-      };
 
       # Keeps a server's sessions and agents alive with nobody logged in, for
       # the machines that link to it. keep-old: a switch must not restart it
@@ -369,6 +387,14 @@ in
         type = "popup"
         command = "${pickProject}"
         description = "Open a project"
+        width = "60%"
+        height = "60%"
+
+        [[keybindings.command]]
+        key = "prefix+K"
+        type = "popup"
+        command = "${cleanSessions}"
+        description = "Close stale sessions (every host)"
         width = "60%"
         height = "60%"
 
