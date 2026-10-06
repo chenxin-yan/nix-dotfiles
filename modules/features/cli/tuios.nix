@@ -262,6 +262,7 @@ in
       };
 
       programs.zsh.shellAliases.ts = "${pickProject}";
+      programs.zsh.shellAliases.t = "tuios attach";
 
       # Keeps a server's sessions and agents alive with nobody logged in, for
       # the machines that link to it. keep-old: a switch must not restart it
