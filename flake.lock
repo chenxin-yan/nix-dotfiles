@@ -264,11 +264,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1791407112,
-        "narHash": "sha256-349xqhiGAg9+M8RdwESTwq/tgMixQZiporb6laKswJM=",
+        "lastModified": 1791504362,
+        "narHash": "sha256-M7f2MMeSNcTajEFbCLj85AQr98AGxdVPquGZ0F4ivh8=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "649d6c0391029f35959cfbc240eb3534a6667cf5",
+        "rev": "1e0c7730d791f5ce855c5c78935cfea6fb1e43a9",
         "type": "github"
       },
       "original": {
@@ -305,11 +305,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791306979,
-        "narHash": "sha256-KuLePuhwJM9NLt/gTLHzXaOoSZKGoB3m7NfXjiQ98HY=",
+        "lastModified": 1791484883,
+        "narHash": "sha256-iKxFHJrg7Sltwhq3ssCZYQ4CFEDVvReVVuVuO9dj3sE=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "fae6e9e42c3b762ab47635cddcfaf6f52374a61b",
+        "rev": "dfadbe5162d5e86bc0808badec8f346f81b4b3f0",
         "type": "github"
       },
       "original": {
@@ -527,22 +527,6 @@
         "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz"
       }
     },
-    "nixpkgs-clipboard-jh": {
-      "locked": {
-        "lastModified": 1790600678,
-        "narHash": "sha256-6k3n7X2UsZ6tAlWTz99RimiZab+17tMUrw9sRUcELiA=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "f45c6f04c2f013f004bf94e284e95d72898d9393",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "f45c6f04c2f013f004bf94e284e95d72898d9393",
-        "type": "github"
-      }
-    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1785318670,
@@ -577,11 +561,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1791336361,
-        "narHash": "sha256-o9ZUW4SlEAvFPIyJWnqChhOT/VHpHg8TAvEgmqK1fSI=",
+        "lastModified": 1791366222,
+        "narHash": "sha256-o0N4g6uSOIppU7CGToNvGlMf5vC+B6O6ukFHKY/TKOY=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "7dd199b0e2993e37b4775ed66b1c291699608c9f",
+        "rev": "39ad350a0602fa0a58a544344e3e9187526ea45c",
         "type": "github"
       },
       "original": {
@@ -620,11 +604,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1790942082,
-        "narHash": "sha256-i9rD1ZuMww8RbXaCgOzfv+4jM2lKemL4fPUUrqzgbyY=",
+        "lastModified": 1791474082,
+        "narHash": "sha256-x6f2VWiXFXuc7liIE/4R+Ifk1HzGcU/OpYz3BiDpnio=",
         "owner": "AprilNEA",
         "repo": "OpenLogi",
-        "rev": "4863a45e256d80404b95232b513793cbccb5d6d6",
+        "rev": "1505c6525470bc0a38ae3ba79d70e950347d2532",
         "type": "github"
       },
       "original": {
@@ -740,7 +724,6 @@
         "nixos-hardware": "nixos-hardware",
         "nixos-raspberrypi": "nixos-raspberrypi",
         "nixpkgs": "nixpkgs_4",
-        "nixpkgs-clipboard-jh": "nixpkgs-clipboard-jh",
         "openlogi": "openlogi",
         "pi-catppuccin": "pi-catppuccin",
         "sops-nix": "sops-nix",
@@ -861,11 +844,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1791402436,
-        "narHash": "sha256-fb1ie6+zQrkdwIYU8AoaxabsGtFZHbk1dyeNiSydOuQ=",
+        "lastModified": 1791481545,
+        "narHash": "sha256-XNOyd4N63graTvHKVfAlA5Sd7TLETHFqiIbTZRQJSts=",
         "owner": "Gaurav-Gosain",
         "repo": "tuios",
-        "rev": "af79c927113e69ae6188666fc2d872566c60abf7",
+        "rev": "4e7aeebd3305292167ab4a6017bbd1d86ce1e191",
         "type": "github"
       },
       "original": {

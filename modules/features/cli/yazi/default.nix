@@ -1,20 +1,4 @@
-{ inputs, ... }:
 {
-  # TODO: remove, with the nixpkgs-clipboard-jh input, once clipboard-jh
-  # builds on NixOS again. 0.10.0 fails with GCC 16 (SSIZE_MAX undeclared in
-  # src/cbwayland/src/fd.cpp, a missing <climits>), and neither nixpkgs nor
-  # upstream has a fix yet. Until then NixOS uses the last working build, from
-  # the nixpkgs locked before 301655f. The Macs build with clang and are
-  # unaffected. Try it with:
-  #   nix build .#nixosConfigurations.framework.pkgs.clipboard-jh --override-input nixpkgs-clipboard-jh nixpkgs
-  features.yazi.nixos.nixpkgs.overlays = [
-    (final: _: {
-      inherit (inputs.nixpkgs-clipboard-jh.legacyPackages.${final.stdenv.hostPlatform.system})
-        clipboard-jh
-        ;
-    })
-  ];
-
   # TODO: remove this overlay once https://github.com/NixOS/nixpkgs/pull/570577
   # is merged and the locked nixpkgs includes it. nixpkgs 9fad6ba378 switched
   # clipboard-jh to gcc15Stdenv on every platform, and g++ rejects the

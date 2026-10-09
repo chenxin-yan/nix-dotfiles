@@ -3,8 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # TODO: remove with the overlay in modules/features/cli/yazi/default.nix.
-    nixpkgs-clipboard-jh.url = "github:nixos/nixpkgs/f45c6f04c2f013f004bf94e284e95d72898d9393";
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
