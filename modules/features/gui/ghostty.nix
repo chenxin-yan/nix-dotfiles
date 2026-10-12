@@ -29,7 +29,9 @@
           quit-after-last-window-closed = true;
 
           copy-on-select = "clipboard";
-          shell-integration-features = "cursor,sudo,no-title";
+          # ssh-terminfo: install xterm-ghostty into the remote ~/.terminfo on
+          # first ssh; macOS /bin/zsh ignores TERMINFO_DIRS set after startup.
+          shell-integration-features = "cursor,sudo,no-title,ssh-terminfo";
 
           # Mac (Cmd) shortcuts on both systems; on Linux xremap leaves Ghostty
           # alone so these super binds reach it.
