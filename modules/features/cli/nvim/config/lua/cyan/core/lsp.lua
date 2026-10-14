@@ -75,10 +75,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
       map('<leader>ch', '<cmd>LspClangdSwitchSourceHeader<cr>', 'Switch Source/Header (C/C++)')
     end
 
-    -- lsp codelens
     if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
       map('<leader>cc', vim.lsp.codelens.run, 'Run [C]odelens', 'n')
-      vim.lsp.codelens.enable(true, { bufnr = event.buf })
     end
 
     local navic = require 'nvim-navic'

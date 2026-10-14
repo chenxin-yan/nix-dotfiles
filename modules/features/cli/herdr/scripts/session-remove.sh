@@ -2,7 +2,7 @@
 
 set -e
 
-source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/session.sh"
 
 # --- Helper Functions ---
 

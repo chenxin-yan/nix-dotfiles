@@ -32,11 +32,6 @@ in
       cdv = "cd $DEV_PATH";
       dvc = "${scriptsDir}/dev/clone.sh";
 
-      # herdr workspaces per project
-      scu = "${scriptsDir}/dev/cleanup.sh";
-      se = "${scriptsDir}/dev/attach.sh";
-      srm = "${scriptsDir}/dev/session-remove.sh";
-
       fzg = "${scriptsDir}/utils/rg_with_fzf.sh";
 
       md2pdf = "${scriptsDir}/utils/md2pdf.sh";

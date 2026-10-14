@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/session.sh"
 
 mkdir -p "$DEV_PATH"
 

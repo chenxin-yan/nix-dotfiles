@@ -1,32 +1,6 @@
 #!/usr/bin/env bash
-# Shared helpers for dev scripts.
+# Shared helpers for the herdr project scripts.
 # Source this file — do not execute directly.
-
-# Parse a git remote URL into HOST, OWNER, REPO (and REPO_URL) global variables.
-# Supports SSH, HTTPS, and owner/repo shorthand (defaults to github.com SSH).
-parse_git_url() {
-  local url="$1"
-  if [[ "$url" =~ ^git@([^:]+):([^/]+)/(.+)(\.git)?$ ]]; then
-    HOST="${BASH_REMATCH[1]}"
-    OWNER="${BASH_REMATCH[2]}"
-    REPO="${BASH_REMATCH[3]}"
-    REPO_URL="$url"
-  elif [[ "$url" =~ ^https?://([^/]+)/([^/]+)/(.+)$ ]]; then
-    HOST="${BASH_REMATCH[1]}"
-    OWNER="${BASH_REMATCH[2]}"
-    REPO="${BASH_REMATCH[3]}"
-    REPO_URL="$url"
-  elif [[ "$url" =~ ^([^/]+)/([^/]+)$ ]]; then
-    HOST="github.com"
-    OWNER="${BASH_REMATCH[1]}"
-    REPO="${BASH_REMATCH[2]}"
-    REPO_URL="git@github.com:$OWNER/$REPO.git"
-  else
-    echo "Error: Unable to parse URL: $url"
-    return 1
-  fi
-  REPO="${REPO%.git}"
-}
 
 # True when a herdr process is an ancestor of this shell. herdr sets no env
 # marker, so walk the parent chain instead.

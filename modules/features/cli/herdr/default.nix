@@ -1,11 +1,18 @@
+# Reads config.dotfiles, hence the paths include.
+{ config, ... }:
 {
+  features.herdr.includes = with config.features; [ paths ];
+
   features.herdr.homeManager =
     {
+      config,
       pkgs,
       lib,
       ...
     }:
     let
+      # Run from the working copy so edits apply without a rebuild.
+      scripts = "${config.dotfiles}/modules/features/cli/herdr/scripts";
       vim-herdr-navigation = pkgs.fetchFromGitHub {
         owner = "paulbkim-dev";
         repo = "vim-herdr-navigation";
@@ -15,6 +22,13 @@
     in
     {
       home.packages = [ pkgs.herdr ];
+
+      # One herdr workspace per project under $DEV_PATH.
+      programs.zsh.shellAliases = {
+        se = "${scripts}/attach.sh";
+        scu = "${scripts}/cleanup.sh";
+        srm = "${scripts}/session-remove.sh";
+      };
 
       # Herdr has no plugin discovery; registration is a CLI side effect.
       home.activation.herdrNavigation = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

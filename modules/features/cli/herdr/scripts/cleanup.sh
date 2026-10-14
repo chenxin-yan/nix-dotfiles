@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$(dirname "${BASH_SOURCE[0]}")/lib/session.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/session.sh"
 
 # Build set of valid workspace labels from all project directories
 declare -A valid_labels
