@@ -13,6 +13,7 @@
       secrets
       hermes
       dokploy
+      agents
     ];
 
     nixos =
