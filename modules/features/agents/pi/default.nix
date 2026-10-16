@@ -88,7 +88,11 @@ in
     in
     {
       home.packages = with pkgs; [
-        pi-coding-agent
+        # The agents feature declares the secret. Pi prefers a credential in
+        # its auth.json, so `/logout anthropic` once to use this one.
+        ((import ../_claude-token.nix).wrap {
+          inherit pkgs osConfig;
+        } "ANTHROPIC_OAUTH_TOKEN" pi-coding-agent)
         hypa
       ];
 

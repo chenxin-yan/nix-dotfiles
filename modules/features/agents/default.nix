@@ -1,10 +1,16 @@
 { config, ... }:
+let
+  claudeToken = import ./_claude-token.nix;
+in
 {
   features.agents.includes = with config.features; [ pi ];
+  features.agents.darwin = claudeToken.declareSecret;
+  features.agents.nixos = claudeToken.declareSecret;
 
   features.agents.homeManager =
     {
       config,
+      osConfig,
       pkgs,
       ...
     }:
@@ -13,7 +19,8 @@
     in
     {
       home.packages = with pkgs; [
-        claude-code
+        # Claude Code prefers this over its own /login.
+        (claudeToken.wrap { inherit pkgs osConfig; } "CLAUDE_CODE_OAUTH_TOKEN" claude-code)
         codex
         opencode
       ];

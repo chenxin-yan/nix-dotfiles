@@ -15,6 +15,14 @@
           sopsFile = ../../../secrets/hosts/${config.networking.hostName}.yaml;
           owner = host.login;
         };
+
+        # The Claude token the agents share (see ../agents/_claude-token.nix),
+        # as the dotenv line Hermes reads.
+        sops.secrets.claude-oauth-token = { };
+        sops.templates.hermes-claude-env = {
+          owner = host.login;
+          content = "ANTHROPIC_TOKEN=${config.sops.placeholder.claude-oauth-token}\n";
+        };
       };
 
     homeManager =
@@ -27,6 +35,7 @@
         # makes a new value reach .env and restarts it.
         systemd.user.services.hermes-agent.Unit.X-Restart-Triggers = [
           osConfig.sops.secrets.hermes-env.sopsFileHash
+          osConfig.sops.secrets.claude-oauth-token.sopsFileHash
         ];
 
         programs.hermes-agent.enable = true;
@@ -34,7 +43,10 @@
         services.hermes-agent = {
           enable = true;
           gateway.enable = true;
-          environmentFiles = [ osConfig.sops.secrets.hermes-env.path ];
+          environmentFiles = [
+            osConfig.sops.secrets.hermes-env.path
+            osConfig.sops.templates.hermes-claude-env.path
+          ];
           environment.AGENT_BROWSER_EXECUTABLE_PATH = "${pkgs.chromium}/bin/chromium";
           extraPackages = with pkgs; [
             agent-browser
