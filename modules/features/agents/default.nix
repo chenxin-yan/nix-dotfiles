@@ -21,7 +21,6 @@ in
       home.packages = with pkgs; [
         # Claude Code prefers this over its own /login.
         (claudeToken.wrap { inherit pkgs osConfig; } "CLAUDE_CODE_OAUTH_TOKEN" claude-code)
-        codex
         opencode
       ];
 
