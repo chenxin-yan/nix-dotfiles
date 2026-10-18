@@ -34,7 +34,7 @@
   j (tap-hold $hrm-index $hrm-index j rctl)
   k (tap-hold $hrm $hrm k ralt)
   l (tap-hold $hrm $hrm l rsft)
-  ; (tap-hold $hrm $hrm ; rmet)
+  ; (tap-hold $hrm $hrm ; lmet)
 
   ;; Layer keys opt out of Flow Tap (as in QMK, where it covers only alphas),
   ;; so a fast `foo(` still reaches the layer.

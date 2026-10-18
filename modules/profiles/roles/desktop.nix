@@ -31,6 +31,7 @@
     noctalia
     quiet-boot
     vicinae
+    voxtype # dictation on right ⌘
 
     # macOS only
     aerospace
