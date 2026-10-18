@@ -7,6 +7,9 @@
 polkit_agent = true
 # This file is the setup; don't open the first-run wizard on a fresh profile.
 setup_wizard_enabled = false
+# Tint full-colour app icons (tray, launcher) to the palette so they sit
+# quietly beside the bar's glyphs.
+app_icon_colorize = true
 
 # Keep the login screen's wallpaper and palette in step with the shell's
 # (allowed without a password by noctalia/default.nix).
@@ -64,11 +67,21 @@ margin_ends = 0
 radius = 10
 start = ["workspaces"]
 center = ["clock"]
-end = ["media", "privacy", "tray", "network", "volume", "notifications", "battery", "control-center"]
+end = [
+  "media",
+  "privacy",
+  "tray",
+  "network",
+  "volume",
+  "notifications",
+  "battery",
+  "control-center",
+]
 
 # Media and privacy only appear while something is playing or being captured.
 [widget.media]
 hide_when_no_media = true
+hide_when_idle = true
 
 [widget.privacy]
 hide_inactive = true
@@ -79,6 +92,10 @@ show_label = false
 
 [widget.volume]
 show_label = false
+
+# App icons fold behind one button.
+[widget.tray]
+drawer = true
 
 [widget.clock]
 format = "{:%I:%M}"
