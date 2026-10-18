@@ -26,6 +26,8 @@ binds {
     Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "deeplink" "vicinae://launch/clipboard/history"; }
     Super+Alt+L repeat=false hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }
     Super+Alt+P repeat=false { power-off-monitors; }
+    // Pauses Noctalia's idle lock/suspend, not lid-close suspend (logind).
+    Super+Alt+C repeat=false hotkey-overlay-title="Toggle caffeine" { spawn "noctalia" "msg" "caffeine-toggle"; }
     // Noctalia's suggested binds; its Mod+Comma settings bind would take
     // niri's consume-window-into-column, hence Shift.
     Mod+S repeat=false hotkey-overlay-title="Control center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
