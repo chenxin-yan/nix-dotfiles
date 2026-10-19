@@ -9,11 +9,14 @@ focus_follows_mouse = false
 mouse_follows_focus = true
 mouse_hides_on_focus = false
 # Subscriptions live in Rift's memory, so each start re-registers them, and
-# seeds the bar in case sketchybar started first (sketchybarrc seeds the
-# other order).
+# refreshes the bar in case sketchybar started first (sketchybarrc covers
+# the other order). The bar reads the state itself (sketchybar's plugins/space.sh).
+# Rift appends the event JSON to the command's arguments; under sh -c it
+# lands in $0 instead of reaching sketchybar.
 run_on_start = [
-  "rift-cli subscribe cli --event workspace_changed --command sh --args -c --args 'sketchybar --trigger rift_workspace_change FOCUSED_WORKSPACE=\"$RIFT_WORKSPACE_NAME\"'",
-  "sh -c 'sketchybar --trigger rift_workspace_change FOCUSED_WORKSPACE=\"$(rift-cli query workspaces | jq -r \".[] | select(.is_active) | .name\")\"'",
+  "rift-cli subscribe cli --event workspace_changed --command sh --args -c --args 'sketchybar --trigger rift_workspaces_changed'",
+  "rift-cli subscribe cli --event windows_changed --command sh --args -c --args 'sketchybar --trigger rift_workspaces_changed'",
+  "sketchybar --trigger rift_workspaces_changed",
 ]
 
 [settings.layout]
@@ -44,30 +47,17 @@ vertical = 6
 [settings.ui.mission_control]
 enabled = true
 
+# As in niri, workspaces are unnamed groups used by position, and windows
+# open where you are. Rift keeps a fixed pool rather than niri's dynamic
+# stack; sketchybar hides the empty ones.
 [virtual_workspaces]
-default_workspace_count = 7
-# Named by index: workspace_changed reports only the name, and sketchybar's
-# space.0…space.6 items match it.
-workspace_names = ["0", "1", "2", "3", "4", "5", "6"]
+default_workspace_count = 9
 # niri's workspaces stop at the ends.
 prevent_wrapping = true
-app_rules = [
-  { app_id = "com.apple.mail", workspace = 0 },
-  { app_id = "com.microsoft.VSCode", workspace = 1 },
-  { app_id = "app.zen-browser.zen", workspace = 2 },
-  { app_id = "com.vivaldi.Vivaldi", workspace = 2 },
-  { app_id = "com.flexibits.fantastical2.mac", workspace = 3 },
-  { app_id = "com.lukilabs.lukiapp-setapp", workspace = 4 },
-  { app_id = "com.electron.logseq", workspace = 4 },
-  { app_id = "dev.vencord.vesktop", workspace = 5 },
-  { app_id = "com.tencent.xinWeChat", workspace = 5 },
-  { app_id = "com.tinyspeck.slackmacgap", workspace = 5 },
-  { app_id = "com.apple.Music", workspace = 6 },
-]
 
 # niri's binds (niri/config/binds.kdl) on the same keys, Mod = Alt: Shift
-# moves windows, Ctrl acts on displays. Workspaces 0–6, Grave = 0, as
-# kanata and the Voyager send them.
+# moves windows, Ctrl acts on displays. Alt+N is the Nth workspace
+# (Rift counts from 0).
 [keys]
 # Columns left/right, windows within a column up/down.
 "Alt + H" = { move_focus = "left" }
@@ -94,21 +84,25 @@ app_rules = [
 "Alt + Shift + Q" = "close_window"
 "Alt + O" = "show_mission_control_all"
 
-"Alt + Grave" = { switch_to_workspace = 0 }
-"Alt + 1" = { switch_to_workspace = 1 }
-"Alt + 2" = { switch_to_workspace = 2 }
-"Alt + 3" = { switch_to_workspace = 3 }
-"Alt + 4" = { switch_to_workspace = 4 }
-"Alt + 5" = { switch_to_workspace = 5 }
-"Alt + 6" = { switch_to_workspace = 6 }
+"Alt + 1" = { switch_to_workspace = 0 }
+"Alt + 2" = { switch_to_workspace = 1 }
+"Alt + 3" = { switch_to_workspace = 2 }
+"Alt + 4" = { switch_to_workspace = 3 }
+"Alt + 5" = { switch_to_workspace = 4 }
+"Alt + 6" = { switch_to_workspace = 5 }
+"Alt + 7" = { switch_to_workspace = 6 }
+"Alt + 8" = { switch_to_workspace = 7 }
+"Alt + 9" = { switch_to_workspace = 8 }
 # Focus goes along with the window, as in niri.
-"Alt + Shift + Grave" = { move_window_to_workspace = { workspace = 0, follow = true } }
-"Alt + Shift + 1" = { move_window_to_workspace = { workspace = 1, follow = true } }
-"Alt + Shift + 2" = { move_window_to_workspace = { workspace = 2, follow = true } }
-"Alt + Shift + 3" = { move_window_to_workspace = { workspace = 3, follow = true } }
-"Alt + Shift + 4" = { move_window_to_workspace = { workspace = 4, follow = true } }
-"Alt + Shift + 5" = { move_window_to_workspace = { workspace = 5, follow = true } }
-"Alt + Shift + 6" = { move_window_to_workspace = { workspace = 6, follow = true } }
+"Alt + Shift + 1" = { move_window_to_workspace = { workspace = 0, follow = true } }
+"Alt + Shift + 2" = { move_window_to_workspace = { workspace = 1, follow = true } }
+"Alt + Shift + 3" = { move_window_to_workspace = { workspace = 2, follow = true } }
+"Alt + Shift + 4" = { move_window_to_workspace = { workspace = 3, follow = true } }
+"Alt + Shift + 5" = { move_window_to_workspace = { workspace = 4, follow = true } }
+"Alt + Shift + 6" = { move_window_to_workspace = { workspace = 5, follow = true } }
+"Alt + Shift + 7" = { move_window_to_workspace = { workspace = 6, follow = true } }
+"Alt + Shift + 8" = { move_window_to_workspace = { workspace = 7, follow = true } }
+"Alt + Shift + 9" = { move_window_to_workspace = { workspace = 8, follow = true } }
 
 "Alt + N" = "next_workspace"
 "Alt + P" = "prev_workspace"

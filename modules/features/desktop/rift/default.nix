@@ -64,11 +64,8 @@
       '';
 
       launchd.user.agents.rift = {
-        # run_on_start and exec binds look up sketchybar, rift-cli, jq and sh here.
-        path = [
-          pkgs.jq
-          config.environment.systemPath
-        ];
+        # run_on_start and exec binds look up sketchybar, rift-cli and sh here.
+        path = [ config.environment.systemPath ];
         environment.RUST_LOG = "error,warn,info";
         serviceConfig = {
           ProgramArguments = [ stableRift ];

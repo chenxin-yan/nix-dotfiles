@@ -67,6 +67,6 @@ sketchybar --add item cat center \
 
 sketchybar --update
 
-# Rift only reports workspace changes, so seed the highlight on (re)start.
-sketchybar --trigger rift_workspace_change FOCUSED_WORKSPACE="$(rift-cli query workspaces 2>/dev/null | jq -r '.[] | select(.is_active) | .name')"
+# Rift only reports changes, so draw the workspaces on (re)start.
+sketchybar --trigger rift_workspaces_changed
 

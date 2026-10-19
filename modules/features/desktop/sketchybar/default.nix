@@ -32,7 +32,7 @@
     in
     {
       services.sketchybar.enable = true;
-      # sketchybarrc reads Rift's focused workspace from rift-cli's JSON.
+      # plugins/space.sh reads Rift's workspaces from rift-cli's JSON.
       services.sketchybar.extraPackages = [ pkgs.jq ];
 
       # Icon fonts the bar's config uses: SF Pro (ICON_FONT) and the app-icon font.
