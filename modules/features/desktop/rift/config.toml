@@ -16,6 +16,9 @@ mouse_hides_on_focus = false
 run_on_start = [
   "rift-cli subscribe cli --event workspace_changed --command sh --args -c --args 'sketchybar --trigger rift_workspaces_changed'",
   "rift-cli subscribe cli --event windows_changed --command sh --args -c --args 'sketchybar --trigger rift_workspaces_changed'",
+  # Focus moving to another display's window changes which workspaces the
+  # bar shows, without a workspace_changed.
+  "rift-cli subscribe cli --event focused_window_changed --command sh --args -c --args 'sketchybar --trigger rift_workspaces_changed'",
   "sketchybar --trigger rift_workspaces_changed",
 ]
 
@@ -78,9 +81,6 @@ prevent_wrapping = true
 "Alt + Shift + Ctrl + K" = { move_window_to_display = { selector = "up" } }
 "Alt + Shift + Ctrl + L" = { move_window_to_display = { selector = "right" } }
 
-# Hyper (home-row g/h) + Space: Ghostty, opened or focused. niri binds the
-# same key.
-"Alt + Ctrl + Shift + Meta + Space" = { exec = ["/usr/bin/open", "-a", "Ghostty"] }
 "Alt + Shift + Q" = "close_window"
 "Alt + O" = "show_mission_control_all"
 

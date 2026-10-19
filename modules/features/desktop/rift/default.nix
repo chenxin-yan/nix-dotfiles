@@ -1,9 +1,10 @@
 # Rift, a tiling window manager for macOS with a niri-style scrolling layout.
-# The TOML config is linked from the checkout rather than copied into the
-# store: Rift reloads it on save, so tweaks need no rebuild. Rift has no
-# config check command; a bad edit shows up in /tmp/rift_<user>.err.log.
+# Rift reads its TOML config straight from the checkout rather than the
+# store: it reloads on save, so tweaks need no rebuild. Rift has no config
+# check command; a bad edit shows up in /tmp/rift_<user>.err.log.
 { config, ... }:
 {
+  # Reads Home Manager's dotfiles option, hence the paths include.
   features.rift.includes = with config.features; [ paths ];
 
   features.rift.darwin =
@@ -15,6 +16,13 @@
     }:
     let
       user = config.system.primaryUser;
+
+      # Not a Home Manager link: nix-darwin loads the agent (RunAtLoad) before
+      # Home Manager makes its links, and Rift started without a config
+      # falls back to its defaults and never picks the file up.
+      configFile = "${
+        config.home-manager.users.${user}.dotfiles
+      }/modules/features/desktop/rift/config.toml";
 
       # Upstream's release build. nixpkgs' rift-wm is 0.5.5, before the 0.6
       # scrolling-layout fixes, and a source build needs a cargoHash that only
@@ -51,7 +59,8 @@
       # which changes only when the pinned release does. Unlike sketchybar's
       # wrapper, a script exec'ing the store binary would not keep the
       # Accessibility grant.
-      stableRift = "/usr/local/libexec/nix-darwin/rift";
+      stableDir = "/usr/local/libexec/nix-darwin";
+      stableRift = "${stableDir}/rift";
     in
     {
       # rift-cli for sketchybar and the shell.
@@ -59,16 +68,31 @@
 
       # Before `userLaunchd` loads the agent (RunAtLoad), as for sketchybar.
       system.activationScripts.launchd.text = lib.mkAfter ''
-        mkdir -p /usr/local/libexec/nix-darwin
-        install -m0555 ${rift}/bin/rift ${stableRift}
+        mkdir -p ${stableDir}
+        install -m0555 ${rift}/bin/rift ${rift}/bin/rift-cli ${stableDir}
       '';
 
       launchd.user.agents.rift = {
-        # run_on_start and exec binds look up sketchybar, rift-cli and sh here.
-        path = [ config.environment.systemPath ];
-        environment.RUST_LOG = "error,warn,info";
+        # run_on_start looks up sketchybar, rift-cli and sh here.
+        # rift-cli comes from stableDir: on a first switch the agent starts
+        # before /run/current-system points at the new profile.
+        path = [
+          stableDir
+          config.environment.systemPath
+        ];
+        environment = {
+          RUST_LOG = "error,warn,info";
+          # nix-darwin reloads an agent only when its plist changes, and a
+          # new release changes only the copied binary. The version here
+          # restarts Rift on bumps and rollbacks.
+          RIFT_VERSION = rift.version;
+        };
         serviceConfig = {
-          ProgramArguments = [ stableRift ];
+          ProgramArguments = [
+            stableRift
+            "--config"
+            configFile
+          ];
           RunAtLoad = true;
           # Upstream's agent (`rift service install`): restart after a crash,
           # but not after a clean exit.
@@ -81,17 +105,5 @@
           StandardErrorPath = "/tmp/rift_${user}.err.log";
         };
       };
-    };
-
-  features.rift.homeManager =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
-    }:
-    lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      xdg.configFile."rift/config.toml".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.dotfiles}/modules/features/desktop/rift/config.toml";
     };
 }

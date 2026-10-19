@@ -10,14 +10,14 @@
 //     Mac (xremap turns them into Ctrl+W/Ctrl+Q; Ghostty binds them itself).
 //     Mod+Shift+Q (i3/sway's key) closes any window; plain Alt+Q stays
 //     zsh's push-line.
-//   - Mod+T (terminal): Hyper+Space, the same key as on the Mac.
+//   - Mod+T (terminal): Hyper+Space.
 //   - arrow-key variants: xremap turns Alt+Left/Right into word jumps before
 //     niri sees them (xremap/config.yml); hjkl covers them.
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Apps and session.
-    // Hyper (home-row g/h) + Space, as in Rift.
+    // Hyper (home-row g/h) + Space.
     Mod+Super+Ctrl+Shift+Space hotkey-overlay-title="Terminal: Ghostty" { spawn "ghostty"; }
     // Hyper+letter opens a new window beside the focused one, like Hyper+Space;
     // Super+grave (recent-windows in config.kdl) reaches an existing one.

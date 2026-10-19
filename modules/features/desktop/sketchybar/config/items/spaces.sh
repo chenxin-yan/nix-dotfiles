@@ -30,8 +30,12 @@ done
 
 # One hidden item redraws all nine, so each event costs a single query.
 # updates=on: a hidden item's script would otherwise not run.
+# ponytail: Rift sends no event when the last window of an inactive
+# workspace closes, or for keyboard focus onto an empty display, so a poll
+# catches those within update_freq seconds. Drop it if Rift starts sending
+# them.
 sketchybar --add item spaces left \
-           --set spaces drawing=off updates=on script="$PLUGIN_DIR/space.sh" \
+           --set spaces drawing=off updates=on update_freq=2 script="$PLUGIN_DIR/space.sh" \
            --subscribe spaces rift_workspaces_changed
 
 sketchybar --add item space_separator_left left \
