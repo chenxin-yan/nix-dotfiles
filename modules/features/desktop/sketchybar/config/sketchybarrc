@@ -12,8 +12,10 @@ PADDING=6
 source "$DIR/colors.sh"
 source "$DIR/icons.sh"
 
+# 4 + 28: the bar ends at 32pt, inside the strip the laptop's notch already
+# takes. OmniWM's top gap (omniwm/settings.toml, 38) starts windows 6pt below.
 BAR_PROPS=(
-  height=32
+  height=28
   color=$BG_PRI_COLR
   shadow=off
   position=top
@@ -21,7 +23,7 @@ BAR_PROPS=(
   padding_right=15
   padding_left=15
   corner_radius=10
-  y_offset=6
+  y_offset=4
   margin=6
   blur_radius=30
   notch_width=0

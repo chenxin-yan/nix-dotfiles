@@ -16,13 +16,10 @@
 #     that take a typed Option character (Option+T, Option+`, …) are
 #     unassigned. Nothing uses Option+D or Option+Q (zsh's) or Option+Esc.
 #   - niri.resizeStepPercent = 10: niri's ±10% column widths and heights.
-#   - workspaces: nine, used by position like niri's. 1 is "home": chat,
-#     mail, calendar and music open there (appRules). Not the browser: a
-#     rule places an app's window whenever the app has no other, so once
-#     every Helium window was closed, the next would go home instead of
-#     where you are (niri can route it only at startup). 1–7 live on the
-#     Main display (the one with the menu bar), 8–9 on the Secondary;
-#     alone, the laptop holds all nine.
+#   - workspaces: nine, used by position like niri's; 1 is named "home".
+#     Windows open where you are (no appRules route them). 1–7 live on the
+#     Main display (ranked first in Settings → Monitors), 8–9 on the
+#     Secondary; alone, the laptop holds all nine.
 #   - workspaceBar.hideEmptyWorkspaces: Option+N/P skip empty workspaces.
 #     The bar itself is off (sketchybar shows the workspaces, through IPC).
 #     showFloatingWindows: the IPC workspace-bar events sketchybar follows
@@ -31,12 +28,17 @@
 #   - off: the Hidden Bar, the Quake terminal and clipboard history (Ghostty
 #     and Raycast cover them), update checks (Nix pins the version).
 #   - borders: off, no highlight around the focused window.
+#   - appearance: automatic, so OmniWM's own windows follow macOS's light or
+#     dark mode.
 #   - focus: the pointer follows focus, and focus follows moved windows.
-#   - gaps: 6 inner and outer, 12 on top. OmniWM measures the top from the
-#     display's physical edge, minus the menu bar.
-#     TODO: top = 44 on the LG and the DELL S2725QC, clear of sketchybar. A
-#     per-display override matches the display's UUID, not its name: add it
-#     in Settings → Monitors, which records the UUID here.
+#   - gaps: 6 everywhere, 38 on top: 6pt below sketchybar (4–32pt).
+#     OmniWM measures the top from the display's physical edge
+#     and only past the menu bar (the notch strip on the laptop), so one
+#     value clears the bar on every display, with no per-display override.
+#     edgeGaps = false: the inner gap isn't added to the outer ones at the
+#     screen edges. fullscreenUsesOuterGaps: a lone window (singleWindowFit
+#     "fill") and Option+M take the fullscreen frame, which would otherwise
+#     cover the bar.
 { config, ... }:
 {
   # Reads Home Manager's dotfiles option, hence the paths include.

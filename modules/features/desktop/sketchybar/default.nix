@@ -32,6 +32,8 @@
     in
     {
       services.sketchybar.enable = true;
+      # The bar takes the menu bar's place.
+      system.defaults.NSGlobalDomain._HIHideMenuBar = true;
       # plugins/space.sh reads OmniWM's workspaces from omniwmctl's JSON.
       services.sketchybar.extraPackages = [
         pkgs.jq
