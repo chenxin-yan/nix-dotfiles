@@ -6,6 +6,8 @@ FRONT_APP=(
   icon.color=$BG_PRI_COLR
   label.color=$BG_PRI_COLR
   background.color=$LAVENDER
+  # The workspace pill ends flush (space_bracket), so the 12pt gap sits here.
+  background.padding_left=12
   script="$PLUGIN_DIR/front_app.sh"
 )
 
