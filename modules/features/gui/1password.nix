@@ -28,10 +28,15 @@ in
     # SSH and git use the keys in 1Password through its agent, so a desktop
     # needs no key file. The agent itself is switched on in 1Password →
     # Settings → Developer; that setting lives in the app, not in a file.
+    # Only outside SSH sessions: in one, ssh falls back to SSH_AUTH_SOCK, the
+    # agent forwarded from the desktop I'm at (see ssh), so prompts show there.
     homeManager =
       { pkgs, ... }:
+      let
+        notOverSsh = ''Match exec "test -z \"$SSH_CONNECTION\""'';
+      in
       {
-        programs.ssh.settings."*".IdentityAgent =
+        programs.ssh.settings.${notOverSsh}.IdentityAgent =
           if pkgs.stdenv.hostPlatform.isDarwin then
             ''"~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"''
           else
