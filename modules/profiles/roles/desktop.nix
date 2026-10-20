@@ -34,7 +34,7 @@
     voxtype # dictation on right ⌘
 
     # macOS only
-    rift
+    omniwm
     iina
     sketchybar
   ];

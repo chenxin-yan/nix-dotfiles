@@ -67,6 +67,7 @@ sketchybar --add item cat center \
 
 sketchybar --update
 
-# Rift only reports changes, so draw the workspaces on (re)start.
-sketchybar --trigger rift_workspaces_changed
+# The sketchybar-omniwm agent reports changes only, so draw the workspaces on
+# (re)start.
+sketchybar --trigger omniwm_workspaces_changed
 

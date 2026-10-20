@@ -1,6 +1,6 @@
 // niri's default binds (resources/default-config.kdl, v26.04) with Mod = Alt
-// (config.kdl), a few binds shared with Rift on the Mac
-// (desktop/rift/config.toml, which copies these on the same keys), and Super
+// (config.kdl), a few binds shared with OmniWM on the Mac
+// (desktop/omniwm/settings.toml, which copies these on the same keys), and Super
 // binds that copy macOS shortcuts.
 // One swap, matching the Mac: Shift moves windows (niri: Ctrl), Ctrl acts
 // on monitors and whole workspaces (niri: Shift). The mouse wheel follows it.
