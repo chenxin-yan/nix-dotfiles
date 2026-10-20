@@ -44,14 +44,14 @@ moveMouseToFocusedWindow = true
 raiseOnMouseFocus = false
 
 [gaps]
-fullscreenUsesOuterGaps = false
+fullscreenUsesOuterGaps = true
 size = 6.0
 
 [gaps.outer]
 bottom = 6.0
 left = 6.0
 right = 6.0
-top = 12.0
+top = 38.0
 
 [general]
 animationsEnabled = true
@@ -104,7 +104,7 @@ alwaysCenterSingleColumn = false
 centerFocusedColumn = "never"
 containerPrimarySpanPresets = [0.3333333333333333, 0.5, 0.6666666666666666]
 defaultContainerPrimarySpan = 0.5
-edgeGaps = true
+edgeGaps = false
 infiniteLoop = false
 resizeStepPercent = 10
 singleWindowFit = "fill"

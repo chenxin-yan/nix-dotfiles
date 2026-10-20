@@ -32,11 +32,14 @@
 #     and Raycast cover them), update checks (Nix pins the version).
 #   - borders: off, no highlight around the focused window.
 #   - focus: the pointer follows focus, and focus follows moved windows.
-#   - gaps: 6 inner and outer, 12 on top. OmniWM measures the top from the
-#     display's physical edge, minus the menu bar.
-#     TODO: top = 44 on the LG and the DELL S2725QC, clear of sketchybar. A
-#     per-display override matches the display's UUID, not its name: add it
-#     in Settings → Monitors, which records the UUID here.
+#   - gaps: 6 everywhere, 38 on top: 6pt below sketchybar (4–32pt).
+#     OmniWM measures the top from the display's physical edge
+#     and only past the menu bar (the notch strip on the laptop), so one
+#     value clears the bar on every display, with no per-display override.
+#     edgeGaps = false: the inner gap isn't added to the outer ones at the
+#     screen edges. fullscreenUsesOuterGaps: a lone window (singleWindowFit
+#     "fill") and Option+M take the fullscreen frame, which would otherwise
+#     cover the bar.
 { config, ... }:
 {
   # Reads Home Manager's dotfiles option, hence the paths include.
