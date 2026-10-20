@@ -1,29 +1,25 @@
 #!/bin/bash
 
-# Like niri's bar: show the workspaces with windows and the one in view.
-# Slot N is the focused display's Nth workspace; the query lists each
-# display's workspaces in that order. Scratchpad windows stay hidden until
-# summoned, so they don't count.
-rows=()
-while read -r row; do
-  rows+=("$row")
-done < <(omniwmctl query workspaces --fields display,is-current,window-counts 2>/dev/null | jq -r '
-  (.result.payload.workspaces // []) as $ws
-  | ($ws[] | select(.isCurrent) | .display.id) as $display
-  | $ws[] | select(.display.id == $display)
-  | "\(.isCurrent) \(.counts.total - .counts.scratchpad)"')
+workspaces=$(omniwmctl query workspaces --fields number,display,is-visible,window-counts 2>/dev/null)
+displays=$(sketchybar --query displays)
 
 # OmniWM isn't answering: keep what the bar shows.
-[ ${#rows[@]} -gt 0 ] || exit 0
+jq -e '(.result.payload.workspaces // []) | length > 0' <<< "$workspaces" >/dev/null || exit 0
 
 args=()
-for sid in {1..9}; do
-  read -r active count <<< "${rows[sid - 1]:-false 0}"
-  drawing=off
-  if [ "$active" = true ] || [ "$count" -gt 0 ]; then
-    drawing=on
-  fi
-  args+=(--set "space.$sid" drawing="$drawing" icon.highlight="$active")
-done
+while read -r name drawing active number; do
+  args+=(--set "$name" drawing="$drawing" icon.highlight="$active"
+    click_script="omniwmctl command switch-workspace $number")
+done < <(jq -rn --argjson ws "$workspaces" --argjson ds "$displays" '
+  $ws.result.payload.workspaces as $all
+  | range(1; 4) as $d
+  | ([$ds[] | select(."arrangement-id" == $d) | "display:\(.DirectDisplayID)"][0]) as $id
+  | [$all[] | select(.display.id == $id)] as $mine
+  | range(1; 10) as $n
+  | $mine[$n - 1] as $w
+  | if $w == null then "space.\($d).\($n) off false 0"
+    else "space.\($d).\($n) \(if $w.isVisible or ($w.counts.total - $w.counts.scratchpad) > 0
+      then "on" else "off" end) \($w.isVisible) \($w.number)"
+    end')
 
 sketchybar --animate tanh 10 "${args[@]}"
