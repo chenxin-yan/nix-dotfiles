@@ -28,6 +28,8 @@
 #   - off: the Hidden Bar, the Quake terminal and clipboard history (Ghostty
 #     and Raycast cover them), update checks (Nix pins the version).
 #   - borders: off, no highlight around the focused window.
+#   - appearance: automatic, so OmniWM's own windows follow macOS's light or
+#     dark mode.
 #   - focus: the pointer follows focus, and focus follows moved windows.
 #   - gaps: 6 everywhere, 38 on top: 6pt below sketchybar (4–32pt).
 #     OmniWM measures the top from the display's physical edge

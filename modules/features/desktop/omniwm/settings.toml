@@ -6,7 +6,7 @@ monitorOrientationOverrides = []
 schemaVersion = 4
 
 [appearance]
-mode = "dark"
+mode = "automatic"
 tabRailAppIcons = false
 
 [borders]
