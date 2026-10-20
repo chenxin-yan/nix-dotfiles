@@ -33,7 +33,7 @@ input {
         map-to-output "eDP-1"
     }
 
-    // Alt is the window key on the Mac too (AeroSpace), and the Voyager's and
+    // Alt is the window key on the Mac too (OmniWM), and the Voyager's and
     // kanata's Esc-hold layer sends Alt+1…6 for workspaces. Super stays free
     // for the Cmd-style app shortcuts xremap translates.
     mod-key "Alt"
@@ -72,6 +72,10 @@ output "Dell Inc. DELL S2725QC 9GSKS84" {
 switch-events {
     lid-close { spawn "sh" "-c" r#"id=$(niri msg -j windows | jq -r 'max_by([.focus_timestamp.secs, .focus_timestamp.nanos]) | .id // empty'); [ -n "$id" ] && niri msg action focus-window --id "$id""#; }
 }
+
+// Declared first, so it sits at the top of its monitor: Mod+1. Chat apps
+// open there (rules below), as on the Mac (desktop/omniwm).
+workspace "home"
 
 layout {
     gaps 12
@@ -166,6 +170,21 @@ window-rule {
 window-rule {
     match app-id=r#"(?i)^1password$"#
     block-out-from "screen-capture"
+}
+
+// Telegram: Wayland app-id (its .desktop name) or X11 class.
+window-rule {
+    match app-id=r#"(?i)^vesktop$"#
+    match app-id=r#"^(org\.telegram\.desktop|TelegramDesktop)$"#
+    match app-id=r#"(?i)^wechat$"#
+    open-on-workspace "home"
+}
+
+// Only in niri's first minute (a browser opened at login); later windows open
+// where you are.
+window-rule {
+    match app-id=r#"^helium$"# at-startup=true
+    open-on-workspace "home"
 }
 
 debug {

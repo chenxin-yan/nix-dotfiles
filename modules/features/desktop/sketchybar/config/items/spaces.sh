@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SPACE_ICONS=("~" "1:DEV" "2:WEB" "3:TODO" "4:NOTE" "5:CHAT" "6:MEDIA")
-
 SPACE=(
   icon.padding_left=18
   icon.padding_right=18
@@ -16,24 +14,30 @@ SPACE=(
   background.corner_radius=10
   background.drawing=on
   label.drawing=off
+  drawing=off
 )
 
-sketchybar --add event aerospace_workspace_change
+# Triggered by the sketchybar-omniwm agent (sketchybar/default.nix).
+sketchybar --add event omniwm_workspaces_changed
 
-sid=0
-for i in "${!SPACE_ICONS[@]}"
+# Numbered by position on the focused display (OmniWM's workspace slots),
+# like niri's workspaces and Option+1…9.
+for sid in {1..9}
 do
-  sid=$(($i))
   sketchybar --add item space.$sid left \
-             --subscribe space.$sid aerospace_workspace_change \
              --set space.$sid "${SPACE[@]}" \
-                  script="$PLUGIN_DIR/space.sh $sid" \
-                  click_script="aerospace workspace $sid" \
-             --set space.$sid icon=${SPACE_ICONS[i]}
+                  icon=$sid \
+                  click_script="omniwmctl command switch-workspace slot $sid"
 done
 
+# One hidden item redraws all nine, so each event costs a single query.
+# updates=on: a hidden item's script would otherwise not run.
+sketchybar --add item spaces left \
+           --set spaces drawing=off updates=on script="$PLUGIN_DIR/space.sh" \
+           --subscribe spaces omniwm_workspaces_changed
+
 sketchybar --add item space_separator_left left \
-           --set space_separator_left icon= \
+           --set space_separator_left icon= \
                                  icon.font="$FONT:Bold:16.0" \
                                  background.padding_left=16 \
                                  background.padding_right=10 \
