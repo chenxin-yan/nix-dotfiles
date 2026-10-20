@@ -35,6 +35,7 @@
 
     # macOS only
     omniwm
+    homerow
     iina
     raycast
     sketchybar
