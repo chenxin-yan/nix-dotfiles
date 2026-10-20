@@ -32,6 +32,8 @@ in
       }:
       let
         inherit (pkgs.stdenv.hostPlatform) isDarwin;
+        hasOnePassword = host: lib.any (f: f.name == "_1password") host.selected;
+        desktops = lib.attrNames (lib.filterAttrs (_: hasOnePassword) hosts);
       in
       {
         programs.ssh = {
@@ -49,10 +51,18 @@ in
               # Over SSH a desktop's own 1Password can't be unlocked, so it
               # uses this machine's agent instead (see _1password). Set here,
               # not with -A: a reused ControlMaster connection ignores -A.
-              // lib.optionalAttrs (lib.any (f: f.name == "_1password") host.selected) {
+              // lib.optionalAttrs (hasOnePassword host) {
                 ForwardAgent = "yes";
               }
             ) hosts
+            # A shared connection forwards the agent of the session that opened
+            # it, so one opened over SSH must not serve local sessions or the
+            # reverse. Before the host blocks: ssh keeps the first ControlPath.
+            // lib.optionalAttrs (desktops != [ ]) {
+              ${''Match host ${lib.concatStringsSep "," desktops} exec "test -n \"$SSH_CONNECTION\""''} =
+                lib.hm.dag.entryBefore desktops
+                  { ControlPath = "none"; };
+            }
             // {
               "github.com" = {
                 AddKeysToAgent = "yes";
