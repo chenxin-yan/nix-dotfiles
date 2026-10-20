@@ -38,12 +38,21 @@ in
           enable = true;
           enableDefaultConfig = false;
           settings =
-            lib.mapAttrs (_: host: {
-              User = host.login;
-              ControlMaster = "auto";
-              ControlPersist = "10m";
-              ControlPath = "${config.home.homeDirectory}/.ssh/cm-%C";
-            }) hosts
+            lib.mapAttrs (
+              _: host:
+              {
+                User = host.login;
+                ControlMaster = "auto";
+                ControlPersist = "10m";
+                ControlPath = "${config.home.homeDirectory}/.ssh/cm-%C";
+              }
+              # Over SSH a desktop's own 1Password can't be unlocked, so it
+              # uses this machine's agent instead (see _1password). Set here,
+              # not with -A: a reused ControlMaster connection ignores -A.
+              // lib.optionalAttrs (lib.any (f: f.name == "_1password") host.selected) {
+                ForwardAgent = "yes";
+              }
+            ) hosts
             // {
               "github.com" = {
                 AddKeysToAgent = "yes";
