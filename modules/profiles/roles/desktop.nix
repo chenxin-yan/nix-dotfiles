@@ -36,6 +36,7 @@
     # macOS only
     omniwm
     iina
+    raycast
     sketchybar
   ];
 }
