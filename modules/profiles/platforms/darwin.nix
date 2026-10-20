@@ -20,7 +20,7 @@
       # activation from a terminal without it.
       system.defaults = {
         NSGlobalDomain = {
-          AppleKeyboardUIMode = 3; # Tab reaches every control, not just text fields
+          AppleKeyboardUIMode = 2; # Tab reaches every control (2 on Sonoma and later)
           ApplePressAndHoldEnabled = false; # held keys repeat (hjkl) instead of offering accents
           InitialKeyRepeat = 15;
           KeyRepeat = 2;
