@@ -274,41 +274,6 @@ id = "552FB77D-BF0E-4737-90A6-B5BC6986C579"
 minHeight = 320.0
 minWidth = 660.0
 
-[[appRules]]
-assignToWorkspace = "1"
-bundleId = "com.apple.mail"
-id = "E848983D-AE40-44D7-AEBA-7E9E4C077DD3"
-
-[[appRules]]
-assignToWorkspace = "1"
-bundleId = "com.flexibits.fantastical2.mac"
-id = "3FFBF6F0-C224-4CDD-BC6D-70AB493EE7F1"
-
-[[appRules]]
-assignToWorkspace = "1"
-bundleId = "com.tinyspeck.slackmacgap"
-id = "1EC3E0BB-2E68-4B6D-9A9C-EA58B2A81624"
-
-[[appRules]]
-assignToWorkspace = "1"
-bundleId = "com.tencent.xinWeChat"
-id = "075874C0-90E5-463C-B9DB-34C3650AF3C2"
-
-[[appRules]]
-assignToWorkspace = "1"
-bundleId = "dev.vencord.vesktop"
-id = "703D03E0-467F-4DB2-B585-DBBF927FF5C0"
-
-[[appRules]]
-assignToWorkspace = "1"
-bundleId = "com.apple.Music"
-id = "E51F99D6-0BB8-4FC3-90FE-F1E2FFC8039F"
-
-[[appRules]]
-assignToWorkspace = "1"
-bundleId = "com.tdesktop.Telegram"
-id = "DB6FB83F-3C8A-4E96-92C7-065498B34919"
-
 [[hotkeys]]
 binding = "Unassigned"
 id = "toggleScratchpad.1"

@@ -16,13 +16,10 @@
 #     that take a typed Option character (Option+T, Option+`, …) are
 #     unassigned. Nothing uses Option+D or Option+Q (zsh's) or Option+Esc.
 #   - niri.resizeStepPercent = 10: niri's ±10% column widths and heights.
-#   - workspaces: nine, used by position like niri's. 1 is "home": chat,
-#     mail, calendar and music open there (appRules). Not the browser: a
-#     rule places an app's window whenever the app has no other, so once
-#     every Helium window was closed, the next would go home instead of
-#     where you are (niri can route it only at startup). 1–7 live on the
-#     Main display (the one with the menu bar), 8–9 on the Secondary;
-#     alone, the laptop holds all nine.
+#   - workspaces: nine, used by position like niri's; 1 is named "home".
+#     Windows open where you are (no appRules route them). 1–7 live on the
+#     Main display (ranked first in Settings → Monitors), 8–9 on the
+#     Secondary; alone, the laptop holds all nine.
 #   - workspaceBar.hideEmptyWorkspaces: Option+N/P skip empty workspaces.
 #     The bar itself is off (sketchybar shows the workspaces, through IPC).
 #     showFloatingWindows: the IPC workspace-bar events sketchybar follows
