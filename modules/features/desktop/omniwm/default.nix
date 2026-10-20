@@ -30,6 +30,7 @@
 #     floating windows would keep a stale pill.
 #   - off: the Hidden Bar, the Quake terminal and clipboard history (Ghostty
 #     and Raycast cover them), update checks (Nix pins the version).
+#   - borders: off, no highlight around the focused window.
 #   - focus: the pointer follows focus, and focus follows moved windows.
 #   - gaps: 6 inner and outer, 12 on top. OmniWM measures the top from the
 #     display's physical edge, minus the menu bar.

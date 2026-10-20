@@ -1,9 +1,200 @@
-schemaVersion = 4
 monitorBarOverrides = []
 monitorDwindleOverrides = []
 monitorGapOverrides = []
 monitorNiriOverrides = []
 monitorOrientationOverrides = []
+schemaVersion = 4
+
+[appearance]
+mode = "dark"
+tabRailAppIcons = false
+
+[borders]
+enabled = false
+width = 5.0
+
+[borders.color]
+alpha = 1.0
+blue = 0.979300037944676
+green = 1.0
+red = 0.08458520228437894
+
+[clipboard]
+historyEnabled = false
+ignoredTypes = []
+maxItemBytes = 8388608
+maxItems = 200
+maxTotalBytes = 67108864
+
+[dwindle]
+defaultSplitRatio = 1.0
+moveToRootStable = true
+singleWindowFit = "fill"
+smartSplit = false
+splitWidthMultiplier = 1.0
+useGlobalGaps = true
+
+[focus]
+crossesMonitorAtEdge = false
+followsMouse = false
+followsWindowToMonitor = true
+lockModifier = "off"
+moveCrossesMonitorAtEdge = false
+moveMouseToFocusedWindow = true
+raiseOnMouseFocus = false
+
+[gaps]
+fullscreenUsesOuterGaps = false
+size = 6.0
+
+[gaps.outer]
+bottom = 6.0
+left = 6.0
+right = 6.0
+top = 12.0
+
+[general]
+animationsEnabled = true
+defaultLayoutType = "niri"
+hotkeysEnabled = true
+hyperKeyModifiers = "Control+Option+Shift+Command"
+ipcEnabled = true
+preventSleepEnabled = false
+systemHyperTrigger = "None"
+updateChecksEnabled = false
+
+[gestures]
+fingerCount = 3
+invertDirection = true
+mouseMoveModifierKey = "option"
+mouseResizeModifierKey = "option"
+overviewGestureEnabled = false
+overviewGestureFingerCount = 4
+scrollEnabled = true
+scrollModifierKey = "optionShift"
+scrollSensitivity = 5.0
+trackpadScrollStyle = "snap"
+windowGestureSensitivity = 1.0
+windowMoveEnabled = false
+windowMoveFingerCount = 4
+windowResizeEnabled = false
+windowResizeFingerCount = 3
+workspaceSwipeAxis = "vertical"
+workspaceSwipeEnabled = false
+workspaceSwipeFingerCount = 3
+
+[hiddenBar]
+enabled = false
+hiddenBundleIDs = []
+rehideIntervalSeconds = 5.0
+
+[monitors]
+
+[[monitors.ranking]]
+displayUUID = "2AAC428D-78F9-4D4D-B6F8-551E266771E9"
+name = "Odyssey G95NC"
+
+[mouseWarp]
+constrainToArrangement = false
+enabled = true
+margin = 1
+
+[niri]
+alwaysCenterSingleColumn = false
+centerFocusedColumn = "never"
+containerPrimarySpanPresets = [0.3333333333333333, 0.5, 0.6666666666666666]
+defaultContainerPrimarySpan = 0.5
+edgeGaps = true
+infiniteLoop = false
+resizeStepPercent = 10
+singleWindowFit = "fill"
+visibleContainerCount = 2
+
+[overview]
+enabled = true
+invertScrollDirection = false
+matchFocusBorder = true
+mouseScrollSpeed = 1.0
+zoom = 1.0
+
+[overview.backdrop]
+alpha = 0.0
+blue = 0.08
+green = 0.05
+red = 0.05
+
+[overview.windowBorders]
+
+[overview.windowBorders.hovered]
+alpha = 1.0
+blue = 1.0
+green = 0.6
+red = 0.4
+
+[overview.windowBorders.normal]
+alpha = 0.5
+blue = 0.35
+green = 0.3
+red = 0.3
+
+[overview.windowBorders.selected]
+alpha = 1.0
+blue = 0.4
+green = 0.8
+red = 0.3
+
+[quakeTerminal]
+animationDuration = 0.2
+autoHide = false
+backgroundBlurRadius = 0
+backgroundEffect = "standardBlur"
+enabled = false
+heightPercent = 50.0
+monitorMode = "focusedWindow"
+opacity = 1.0
+position = "center"
+widthPercent = 50.0
+
+[routing]
+arrangements = []
+mode = "macOS"
+
+[scratchpads]
+
+[scratchpads.labels]
+
+[statusBar]
+showAppNames = false
+showWorkspaceName = false
+useWorkspaceId = false
+
+[workspaceBar]
+backgroundOpacity = 0.1
+deduplicateAppIcons = false
+enabled = false
+excludedBundleIDs = []
+height = 24.0
+hideEmptyWorkspaces = true
+hideInNativeFullscreen = false
+hoverPreviewsEnabled = true
+notchActiveZoneWidth = 180.0
+notchMode = "moveBelowMenuBar"
+position = "overlappingMenuBar"
+reserveLayoutSpace = false
+revealHoldMilliseconds = 200.0
+revealModifier = "off"
+showAccentHighlights = true
+showFloatingWindows = true
+showItemBackgrounds = true
+showLabels = true
+solidBlackBackground = false
+systemStatsButton = false
+transparentBackground = false
+windowLevel = "popup"
+xOffset = 0.0
+yOffset = 0.0
+
+[workspaceBar.iconOverrides]
 
 [[appRules]]
 bundleId = "com.openai.codex"
@@ -117,89 +308,6 @@ id = "E51F99D6-0BB8-4FC3-90FE-F1E2FFC8039F"
 assignToWorkspace = "1"
 bundleId = "com.tdesktop.Telegram"
 id = "DB6FB83F-3C8A-4E96-92C7-065498B34919"
-
-[appearance]
-mode = "dark"
-tabRailAppIcons = false
-
-[borders]
-enabled = true
-width = 5.0
-
-[borders.color]
-alpha = 1.0
-blue = 0.979300037944676
-green = 1.0
-red = 0.08458520228437894
-
-[clipboard]
-historyEnabled = false
-ignoredTypes = []
-maxItemBytes = 8388608
-maxItems = 200
-maxTotalBytes = 67108864
-
-[dwindle]
-defaultSplitRatio = 1.0
-moveToRootStable = true
-singleWindowFit = "fill"
-smartSplit = false
-splitWidthMultiplier = 1.0
-useGlobalGaps = true
-
-[focus]
-crossesMonitorAtEdge = false
-followsMouse = false
-followsWindowToMonitor = true
-lockModifier = "off"
-moveCrossesMonitorAtEdge = false
-moveMouseToFocusedWindow = true
-raiseOnMouseFocus = false
-
-[gaps]
-fullscreenUsesOuterGaps = false
-size = 6.0
-
-[gaps.outer]
-bottom = 6.0
-left = 6.0
-right = 6.0
-top = 12.0
-
-[general]
-animationsEnabled = true
-defaultLayoutType = "niri"
-hotkeysEnabled = true
-hyperKeyModifiers = "Control+Option+Shift+Command"
-ipcEnabled = true
-preventSleepEnabled = false
-systemHyperTrigger = "None"
-updateChecksEnabled = false
-
-[gestures]
-fingerCount = 3
-invertDirection = true
-mouseMoveModifierKey = "option"
-mouseResizeModifierKey = "option"
-overviewGestureEnabled = false
-overviewGestureFingerCount = 4
-scrollEnabled = true
-scrollModifierKey = "optionShift"
-scrollSensitivity = 5.0
-trackpadScrollStyle = "snap"
-windowGestureSensitivity = 1.0
-windowMoveEnabled = false
-windowMoveFingerCount = 4
-windowResizeEnabled = false
-windowResizeFingerCount = 3
-workspaceSwipeAxis = "vertical"
-workspaceSwipeEnabled = false
-workspaceSwipeFingerCount = 3
-
-[hiddenBar]
-enabled = false
-hiddenBundleIDs = []
-rehideIntervalSeconds = 5.0
 
 [[hotkeys]]
 binding = "Unassigned"
@@ -590,12 +698,12 @@ binding = "Option+Period"
 id = "expelWindowFromColumn"
 
 [[hotkeys]]
-binding = "Control+Option+K"
-id = "focusMonitorPrevious"
-
-[[hotkeys]]
 binding = "Control+Option+J"
 id = "focusMonitorNext"
+
+[[hotkeys]]
+binding = "Control+Option+K"
+id = "focusMonitorPrevious"
 
 [[hotkeys]]
 binding = "Control+Command+Grave"
@@ -960,104 +1068,6 @@ id = "toggleOverview"
 [[hotkeys]]
 binding = "Unassigned"
 id = "toggleSystemStats"
-
-[mouseWarp]
-constrainToArrangement = false
-enabled = true
-margin = 1
-
-[niri]
-alwaysCenterSingleColumn = false
-centerFocusedColumn = "never"
-containerPrimarySpanPresets = [0.3333333333333333, 0.5, 0.6666666666666666]
-defaultContainerPrimarySpan = 0.5
-edgeGaps = true
-infiniteLoop = false
-resizeStepPercent = 10
-singleWindowFit = "fill"
-visibleContainerCount = 2
-
-[overview]
-enabled = true
-invertScrollDirection = false
-matchFocusBorder = true
-mouseScrollSpeed = 1.0
-zoom = 1.0
-
-[overview.backdrop]
-alpha = 0.0
-blue = 0.08
-green = 0.05
-red = 0.05
-
-[overview.windowBorders.hovered]
-alpha = 1.0
-blue = 1.0
-green = 0.6
-red = 0.4
-
-[overview.windowBorders.normal]
-alpha = 0.5
-blue = 0.35
-green = 0.3
-red = 0.3
-
-[overview.windowBorders.selected]
-alpha = 1.0
-blue = 0.4
-green = 0.8
-red = 0.3
-
-[quakeTerminal]
-animationDuration = 0.2
-autoHide = false
-backgroundBlurRadius = 0
-backgroundEffect = "standardBlur"
-enabled = false
-heightPercent = 50.0
-monitorMode = "focusedWindow"
-opacity = 1.0
-position = "center"
-widthPercent = 50.0
-
-[routing]
-arrangements = []
-mode = "macOS"
-
-[scratchpads]
-labels = {}
-
-[statusBar]
-showAppNames = false
-showWorkspaceName = false
-useWorkspaceId = false
-
-[workspaceBar]
-backgroundOpacity = 0.1
-deduplicateAppIcons = false
-enabled = false
-excludedBundleIDs = []
-height = 24.0
-hideEmptyWorkspaces = true
-hideInNativeFullscreen = false
-hoverPreviewsEnabled = true
-iconOverrides = {}
-notchMode = "moveBelowMenuBar"
-notchActiveZoneWidth = 180.0
-position = "overlappingMenuBar"
-reserveLayoutSpace = false
-revealModifier = "off"
-revealHoldMilliseconds = 200.0
-showAccentHighlights = true
-showFloatingWindows = true
-showItemBackgrounds = true
-showLabels = true
-solidBlackBackground = false
-systemStatsButton = false
-transparentBackground = false
-windowLevel = "popup"
-xOffset = 0.0
-yOffset = 0.0
 
 [[workspaces]]
 displayName = "home"
