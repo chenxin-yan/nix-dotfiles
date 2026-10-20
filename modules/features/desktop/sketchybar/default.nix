@@ -34,31 +34,7 @@
       services.sketchybar.enable = true;
       # The bar takes the menu bar's place.
       system.defaults.NSGlobalDomain._HIHideMenuBar = true;
-      # plugins/space.sh reads OmniWM's workspaces from omniwmctl's JSON.
-      services.sketchybar.extraPackages = [
-        pkgs.jq
-        pkgs.omniwm
-      ];
-
-      # Redraws the workspaces (event in items/spaces.sh) on each OmniWM change.
-      # watch sends a snapshot on connect, so the bar catches up when OmniWM
-      # starts after sketchybar (sketchybarrc covers the other order), and
-      # --reconnect follows OmniWM's restarts. A first connection that fails
-      # exits, so launchd retries until OmniWM is up.
-      launchd.user.agents.sketchybar-omniwm.serviceConfig = {
-        ProgramArguments = [
-          (lib.getExe' pkgs.omniwm "omniwmctl")
-          "watch"
-          "workspace-bar,active-workspace"
-          "--reconnect"
-          "--exec"
-          (lib.getExe' config.services.sketchybar.package "sketchybar")
-          "--trigger"
-          "omniwm_workspaces_changed"
-        ];
-        RunAtLoad = true;
-        KeepAlive = true;
-      };
+      # The window manager's feature (omniwm, aerospace) feeds the workspaces.
 
       # Icon fonts the bar's config uses: SF Pro (ICON_FONT) and the app-icon font.
       homebrew.casks = [ "font-sf-pro" ];

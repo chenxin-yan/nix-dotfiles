@@ -7,7 +7,11 @@
     features = with config.features; [
       workstation
       desktop
+      aerospace
     ];
+
+    # Not on macOS 26, which OmniWM needs.
+    exclude = with config.features; [ omniwm ];
 
     darwin =
       { host, pkgs, ... }:

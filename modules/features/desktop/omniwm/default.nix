@@ -46,7 +46,45 @@
 
   # "Displays have separate Spaces", the macOS default: OmniWM manages no
   # windows without it. A change needs a logout.
-  features.omniwm.darwin.system.defaults.spaces.spans-displays = false;
+  features.omniwm.darwin =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    lib.mkMerge [
+      { system.defaults.spaces.spans-displays = false; }
+
+      (lib.mkIf config.services.sketchybar.enable {
+        # sketchybar's plugins/space.sh reads OmniWM's workspaces from
+        # omniwmctl's JSON.
+        services.sketchybar.extraPackages = [
+          pkgs.jq
+          pkgs.omniwm
+        ];
+
+        # Redraws the workspaces (event in items/spaces.sh) on each OmniWM change.
+        # watch sends a snapshot on connect, so the bar catches up when OmniWM
+        # starts after sketchybar (sketchybarrc covers the other order), and
+        # --reconnect follows OmniWM's restarts. A first connection that fails
+        # exits, so launchd retries until OmniWM is up.
+        launchd.user.agents.sketchybar-omniwm.serviceConfig = {
+          ProgramArguments = [
+            (lib.getExe' pkgs.omniwm "omniwmctl")
+            "watch"
+            "workspace-bar,active-workspace"
+            "--reconnect"
+            "--exec"
+            (lib.getExe' config.services.sketchybar.package "sketchybar")
+            "--trigger"
+            "omniwm_workspaces_changed"
+          ];
+          RunAtLoad = true;
+          KeepAlive = true;
+        };
+      })
+    ];
 
   features.omniwm.homeManager =
     {

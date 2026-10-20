@@ -51,7 +51,12 @@ sketchybar --default "${DEF_PROPS[@]}"
 
 # -- LEFT Side Items --
 source "$ITEM_DIR/apple.sh"
-source "$ITEM_DIR/spaces.sh"
+# AeroSpace on Macs that can't run OmniWM (aerospace.nix).
+if command -v aerospace >/dev/null; then
+  source "$ITEM_DIR/spaces_aerospace.sh"
+else
+  source "$ITEM_DIR/spaces.sh"
+fi
 source "$ITEM_DIR/front_app.sh"
 
 # -- RIGHT Side Items -- 
@@ -69,7 +74,11 @@ sketchybar --add item cat center \
 
 sketchybar --update
 
-# The sketchybar-omniwm agent reports changes only, so draw the workspaces on
+# The window managers report changes only, so draw the workspaces on
 # (re)start.
-sketchybar --trigger omniwm_workspaces_changed
+if command -v aerospace >/dev/null; then
+  sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$(aerospace list-workspaces --focused 2>/dev/null)"
+else
+  sketchybar --trigger omniwm_workspaces_changed
+fi
 
