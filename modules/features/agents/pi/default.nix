@@ -80,10 +80,6 @@ in
         "@hypabolic/pi-hypa"
         # /rewind checkpoint navigation and /checkpoint storage manager.
         "@ayulab/pi-rewind"
-        # MCP servers as Pi tools through one `mcp` proxy tool; servers are
-        # read from ~/.config/mcp/mcp.json or a project .mcp.json (unmanaged
-        # here; `/mcp-adapter setup` scaffolds one). Replaces Pi's built-in MCP.
-        "pi-mcp-adapter"
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         # Desktop app observation and control. The NixOS host is headless.
