@@ -4,8 +4,8 @@
   anthropicSkills = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
-    rev = "683bc88e56f3e09ba94f7055977f3d3aa499f202";
-    hash = "sha256-APw+xMKqRvkLnuQxttiyyIeylrIMSxZovQnw3xEl1C4=";
+    rev = "dbd4588f9e1033efb41dad4bef2f7947c8993d44";
+    hash = "sha256-+UIqBnzyeIOvJSKYaDaE3GYPEpLw7qQqyUw5S971AfU=";
   };
 
   vercelSkills = pkgs.fetchFromGitHub {
@@ -18,22 +18,22 @@
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "b0618bc436ad893b3c5e84e55fba86586d34a404";
-    hash = "sha256-1QwFBwG+gORvDvW4HM0LrZlHZKmKtWr7pUHU0MAXF2Y=";
+    rev = "5beb35b040e3de97e54fa9e386d7e42d15c295c2";
+    hash = "sha256-2FKfe3/Fwc4MmwBLa+d/oQW4/gtYIssdWapy2MPd39I=";
   };
 
   pstack = pkgs.fetchFromGitHub {
     owner = "backnotprop";
     repo = "pstack";
-    rev = "3a604672c46cd8187d2b19980eae0a34f9f91138";
-    hash = "sha256-eA5GF6CgHgGoX7H+AWSF5xnvHjB1NgBlODJKlvOs7/U=";
+    rev = "e44668c2aad92eacf4e84df47984121fefb11b82";
+    hash = "sha256-D2MTX3kirzLjS5hz46iyjBW2lUh9w5AUy9H2arIJy6U=";
   };
 
   ponytail = pkgs.fetchFromGitHub {
     owner = "DietrichGebert";
     repo = "ponytail";
-    rev = "9cc65d03aa2da1db7121b912d03596409ee340b8";
-    hash = "sha256-diYM3gqcEboVi7OQff/SvlE0TKAIPTJDIggX7rZWslY=";
+    rev = "09c434ab73ca43761c5d8b0c5d341926c2fba710";
+    hash = "sha256-sVnxA4rfxa2SlS2g+2+q3odRq0VJz1z7PEVHW2QRPQI=";
   };
 
   humanlayerSkills = pkgs.fetchFromGitHub {

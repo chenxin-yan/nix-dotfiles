@@ -1,16 +1,4 @@
 {
-  # TODO: remove this overlay once https://github.com/NixOS/nixpkgs/pull/570577
-  # is merged and the locked nixpkgs includes it. nixpkgs 9fad6ba378 switched
-  # clipboard-jh to gcc15Stdenv on every platform, and g++ rejects the
-  # -fobjc-arc flag upstream's CMake adds on Apple. To check, delete the overlay
-  # and run:
-  #   nix build .#darwinConfigurations.work-macbook.pkgs.clipboard-jh
-  features.yazi.darwin.nixpkgs.overlays = [
-    (final: prev: {
-      clipboard-jh = prev.clipboard-jh.override { gcc15Stdenv = final.stdenv; };
-    })
-  ];
-
   features.yazi.homeManager =
     {
       config,
@@ -23,8 +11,8 @@
       yazi-plugins = pkgs.fetchFromGitHub {
         owner = "yazi-rs";
         repo = "plugins";
-        rev = "6229767f7fef39a2a78f5cee9122cc4dfb43f327";
-        hash = "sha256-/BNGoWziHIZ9i+RoTWGq/q3ZowNCyHGBOWiz8v2/vOE=";
+        rev = "9166202cc1694c98bac3a639874d6f4c0eaa2dab";
+        hash = "sha256-3ddGRQSzxyurNcyYJA+9LTLXTCjBFGATTqdkuGKixzA=";
       };
     in
     {
