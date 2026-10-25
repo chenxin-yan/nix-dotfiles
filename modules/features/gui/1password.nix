@@ -33,7 +33,7 @@ in
     homeManager =
       { pkgs, ... }:
       let
-        notOverSsh = ''Match exec "test -z \"$SSH_CONNECTION\""'';
+        notOverSsh = ''Match exec "! printenv SSH_CONNECTION >/dev/null"'';
       in
       {
         programs.ssh.settings.${notOverSsh}.IdentityAgent =

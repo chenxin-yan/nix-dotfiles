@@ -59,7 +59,7 @@ in
             # it, so one opened over SSH must not serve local sessions or the
             # reverse. Before the host blocks: ssh keeps the first ControlPath.
             // lib.optionalAttrs (desktops != [ ]) {
-              ${''Match host ${lib.concatStringsSep "," desktops} exec "test -n \"$SSH_CONNECTION\""''} =
+              ${''Match host ${lib.concatStringsSep "," desktops} exec "printenv SSH_CONNECTION >/dev/null"''} =
                 lib.hm.dag.entryBefore desktops
                   { ControlPath = "none"; };
             }
