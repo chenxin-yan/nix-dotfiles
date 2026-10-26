@@ -25,8 +25,8 @@
   pstack = pkgs.fetchFromGitHub {
     owner = "backnotprop";
     repo = "pstack";
-    rev = "18b6c36e6e201b110acc62472de987416ac4e23b";
-    hash = "sha256-hsGfW8S58TL5QPv9VbhQ5/V1JyPhz52y4we914LELOI=";
+    rev = "f51fdeba3d803ef90e4eaa4a95ffb4e76008ab37";
+    hash = "sha256-WftZaB0mckZONC2ODbPe15j+Ntc9BKbbwGrXrqBEdn4=";
   };
 
   ponytail = pkgs.fetchFromGitHub {

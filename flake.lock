@@ -38,11 +38,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1792851666,
-        "narHash": "sha256-wDEAxTyksYFu9HVo8L6ozCRoW2k6QGlJkedujlY+VA4=",
+        "lastModified": 1793011355,
+        "narHash": "sha256-Nwt7keMo7rYq33UL4sk4YpD63Pbokr0lMU7hmVEtEPI=",
         "owner": "catppuccin",
         "repo": "nix",
-        "rev": "a08c7948f09cdd3c7f80f718b1d9b93eeaacca0c",
+        "rev": "96f08f364265c5ac66aa61f8f36946279e2c3b00",
         "type": "github"
       },
       "original": {
@@ -187,11 +187,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1792996224,
-        "narHash": "sha256-uPbItqE/+ozVqbxoRkONF8TckeIbqras60UOHhVsT4k=",
+        "lastModified": 1793041330,
+        "narHash": "sha256-65veDckA9LDNBw/BRMdmjqjuP5wWcxl2f5yojwMjv5M=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "0107da5d2a362b1b0b29aff8ada3fd2d4437f88e",
+        "rev": "15732642b0cbf3828bbfc5f51d1850aa1fa8541b",
         "type": "github"
       },
       "original": {
@@ -228,11 +228,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792896866,
-        "narHash": "sha256-/0tELNnhdSnP+bHSdWiEe6KpfSwi6WrTnT9cm/jNkjA=",
+        "lastModified": 1793033486,
+        "narHash": "sha256-fXVURa0+CSCgaxLt8tmPNJq2U+fGYOwbk5j2YUe7kSc=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "c216bf5a1f173b0481bd5c8c489ebe5595ecc68c",
+        "rev": "7db163b2aee7e410e396b48aed02f646d742b9b8",
         "type": "github"
       },
       "original": {
@@ -455,11 +455,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1792812153,
-        "narHash": "sha256-T2+XBfNbf9pecLUWS4+RtuVNZ3W8K5taG5QdV71mWlk=",
+        "lastModified": 1792842277,
+        "narHash": "sha256-pGPnZGi8y9d76xNeracniXO3dsYVROEmMkMc8jD0Ihc=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "674a2028661e550a97400c1cc992b9cca9a668a1",
+        "rev": "d3b13ad75cc492690728f9307e443dec9ef9a20e",
         "type": "github"
       },
       "original": {
@@ -498,11 +498,11 @@
         "openlogi": "openlogi_2"
       },
       "locked": {
-        "lastModified": 1792959112,
-        "narHash": "sha256-HG0hpvk6UGSOvpLt7LSVbGNS9/xppQt9dCdezn/2cDM=",
+        "lastModified": 1793030560,
+        "narHash": "sha256-7F132UlYr+IX2wWvZM2+JvaKHKC80CLOZxd8daLauwo=",
         "owner": "AprilNEA",
         "repo": "OpenLogi",
-        "rev": "d9fd33aca1639c377af25b8fe89ee89c6120f187",
+        "rev": "afc3276dba901a5bd76e88ab63184d0c0539dfef",
         "type": "github"
       },
       "original": {
