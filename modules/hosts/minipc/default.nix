@@ -90,18 +90,10 @@
         services.envfs.enable = true;
       };
 
-    homeManager =
-      { pkgs, ... }:
+    homeManager = {
+      home.stateVersion = "25.05";
 
-      {
-        home.stateVersion = "25.05";
-
-        home.packages = with pkgs; [
-          # terminfo for xterm-ghostty so SSH sessions from Ghostty clients work
-          ghostty.terminfo
-        ];
-
-        services.ssh-agent.enable = true;
-      };
+      services.ssh-agent.enable = true;
+    };
   };
 }

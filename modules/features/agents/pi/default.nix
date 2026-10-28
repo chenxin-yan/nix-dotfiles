@@ -80,6 +80,9 @@ in
         "@hypabolic/pi-hypa"
         # /rewind checkpoint navigation and /checkpoint storage manager.
         "@ayulab/pi-rewind"
+        # /fast toggles provider Fast mode (Codex `service_tier: priority`,
+        # Claude `speed: fast` + beta) for the selected model.
+        "@diegopetrucci/pi-fast"
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         # Desktop app observation and control. The NixOS host is headless.
@@ -332,6 +335,12 @@ in
         # message and wall-clock time spent in the current agent run.
         ".pi/agent/extensions/tps-status.ts".source = ./config/extensions/tps-status.ts;
         ".pi/agent/extensions/agent-time.ts".source = ./config/extensions/agent-time.ts;
+
+        # pi-fast global config: Fast mode on by default for eligible models
+        # (/fast still toggles per session). Costs more than standard speed.
+        ".pi/agent/extensions/fast.json".text = builtins.toJSON {
+          enabled = true;
+        };
 
         ".pi/agent/AGENTS.md".source = ../config/AGENTS.md;
 

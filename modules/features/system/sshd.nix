@@ -30,14 +30,19 @@ in
         AuthorizedKeysFile none
       '';
     };
-    nixos = {
-      imports = [ server ];
-      services.openssh.settings = {
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-        PermitRootLogin = "no";
+    nixos =
+      { pkgs, ... }:
+      {
+        imports = [ server ];
+        # Ghostty clients send TERM=xterm-ghostty; its ssh-terminfo only covers
+        # SSH from integrated shells, so ship the entry system-wide (root too).
+        environment.systemPackages = [ pkgs.ghostty.terminfo ];
+        services.openssh.settings = {
+          PasswordAuthentication = false;
+          KbdInteractiveAuthentication = false;
+          PermitRootLogin = "no";
+        };
+        services.openssh.authorizedKeysInHomedir = false;
       };
-      services.openssh.authorizedKeysInHomedir = false;
-    };
   };
 }
