@@ -46,6 +46,11 @@
               --device-name ${lib.escapeShellArg osConfig.networking.hostName} \
               < ${secret "obsidian-vault-password"}
           fi
+          # sync-setup can't set these and defaults to no configs and no
+          # "unsupported" files; reapplying each start keeps them declarative.
+          ${ob} sync-config --path "$vault" \
+            --file-types image,audio,video,pdf,unsupported \
+            --configs app,appearance,appearance-data,hotkey,core-plugin,core-plugin-data,community-plugin,community-plugin-data
           exec ${ob} sync --path "$vault" --continuous
         '';
       in
