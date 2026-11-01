@@ -18,8 +18,8 @@
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "a496f5513d4a4cf889bc48e189e579f4b0bdf6aa";
-    hash = "sha256-XpP8D7V2seR0sJ9bErscXgVLY2+6QiaA8TR/l8v2gx0=";
+    rev = "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d";
+    hash = "sha256-3vhd77xfZjKUYJsIwPFevIZPUAzUgZXr0RYj5NQrBwk=";
   };
 
   pstack = pkgs.fetchFromGitHub {
@@ -39,7 +39,7 @@
   humanlayerSkills = pkgs.fetchFromGitHub {
     owner = "humanlayer";
     repo = "skills";
-    rev = "653b6411c1f70c275a18e37673b042ff99f67ceb";
-    hash = "sha256-W3dFEdIi4sz4CAZvaj1xjtN7xTRebF/WHOTQYCIe2Xo=";
+    rev = "69d5fc61d6ca6f7056d283a2ee2a045be741a1d6";
+    hash = "sha256-I/FEGMmJvmkxAzdHEBnacrG5TcP4Y46Kk9lqkKE834M=";
   };
 }
