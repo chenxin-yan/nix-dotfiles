@@ -88,6 +88,10 @@
         # enables MagicDNS). See: https://github.com/tailscale/tailscale/issues/4254
         services.resolved.enable = true;
         services.envfs.enable = true;
+
+        # Lets the login user change Tailscale config without sudo, so
+        # `t3 pair --tailscale` can set up Tailscale Serve for T3 Code.
+        services.tailscale.extraSetFlags = [ "--operator=${host.login}" ];
       };
 
     homeManager = {
