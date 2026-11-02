@@ -187,11 +187,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1793576841,
-        "narHash": "sha256-mWDRqJZ/G4mRHeV4p1+QT/ftNQuwuqU27OmjZoGL9TQ=",
+        "lastModified": 1793635052,
+        "narHash": "sha256-3/hZY92jAugOg1z+p9Avk5QMqs3HigOxjmZc7ZYwgVU=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "557254faa24ef5d86f67595c4c64dc61644d0f68",
+        "rev": "f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab",
         "type": "github"
       },
       "original": {
@@ -455,11 +455,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1793494649,
-        "narHash": "sha256-Thn0OE71NF80ZfOMGCgJvKtbCcnnz0fToT/qsvb/Gtc=",
+        "lastModified": 1793582901,
+        "narHash": "sha256-WDValiY9se78X2Wh7aWWaq/c7HN29U555+OKbHEzYrw=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d357a2b54f0b6dc4aeb4e993190a52cf151b6f24",
+        "rev": "5c9de89ec55bff981cb8da1a4ee92b10f1438ffc",
         "type": "github"
       },
       "original": {
@@ -498,11 +498,11 @@
         "openlogi": "openlogi_2"
       },
       "locked": {
-        "lastModified": 1793577912,
-        "narHash": "sha256-T44jZPY6ajPg7rJhjeFGU1bCBtbrWKCd4167GrzYRiA=",
+        "lastModified": 1793635053,
+        "narHash": "sha256-ZHeOUBzmGXORzS6OQbLUb+Qm5oOhK2EXQ46S5aCMEN0=",
         "owner": "AprilNEA",
         "repo": "OpenLogi",
-        "rev": "e581c20570fa5506fade755671e74f94eb5f62f4",
+        "rev": "6d01ac3ab110869d10140e6188541eb567378932",
         "type": "github"
       },
       "original": {
