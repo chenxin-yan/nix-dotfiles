@@ -25,8 +25,8 @@
   pstack = pkgs.fetchFromGitHub {
     owner = "backnotprop";
     repo = "pstack";
-    rev = "25abb38559ddbabec563646224d09eff9a250eca";
-    hash = "sha256-C4pCSuEBG5DAAdfpbz7EsYy/Yh4Hbl1Db4u4yPm4y2w=";
+    rev = "6c75f4e67546c2ddbf9634734c1e3ebbea34861a";
+    hash = "sha256-tAOoTuaLa/xJ7x6YH4rk828waJrcqLVhV04fXoDuzXA=";
   };
 
   ponytail = pkgs.fetchFromGitHub {
@@ -39,7 +39,7 @@
   humanlayerSkills = pkgs.fetchFromGitHub {
     owner = "humanlayer";
     repo = "skills";
-    rev = "69d5fc61d6ca6f7056d283a2ee2a045be741a1d6";
-    hash = "sha256-I/FEGMmJvmkxAzdHEBnacrG5TcP4Y46Kk9lqkKE834M=";
+    rev = "4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329";
+    hash = "sha256-ZuDObFjOFAahsvrxqDbL9FHrMVWx6Lnh5dttdsW+czo=";
   };
 }

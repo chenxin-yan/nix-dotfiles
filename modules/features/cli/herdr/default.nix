@@ -16,8 +16,8 @@
       vim-herdr-navigation = pkgs.fetchFromGitHub {
         owner = "paulbkim-dev";
         repo = "vim-herdr-navigation";
-        rev = "742db891e7d1f9a550b16c01dc8a6763f2b1493a";
-        hash = "sha256-Yt82HBBOdY4tjvZVREpQzKoEklJY0aIYU5ZzISdf7fg=";
+        rev = "7873100eb47212269005c693effb2a844986b30f";
+        hash = "sha256-clp3xPU7FfcfDookBI2SDSFQLygWke3gaG0RH2T7Jy0=";
       };
     in
     {
