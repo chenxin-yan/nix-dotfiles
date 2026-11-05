@@ -95,7 +95,17 @@ in
         # its auth.json, so `/logout anthropic` once to use this one.
         ((import ../_claude-token.nix).wrap {
           inherit pkgs osConfig;
-        } "ANTHROPIC_OAUTH_TOKEN" pi-coding-agent)
+        } "ANTHROPIC_OAUTH_TOKEN" (
+          # nixpkgs drops the pi-schema workspace package, breaking subagents.
+          # Remove once NixOS/nixpkgs#582756 lands in nixpkgs-unstable.
+          pi-coding-agent.overrideAttrs (old: {
+            postInstall =
+              builtins.replaceStrings
+                [ "@earendil-works/pi-tui:packages/tui;" ]
+                [ "@earendil-works/pi-schema:packages/schema @earendil-works/pi-tui:packages/tui;" ]
+                old.postInstall;
+          })
+        ))
         hypa
       ];
 
