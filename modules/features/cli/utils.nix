@@ -19,6 +19,8 @@
       # Let Home Manager install and manage itself.
       programs.home-manager.enable = true;
 
+      programs.jq.enable = true;
+
       programs.btop = {
         enable = true;
         settings = {

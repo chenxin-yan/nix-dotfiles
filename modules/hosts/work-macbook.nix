@@ -13,13 +13,12 @@
     exclude = with config.features; [ podman ];
 
     darwin =
-      { host, pkgs, ... }:
+      { host, ... }:
       {
         system.stateVersion = 6;
 
         users.users.${host.login} = {
           home = "/Users/${host.login}";
-          shell = pkgs.zsh;
           uid = 501;
         };
       };

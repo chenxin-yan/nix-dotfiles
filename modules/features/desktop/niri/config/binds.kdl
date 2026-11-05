@@ -22,7 +22,7 @@ binds {
     // Hyper+letter opens a new window beside the focused one, like Hyper+Space;
     // Super+grave (recent-windows in config.kdl) reaches an existing one.
     Mod+Super+Ctrl+Shift+B repeat=false hotkey-overlay-title="Browser: Helium" { spawn "helium" "--new-window"; }
-    // Default Mod+D (zsh). Cmd+Space, like Raycast on the Mac.
+    // Cmd+Space, like Raycast on the Mac (Mod+D is left out; see header).
     Super+Space repeat=false hotkey-overlay-title="Launcher: Vicinae" { spawn "vicinae" "toggle"; }
     Super+Shift+V repeat=false hotkey-overlay-title="Clipboard history" { spawn "vicinae" "deeplink" "vicinae://launch/clipboard/history"; }
     Super+Alt+L repeat=false hotkey-overlay-title="Lock the screen" { spawn "noctalia" "msg" "session" "lock"; }

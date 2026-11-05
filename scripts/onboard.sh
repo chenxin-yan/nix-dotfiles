@@ -730,15 +730,7 @@ gate "Build $target now? (as $login; downloads/builds packages; activates nothin
 if [ "$os" = nixos ]; then
   (cd "$work" && nixos-rebuild build --flake "$root#$target" --option builders '' --no-update-lock-file --no-write-lock-file) \
     || die "build failed; nothing was activated and $hostrel is kept. Fix it, then rerun."
-  help="$(env MANPAGER=cat nixos-rebuild --help 2>/dev/null || true)"
-  if printf '%s\n' "$help" | grep -q -E -- '(^|[^-a-z])--sudo([^-a-z]|$)'; then
-    elevate=--sudo
-  elif printf '%s\n' "$help" | grep -q -- '--use-remote-sudo'; then
-    elevate=--use-remote-sudo
-  else
-    die "this nixos-rebuild documents neither --sudo nor --use-remote-sudo; activate by hand: sudo nixos-rebuild switch --flake $root#$target --option builders \"\" --no-update-lock-file --no-write-lock-file"
-  fi
-  activate="nixos-rebuild switch $elevate --flake $root#$target --option builders \"\" --no-update-lock-file --no-write-lock-file"
+  activate="nixos-rebuild switch --sudo --flake $root#$target --option builders \"\" --no-update-lock-file --no-write-lock-file"
   say "Built. Activation runs: $activate"
   say "It changes the running system now and makes it the boot default."
   note "('test' is not a dry run either: it also changes the live system.)"
@@ -772,7 +764,7 @@ fi
 gate "Activate $target on this machine now?" \
   || declined "built but not activated." "Rerun this wizard to activate later; temporary result links are removed on exit."
 if [ "$os" = nixos ]; then
-  nixos-rebuild switch "$elevate" --flake "$root#$target" --option builders '' --no-update-lock-file --no-write-lock-file \
+  nixos-rebuild switch --sudo --flake "$root#$target" --option builders '' --no-update-lock-file --no-write-lock-file \
     || die "activation failed: setup is NOT complete. $hostrel is kept and the previous generation is still bootable; fix the error above, then rerun."
 else
   sudo "$out/sw/bin/darwin-rebuild" switch --flake "$root#$target" --option builders '' --no-update-lock-file --no-write-lock-file \

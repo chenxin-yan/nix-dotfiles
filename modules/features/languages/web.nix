@@ -17,7 +17,5 @@
         taplo
         yaml-language-server
       ];
-
-      programs.jq.enable = true;
     };
 }

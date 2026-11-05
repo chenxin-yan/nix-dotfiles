@@ -7,7 +7,7 @@
       programs.jujutsu = {
         enable = true;
         settings = {
-          # Identity lives in the git module; requires core.git.enable.
+          # Identity lives in the git module; requires programs.git.enable.
           user = config.programs.git.settings.user;
           ui.default-command = "log";
           # Locally created bookmarks track origin, so they push without

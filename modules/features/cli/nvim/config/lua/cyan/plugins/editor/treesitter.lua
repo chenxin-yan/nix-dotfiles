@@ -30,7 +30,6 @@ return {
     'nvim-treesitter/nvim-treesitter-context',
     event = { 'BufReadPost', 'BufNewFile' },
     opts = {
-      mode = 'cursor',
       multiline_threshold = 1,
       max_lines = 3,
     },
@@ -50,10 +49,7 @@ return {
     branch = 'main',
     event = { 'VeryLazy' },
     config = function()
-      require('nvim-treesitter-textobjects').setup {
-        move = { enable = true, set_jumps = true },
-        swap = { enable = true },
-      }
+      require('nvim-treesitter-textobjects').setup {}
 
       local move = require 'nvim-treesitter-textobjects.move'
       local swap = require 'nvim-treesitter-textobjects.swap'

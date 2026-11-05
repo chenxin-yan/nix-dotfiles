@@ -65,7 +65,6 @@
         catppuccin.tty.enable = false;
 
         time.timeZone = "America/Los_Angeles";
-        i18n.defaultLocale = "en_US.UTF-8";
 
         sops.secrets.cyan-password = {
           sopsFile = ../../../secrets/hosts/pi.yaml;
@@ -78,17 +77,13 @@
           uid = 1000;
           extraGroups = [ "wheel" ];
           hashedPasswordFile = config.sops.secrets.cyan-password.path;
-          shell = pkgs.zsh;
           linger = true; # user services (Hermes, Atlas sync) run without a login
         };
 
-        environment.systemPackages = [ pkgs.git ];
-
         # Everything but SSH stays on the tailnet; SSH also on the LAN as a
-        # way in when Tailscale is down.
+        # way in when Tailscale is down (services.openssh opens port 22).
         networking.firewall = {
           trustedInterfaces = [ "tailscale0" ];
-          allowedTCPPorts = [ 22 ];
           allowedUDPPorts = [ config.services.tailscale.port ];
         };
 

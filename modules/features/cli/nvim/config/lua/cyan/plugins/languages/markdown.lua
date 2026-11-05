@@ -7,16 +7,8 @@ return {
         n = {
           new_footnote = '<leader>cfn',
           organize_footnotes = '<leader>cfo',
-          next_footnote = ']f',
-          prev_footnote = '[f',
-        },
-        i = {
-          new_footnote = '<C-f>',
         },
       },
-
-      organize_on_save = false,
-      organize_on_new = false,
     },
   },
   {
@@ -34,18 +26,12 @@ return {
     'iamcco/markdown-preview.nvim',
     cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
     ft = { 'markdown', 'markdown.mdx' },
-    build = function(plugin)
-      if vim.fn.executable 'npx' == 1 then
-        vim.cmd('!cd ' .. plugin.dir .. ' && cd app && npx --yes yarn install')
-      else
-        vim.cmd [[Lazy load markdown-preview.nvim]]
-        vim.fn['mkdp#util#install']()
-      end
+    build = function()
+      vim.cmd [[Lazy load markdown-preview.nvim]]
+      vim.fn['mkdp#util#install']()
     end,
     init = function()
-      if vim.fn.executable 'npx' == 1 then
-        vim.g.mkdp_filetypes = { 'markdown', 'markdown.mdx' }
-      end
+      vim.g.mkdp_filetypes = { 'markdown', 'markdown.mdx' }
     end,
     keys = {
       { '<leader>up', ft = { 'markdown', 'markdown.mdx' }, '<cmd>MarkdownPreviewToggle<cr>', desc = 'Toggle Markdown [P]review' },
@@ -91,7 +77,7 @@ return {
     opts = {
       linters = {
         ['markdownlint-cli2'] = {
-          -- `-` lints stdin; lists replace the default args by index, so keep it.
+          -- `-` lints stdin; this list replaces the default args, so keep it.
           args = { '--config', vim.fn.expand '~/.markdownlint.json', '-' },
         },
       },
@@ -105,9 +91,7 @@ return {
     'neovim/nvim-lspconfig',
     opts = {
       servers = {
-        marksman = {
-          filetypes = { 'markdown', 'markdown.mdx' },
-        },
+        marksman = {},
         harper_ls = {
           settings = {
             ['harper-ls'] = {

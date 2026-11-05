@@ -11,23 +11,10 @@ return {
       transparent = true,
     },
     integrations = {
-      navic = {
-        enabled = true,
-      },
       noice = true,
-      blink_cmp = true,
-      grug_far = true,
-      mini = {
-        enabled = true,
-      },
       snacks = {
-        enabled = true,
         indent_scope_color = 'lavender',
       },
-      lsp_trouble = true,
-      which_key = true,
-      octo = true,
-      gitgraph = true,
     },
   },
 }

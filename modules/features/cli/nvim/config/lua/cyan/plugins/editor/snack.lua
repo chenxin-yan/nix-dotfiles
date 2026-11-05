@@ -4,19 +4,13 @@ return {
     priority = 1000,
     lazy = false,
     opts = {
-      notifier = {
-        enabled = true,
-        timeout = 3000,
-      },
-      input = { enabled = true },
-      quickfile = { enabled = true },
-      statuscolumn = { enabled = true },
-      words = { enabled = true },
-      indent = {
-        enabled = true,
-        scope = { enabled = true },
-      },
-      scope = { enabled = true },
+      notifier = {},
+      input = {},
+      quickfile = {},
+      statuscolumn = {},
+      words = {},
+      indent = {},
+      scope = {},
       terminal = {
         win = {
           style = 'minimal',
@@ -36,14 +30,10 @@ return {
       image = {
         doc = {
           inline = false,
-          float = true,
         },
       },
-      explorer = {
-        enabled = true,
-      },
+      explorer = {},
       picker = {
-        ui_select = true,
         sources = {
           explorer = {
             layout = {
@@ -53,7 +43,6 @@ return {
         },
       },
       dashboard = {
-        enabled = true,
         width = 50,
         preset = {
           keys = {
@@ -75,7 +64,6 @@ return {
     },
     keys = function()
       local Snacks = require 'snacks'
-      Snacks.input.enable()
       return {
         {
           '<leader>gB',

@@ -12,7 +12,7 @@
     # config.toml is a read-only store file: the GUI can't save changes
     # (it rolls them back and shows an error), so settings change here.
     homeManager =
-      { lib, pkgs, ... }:
+      { pkgs, ... }:
       let
         capabilities = {
           backlight = false;
@@ -39,21 +39,10 @@
 
           app_settings = {
             launch_at_login = !pkgs.stdenv.hostPlatform.isLinux;
-            app_icon = "openlogi";
-            appearance = "system";
-            asset_source = "automatic";
-            auto_download_assets = true;
-            auto_install_updates = false;
-            capture_mouse_events = true;
+            # Nix updates OpenLogi; keep its updater off even if the default changes.
             check_for_updates = false;
-            device_view_mode = "grid";
-            mouse_profile_target = "pointer";
-            show_in_menu_bar = true;
-            smooth_scroll = false;
-            thumbwheel_sensitivity = 14;
-            ui_scale = "normal";
+            auto_install_updates = false;
             update_prompt_seen = true;
-            vertical_scroll_sensitivity = 14;
           };
 
           devices = {

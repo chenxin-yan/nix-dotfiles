@@ -4,7 +4,7 @@
 # Supports SSH, HTTPS, and owner/repo shorthand (defaults to github.com SSH).
 parse_git_url() {
   local url="$1"
-  if [[ "$url" =~ ^git@([^:]+):([^/]+)/(.+)(\.git)?$ ]]; then
+  if [[ "$url" =~ ^git@([^:]+):([^/]+)/(.+)$ ]]; then
     HOST="${BASH_REMATCH[1]}"
     OWNER="${BASH_REMATCH[2]}"
     REPO="${BASH_REMATCH[3]}"

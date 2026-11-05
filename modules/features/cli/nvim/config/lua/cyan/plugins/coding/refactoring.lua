@@ -12,7 +12,6 @@ return {
   dependencies = {
     -- Only needed on Neovim 0.12; 0.13 ships vim.async.
     'lewis6991/async.nvim',
-    'romus204/tree-sitter-manager.nvim',
   },
   keys = {
     { '<leader>rf', op 'extract_func', mode = { 'n', 'x' }, expr = true, desc = 'Extract [F]unction' },

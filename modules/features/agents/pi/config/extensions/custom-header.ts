@@ -16,11 +16,6 @@
  * Run `/builtin-header` mid-session to switch back to the built-in logo
  * + keybinding hints (e.g. when discovering shortcuts). `pi --verbose`
  * overrides `quietStartup` for one launch.
- *
- * Sticky-on-scroll caveat
- * -----------------------
- * Custom headers stay pinned at the top while scrolling. Upstream
- * limitation (badlogic/pi-mono RFE #3415), not configurable.
  */
 
 import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";

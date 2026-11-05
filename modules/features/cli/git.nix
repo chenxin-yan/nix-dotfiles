@@ -33,7 +33,6 @@
           rebase.autosquash = true;
           push.default = "current";
           fetch.prune = true;
-          color.ui = true;
           core.editor = "nvim";
           core.pager = "hunk pager";
           difftool.prompt = false;
@@ -61,9 +60,6 @@
 
         settings = {
           git_protocol = "ssh";
-          aliases = {
-            co = "pr checkout";
-          };
         };
       };
 
@@ -71,7 +67,6 @@
 
       programs.lazygit = {
         enable = true;
-        enableZshIntegration = true;
         settings = {
           git.diffRenderers = [
             {

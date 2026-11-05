@@ -122,8 +122,8 @@ return {
         theme = custom_catppuccin,
         globalstatus = vim.o.laststatus == 3,
         disabled_filetypes = {
-          statusline = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard', 'sidekick_terminal' },
-          winbar = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard', 'sidekick_terminal' },
+          statusline = { 'snacks_dashboard' },
+          winbar = { 'snacks_dashboard' },
         },
         component_separators = ' ',
         section_separators = { left = '', right = '' },
@@ -179,12 +179,7 @@ return {
         },
       },
       inactive_sections = {
-        lualine_a = {},
-        lualine_b = {},
         lualine_c = {},
-        lualine_x = { 'location' },
-        lualine_y = {},
-        lualine_z = {},
       },
       winbar = {
         lualine_a = {},
@@ -267,7 +262,6 @@ return {
         lualine_y = {},
         lualine_z = {},
       },
-      extensions = {},
     }
 
     return opts

@@ -1,7 +1,13 @@
 {
   features.iina.homeManager =
     { pkgs, lib, ... }:
-    {
-      home.packages = lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.iina ];
+    lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      home.packages = [ pkgs.iina ];
+
+      # Sparkle would try to replace the read-only Nix store app.
+      targets.darwin.defaults."com.colliderli.iina" = {
+        SUEnableAutomaticChecks = false;
+        SUAutomaticallyUpdate = false;
+      };
     };
 }

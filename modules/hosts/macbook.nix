@@ -14,7 +14,7 @@
     exclude = with config.features; [ omniwm ];
 
     darwin =
-      { host, pkgs, ... }:
+      { host, ... }:
       {
         # Used for backwards compatibility, please read the changelog before changing.
         # $ darwin-rebuild changelog
@@ -22,7 +22,6 @@
 
         users.users.${host.login} = {
           home = "/Users/${host.login}";
-          shell = pkgs.zsh;
           uid = 501;
         };
       };

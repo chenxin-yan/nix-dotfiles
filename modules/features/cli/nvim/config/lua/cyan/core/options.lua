@@ -53,14 +53,12 @@ vim.o.scrolloff = 10
 
 -- Spell checker setting
 vim.o.spelllang = 'en_us'
-vim.o.spell = false
 
 -- turn off line wrap
 vim.o.wrap = false
 
 -- indent config
 vim.o.expandtab = true
-vim.o.autoindent = true
 vim.o.smartindent = true
 vim.o.tabstop = 2
 vim.o.softtabstop = 2

@@ -10,7 +10,10 @@
     };
     import-tree.url = "github:denful/import-tree";
 
-    catppuccin.url = "github:catppuccin/nix";
+    catppuccin = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     pi-catppuccin = {
       url = "github:otahontas/pi-coding-agent-catppuccin";
@@ -64,7 +67,7 @@
     # the package, udev rules and the agent user service. Linux only: the
     # Mac gets the Homebrew cask instead.
     openlogi = {
-      url = "github:AprilNEA/OpenLogi";
+      url = "github:AprilNEA/OpenLogi?dir=packaging";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

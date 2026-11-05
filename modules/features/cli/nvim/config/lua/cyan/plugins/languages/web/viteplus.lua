@@ -33,6 +33,8 @@ function M.oxlint(config)
       standalone_root(bufnr, on_dir)
     end
   end
+  -- lspconfig's oxlint cmd also finds vp but starts it without cwd (and Neovim ignores
+  -- cmd_cwd for function cmds); `vp lint` reads its config from the working directory.
   config.cmd = function(dispatchers, client_config)
     local root = client_config.root_dir and M.root(client_config.root_dir)
     if root then

@@ -2,18 +2,6 @@
 # Shared helpers for the herdr project scripts.
 # Source this file — do not execute directly.
 
-# True when a herdr process is an ancestor of this shell. herdr sets no env
-# marker, so walk the parent chain instead.
-_inside_herdr() {
-  local pid=$PPID comm
-  while [[ -n "$pid" && "$pid" -gt 1 ]]; do
-    comm=$(ps -o comm= -p "$pid" 2>/dev/null)
-    [[ "${comm##*/}" == herdr ]] && return 0
-    pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
-  done
-  return 1
-}
-
 # Convert a directory path to a herdr workspace label.
 get_session_name() {
   local dir="$1"
@@ -58,8 +46,9 @@ mux_open() {
   local id; id=$(_herdr_workspace_id "$label")
   if [[ -n "$id" ]]; then herdr workspace focus "$id" >/dev/null
   else herdr workspace create --cwd "$dir" --label "$label" --focus >/dev/null; fi
-  # Outside herdr the focus only changed server state; attach so it shows.
-  _inside_herdr || herdr
+  # Outside herdr (no HERDR_ENV in its panes) the focus only changed server
+  # state; attach so it shows.
+  [[ ${HERDR_ENV:-} == 1 ]] || herdr
 }
 
 # Close a project's workspace if it exists. ($1=label)

@@ -31,7 +31,7 @@ Profiles are features that select other features and hold no settings of their o
 | `profiles/roles/`     | `server`, `workstation`, `desktop` | Any combination: runs unattended, I work on it, I sit at it |
 | `profiles/blocks/`    | `base`, `fleet`, `development`     | Shared by roles; a host may add one directly                |
 
-Roles overlap through `fleet` (maintenance, Tailscale, sshd), and a feature is selected once however many profiles include it. `desktop` lists both the macOS and future Linux desktop features; each one does nothing on the other OS.
+Roles overlap through `fleet` (maintenance, Tailscale, sshd), and a feature is selected once however many profiles include it. `desktop` lists both the macOS and Linux desktop features; each one does nothing on the other OS.
 
 ### Hosts
 
@@ -156,7 +156,7 @@ Nix doesn't update these; check them every few months.
 - **Servers switch themselves.** NixOS hosts with `auto-upgrade` (the `server` role) pull their `~/dotfiles` and rebuild from `main` on GitHub nightly at 04:40, so a switch of unpushed changes lasts until then. `sudo systemctl start nixos-upgrade` runs it now.
 - **SSH accepts only keys declared in Nix.** No passwords, no root, and `~/.ssh/authorized_keys` is ignored. Every machine accepts `desktopKey` in `modules/features/system/sshd.nix` and each host's `sshKey`, so any fleet machine reaches any other as `ssh <name>`, with its host key pinned once enrolled.
 - **Homebrew removes what isn't declared.** Activation runs with `cleanup = "zap"`, so declare casks in the feature they belong to (`darwin.homebrew.casks`).
-- **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/cli/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/cli/zsh/scripts/`) apply without a rebuild.
+- **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/cli/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/cli/zsh/scripts/`) and the herdr scripts (`modules/features/cli/herdr/scripts/`) apply without a rebuild.
 - **`nix flake check` only evaluates the NixOS hosts.** A broken Mac config shows up at `just switch`.
 
 ## Making changes

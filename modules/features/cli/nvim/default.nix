@@ -18,7 +18,6 @@
         tree-sitter
         imagemagick_light
         neovim
-        lua51Packages.tree-sitter-cli
       ];
 
       xdg.configFile."nvim".source =

@@ -55,7 +55,6 @@ return {
 
   { -- emmet integration
     'olrtg/nvim-emmet',
-    lazy = true,
     keys = { { '<leader>ce', "<cmd>lua require('nvim-emmet').wrap_with_abbreviation()<cr>", desc = 'Emmet: Wrap with abbreviation()', mode = { 'n', 'v' } } },
   },
 
@@ -96,12 +95,8 @@ return {
             config.settings.yaml.schemas = require('schemastore').yaml.schemas()
           end,
           settings = {
-            redhat = { telemetry = { enabled = false } },
             yaml = {
               keyOrdering = false,
-              format = {
-                enable = true,
-              },
               validate = true,
               schemaStore = {
                 -- Must disable built-in schemaStore support to use
@@ -148,7 +143,6 @@ return {
             '--stdin-file-path',
             '$FILENAME',
           },
-          stdin = true,
         },
       })
 

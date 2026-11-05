@@ -1,4 +1,7 @@
+{ config, ... }:
 {
+  features.pandoc.includes = with config.features; [ latex ];
+
   features.pandoc.homeManager =
     { pkgs, ... }:
     let
@@ -25,13 +28,8 @@
         builtins.toJSON {
           cite-method = "biblatex";
           embed-resources = true;
-          file-scope = false;
           from = "markdown";
-          highlight-style = "pygments";
           reference-location = "block";
-          resource-path = [ ];
-          standalone = true;
-          top-level-division = "default";
           verbosity = "ERROR";
           pdf-engine = "tectonic";
           to = "pdf";
@@ -53,10 +51,6 @@
       );
     in
     {
-      home.packages = with pkgs; [
-        tectonic
-      ];
-
       programs.pandoc.enable = true;
 
       xdg.dataFile = {

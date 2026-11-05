@@ -32,7 +32,6 @@
 
       services.podman = lib.mkIf isDarwin {
         enable = true;
-        useDefaultMachine = true;
       };
 
       programs.lazydocker = {

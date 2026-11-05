@@ -147,7 +147,6 @@
             "networkmanager"
             "wheel"
           ];
-          shell = pkgs.zsh;
         };
 
         # The default system service re-runs Home Manager only when its

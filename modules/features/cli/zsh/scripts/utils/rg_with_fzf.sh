@@ -2,7 +2,7 @@
 
 # 1. Search for text in files using Ripgrep
 # 2. Interactively restart Ripgrep with reload action
-# 3. Open the file in Vim
+# 3. Open the file in $EDITOR
 RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
 INITIAL_QUERY="${*:-}"
 fzf --ansi --disabled --query "$INITIAL_QUERY" \
@@ -11,5 +11,5 @@ fzf --ansi --disabled --query "$INITIAL_QUERY" \
     --delimiter : \
     --preview 'bat --color=always {1} --highlight-line {2}' \
     --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
-    --bind 'enter:become(vim {1} +{2})'
+    --bind 'enter:become($EDITOR {1} +{2})'
 

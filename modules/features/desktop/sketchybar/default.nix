@@ -11,15 +11,8 @@
   #
   # Refs: nix-darwin#1219 (tracker), #1660, #1678, LnL7/nix-darwin#558.
   features.sketchybar.darwin =
-    {
-      lib,
-      config,
-      pkgs,
-      ...
-    }:
+    { lib, pkgs, ... }:
     let
-      userHome = "/Users/${config.system.primaryUser}";
-
       # Use a literal `/bin/sh` shebang (Apple-shipped, never moves) so the
       # wrapper file's content hash is fully stable across rebuilds. Using
       # pkgs.writeShellScript would embed /nix/store/<bash-hash> in the
@@ -50,13 +43,11 @@
       '';
 
       # Override the LaunchAgent's ProgramArguments to point at the stable
-      # wrapper. This drops upstream's `--config ${configFile}` arg branch,
-      # which is harmless here because `services.sketchybar.config` is empty
-      # (config files are managed via xdg.configFile in home-manager).
+      # wrapper. No `--config`: `services.sketchybar.config` is empty (Home
+      # Manager links the files), and sketchybar finds
+      # ~/.config/sketchybar/sketchybarrc on its own.
       launchd.user.agents.sketchybar.serviceConfig.ProgramArguments = lib.mkForce [
         "/usr/local/libexec/nix-darwin/sketchybar-wrapper"
-        "--config"
-        "${userHome}/.config/sketchybar/sketchybarrc"
       ];
     };
 
@@ -68,7 +59,7 @@
         recursive = true;
       };
 
-      # Use the icon_map.sh from the package instead of custom one
+      # front_app.sh maps app names to icons with the font's own icon_map.sh.
       xdg.configFile."sketchybar/plugins/icon_map.sh" = {
         source = "${pkgs.sketchybar-app-font}/bin/icon_map.sh";
       };

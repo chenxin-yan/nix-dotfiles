@@ -2,7 +2,6 @@ return {
   'folke/todo-comments.nvim',
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = { 'nvim-lua/plenary.nvim' },
-  opts = {},
   keys = {
     { '<leader>xt', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme' },
     { '<leader>xT', '<cmd>Trouble todo toggle<cr>', desc = 'Todos' },

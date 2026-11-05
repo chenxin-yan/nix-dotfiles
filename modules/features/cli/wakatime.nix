@@ -23,8 +23,6 @@ in
           text = ''
             [settings]
             api_key_vault_cmd = ${pkgs.coreutils}/bin/cat ${osConfig.sops.secrets.wakatime.path}
-            debug = false
-            hidefilenames = false
             ignore =
                 COMMIT_EDITMSG$
                 PULLREQ_EDITMSG$

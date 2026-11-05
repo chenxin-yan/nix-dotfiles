@@ -21,7 +21,6 @@ let
   standIns = {
     config = {
       features = { };
-      hosts = { };
     };
     inputs = { };
     lib = { };

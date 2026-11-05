@@ -14,7 +14,7 @@ setup_wizard_enabled = false
 auto_sync = true
 
 # Idle, the session menu and IPC suspend like the lid does (logind, in
-# hosts/framework): hibernate before the battery runs out.
+# modules/hosts/framework/default.nix): hibernate before the battery runs out.
 [shell.session.power]
 suspend = "systemctl suspend-then-hibernate"
 
@@ -59,11 +59,9 @@ action = "lock_and_suspend"
 [bar.default]
 position = "left"
 thickness = 32
-margin_edge = 0
 margin_ends = 0
 radius = 10
 start = ["workspaces"]
-center = ["clock"]
 end = [
   "media",
   "privacy",
@@ -95,10 +93,9 @@ format = "{:%I:%M}"
 
 # Muted numbered pills; only the active workspace takes the accent colour.
 [widget.workspaces]
-style = "regular"
 hide_when_empty = true
-occupied_color = "surface_variant"
-empty_color = "surface_variant"
+occupied_color = "surface_container"
+empty_color = "surface_container"
 
 # Lock screen: a large clock, the date, and a bare password field over the
 # blurred wallpaper. The noctalia-greeter settings in default.nix match it.
@@ -138,10 +135,8 @@ box_height = 170.0
 
 [lockscreen_widgets.widget.lock-time.settings]
 format = "{:%-I:%M}"
-center_text = true
 background = false
 shadow = false
-color = "on_surface"
 
 [lockscreen_widgets.widget.lock-date]
 type = "clock"
@@ -153,7 +148,6 @@ box_height = 36.0
 
 [lockscreen_widgets.widget.lock-date.settings]
 format = "{:%A, %B %-d}"
-center_text = true
 background = false
 shadow = false
 color = "on_surface_variant"
@@ -185,10 +179,8 @@ box_height = 170.0
 
 [lockscreen_widgets.widget.lock-time-dp3.settings]
 format = "{:%-I:%M}"
-center_text = true
 background = false
 shadow = false
-color = "on_surface"
 
 [lockscreen_widgets.widget.lock-date-dp3]
 type = "clock"
@@ -200,7 +192,6 @@ box_height = 36.0
 
 [lockscreen_widgets.widget.lock-date-dp3.settings]
 format = "{:%A, %B %-d}"
-center_text = true
 background = false
 shadow = false
 color = "on_surface_variant"

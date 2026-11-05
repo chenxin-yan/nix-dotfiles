@@ -1,6 +1,11 @@
 source "$HOME/.config/sketchybar/icons.sh"
 
-VOLUME=$(osascript -e "output volume of (get volume settings)")
+# volume_change passes the new volume; the initial forced run has to ask.
+if [ "$SENDER" = volume_change ]; then
+    VOLUME=$INFO
+else
+    VOLUME=$(osascript -e "output volume of (get volume settings)")
+fi
 MUTED=$(osascript -e "output muted of (get volume settings)")
 
 if [[ $MUTED != "false" ]]; then

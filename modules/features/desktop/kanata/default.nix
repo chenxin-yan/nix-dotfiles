@@ -100,7 +100,6 @@ in
           ];
           KeepAlive = true;
           RunAtLoad = true;
-          UserName = "root";
           StandardOutPath = "${userHome}/Library/Logs/kanata.log";
           StandardErrorPath = "${userHome}/Library/Logs/kanata.error.log";
           # Unused by kanata: it changes the plist whenever the package does,

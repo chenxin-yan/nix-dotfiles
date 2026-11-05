@@ -7,7 +7,6 @@
         glow
 
         markdownlint-cli2
-        prettierd
         marksman
         harper
       ];

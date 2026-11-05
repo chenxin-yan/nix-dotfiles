@@ -7,8 +7,7 @@ function M.dial(increment, g)
   -- Use visual commands for VISUAL 'v', VISUAL LINE 'V' and VISUAL BLOCK '\22'
   local is_visual = mode == 'v' or mode == 'V' or mode == '\22'
   local func = (increment and 'inc' or 'dec') .. (g and '_g' or '_') .. (is_visual and 'visual' or 'normal')
-  local group = vim.g.dials_by_ft[vim.bo.filetype] or 'default'
-  return require('dial.map')[func](group)
+  return require('dial.map')[func]()
 end
 
 return {
@@ -201,7 +200,12 @@ return {
         vim.list_extend(group, opts.groups.default)
       end
     end
-    require('dial.config').augends:register_group(opts.groups)
-    vim.g.dials_by_ft = opts.dials_by_ft
+    local augends = require('dial.config').augends
+    augends:register_group(opts.groups)
+    local by_ft = {}
+    for ft, group in pairs(opts.dials_by_ft) do
+      by_ft[ft] = opts.groups[group]
+    end
+    augends:on_filetype(by_ft)
   end,
 }

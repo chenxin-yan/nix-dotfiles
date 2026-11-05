@@ -1,5 +1,19 @@
 local toolchain = require 'cyan.plugins.languages.typescript.toolchain'
 local js_filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' }
+local js_ts_settings = {
+  updateImportsOnFileMove = { enabled = 'always' },
+  suggest = {
+    completeFunctionCalls = true,
+  },
+  inlayHints = {
+    enumMemberValues = { enabled = true },
+    functionLikeReturnTypes = { enabled = true },
+    parameterNames = { enabled = 'literals' },
+    parameterTypes = { enabled = true },
+    propertyDeclarationTypes = { enabled = true },
+    variableTypes = { enabled = true },
+  },
+}
 
 return {
   {
@@ -14,8 +28,6 @@ return {
     'romus204/tree-sitter-manager.nvim',
     opts = { ensure_installed = { 'javascript', 'typescript', 'tsx', 'astro', 'svelte', 'json5', 'jsdoc', 'prisma' } },
   },
-
-  { 'b0o/schemastore.nvim', lazy = true, version = false },
 
   { 'yioneko/nvim-vtsls', lazy = true },
   {
@@ -39,46 +51,22 @@ return {
                 maxTsServerMemory = 8192,
                 globalPlugins = {
                   {
+                    -- Linked by the typescript feature from astro-language-server.
                     name = '@astrojs/ts-plugin',
-                    location = '~/.local/share/nvim/mason/packages/astro-language-server/node_modules/@astrojs/ts-plugin',
+                    location = vim.fn.stdpath 'data' .. '/astro-ts-plugin',
                     enableForWorkspaceTypeScriptVersions = true,
                   },
                 },
               },
             },
-            typescript = {
+            typescript = vim.tbl_extend('force', js_ts_settings, {
               tsserver = {
                 maxTsServerMemory = 8192,
               },
-              updateImportsOnFileMove = { enabled = 'always' },
-              suggest = {
-                completeFunctionCalls = true,
-              },
-              inlayHints = {
-                enumMemberValues = { enabled = true },
-                functionLikeReturnTypes = { enabled = true },
-                parameterNames = { enabled = 'literals' },
-                parameterTypes = { enabled = true },
-                propertyDeclarationTypes = { enabled = true },
-                variableTypes = { enabled = true },
-              },
-            },
-            javascript = {
-              updateImportsOnFileMove = { enabled = 'always' },
-              suggest = {
-                completeFunctionCalls = true,
-              },
-              inlayHints = {
-                enumMemberValues = { enabled = true },
-                functionLikeReturnTypes = { enabled = true },
-                parameterNames = { enabled = 'literals' },
-                parameterTypes = { enabled = true },
-                propertyDeclarationTypes = { enabled = true },
-                variableTypes = { enabled = true },
-              },
-            },
+            }),
+            javascript = js_ts_settings,
           },
-          on_attach = function(client, buffer)
+          on_attach = function(_, buffer)
             -- setup vtsls keymaps for JS/TS
             local vtsls = require 'vtsls'
 
@@ -113,16 +101,6 @@ return {
             vim.keymap.set('n', 'cR', function()
               vtsls.commands['restart_tsserver'](0)
             end, { desc = 'vtsls: [R]estart tsserver', buffer = buffer })
-
-            -- setup codelens for JS/TS
-            vim.lsp.commands['editor.action.showReferences'] = function(command, ctx)
-              local locations = command.arguments[3]
-              if locations and #locations > 0 then
-                local items = vim.lsp.util.locations_to_items(locations, client.offset_encoding)
-                vim.fn.setloclist(0, {}, ' ', { title = 'References', items = items, context = ctx })
-                vim.api.nvim_command 'lopen'
-              end
-            end
           end,
         },
         tsc = {

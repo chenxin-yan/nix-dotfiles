@@ -38,7 +38,7 @@ return {
     end, { desc = 'Skip a cursor at previous match' })
 
     -- Add all matches in the document
-    set({ 'n', 'v' }, '<leader>cA', mc.matchAllAddCursors, { desc = 'Add cursor at all matches' })
+    set({ 'n', 'v' }, '<leader>c*', mc.matchAllAddCursors, { desc = 'Add cursor at all matches' })
 
     -- Rotate the main cursor.
     set({ 'n', 'v' }, '<left>', mc.nextCursor, { desc = 'Next cursor' })
@@ -71,7 +71,7 @@ return {
     set('n', '<leader>crr', mc.restoreCursors, { desc = 'Restore cursors' })
 
     -- Align cursor col
-    set('n', '<leader>ca', mc.alignCursors, { desc = 'Align cursors' })
+    set('n', '<leader>c=', mc.alignCursors, { desc = 'Align cursors' })
 
     -- Split visual selections by regex.
     set('v', 'S', mc.splitCursors)
@@ -86,10 +86,6 @@ return {
     -- Customize how cursors look.
     local hl = vim.api.nvim_set_hl
     hl(0, 'MultiCursorCursor', { link = 'Cursor' })
-    hl(0, 'MultiCursorVisual', { link = 'Visual' })
-    hl(0, 'MultiCursorSign', { link = 'SignColumn' })
     hl(0, 'MultiCursorDisabledCursor', { link = 'Visual' })
-    hl(0, 'MultiCursorDisabledVisual', { link = 'Visual' })
-    hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
   end,
 }

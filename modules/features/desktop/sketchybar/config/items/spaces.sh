@@ -14,7 +14,7 @@ SPACE=(
   drawing=off
 )
 
-# Triggered by the sketchybar-omniwm agent (sketchybar/default.nix).
+# Triggered by the sketchybar-omniwm agent (omniwm/default.nix).
 sketchybar --add event omniwm_workspaces_changed
 
 # Each bar shows its own display's workspaces, like Noctalia's on niri

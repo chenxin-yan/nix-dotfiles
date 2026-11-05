@@ -73,7 +73,6 @@
           # key release or on a lone modifier. It reads /dev/input, so it
           # needs the input group (xremap's feature adds it).
           hotkey = {
-            enabled = true;
             key = "RIGHTMETA";
           };
           output.post_process = {

@@ -8,7 +8,6 @@
       services.aerospace = {
         enable = true;
         settings = {
-          after-login-command = [ ];
           exec-on-workspace-change = [
             "${pkgs.bash}/bin/bash"
             "-c"
@@ -17,16 +16,9 @@
 
           on-focus-changed = [ "move-mouse window-lazy-center" ];
 
-          enable-normalization-flatten-containers = true;
-          enable-normalization-opposite-orientation-for-nested-containers = true;
-
           accordion-padding = 20;
           default-root-container-layout = "accordion";
-          default-root-container-orientation = "auto";
-          on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
-          automatically-unhide-macos-hidden-apps = false;
 
-          key-mapping.preset = "qwerty";
           gaps = {
             inner = {
               horizontal = 6;

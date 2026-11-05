@@ -93,44 +93,28 @@ in
       home.packages = with pkgs; [
         # The agents feature declares the secret. Pi prefers a credential in
         # its auth.json, so `/logout anthropic` once to use this one.
-        ((import ../_claude-token.nix).wrap {
-          inherit pkgs osConfig;
-        } "ANTHROPIC_OAUTH_TOKEN" (
-          # nixpkgs drops the pi-schema workspace package, breaking subagents.
-          # Remove once NixOS/nixpkgs#582756 lands in nixpkgs-unstable.
-          pi-coding-agent.overrideAttrs (old: {
-            postInstall =
-              builtins.replaceStrings
-                [ "@earendil-works/pi-tui:packages/tui;" ]
-                [ "@earendil-works/pi-schema:packages/schema @earendil-works/pi-tui:packages/tui;" ]
-                old.postInstall;
-          })
-        ))
+        ((import ../_claude-token.nix).wrap
+          {
+            inherit pkgs osConfig;
+          }
+          "ANTHROPIC_OAUTH_TOKEN"
+          (
+            # nixpkgs drops the pi-schema workspace package, breaking subagents.
+            # Remove once NixOS/nixpkgs#582756 lands in nixpkgs-unstable.
+            pi-coding-agent.overrideAttrs (old: {
+              postInstall =
+                builtins.replaceStrings
+                  [ "@earendil-works/pi-tui:packages/tui;" ]
+                  [ "@earendil-works/pi-schema:packages/schema @earendil-works/pi-tui:packages/tui;" ]
+                  old.postInstall;
+            })
+          )
+        )
         hypa
       ];
 
-      # Disable pi's startup "new version available" toast. The pi binary
-      # itself is pinned by Nix, so the upstream npm-registry version check
-      # (utils/version-check.js checkForNewPiVersion()) is pure noise and
-      # would nudge us toward `npm i -g` updates that fight the read-only Nix
-      # store. We deliberately do NOT set PI_OFFLINE here: that would also
-      # silence checkForPackageUpdates() for the npm extensions in
-      # `packages` below, and those updates are still useful as a signal
-      # to bump our declarative list (PI_OFFLINE gates
-      # core/package-manager.js).
       home.sessionVariables = {
-        PI_SKIP_VERSION_CHECK = "1";
-        # Ponytail default mode. `full` keeps the lazy-dev ruleset injected
-        # every turn — it owns the YAGNI/minimal-code philosophy, which has
-        # been trimmed out of ../config/AGENTS.md to avoid duplication
-        # (AGENTS.md keeps the non-minimalism guidance: delegation,
-        # planning, verification, error handling, single-source-of-truth).
-        # Escalate/relax per session with `/ponytail lite|full|ultra` or
-        # `stop ponytail`. The env var is ponytail's highest-priority
-        # source (over ~/.config/ponytail/config.json), so
-        # `/ponytail default <mode>` still writes the file but this wins;
-        # the extension reports that override instead of silently ignoring
-        # it. See ponytail/hooks/ponytail-config.js:getDefaultMode().
+        # Pins ponytail to full; overrides ~/.config/ponytail/config.json.
         PONYTAIL_DEFAULT_MODE = "full";
       };
 
@@ -245,64 +229,6 @@ in
           # useful extension-update checks), so this explicit flag is what
           # actually suppresses the ping.
           enableInstallTelemetry = false;
-        };
-
-        # Claude Haiku 5.5 (released 2026-10-07) isn't in pi 1.0.2's bundled
-        # or pi.dev catalog yet. api/baseUrl inherit from the built-in
-        # anthropic provider; the rest mirrors claude-sonnet-5-5 with specs
-        # from platform.claude.com/docs/en/models/haiku-5-5/overview. A
-        # models.json entry replaces the catalog model with the same ID, so
-        # delete this once `pi update --models` lists claude-haiku-5-5.
-        ".pi/agent/models.json".text = builtins.toJSON {
-          providers.anthropic.models = [
-            {
-              id = "claude-haiku-5-5";
-              name = "Claude Haiku 5.5";
-              reasoning = true;
-              input = [
-                "text"
-                "image"
-              ];
-              cost = {
-                input = 0.1;
-                output = 0.5;
-                cacheRead = 0.01;
-                cacheWrite = 0.125;
-                tiers = [
-                  {
-                    inputTokensAbove = 100000;
-                    input = 0.5;
-                    output = 2.5;
-                    cacheRead = 0.05;
-                    cacheWrite = 0.625;
-                  }
-                ];
-              };
-              contextWindow = 1000000;
-              maxTokens = 128000;
-              thinkingLevelMap = {
-                off = null;
-                minimal = null;
-                low = "low";
-                medium = "medium";
-                high = "high";
-                xhigh = "xhigh";
-                max = "max";
-              };
-              compat = {
-                supportsMidConvoEffort = true;
-                supportsMidConvoSystemMessages = true;
-                supportsMidConvoToolChanges = true;
-                forceAdaptiveThinking = true;
-                supportsTemperature = false;
-                supportsStrictTools = true;
-              };
-              promptCache = {
-                short = 300;
-                long = 3600;
-              };
-            }
-          ];
         };
 
         # Catppuccin themes from upstream flake

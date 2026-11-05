@@ -1,12 +1,12 @@
 {
   features.go.homeManager =
-    { pkgs, lib, ... }:
+    { pkgs, ... }:
     {
       home.packages = with pkgs; [
         # editor
         gopls
         gofumpt
-        (lib.meta.lowPrio gotools)
+        gotools
       ];
 
       programs.go.enable = true;

@@ -54,9 +54,7 @@ let
           system.primaryUser = host.login;
           nix-homebrew = {
             enable = true;
-            enableRosetta = false;
             user = host.login;
-            mutableTaps = true;
           };
         }
       ]

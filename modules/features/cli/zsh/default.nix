@@ -3,8 +3,18 @@
 {
   features.zsh.includes = with config.features; [ paths ];
 
-  features.zsh.darwin.programs.zsh.enable = true;
-  features.zsh.nixos.programs.zsh.enable = true;
+  features.zsh.darwin =
+    { host, pkgs, ... }:
+    {
+      programs.zsh.enable = true;
+      users.users.${host.login}.shell = pkgs.zsh;
+    };
+  features.zsh.nixos =
+    { host, pkgs, ... }:
+    {
+      programs.zsh.enable = true;
+      users.users.${host.login}.shell = pkgs.zsh;
+    };
 
   features.zsh.homeManager =
     { config, ... }:
@@ -27,26 +37,19 @@
         dotDir = "${config.xdg.configHome}/zsh";
         history = {
           size = 100000;
-          save = 100000;
           path = "${config.xdg.dataHome}/zsh/history";
           ignoreAllDups = true;
-          ignoreSpace = true;
           expireDuplicatesFirst = true;
-          share = true;
           extended = true;
         };
         setOptions = [ "HIST_REDUCE_BLANKS" ];
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
-        enableCompletion = true;
-        completionInit = ''
-          autoload -Uz compinit
-          compinit
+        initContent = ''
           zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
           zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
           zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-        '';
-        initContent = ''
+
           # Shell behavior
           setopt auto_cd            # type a bare dir name to cd into it
           setopt numeric_glob_sort  # sort globs numerically (f1 f2 f10, not f1 f10 f2)
@@ -95,7 +98,7 @@
             
             case "$command" in
               cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-              export|unset) fzf --preview "eval 'echo \''${}" "$@" ;;
+              export|unset) fzf --preview "eval 'echo \''$'{}" "$@" ;;
               ssh)          fzf --preview 'dig {}'                   "$@" ;;
               *)            fzf --preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi' "$@" ;;
             esac
@@ -114,14 +117,12 @@
 
       programs.direnv = {
         enable = true;
-        enableZshIntegration = true;
         silent = true;
         nix-direnv.enable = true;
       };
 
       programs.eza = {
         enable = true;
-        enableZshIntegration = true;
       };
 
       programs.ripgrep.enable = true;
@@ -134,13 +135,11 @@
 
       programs.zoxide = {
         enable = true;
-        enableZshIntegration = true;
         options = [ "--cmd cd" ];
       }; # better cd
 
       programs.fzf = {
         enable = true;
-        enableZshIntegration = true;
 
         defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
         fileWidget = {
@@ -160,13 +159,11 @@
 
       programs.oh-my-posh = {
         enable = true;
-        enableZshIntegration = true;
         settings = {
           version = 3;
           final_space = true;
 
           palette = {
-            blue = "#89B4FA";
             closer = "p:os";
             lavender = "#B4BEFE";
             os = "#ACB0BE";
@@ -201,7 +198,6 @@
                   style = "plain";
                   properties = {
                     folder_icon = "....";
-                    home_icon = "~";
                     style = "agnoster_short";
                   };
                 }
@@ -214,8 +210,6 @@
                     branch_icon = " ";
                     cherry_pick_icon = " ";
                     commit_icon = " ";
-                    fetch_status = false;
-                    fetch_upstream_icon = false;
                     merge_icon = " ";
                     no_commits_icon = " ";
                     rebase_icon = " ";

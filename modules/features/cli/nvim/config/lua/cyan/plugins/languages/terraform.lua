@@ -11,8 +11,8 @@ return {
   },
   {
     'neovim/nvim-lspconfig',
-    -- nvim maps *.tf -> 'tf' and doesn't detect *.tofu; tofu-ls expects the
-    -- 'opentofu'/'opentofu-vars' filetypes, so remap as the tofu-ls docs advise.
+    -- nvim maps *.tf -> 'terraform' (or 'tf' for blank/TinyFugue-style files) and doesn't
+    -- detect *.tofu; tofu-ls expects the 'opentofu'/'opentofu-vars' filetypes, so remap as the tofu-ls docs advise.
     init = function()
       vim.filetype.add {
         extension = {

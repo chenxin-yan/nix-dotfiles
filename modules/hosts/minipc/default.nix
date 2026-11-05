@@ -14,7 +14,6 @@
       {
         config,
         host,
-        pkgs,
         ...
       }:
 
@@ -34,8 +33,6 @@
         time.timeZone = "America/Los_Angeles";
 
         programs.nix-ld.enable = true;
-        programs.nix-ld.libraries = with pkgs; [
-        ];
 
         # Define a user account. Don't forget to set a password with ‘passwd’.
         users.users.${host.login} = {
@@ -46,33 +43,15 @@
             "networkmanager"
             "wheel"
           ];
-          shell = pkgs.zsh;
           linger = true; # Keep user services running without active login session
         };
-
-        # List packages installed in system profile. To search, run:
-        # $ nix search wget
-        environment.systemPackages = with pkgs; [
-          git
-        ];
-
-        # Some programs need SUID wrappers, can be configured further or are
-        # started in user sessions.
-        # programs.mtr.enable = true;
-        # programs.gnupg.agent = {
-        #   enable = true;
-        #   enableSSHSupport = true;
-        # };
-
-        # List services that you want to enable:
 
         # Firewall
         # - Trust all Tailscale traffic (no need to open ports for Tailscale-only services)
         # - Allow Tailscale UDP port for direct peer-to-peer connections (avoids DERP relay)
-        # - Keep SSH open on LAN as emergency fallback
+        # - SSH stays open on LAN as emergency fallback (services.openssh opens port 22)
         networking.firewall = {
           trustedInterfaces = [ "tailscale0" ];
-          allowedTCPPorts = [ 22 ];
           allowedUDPPorts = [ config.services.tailscale.port ];
         };
 

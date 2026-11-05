@@ -10,7 +10,6 @@ return {
     leader_key = "'",
     buffer_leader_key = 'm', -- Per Buffer Mappings
     mappings = {
-      toggle = 's',
       open_vertical = '|',
       open_horizontal = '_',
       next_item = 'j',

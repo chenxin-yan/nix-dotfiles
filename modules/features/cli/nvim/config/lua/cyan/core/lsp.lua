@@ -9,7 +9,6 @@ vim.keymap.del('n', 'grt')
 vim.diagnostic.config {
   severity_sort = true,
   float = { border = 'rounded', source = 'if_many' },
-  underline = true,
   signs = {
     text = {
       [vim.diagnostic.severity.ERROR] = '●',
@@ -22,15 +21,6 @@ vim.diagnostic.config {
     source = 'if_many',
     spacing = 2,
     current_line = true,
-    format = function(diagnostic)
-      local diagnostic_message = {
-        [vim.diagnostic.severity.ERROR] = diagnostic.message,
-        [vim.diagnostic.severity.WARN] = diagnostic.message,
-        [vim.diagnostic.severity.INFO] = diagnostic.message,
-        [vim.diagnostic.severity.HINT] = diagnostic.message,
-      }
-      return diagnostic_message[diagnostic.severity]
-    end,
   },
 }
 

@@ -1,21 +1,21 @@
 -- blink git customizations
 local blink_cmp_kind_name_highlight = {
-  Commit = { default = false, fg = '#a6e3a1' },
-  Mention = { default = false, fg = '#a6e3a1' },
-  openPR = { default = false, fg = '#a6e3a1' },
-  openedPR = { default = false, fg = '#a6e3a1' },
-  closedPR = { default = false, fg = '#f38ba8' },
-  mergedPR = { default = false, fg = '#cba6f7' },
-  draftPR = { default = false, fg = '#9399b2' },
-  lockedPR = { default = false, fg = '#f5c2e7' },
-  openIssue = { default = false, fg = '#a6e3a1' },
-  openedIssue = { default = false, fg = '#a6e3a1' },
-  reopenedIssue = { default = false, fg = '#a6e3a1' },
-  completedIssue = { default = false, fg = '#cba6f7' },
-  closedIssue = { default = false, fg = '#cba6f7' },
-  not_plannedIssue = { default = false, fg = '#9399b2' },
-  duplicateIssue = { default = false, fg = '#9399b2' },
-  lockedIssue = { default = false, fg = '#f5c2e7' },
+  Commit = { fg = '#a6e3a1' },
+  Mention = { fg = '#a6e3a1' },
+  openPR = { fg = '#a6e3a1' },
+  openedPR = { fg = '#a6e3a1' },
+  closedPR = { fg = '#f38ba8' },
+  mergedPR = { fg = '#cba6f7' },
+  draftPR = { fg = '#9399b2' },
+  lockedPR = { fg = '#f5c2e7' },
+  openIssue = { fg = '#a6e3a1' },
+  openedIssue = { fg = '#a6e3a1' },
+  reopenedIssue = { fg = '#a6e3a1' },
+  completedIssue = { fg = '#cba6f7' },
+  closedIssue = { fg = '#cba6f7' },
+  not_plannedIssue = { fg = '#9399b2' },
+  duplicateIssue = { fg = '#9399b2' },
+  lockedIssue = { fg = '#f5c2e7' },
 }
 
 for kind_name, hl in pairs(blink_cmp_kind_name_highlight) do
@@ -63,9 +63,7 @@ return {
   {
     'chrisgrieser/nvim-scissors',
     event = { 'BufReadPre', 'BufNewFile' },
-    opts = {
-      snippetDir = vim.fn.stdpath 'config' .. '/snippets',
-    },
+    opts = {},
     keys = {
 
       { '<leader>Se', '<cmd>lua require("scissors").editSnippet()<cr>', desc = 'Snippet: Edit' },
@@ -76,7 +74,6 @@ return {
     'saghen/blink.cmp',
     dependencies = {
       'rafamadriz/friendly-snippets',
-      'Kaiser-Yang/blink-cmp-avante',
       {
         'Kaiser-Yang/blink-cmp-git',
         dependencies = { 'nvim-lua/plenary.nvim' },
@@ -112,8 +109,6 @@ return {
         ['<C-h>'] = { 'snippet_backward', 'fallback' },
       },
       appearance = {
-        use_nvim_cmp_as_default = false,
-        nerd_font_variant = 'mono',
         kind_icons = {
           Text = '󰉿',
           Method = '󰊕',
@@ -148,11 +143,6 @@ return {
         },
       },
       completion = {
-        accept = {
-          auto_brackets = {
-            enabled = true,
-          },
-        },
         menu = {
           draw = {
             treesitter = { 'lsp' },
@@ -166,12 +156,6 @@ return {
           auto_show = true,
           auto_show_delay_ms = 200,
         },
-      },
-      snippets = {
-        preset = 'default',
-      },
-      cmdline = {
-        enabled = true,
       },
       fuzzy = {
         sorts = {
@@ -193,7 +177,6 @@ return {
           'snippets',
           'buffer',
           'git',
-          'avante',
         },
         per_filetype = {
           lua = { inherit_defaults = true, 'lazydev' },
@@ -220,7 +203,7 @@ return {
             name = 'Git',
             score_offset = 100,
             enabled = function()
-              return vim.tbl_contains({ 'octo', 'gitcommit', 'markdown' }, vim.bo.filetype)
+              return vim.tbl_contains({ 'gitcommit', 'markdown' }, vim.bo.filetype)
             end,
             opts = {
               kind_icons = {
@@ -279,12 +262,6 @@ return {
                 },
               },
             },
-          },
-          avante = {
-            module = 'blink-cmp-avante',
-            score_offset = 100,
-            name = 'Avante',
-            opts = {},
           },
         },
       },

@@ -7,14 +7,6 @@
       pkgs,
       ...
     }:
-    let
-      yazi-plugins = pkgs.fetchFromGitHub {
-        owner = "yazi-rs";
-        repo = "plugins";
-        rev = "2e0d8cf9084bc007b835fcf7c492a32736aa2ff9";
-        hash = "sha256-pO6rUSWNqMeWN+ikT3TFoOGohBHl+9UXUneVLcOddFY=";
-      };
-    in
     {
       home.file = {
         ".config/yazi/yazi.toml".source = ./config/yazi.toml;
@@ -30,14 +22,15 @@
 
       programs.yazi = {
         enable = true;
-        enableZshIntegration = true;
         shellWrapperName = "y";
         plugins = {
-          full-border = "${yazi-plugins}/full-border.yazi";
-          no-status = "${yazi-plugins}/no-status.yazi";
-          vcs-files = "${yazi-plugins}/vcs-files.yazi";
-          chmod = "${yazi-plugins}/chmod.yazi";
-          git = "${yazi-plugins}/git.yazi";
+          inherit (pkgs.yaziPlugins)
+            full-border
+            no-status
+            vcs-files
+            chmod
+            git
+            ;
           omp = pkgs.fetchFromGitHub {
             owner = "saumyajyoti";
             repo = "omp.yazi";
@@ -50,6 +43,9 @@
             rev = "ed946c3932937cb58b1bcaaf0e45f8e26b14f151";
             hash = "sha256-1qbi/oOcnWTliP+FT4Yk4rwPCRu4KQh3EHJzLY+noUw=";
           };
+          # nixpkgs' yaziPlugins.compress (tag 0.6) calls fs.unique_name, which
+          # yazi 26.x removed. Switch to it once nixpkgs packages a newer rev:
+          # https://github.com/KKV9/compress.yazi/issues/39
           compress = pkgs.fetchFromGitHub {
             owner = "KKV9";
             repo = "compress.yazi";

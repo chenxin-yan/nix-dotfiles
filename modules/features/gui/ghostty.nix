@@ -10,7 +10,7 @@
         settings = {
           # Icons come from Ghostty's bundled Nerd Font symbols.
           font-family = "JetBrains Mono";
-          # Compensate for 2x Wayland scaling on Linux
+          # Smaller on Linux, where niri scales outputs by 1.75
           font-size = if pkgs.stdenv.hostPlatform.isLinux then 12 else 14;
           adjust-underline-position = 4;
 
@@ -27,6 +27,8 @@
           window-padding-balance = true;
           macos-titlebar-style = "hidden";
           quit-after-last-window-closed = true;
+          # The app lives in the read-only Nix store; nixpkgs bumps update it.
+          auto-update = "off";
 
           copy-on-select = "clipboard";
           # ssh-terminfo: install xterm-ghostty into the remote ~/.terminfo on

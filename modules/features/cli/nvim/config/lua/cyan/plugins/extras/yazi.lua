@@ -1,8 +1,8 @@
 return {
   'mikavilpas/yazi.nvim',
   init = function()
-    -- More details: https://github.com/mikavilpas/yazi.nvim/issues/802
-    -- vim.g.loaded_netrw = 1
+    -- yazi.nvim documents this so it can open directories:
+    -- https://github.com/mikavilpas/yazi.nvim/issues/802
     vim.g.loaded_netrwPlugin = 1
   end,
   keys = {

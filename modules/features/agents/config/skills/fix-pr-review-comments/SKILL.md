@@ -133,7 +133,8 @@ only some items, resolve only those threads.
 
 Re-fetch the approved threads before resolving: skip already-resolved
 threads, and leave any with new unaddressed feedback open. For each
-remaining approved thread with `viewerCanResolve: true`.
+remaining approved thread with `viewerCanResolve: true`, resolve it by
+thread ID via the `resolveReviewThread` mutation.
 
 Confirm the returned thread has `isResolved: true` before reporting it
 resolved. Report resolved items and any still-open threads with reasons;

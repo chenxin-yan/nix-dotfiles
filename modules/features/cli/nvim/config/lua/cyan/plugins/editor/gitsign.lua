@@ -9,7 +9,6 @@ return { -- Adds git related signs to the gutter, as well as utilities for manag
         change = { text = '~' },
         delete = { text = '_' },
         topdelete = { text = '‾' },
-        changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'

@@ -12,7 +12,6 @@ return {
       },
     },
   },
-  { 'Bilal2453/luvit-meta', lazy = true },
   {
     'romus204/tree-sitter-manager.nvim',
     opts = { ensure_installed = { 'lua', 'luadoc', 'luap' } },
@@ -27,9 +26,6 @@ return {
               workspace = {
                 checkThirdParty = false,
               },
-              codeLens = {
-                enable = true,
-              },
               completion = {
                 callSnippet = 'Replace',
               },
@@ -38,11 +34,7 @@ return {
               },
               diagnostics = { disable = { 'missing-fields' } },
               hint = {
-                enable = true,
-                setType = false,
-                paramType = true,
                 paramName = 'Disable',
-                semicolon = 'Disable',
                 arrayIndex = 'Disable',
               },
             },
