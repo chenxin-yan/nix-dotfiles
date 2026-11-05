@@ -17,8 +17,8 @@
       sourcesans = pkgs.fetchFromGitLab {
         owner = "slxh/latex";
         repo = "sourcesans";
-        rev = "88c6d25588a1138f360d905bb1c4ee461daaef91";
-        hash = "sha256-iOsvNTFFzPvh1lNHBd3UrhWgjI6Xut35ZZNj0XEqlBk=";
+        rev = "8e0152b15c92d0851d3a4b568370ced59b5a19b1";
+        hash = "sha256-T7Px0T6zM/0qSFiRZbBUTH7Q3kJAUT/R1Ma/9lqCJbc=";
       };
 
       academicDefaults = pkgs.writeText "academic.yaml" (
