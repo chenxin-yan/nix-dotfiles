@@ -23,6 +23,12 @@ in
         (claudeToken.wrap { inherit pkgs osConfig; } "CLAUDE_CODE_OAUTH_TOKEN" claude-code)
       ];
 
+      # Codex reads skills from ~/.agents/skills natively. Auth: `codex login`.
+      programs.codex = {
+        enable = true;
+        context = ./config/AGENTS.md;
+      };
+
       home.file = {
         ".agents/skills" = {
           source = ./config/skills;
