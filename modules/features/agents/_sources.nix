@@ -4,8 +4,8 @@
   anthropicSkills = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
-    rev = "ca45fc496a3436251f191354091d557da31c15b5";
-    hash = "sha256-MkCOANBAqCc1WmNf7S8PsyAphGJAIzEXGyCm8RrCR9M=";
+    rev = "2c5958ecac7cee2b583967a2c4981d0f4a75c579";
+    hash = "sha256-dRCZrNarCCJFuvATgfW6qmwwVS5HGFXNVGOhbVZd7LA=";
   };
 
   vercelSkills = pkgs.fetchFromGitHub {
@@ -25,8 +25,8 @@
   pstack = pkgs.fetchFromGitHub {
     owner = "backnotprop";
     repo = "pstack";
-    rev = "e388616361ac78eeb2da66c148d882534aca4cb9";
-    hash = "sha256-Qd4QcuBOT1MbYHEdnqftATSlvdS59yA1OysWpk7Djqc=";
+    rev = "a6342ded43a2437e3c664b46c2cff103787773fd";
+    hash = "sha256-/zYoEU1nxKmG2mWcuxvkM7z6krZYs/3YZ1QjhOP7LN4=";
   };
 
   ponytail = pkgs.fetchFromGitHub {
