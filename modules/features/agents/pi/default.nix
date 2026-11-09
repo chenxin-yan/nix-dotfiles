@@ -179,9 +179,17 @@ in
               skills = [ ];
             }
           ];
+          # Children skip ~/.pi/agent/AGENTS.md unless asked; this gives every
+          # role the same behavior rules as the parent session.
+          subagents.defaultInheritGlobalContext = true;
           # Pin routing independently of the parent: Haiku recon, Sonnet
           # research, Opus implementation, Astra cross-family review and oracle.
+          # Only delegate follows the parent model.
           # Upstream returns provider failures; another model needs an explicit launch.
+          #
+          # Thinking stays high everywhere on purpose. Anthropic's effort guide
+          # says Haiku 5.5 skips searches and stops early at low, and recommends
+          # high for longer agent tasks on Haiku and Sonnet 5.5.
           subagents.agentOverrides = {
             scout = {
               model = "anthropic/claude-haiku-5-5";
@@ -210,7 +218,7 @@ in
               thinking = "high";
             };
             delegate = {
-              model = "anthropic/claude-opus-5-5";
+              model = "inherit";
               thinking = "high";
             };
           };
