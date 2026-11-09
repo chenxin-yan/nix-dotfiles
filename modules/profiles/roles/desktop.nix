@@ -12,7 +12,6 @@
     ghostty
     helium
     obsidian
-    telegram
     todoist
     vesktop
     viewers # Linux: mpv, imv, zathura

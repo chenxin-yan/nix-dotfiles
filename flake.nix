@@ -3,6 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    # Last Hydra eval (2026-11-04) with aarch64-darwin builds of oxfmt and
+    # marksman (via dotnet-sdk_9) in cache.nixos.org; later ones fail there.
+    # TODO: remove once nixpkgs-unstable has these cached for aarch64-darwin again.
+    nixpkgs-cached.url = "github:nixos/nixpkgs/13e53762c5afaf384d4614e94527a9ccfafe41d0";
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";

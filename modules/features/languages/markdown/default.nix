@@ -1,3 +1,4 @@
+{ inputs, ... }:
 {
   features.markdown.homeManager =
     { pkgs, ... }:
@@ -7,7 +8,8 @@
         glow
 
         markdownlint-cli2
-        marksman
+        # TODO: back to pkgs once nixpkgs-cached is removed from flake.nix.
+        inputs.nixpkgs-cached.legacyPackages.${pkgs.stdenv.hostPlatform.system}.marksman
         harper
       ];
 

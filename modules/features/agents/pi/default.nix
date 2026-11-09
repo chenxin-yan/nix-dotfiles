@@ -100,13 +100,21 @@ in
           "ANTHROPIC_OAUTH_TOKEN"
           (
             # nixpkgs drops the pi-schema workspace package, breaking subagents.
-            # Remove once NixOS/nixpkgs#582756 lands in nixpkgs-unstable.
+            # TODO: remove once NixOS/nixpkgs#582756 lands in nixpkgs-unstable.
             pi-coding-agent.overrideAttrs (old: {
               postInstall =
                 builtins.replaceStrings
                   [ "@earendil-works/pi-tui:packages/tui;" ]
                   [ "@earendil-works/pi-schema:packages/schema @earendil-works/pi-tui:packages/tui;" ]
                   old.postInstall;
+              # Anthropic serves new models to OAuth clients only when they report a
+              # recent Claude Code version (Fable 5.2 needs >= 2.1.290); pi pins an
+              # older one. The assignment fails the build if pi renames the constant.
+              # TODO: remove once upstream pi bumps claudeCodeVersion to >= 2.1.290.
+              postFixup = old.postFixup + ''
+                files=$(grep -rlE 'claudeCodeVersion ?= ?"' $out/lib/node_modules/pi-monorepo)
+                sed -i -E 's/(claudeCodeVersion ?= ?")[0-9.]+"/\1${claude-code.version}"/' $files
+              '';
             })
           )
         )
@@ -144,9 +152,10 @@ in
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
-          defaultModel = "claude-opus-5-5";
+          defaultModel = "claude-fable-5-2";
           defaultThinkingLevel = "high";
           enabledModels = [
+            "anthropic/claude-fable-5-2"
             "openai-codex/gpt-6-astra"
             "anthropic/claude-opus-5-5"
           ];
@@ -229,6 +238,52 @@ in
           # useful extension-update checks), so this explicit flag is what
           # actually suppresses the ping.
           enableInstallTelemetry = false;
+        };
+
+        # Pi 1.5.0's catalog predates Claude Fable 5.2 (released 2026-11-09).
+        # Mirrors upstream main's definition plus the Fable family rules a
+        # models.json entry doesn't inherit.
+        # TODO: remove once nixpkgs ships a pi release containing claude-fable-5-2.
+        ".pi/agent/models.json".text = builtins.toJSON {
+          providers.anthropic.models = [
+            {
+              id = "claude-fable-5-2";
+              name = "Claude Fable 5.2";
+              reasoning = true;
+              input = [
+                "text"
+                "image"
+              ];
+              cost = {
+                input = 8;
+                output = 40;
+                cacheRead = 0.2;
+                cacheWrite = 10;
+              };
+              contextWindow = 1000000;
+              maxTokens = 128000;
+              thinkingLevelMap = {
+                off = null;
+                xhigh = "xhigh";
+                max = "max";
+              };
+              compat = {
+                forceAdaptiveThinking = true;
+                supportsMidConvoEffort = true;
+                supportsMidConvoSystemMessages = true;
+                supportsMidConvoToolChanges = true;
+                supportsStrictTools = true;
+              };
+              promptCache = {
+                short = 300;
+                long = 3600;
+              };
+              inputLimits = {
+                maxRequestBytes = 33554432;
+                images.maxPerRequest = 600;
+              };
+            }
+          ];
         };
 
         # Catppuccin themes from upstream flake
