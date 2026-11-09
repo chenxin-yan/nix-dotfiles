@@ -13,6 +13,7 @@ return {
     integrations = {
       noice = true,
       snacks = {
+        enabled = true,
         indent_scope_color = 'lavender',
       },
     },

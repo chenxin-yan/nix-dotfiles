@@ -66,7 +66,7 @@ return {
             }),
             javascript = js_ts_settings,
           },
-          on_attach = function(_, buffer)
+          on_attach = function(client, buffer)
             -- setup vtsls keymaps for JS/TS
             local vtsls = require 'vtsls'
 
@@ -101,6 +101,16 @@ return {
             vim.keymap.set('n', 'cR', function()
               vtsls.commands['restart_tsserver'](0)
             end, { desc = 'vtsls: [R]estart tsserver', buffer = buffer })
+
+            -- setup codelens for JS/TS
+            vim.lsp.commands['editor.action.showReferences'] = function(command, ctx)
+              local locations = command.arguments[3]
+              if locations and #locations > 0 then
+                local items = vim.lsp.util.locations_to_items(locations, client.offset_encoding)
+                vim.fn.setloclist(0, {}, ' ', { title = 'References', items = items, context = ctx })
+                vim.api.nvim_command 'lopen'
+              end
+            end
           end,
         },
         tsc = {

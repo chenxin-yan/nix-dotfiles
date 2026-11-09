@@ -13,7 +13,7 @@ if [ ! -d "$ATLAS_PATH" ]; then
   exit 1
 fi
 
-EDITOR="${EDITOR:-nvim}"
+EDITOR="${EDITOR:-vim}"
 INITIAL_QUERY="${*:-}"
 
 selected=$(find "$ATLAS_PATH" -type f \( -name "*.md" -o -name "*.txt" -o -name "*.org" \) 2>/dev/null |

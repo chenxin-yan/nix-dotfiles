@@ -14,6 +14,7 @@
       {
         config,
         host,
+        pkgs,
         ...
       }:
 
@@ -45,6 +46,10 @@
           ];
           linger = true; # Keep user services running without active login session
         };
+
+        environment.systemPackages = with pkgs; [
+          git
+        ];
 
         # Firewall
         # - Trust all Tailscale traffic (no need to open ports for Tailscale-only services)

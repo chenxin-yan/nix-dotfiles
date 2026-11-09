@@ -8,4 +8,5 @@
 )
 
 sketchybar --add item wifi right   \
-           --set wifi "${WIFI[@]}"
+           --set wifi "${WIFI[@]}" \
+           --subscribe wifi wifi_change

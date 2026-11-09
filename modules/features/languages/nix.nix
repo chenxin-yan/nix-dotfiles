@@ -5,6 +5,7 @@
       home.packages = with pkgs; [
         nil
         nixfmt
+        nixfmt-tree
       ];
     };
 }

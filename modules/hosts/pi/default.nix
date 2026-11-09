@@ -80,6 +80,8 @@
           linger = true; # user services (Hermes, Atlas sync) run without a login
         };
 
+        environment.systemPackages = [ pkgs.git ];
+
         # Everything but SSH stays on the tailnet; SSH also on the LAN as a
         # way in when Tailscale is down (services.openssh opens port 22).
         networking.firewall = {
