@@ -75,16 +75,17 @@ if is_git_repo "$SELECTED"; then
     WARNINGS+=("Has untracked files")
   fi
 
-  # Check for unpushed commits
-  UPSTREAM=$(git -C "$SELECTED" rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || echo "")
-  if [[ -n "$UPSTREAM" ]]; then
-    UNPUSHED=$(git -C "$SELECTED" log '@{upstream}..HEAD' --oneline 2>/dev/null | wc -l | tr -d ' ')
+  # Commits on any local branch (or a detached HEAD) that no remote has.
+  if UNPUSHED=$(git -C "$SELECTED" rev-list --count HEAD --branches --not --remotes 2>/dev/null); then
     if [[ "$UNPUSHED" -gt 0 ]]; then
-      WARNINGS+=("Has $UNPUSHED unpushed commit(s)")
+      WARNINGS+=("Has $UNPUSHED commit(s) not on any remote")
     fi
   else
-    # No upstream set - might have local-only commits
-    WARNINGS+=("No upstream branch set (local commits may be lost)")
+    WARNINGS+=("Could not check for unpushed commits")
+  fi
+
+  if [[ -n "$(git -C "$SELECTED" stash list 2>/dev/null)" ]]; then
+    WARNINGS+=("Has stashed changes")
   fi
 
   # Display warnings
