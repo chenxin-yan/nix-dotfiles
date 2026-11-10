@@ -68,8 +68,6 @@ in
         # Aggregated token/cost usage stats across all sessions.
         # /usage for table view, /usage --insights for dashboard.
         "@tmustier/pi-usage-extension"
-        # Current-account usage across supported model providers.
-        "@narumitw/pi-usage"
         # Run interactive CLIs (vim, psql, ssh, dev servers, sub-agent CLIs)
         # in a TUI overlay with 4 modes: interactive, hands-free, dispatch,
         # monitor. Commands: /spawn, /attach, /dismiss. Ships an
