@@ -64,13 +64,8 @@
 
       programs.zsh.initContent = ''
         yazi-widget() {
-          local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
           zle -I  # Prepare the terminal for external command
-          yazi --cwd-file="$tmp" < $TTY
-          if cwd="$(<"$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-            builtin cd -- "$cwd"
-          fi
-          rm -f -- "$tmp"
+          y < $TTY  # Home Manager's wrapper: cd to where yazi was left
           for precmd_func in $precmd_functions; do
             $precmd_func
           done
