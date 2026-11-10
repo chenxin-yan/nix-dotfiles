@@ -6,9 +6,9 @@
 # writes back to it, and an edit saved in the checkout applies live. So it is
 # linked from the checkout rather than the store, and GUI changes show up as
 # git diffs; OmniWM writes through the link to its target. The schema is
-# strict: a missing key or a missing, unknown or duplicate hotkey id rejects
-# the whole file, and OmniWM then runs on its defaults (the reason is in its
-# Diagnostics). Edit values in place. A GUI save rewrites the file without
+# strict: a missing key or an unknown or duplicate hotkey id rejects the whole
+# file, and OmniWM then runs on its defaults (the reason is in its
+# Diagnostics); a hotkey left out is unassigned. Edit values in place. A GUI save rewrites the file without
 # comments, hence these notes. What it changes from OmniWM's defaults:
 #   - hotkeys: niri's binds (niri/config/binds.kdl) on the same keys, Mod =
 #     Option: Shift moves windows, Ctrl acts on displays. Option+1…9 go by
