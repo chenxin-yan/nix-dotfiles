@@ -2,19 +2,6 @@
 
 Nix flake for my Macs (nix-darwin) and NixOS machines, with Home Manager for everything user-level. Built with [flake-parts](https://flake.parts) in the [dendritic pattern](https://github.com/mightyiam/dendritic) and themed with Catppuccin Mocha.
 
-## Layout
-
-```
-flake.nix            inputs; loads every module under modules/
-justfile             everyday commands (`just --list`)
-modules/
-├── flake/           plumbing: the `features` and `hosts` options, system builders
-├── hosts/           one file (or directory) per machine
-├── profiles/        what hosts select: platforms/, roles/, and the blocks/ they share
-└── features/        everything a host can have, grouped by kind
-scripts/             onboarding wizard and the helpers behind the justfile
-```
-
 ## How it works
 
 ### Features
@@ -68,9 +55,14 @@ cd ~/dotfiles
 bash scripts/onboard.sh
 ```
 
-For a new machine, the wizard writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`. It then evaluates, builds and activates the machine, asking before every change. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. On a reinstalled machine that already has a host file, it reuses that file instead. The stages are described at the top of `scripts/onboard.sh`. A new Mac gets `workstation desktop`; a new NixOS machine gets `workstation`, so add any other roles to the host file afterwards. Commit any new host files.
+The wizard evaluates, builds and activates the machine, asking before every change; its stages are described at the top of `scripts/onboard.sh`. For a new machine it writes `modules/hosts/<name>/`, keeping NixOS's own `/etc/nixos` config under `_installed/`; a reinstalled machine reuses its host file. Before building, it prints a `just secrets-enrol` command to run on a machine with 1Password, and waits until that's pushed. A new Mac gets `workstation desktop` and a new NixOS machine `workstation`: add other roles to the host file afterwards, and commit new host files.
 
-**Raspberry Pi (`pi`):** NixOS's installers can't boot a Pi 5 from NVMe, so it is installed by flashing its own image: build `.#nixosConfigurations.pi.config.system.build.sdImage` on an `aarch64-linux` builder (an Apple Silicon Mac alone is `aarch64-darwin`) and write it to the drive. Trust the `nixos-raspberrypi.cachix.org` cache on that builder first, or it compiles the vendor kernel itself; the Pi only gets that cache after its first switch. Before the first boot, with the drive still attached to the machine that flashed it, copy its enrolled host key pair to `/etc/ssh/ssh_host_ed25519_key{,.pub}` on the `NIXOS_SD` partition. Otherwise it generates a new key on boot and can't decrypt its secrets. Then onboard it like any other machine.
+**Raspberry Pi (`pi`):** NixOS's installers can't boot a Pi 5 from NVMe, so it is installed by flashing its own image:
+
+1. On an `aarch64-linux` builder (an Apple Silicon Mac alone is `aarch64-darwin`), trust the `nixos-raspberrypi.cachix.org` cache, or it compiles the vendor kernel itself. The Pi only gets that cache after its first switch.
+2. Build `.#nixosConfigurations.pi.config.system.build.sdImage` and write it to the drive.
+3. Before the first boot, with the drive still attached, copy the Pi's enrolled host key pair to `/etc/ssh/ssh_host_ed25519_key{,.pub}` on the `NIXOS_SD` partition. Otherwise it generates a new key on boot and can't decrypt its secrets.
+4. Boot it and onboard it like any other machine.
 
 ### After install
 
@@ -120,19 +112,19 @@ API keys are encrypted in `secrets/`. Each enrolled machine decrypts them at act
 - **Change a key:** `just secret-set <name>`, commit, then `just switch` on each machine. A key only one machine uses lives in its own file: `just secret-set <name> secrets/hosts/<host>.yaml` (e.g. the Pi's `hermes-env`). Dokploy's keys can't be changed this way; see `modules/features/services/dokploy.nix`.
 - **Use one in a feature:** include `secrets`, declare `sops.secrets.<name>.owner = host.login;` in the feature's `darwin` and `nixos` parts, and have the program read `osConfig.sops.secrets.<name>.path` when it runs. Never read the value during evaluation; it would end up in the Nix store.
 - **Enrol a machine:** the onboarding wizard prints the command. By hand: `just secrets-enrol <name> '<key>'` with that machine's `/etc/ssh/ssh_host_ed25519_key.pub`, then commit and push before its first switch. Re-enrolling replaces the old key.
-- **A machine is lost:** delete its line from `modules/hosts/_host-keys.json`, run `just secrets-rekey`, commit, and rotate the API keys with their providers.
+- **A machine is lost:** delete its line from `modules/hosts/_host-keys.json` and its `secrets/hosts/<host>.yaml` if it has one (rekeying stops on a file with no enrolled host), run `just secrets-rekey`, commit, and rotate the API keys with their providers.
 - **The admin key is lost:** create a new one. This prints only its public half; put it in `admin` in `modules/flake/sops.nix`.
 
   ```sh
   nix shell nixpkgs#age -c sh -c 'age-keygen 2>/dev/null | op document create - --title sops-admin --file-name keys.txt >/dev/null && op document get sops-admin | age-keygen -y'
   ```
 
-  Then re-encrypt from an enrolled machine, using its host key:
+  Then re-encrypt from an enrolled machine, using its host key. Any machine covers `secrets/shared.yaml`, but a `secrets/hosts/<host>.yaml` can only be done on that host (the Pi for `pi.yaml`); if its key is gone too, set those secrets again.
 
   ```sh
   install -m 0644 "$(nix build --no-link --print-out-paths .#sops-config)" .sops.yaml
   key="$(sudo "$(command -v ssh-to-age)" -private-key -i /etc/ssh/ssh_host_ed25519_key)"
-  for f in secrets/*.yaml secrets/hosts/*.yaml; do [ -e "$f" ] && SOPS_AGE_KEY="$key" sops updatekeys --yes "$f"; done
+  for f in secrets/shared.yaml "secrets/hosts/$(hostname).yaml"; do [ -e "$f" ] && SOPS_AGE_KEY="$key" sops updatekeys --yes "$f"; done
   unset key
   ```
 
@@ -156,8 +148,8 @@ Nix doesn't update these; check them every few months.
 - **Servers switch themselves.** NixOS hosts with `auto-upgrade` (the `server` role) pull their `~/dotfiles` and rebuild from `main` on GitHub nightly at 04:40, so a switch of unpushed changes lasts until then. `sudo systemctl start nixos-upgrade` runs it now.
 - **SSH accepts only keys declared in Nix.** No passwords, no root, and `~/.ssh/authorized_keys` is ignored. Every machine accepts `desktopKey` in `modules/features/system/sshd.nix` and each host's `sshKey`, so any fleet machine reaches any other as `ssh <name>`, with its host key pinned once enrolled.
 - **Homebrew removes what isn't declared.** Activation runs with `cleanup = "zap"`, so declare casks in the feature they belong to (`darwin.homebrew.casks`).
-- **Some config is linked, not copied.** Edits to the Neovim config (`modules/features/cli/nvim/config/`) and the shell scripts behind the zsh aliases (`modules/features/cli/zsh/scripts/`) and the herdr scripts (`modules/features/cli/herdr/scripts/`) apply without a rebuild.
-- **`nix flake check` only evaluates the NixOS hosts.** A broken Mac config shows up at `just switch`.
+- **Some config is linked, not copied.** Edits to the Neovim, niri and Noctalia configs, OmniWM's `settings.toml`, and the zsh and herdr scripts apply without a rebuild.
+- **`nix flake check` fails on a Mac.** Evaluating `framework` and `minipc` needs an `x86_64-linux` builder, and it doesn't cover the Macs anyway. To check a Mac's config without switching: `nix eval .#darwinConfigurations.<name>.config.system.build.toplevel.drvPath`.
 
 ## Making changes
 
