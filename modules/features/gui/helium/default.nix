@@ -135,6 +135,7 @@ in
 
     homeManager =
       {
+        config,
         lib,
         pkgs,
         ...
@@ -148,7 +149,6 @@ in
         home.activation.heliumPreferences =
           let
             pgrep = if isLinux then lib.getExe' pkgs.procps "pgrep" else "/usr/bin/pgrep";
-            jq = lib.getExe pkgs.jq;
             preferencesFragment = pkgs.writeText "helium-preferences.json" (
               builtins.toJSON (
                 lib.recursiveUpdate preferences {
@@ -165,18 +165,26 @@ in
                 }) profiles;
               }
             );
-            merge = file: fragment: ''
-              run mkdir -p "$(dirname "${file}")"
-              [ -f "${file}" ] || run sh -c 'echo "{}" > "${file}"'
-              run sh -c '${jq} -s ".[0] * .[1]" "${file}" ${fragment} > "${file}.nix-tmp" && mv "${file}.nix-tmp" "${file}"'
-            '';
+            # Keeps the file's mode (the browser writes these 0600) and replaces
+            # it atomically.
+            merge =
+              file: fragment:
+              lib.hm.generators.mkImpureConfigMerger {
+                inherit pkgs;
+                format = "json";
+                empty = "{}";
+                jqOperation = "$dynamic * $static";
+                path = "${config.home.homeDirectory}/${dataDir}/${file}";
+                staticSettings = fragment;
+                mode = "600";
+              };
           in
           lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             if ${pgrep} -x '${if isLinux then "helium" else "Helium"}' >/dev/null; then
               warnEcho "Helium is running; quit it and switch again to apply its preferences."
             else
-              ${merge "$HOME/${dataDir}/Local State" localStateFragment}
-              ${lib.concatMapStrings (dir: merge "$HOME/${dataDir}/${dir}/Preferences" preferencesFragment) (
+              ${merge "Local State" localStateFragment}
+              ${lib.concatMapStrings (dir: merge "${dir}/Preferences" preferencesFragment) (
                 lib.attrNames profiles
               )}
             fi
