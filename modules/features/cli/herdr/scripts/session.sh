@@ -9,11 +9,15 @@ get_session_name() {
   if [[ "$dir" == "$DEV_PATH/local/"* ]]; then
     name="local:$(basename "$dir")"
   elif [[ "$dir" == "$DEV_PATH"/* ]]; then
-    local rel owner repo
+    local rel host owner repo
     rel="${dir#"$DEV_PATH"/}"
+    host=$(echo "$rel" | cut -d'/' -f1)
     owner=$(echo "$rel" | cut -d'/' -f2)
     repo=$(echo "$rel" | cut -d'/' -f3)
     name="${owner}:${repo}"
+    # github.com (clone.sh's default host) keeps the short label; other hosts
+    # are prefixed so the same owner/repo on two forges gets two workspaces.
+    [[ "$host" == github.com ]] || name="${host}/${name}"
   else
     name=$(basename "$dir")
   fi
