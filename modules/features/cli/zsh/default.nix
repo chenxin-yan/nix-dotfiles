@@ -7,12 +7,16 @@
     { host, pkgs, ... }:
     {
       programs.zsh.enable = true;
+      # Home Manager runs compinit with its larger fpath; a second run from
+      # /etc/zshrc rebuilds the completion dump on every shell start (~1.3 s).
+      programs.zsh.enableGlobalCompInit = false;
       users.users.${host.login}.shell = pkgs.zsh;
     };
   features.zsh.nixos =
     { host, pkgs, ... }:
     {
       programs.zsh.enable = true;
+      programs.zsh.enableGlobalCompInit = false; # as on darwin
       users.users.${host.login}.shell = pkgs.zsh;
     };
 
