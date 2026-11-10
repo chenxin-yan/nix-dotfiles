@@ -12,7 +12,6 @@
 
     nixos =
       {
-        config,
         host,
         pkgs,
         ...
@@ -32,8 +31,6 @@
 
         # Set your time zone.
         time.timeZone = "America/Los_Angeles";
-
-        programs.nix-ld.enable = true;
 
         # Define a user account. Don't forget to set a password with ‘passwd’.
         users.users.${host.login} = {
@@ -55,10 +52,8 @@
         # - Trust all Tailscale traffic (no need to open ports for Tailscale-only services)
         # - Allow Tailscale UDP port for direct peer-to-peer connections (avoids DERP relay)
         # - SSH stays open on LAN as emergency fallback (services.openssh opens port 22)
-        networking.firewall = {
-          trustedInterfaces = [ "tailscale0" ];
-          allowedUDPPorts = [ config.services.tailscale.port ];
-        };
+        networking.firewall.trustedInterfaces = [ "tailscale0" ];
+        services.tailscale.openFirewall = true;
 
         # This value determines the NixOS release from which the default
         # settings for stateful data, like file locations and database versions

@@ -84,10 +84,8 @@
 
         # Everything but SSH stays on the tailnet; SSH also on the LAN as a
         # way in when Tailscale is down (services.openssh opens port 22).
-        networking.firewall = {
-          trustedInterfaces = [ "tailscale0" ];
-          allowedUDPPorts = [ config.services.tailscale.port ];
-        };
+        networking.firewall.trustedInterfaces = [ "tailscale0" ];
+        services.tailscale.openFirewall = true;
 
         # Let Tailscale (MagicDNS) manage DNS through resolved rather than
         # rewriting resolv.conf: https://github.com/tailscale/tailscale/issues/4254
