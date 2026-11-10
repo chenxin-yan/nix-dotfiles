@@ -53,7 +53,10 @@
     # has prebuilt. Its README recommends main as the stable branch.
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
 
-    hermes-agent.url = "github:NousResearch/hermes-agent";
+    hermes-agent = {
+      url = "github:NousResearch/hermes-agent";
+      inputs.home-manager.follows = "home-manager";
+    };
 
     nix-dokploy = {
       url = "github:el-kurto/nix-dokploy";
