@@ -16,6 +16,12 @@ in
     }:
     let
       sources = import ./_sources.nix { inherit pkgs; };
+      # Ponytail's always-on ruleset for the hosts that only get its skills.
+      # Pi gets it from the extension, so it stays out of the shared AGENTS.md.
+      instructions = pkgs.concatText "AGENTS.md" [
+        ./config/AGENTS.md
+        "${sources.ponytail}/AGENTS.md"
+      ];
     in
     {
       home.packages = with pkgs; [
@@ -27,14 +33,9 @@ in
       programs.codex.enable = true;
 
       home.file = {
-        # Ponytail's always-on ruleset for the hosts that only get its skills.
-        # Pi gets it from the extension, so it stays out of the shared AGENTS.md.
         # programs.codex.context would need an eval-time read of the pinned source.
-        ".codex/AGENTS.md".source = pkgs.concatText "AGENTS.md" [
-          ./config/AGENTS.md
-          "${sources.ponytail}/AGENTS.md"
-        ];
-        ".claude/CLAUDE.md".source = "${sources.ponytail}/AGENTS.md";
+        ".codex/AGENTS.md".source = instructions;
+        ".claude/CLAUDE.md".source = instructions;
 
         ".agents/skills" = {
           source = ./config/skills;
