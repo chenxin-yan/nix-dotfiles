@@ -591,7 +591,7 @@ summary="$(nixx eval --raw --no-update-lock-file --no-write-lock-file "$root#$ki
       else \"\")
     + \"@files\\n\"
     + builtins.concatStringsSep \"\" (map (f: (if f.recursive then \"r \" else \"f \") + f.target + \"\\n\")
-        (builtins.filter (f: f.enable) (builtins.attrValues hm.home.file)))
+        (builtins.filter (f: f.enable && !f.force) (builtins.attrValues hm.home.file)))
     + \"@brewfile\\n\" + (if nixos then \"\" else cfg.homebrew.brewfile)")" \
   || die "evaluation failed (see above); nothing was built or activated. Fix $hostrel, then rerun."
 
@@ -635,7 +635,10 @@ if [ -d "$hostdir/_installed" ]; then
     || die "evaluated system.stateVersion $ev_stateVersion differs from the installed configuration's $kept"
 fi
 
-# Home Manager refuses to replace files it does not own; list them now.
+# Home Manager refuses to replace files it does not own unless they are
+# declared with force. An early approximation of its own check, which still
+# runs at activation: files inside an existing recursive directory are not
+# looked at here.
 collisions=""
 while read -r kind_flag t; do
   [ -n "$t" ] || continue
