@@ -165,11 +165,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793894983,
-        "narHash": "sha256-Edf2dXsfHch4YEjzSdBY5+CEmBTBWa5psnlDWExBKWk=",
+        "lastModified": 1794326795,
+        "narHash": "sha256-u/bFiTT2reDPGKDeOWEJMBd7iNYFkbdcIsrymwCF8OU=",
         "owner": "oxcl",
         "repo": "nix-flake-helium-browser",
-        "rev": "9fe3f8f48c8c25b0d245d13d6c91d4cf77adc729",
+        "rev": "ee8c73c6432d7337216775ccbe726c3004af6542",
         "type": "github"
       },
       "original": {
@@ -190,11 +190,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1794279156,
-        "narHash": "sha256-HFENafQhcuO58fy1m92uIFTsCdv1P14QfPBlZjfUxf8=",
+        "lastModified": 1794330801,
+        "narHash": "sha256-hKVZg6kn6zy9DJHdN/oHHlkwtNAygQ1bQmZ2Ami2hlE=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "e782db3f00b36ab03d60977d1454e9fbdbdebbee",
+        "rev": "3d4dd108cf52e26cf0d7fb218461e53623a8ec2d",
         "type": "github"
       },
       "original": {
@@ -463,11 +463,11 @@
       },
       "locked": {
         "dir": "packaging",
-        "lastModified": 1794239258,
-        "narHash": "sha256-narhf48MmFHCvjZo3pNiJ5Zm5NGsxj6tNInkezhL/RI=",
+        "lastModified": 1794304611,
+        "narHash": "sha256-ab32dhYDL5t2j18reU1MSxlmc3PzSjJUlVF8+J35uco=",
         "owner": "AprilNEA",
         "repo": "OpenLogi",
-        "rev": "16d8cbaffb6368ede4aa7ed45250b98a188f9e34",
+        "rev": "98d60ca7b34b7e9b3fe7975ae11dff223b634c8e",
         "type": "github"
       },
       "original": {
