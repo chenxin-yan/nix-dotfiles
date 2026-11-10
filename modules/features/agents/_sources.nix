@@ -36,6 +36,17 @@
     hash = "sha256-PhPtZbeX2wBp19GtWRy+fV93+fFYZe5S487eXPDl/us=";
   };
 
+  # Fork branch of diegopetrucci/pi-extensions that allows Fast mode on
+  # Claude Fable 5.2. `rev` is the branch name so update-pins keeps following
+  # it instead of the fork's default branch.
+  # TODO: remove once diegopetrucci/pi-extensions#217 is released.
+  piFast = pkgs.fetchFromGitHub {
+    owner = "chenxin-yan";
+    repo = "pi-extensions";
+    rev = "fast/claude-fable-5-2";
+    hash = "sha256-ZOJllKATSeEfDermBEnzFjWL6mM6A/8x8PVJhxFyop4=";
+  };
+
   humanlayerSkills = pkgs.fetchFromGitHub {
     owner = "humanlayer";
     repo = "skills";

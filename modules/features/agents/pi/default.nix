@@ -33,7 +33,7 @@ in
       '';
 
       agentSources = import ../_sources.nix { inherit pkgs; };
-      inherit (agentSources) ponytail;
+      inherit (agentSources) ponytail piFast;
       piWebAccessExtension = "${config.home.homeDirectory}/.pi/agent/npm/node_modules/pi-web-access/dist/index.js";
 
       # Single source of truth for declarative pi npm packages. Names are
@@ -80,9 +80,6 @@ in
         "@hypabolic/pi-hypa"
         # /rewind checkpoint navigation and /checkpoint storage manager.
         "@ayulab/pi-rewind"
-        # /fast toggles provider Fast mode (Codex `service_tier: priority`,
-        # Claude `speed: fast` + beta) for the selected model.
-        "@diegopetrucci/pi-fast"
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
         # Desktop app observation and control. The NixOS host is headless.
@@ -178,6 +175,12 @@ in
               source = "${ponytail}";
               skills = [ ];
             }
+            # /fast toggles provider Fast mode (Codex `service_tier: priority`,
+            # Claude `speed: fast` + beta) for the selected model. Loaded from
+            # a fork so Claude Fable 5.2 is eligible.
+            # TODO: go back to "@diegopetrucci/pi-fast" in piPackages once
+            # diegopetrucci/pi-extensions#217 is released.
+            "${piFast}/extensions/fast"
           ];
           # Children skip ~/.pi/agent/AGENTS.md unless asked; this gives every
           # role the same behavior rules as the parent session.
