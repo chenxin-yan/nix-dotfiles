@@ -84,8 +84,6 @@ return {
       }
 
       -- autopair
-      require('mini.pairs').setup {}
-
       local pairs = require 'mini.pairs'
       local opts = {
 

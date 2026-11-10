@@ -12,7 +12,12 @@ return {
       opts = function(_, opts)
         return vim.tbl_deep_extend('force', opts or {}, {
           picker = {
-            actions = require('trouble.sources.snacks').actions,
+            -- Required on use: requiring it here loads Trouble at startup.
+            actions = {
+              trouble_open = function(picker)
+                require('trouble.sources.snacks').open(picker)
+              end,
+            },
             win = {
               input = {
                 keys = {

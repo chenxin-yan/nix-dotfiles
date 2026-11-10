@@ -24,7 +24,7 @@ return {
             local jdtls = require 'jdtls'
             vim.keymap.set('n', '<leader>co', function()
               jdtls.organize_imports()
-            end, { desc = 'jdtls: [O]rganize imports', buffer = buffer })
+            end, { desc = 'jdtls: [O]rganize imports', buf = buffer })
           end,
         },
       },

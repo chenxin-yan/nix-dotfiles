@@ -24,7 +24,7 @@ return {
                 apply = true,
                 context = { only = { 'source.organizeImports' } },
               }
-            end, { desc = 'Ruff: Organize Imports', buffer = buffer })
+            end, { desc = 'Ruff: Organize Imports', buf = buffer })
           end,
         },
         basedpyright = {},

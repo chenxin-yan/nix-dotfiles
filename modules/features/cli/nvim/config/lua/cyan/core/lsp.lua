@@ -32,7 +32,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     local map = function(keys, func, desc, mode)
       mode = mode or 'n'
-      vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+      vim.keymap.set(mode, keys, func, { buf = event.buf, desc = 'LSP: ' .. desc })
     end
 
     -- Execute a code action, usually your cursor needs to be on top of an error
