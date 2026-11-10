@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Update pinned fetchFromGitHub/fetchFromGitLab dependencies to their latest commits.
+# A 40-char SHA `rev` moves to the default branch's HEAD; a branch-name `rev`
+# stays as written and only its hash moves.
 #
 # Auto-discovers every `fetchFromGitHub/fetchFromGitLab { ... }` block under the repo —
 # there is no hardcoded pin list. Replacements are scoped to the matched
@@ -229,6 +231,9 @@ update_pin() {
   local new_rev new_hash
   new_rev=$(echo "$result" | jq -r '.rev')
   new_hash=$(echo "$result" | jq -r '.hash')
+  # prefetch resolves a branch to its commit; writing that SHA back would
+  # turn the pin into one that follows the default branch from then on.
+  [[ -z "$ref" ]] || new_rev="$cur_rev"
 
   if [[ -z "$new_rev" || -z "$new_hash" \
         || "$new_rev" == "null" || "$new_hash" == "null" ]]; then
