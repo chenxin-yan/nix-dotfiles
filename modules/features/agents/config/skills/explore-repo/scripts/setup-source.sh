@@ -39,8 +39,9 @@ fi
 pkg_json="$root/node_modules/$pkg/package.json"
 version=""
 if [[ -f "$pkg_json" ]]; then
-  version="$(node -p "require('$pkg_json').version" 2>/dev/null || true)"
-  [[ -z "$repo_url" ]] && repo_url="$(node -p "(require('$pkg_json').repository?.url||require('$pkg_json').repository||'').toString()" 2>/dev/null || true)"
+  # The path goes in as an argument: inside the JS source a quote in it would break the parse.
+  version="$(node -p 'require(process.argv[1]).version' "$pkg_json" 2>/dev/null || true)"
+  [[ -z "$repo_url" ]] && repo_url="$(node -p '(require(process.argv[1]).repository?.url||require(process.argv[1]).repository||"").toString()' "$pkg_json" 2>/dev/null || true)"
 fi
 [[ -z "$version" ]] && echo "WARN: $pkg not found in node_modules; version unknown"
 
