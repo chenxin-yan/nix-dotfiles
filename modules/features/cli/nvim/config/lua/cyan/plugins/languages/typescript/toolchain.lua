@@ -12,20 +12,6 @@ local function package_version(root)
   return version or false
 end
 
--- ponytail: synchronous probe, capped at 2s; resolve asynchronously if startup latency matters.
-local function native_binary(root)
-  local path = root .. '/node_modules/.bin/tsc'
-  if vim.fn.executable(path) == 1 then
-    local ok, result = pcall(function()
-      return vim.system({ path, '--version' }, { text = true }):wait(2000)
-    end)
-    local version = ok and result.code == 0 and vim.version.parse(result.stdout or '')
-    if version and version.major >= 7 then
-      return path
-    end
-  end
-end
-
 -- root_dir supplies a normalized absolute root, retained in the client config for launch revalidation.
 -- No selection cache: dependency installs and LSP restarts must re-read the workspace.
 function M.resolve(root)
@@ -40,9 +26,9 @@ function M.resolve(root)
     if legacy and vim.fn.filereadable(tsdk .. '/tsserver.js') == 1 then
       return { server = 'vtsls', tsdk = tsdk }
     end
-  elseif override == 'native' or version == nil or (version and version.major >= 7) then
-    local cmd = native_binary(root)
-    if cmd then
+  elseif version and version.major >= 7 then
+    local cmd = root .. '/node_modules/.bin/tsc'
+    if vim.fn.executable(cmd) == 1 then
       return { server = 'tsc', cmd = { cmd, '--lsp', '--stdio' } }
     end
   end

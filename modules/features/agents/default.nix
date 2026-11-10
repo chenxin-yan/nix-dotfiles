@@ -24,12 +24,18 @@ in
       ];
 
       # Codex reads skills from ~/.agents/skills natively. Auth: `codex login`.
-      programs.codex = {
-        enable = true;
-        context = ./config/AGENTS.md;
-      };
+      programs.codex.enable = true;
 
       home.file = {
+        # Ponytail's always-on ruleset for the hosts that only get its skills.
+        # Pi gets it from the extension, so it stays out of the shared AGENTS.md.
+        # programs.codex.context would need an eval-time read of the pinned source.
+        ".codex/AGENTS.md".source = pkgs.concatText "AGENTS.md" [
+          ./config/AGENTS.md
+          "${sources.ponytail}/AGENTS.md"
+        ];
+        ".claude/CLAUDE.md".source = "${sources.ponytail}/AGENTS.md";
+
         ".agents/skills" = {
           source = ./config/skills;
           recursive = true;

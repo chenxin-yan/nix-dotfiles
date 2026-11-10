@@ -35,6 +35,7 @@ in
       agentSources = import ../_sources.nix { inherit pkgs; };
       inherit (agentSources) ponytail piFast;
       piWebAccessExtension = "${config.home.homeDirectory}/.pi/agent/npm/node_modules/pi-web-access/dist/index.js";
+      ponytailExtension = "${ponytail}/pi-extension/index.js";
 
       # Single source of truth for declarative pi npm packages. Names are
       # bare here; the `npm:` prefix is added for settings.json below.
@@ -119,8 +120,7 @@ in
       ];
 
       home.sessionVariables = {
-        # Pins ponytail to full; overrides ~/.config/ponytail/config.json.
-        PONYTAIL_DEFAULT_MODE = "full";
+        PONYTAIL_QUIET_STARTUP = "1";
       };
 
       # pi-web-access prefers this path when XDG_CONFIG_HOME is set. The key
@@ -193,6 +193,9 @@ in
           # Thinking stays high everywhere on purpose. Anthropic's effort guide
           # says Haiku 5.5 skips searches and stops early at low, and recommends
           # high for longer agent tasks on Haiku and Sonnet 5.5.
+          #
+          # Foreground children skip ambient extensions, so the two roles that
+          # write code load ponytail explicitly; read-only roles go without.
           subagents.agentOverrides = {
             scout = {
               model = "anthropic/claude-haiku-5-5";
@@ -201,6 +204,7 @@ in
             worker = {
               model = "anthropic/claude-opus-5-5";
               thinking = "high";
+              subagentOnlyExtensions = [ ponytailExtension ];
             };
             reviewer = {
               model = "openai-codex/gpt-6-astra";
@@ -223,6 +227,7 @@ in
             delegate = {
               model = "inherit";
               thinking = "high";
+              subagentOnlyExtensions = [ ponytailExtension ];
             };
           };
           # Custom theme name (matches `name` field inside the JSON file).
