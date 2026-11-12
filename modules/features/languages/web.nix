@@ -1,11 +1,6 @@
-{ inputs, ... }:
 {
   features.web.homeManager =
     { pkgs, ... }:
-    let
-      # TODO: back to pkgs once nixpkgs-cached is removed from flake.nix.
-      cached = inputs.nixpkgs-cached.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-    in
     {
       home.packages = with pkgs; [
         curlie
@@ -17,8 +12,8 @@
         emmet-language-server
         prettierd
         biome
-        cached.oxfmt
-        cached.oxlint
+        oxfmt
+        oxlint
         taplo
         yaml-language-server
       ];

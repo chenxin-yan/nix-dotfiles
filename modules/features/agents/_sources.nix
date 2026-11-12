@@ -18,15 +18,15 @@
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d";
-    hash = "sha256-3vhd77xfZjKUYJsIwPFevIZPUAzUgZXr0RYj5NQrBwk=";
+    rev = "5863806dd4e15c63174bee4e7515a4256792ecfa";
+    hash = "sha256-AYSRCvBL8TDDdW3rgKu2T7gl4YYDoDId0jYbabEFyfs=";
   };
 
   pstack = pkgs.fetchFromGitHub {
     owner = "backnotprop";
     repo = "pstack";
-    rev = "a6342ded43a2437e3c664b46c2cff103787773fd";
-    hash = "sha256-/zYoEU1nxKmG2mWcuxvkM7z6krZYs/3YZ1QjhOP7LN4=";
+    rev = "97de40dcca2fa396124c3e70a1d8cc28005f60a3";
+    hash = "sha256-7W0+8uH4Y3z1fPSdUrS1Mha576SlSYUUr+FBja4zr4c=";
   };
 
   ponytail = pkgs.fetchFromGitHub {
@@ -34,17 +34,6 @@
     repo = "ponytail";
     rev = "96608e078b2d5ea607c5c3b8b5a54d1c1fba6846";
     hash = "sha256-PhPtZbeX2wBp19GtWRy+fV93+fFYZe5S487eXPDl/us=";
-  };
-
-  # Fork branch of diegopetrucci/pi-extensions that allows Fast mode on
-  # Claude Fable 5.2. `rev` is the branch name so update-pins keeps following
-  # it instead of the fork's default branch.
-  # TODO: remove once diegopetrucci/pi-extensions#217 is released.
-  piFast = pkgs.fetchFromGitHub {
-    owner = "chenxin-yan";
-    repo = "pi-extensions";
-    rev = "fast/claude-fable-5-2";
-    hash = "sha256-ZOJllKATSeEfDermBEnzFjWL6mM6A/8x8PVJhxFyop4=";
   };
 
   humanlayerSkills = pkgs.fetchFromGitHub {
