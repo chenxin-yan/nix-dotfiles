@@ -128,12 +128,11 @@ in
       home.file = {
         ".pi/agent/settings.json".text = builtins.toJSON {
           defaultProvider = "anthropic";
-          defaultModel = "claude-fable-5-2";
+          defaultModel = "claude-opus-5-5";
           defaultThinkingLevel = "high";
           enabledModels = [
-            "anthropic/claude-fable-5-2"
-            "openai-codex/gpt-6-astra"
             "anthropic/claude-opus-5-5"
+            "anthropic/claude-fable-5-2"
           ];
           # Pi passes its managed ~/.pi/agent/npm install prefix explicitly;
           # this wrapper only supplies npm from the Nix-managed Node package.
@@ -172,7 +171,7 @@ in
           subagents.agentOverrides = {
             scout = {
               model = "anthropic/claude-haiku-5-5";
-              thinking = "high";
+              thinking = "medium";
             };
             worker = {
               model = "anthropic/claude-opus-5-5";
