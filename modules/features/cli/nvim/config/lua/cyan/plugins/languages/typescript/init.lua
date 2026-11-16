@@ -117,6 +117,8 @@ return {
           filetypes = js_filetypes,
           root_dir = toolchain.root_dir 'tsc',
           cmd = toolchain.cmd,
+          -- The editor's --runExternalCode: lets a project's tsconfig contentMappers run. On for every project.
+          init_options = { runExternalCode = true },
           on_attach = function(_, buffer)
             -- A buffer may have used legacy before the user restarted LSP with a native override.
             for _, map in ipairs(vim.api.nvim_buf_get_keymap(buffer, 'n')) do
