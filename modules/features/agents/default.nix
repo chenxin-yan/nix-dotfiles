@@ -12,30 +12,88 @@ in
       config,
       osConfig,
       pkgs,
+      lib,
       ...
     }:
     let
       sources = import ./_sources.nix { inherit pkgs; };
-      # Ponytail's always-on ruleset for the hosts that only get its skills.
-      # Pi gets it from the extension, so it stays out of the shared AGENTS.md.
+      ponytailSkills = [
+        "ponytail"
+        "ponytail-review"
+        "ponytail-audit"
+        "ponytail-debt"
+        "ponytail-gain"
+        "ponytail-help"
+      ];
+      ponytailSkillFiles = lib.listToAttrs (
+        map (
+          s:
+          lib.nameValuePair ".agents/skills/${s}" {
+            source = "${sources.ponytail}/skills/${s}";
+            recursive = true;
+          }
+        ) ponytailSkills
+      );
+      # Ponytail's always-on ruleset for Codex, which only gets its skills.
+      # Pi and Claude Code get it from their plugin hooks, so it stays out of
+      # the shared AGENTS.md.
       instructions = pkgs.concatText "AGENTS.md" [
         ./config/AGENTS.md
         "${sources.ponytail}/AGENTS.md"
       ];
     in
     {
-      home.packages = with pkgs; [
+      programs.claude-code = {
+        enable = true;
         # Claude Code prefers this over its own /login.
-        (claudeToken.wrap { inherit pkgs osConfig; } "CLAUDE_CODE_OAUTH_TOKEN" claude-code)
-      ];
+        package = claudeToken.wrap { inherit pkgs osConfig; } "CLAUDE_CODE_OAUTH_TOKEN" pkgs.claude-code;
+        context = ./config/AGENTS.md;
+        # Claude Code writes settings.json itself (/config, /model, plugin
+        # state), so declared keys are merged in at activation instead.
+        mutableSettings = true;
+        # Claude Code installs enabled plugins from this marketplace on launch,
+        # reading them in place from the pinned store path.
+        marketplaces.ponytail = sources.ponytail;
+        settings = {
+          model = "opus[1m]";
+          effortLevel = "high";
+          enabledPlugins."ponytail@ponytail" = true;
+          # The plugin brings its hooks (levels, subagent rules, band); its
+          # skills would duplicate the ~/.agents/skills copies shared with pi
+          # and Codex. A bare name would turn off both copies. Cost: the band's
+          # level/review/audit buttons call the plugin's copies and do nothing.
+          skillOverrides = lib.genAttrs (map (s: "ponytail:${s}") ponytailSkills) (_: "off");
+          env = {
+            DISABLE_TELEMETRY = "1";
+            DISABLE_ERROR_REPORTING = "1";
+          };
+          # herdr's Claude integration, pinned to the installed herdr instead
+          # of `herdr integration install claude`.
+          hooks.SessionStart = [
+            {
+              matcher = "*";
+              hooks = [
+                {
+                  type = "command";
+                  command = "bash '${config.programs.claude-code.configDir}/hooks/herdr-agent-state.sh' session";
+                  timeout = 10;
+                }
+              ];
+            }
+          ];
+        };
+        hooks."herdr-agent-state.sh" = "${pkgs.herdr}/share/herdr/integrations/claude/herdr-agent-state.sh";
+        # Pi's researcher and evidence-auditor roles; Claude's built-in
+        # Explore and general-purpose agents cover scout and worker.
+        agentsDir = ./config/claude-agents;
+      };
 
       # Codex reads skills from ~/.agents/skills natively. Auth: `codex login`.
       programs.codex.enable = true;
 
-      home.file = {
+      home.file = ponytailSkillFiles // {
         # programs.codex.context would need an eval-time read of the pinned source.
         ".codex/AGENTS.md".source = instructions;
-        ".claude/CLAUDE.md".source = instructions;
 
         ".agents/skills" = {
           source = ./config/skills;
@@ -106,31 +164,6 @@ in
         };
         ".agents/skills/herdr" = {
           source = "${pkgs.herdr}/share/skills/herdr/herdr";
-          recursive = true;
-        };
-
-        ".agents/skills/ponytail" = {
-          source = "${sources.ponytail}/skills/ponytail";
-          recursive = true;
-        };
-        ".agents/skills/ponytail-review" = {
-          source = "${sources.ponytail}/skills/ponytail-review";
-          recursive = true;
-        };
-        ".agents/skills/ponytail-audit" = {
-          source = "${sources.ponytail}/skills/ponytail-audit";
-          recursive = true;
-        };
-        ".agents/skills/ponytail-debt" = {
-          source = "${sources.ponytail}/skills/ponytail-debt";
-          recursive = true;
-        };
-        ".agents/skills/ponytail-gain" = {
-          source = "${sources.ponytail}/skills/ponytail-gain";
-          recursive = true;
-        };
-        ".agents/skills/ponytail-help" = {
-          source = "${sources.ponytail}/skills/ponytail-help";
           recursive = true;
         };
 
