@@ -179,7 +179,7 @@ in
               subagentOnlyExtensions = [ ponytailExtension ];
             };
             reviewer = {
-              model = "openai-codex/gpt-6-astra";
+              model = "openai-codex/gpt-6.2-astra";
               thinking = "high";
             };
             researcher = {
@@ -193,7 +193,7 @@ in
               subagentOnlyExtensions = [ piWebAccessExtension ];
             };
             oracle = {
-              model = "openai-codex/gpt-6-astra";
+              model = "openai-codex/gpt-6.2-astra";
               thinking = "high";
             };
             delegate = {
