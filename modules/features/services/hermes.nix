@@ -47,7 +47,7 @@
             osConfig.sops.secrets.hermes-env.path
             osConfig.sops.templates.hermes-claude-env.path
           ];
-          environment.AGENT_BROWSER_EXECUTABLE_PATH = "${pkgs.chromium}/bin/chromium";
+          settings.browser.executable_path = "${pkgs.chromium}/bin/chromium";
           extraPackages = with pkgs; [
             agent-browser
             gh

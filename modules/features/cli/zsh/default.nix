@@ -164,7 +164,7 @@
       programs.oh-my-posh = {
         enable = true;
         settings = {
-          version = 3;
+          version = 4;
           final_space = true;
 
           palette = {
@@ -200,7 +200,7 @@
                   foreground = "p:pink";
                   type = "path";
                   style = "plain";
-                  properties = {
+                  options = {
                     folder_icon = "....";
                     style = "agnoster_short";
                   };
@@ -210,7 +210,7 @@
                   foreground = "p:lavender";
                   type = "git";
                   style = "plain";
-                  properties = {
+                  options = {
                     branch_icon = " ";
                     cherry_pick_icon = " ";
                     commit_icon = " ";

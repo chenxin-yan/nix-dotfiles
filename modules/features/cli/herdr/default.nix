@@ -90,7 +90,7 @@
           };
           ui = {
             prompt_new_tab_name = false;
-            pane_borders = false;
+            pane_borders = "off";
           };
         };
       };

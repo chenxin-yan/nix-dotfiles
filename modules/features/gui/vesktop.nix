@@ -2,6 +2,8 @@
   features.vesktop.homeManager = {
     programs.vesktop = {
       enable = true;
+      # Vesktop rewrites settings.json at runtime, replacing the HM symlink.
+      mutableSettings = true;
 
       settings = {
         disableMinSize = true;

@@ -74,7 +74,6 @@
         # that skipped the unlock (a plain ext4 or a planted hibernation image
         # with our UUID) can be used. tpm2-device=auto is still needed: the
         # measure option turns off the token plugin that would imply it.
-        boot.initrd.systemd.enable = true;
         boot.initrd.luks.devices.cryptroot = {
           device = "/dev/disk/by-partuuid/0644c44e-5125-4041-86ec-81fc78a64f1b";
           # Lets fstrim reach the SSD. The tradeoff: someone holding the disk

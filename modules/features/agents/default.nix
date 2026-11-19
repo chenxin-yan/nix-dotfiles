@@ -71,7 +71,7 @@ in
           # of `herdr integration install claude`.
           hooks.SessionStart = [
             {
-              matcher = "*";
+              matcher = "^(startup|resume|clear|compact|fork)$";
               hooks = [
                 {
                   type = "command";

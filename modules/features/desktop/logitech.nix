@@ -1,13 +1,26 @@
-{ inputs, ... }:
 {
   features.logitech = {
     darwin.homebrew.casks = [ "openlogi" ];
 
-    # The module owns the agent unit and its graphical-session enablement.
-    nixos = {
-      imports = [ inputs.openlogi.nixosModules.default ];
-      programs.openlogi.enable = true;
-    };
+    nixos =
+      { config, lib, ... }:
+      {
+        programs.openlogi.enable = true;
+        # nixpkgs' module installs the package and udev rules but never starts
+        # the agent, and the packaged unit sits in share/, which
+        # systemd.packages doesn't read.
+        systemd.user.services.openlogi-agent = {
+          description = "OpenLogi background agent";
+          wantedBy = [ "graphical-session.target" ];
+          after = [ "graphical-session.target" ];
+          partOf = [ "graphical-session.target" ];
+          serviceConfig = {
+            ExecStart = lib.getExe' config.programs.openlogi.package "openlogi-agent";
+            Restart = "on-failure";
+            RestartSec = 5;
+          };
+        };
+      };
 
     # config.toml is a read-only store file: the GUI can't save changes
     # (it rolls them back and shows an error), so settings change here.

@@ -30,7 +30,6 @@
         _module.args.nixos-raspberrypi = inputs.nixos-raspberrypi;
         imports = with inputs.nixos-raspberrypi.nixosModules; [
           inputs.nixos-raspberrypi.lib.inject-overlays
-          nixpkgs-rpi
           trusted-nix-caches
           raspberry-pi-5.base
           sd-image
