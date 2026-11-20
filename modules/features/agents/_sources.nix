@@ -18,15 +18,15 @@
   mattpocockSkills = pkgs.fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "5863806dd4e15c63174bee4e7515a4256792ecfa";
-    hash = "sha256-AYSRCvBL8TDDdW3rgKu2T7gl4YYDoDId0jYbabEFyfs=";
+    rev = "abeeaf95660ba9e8b7c753eb38f441ca707a8823";
+    hash = "sha256-fc5+qmchp1IQ/rQP1olWKC1eC4VdYhaB7YYzC3+JBe0=";
   };
 
   pstack = pkgs.fetchFromGitHub {
     owner = "backnotprop";
     repo = "pstack";
-    rev = "0d2dc00df47d7686c94324cfe9c3444710d9f16d";
-    hash = "sha256-9RtfIKPuaLmQjSp+fyr3cs1aBY3uSAZ52sPmPx5+A+E=";
+    rev = "4a4f41c46c67a006658ac17cef2d092593f6b26a";
+    hash = "sha256-gm5SO1fEa13evE0mLUsVFn1ueqZ5YfQvU4/im55EglE=";
   };
 
   ponytail = pkgs.fetchFromGitHub {
