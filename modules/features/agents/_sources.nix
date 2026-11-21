@@ -11,8 +11,8 @@
   vercelSkills = pkgs.fetchFromGitHub {
     owner = "vercel-labs";
     repo = "agent-skills";
-    rev = "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62";
-    hash = "sha256-uujS8sGulF6STR4adqYCHBxPY9pHddXfFfX6UqAG24c=";
+    rev = "5a37a6329fbad3666c3207392a6a7c0110e92efb";
+    hash = "sha256-gGacyJJnu1wf2y1CKGVjIyVbTOBnkly2ouYQSbgPb0E=";
   };
 
   mattpocockSkills = pkgs.fetchFromGitHub {
@@ -25,8 +25,8 @@
   pstack = pkgs.fetchFromGitHub {
     owner = "backnotprop";
     repo = "pstack";
-    rev = "4a4f41c46c67a006658ac17cef2d092593f6b26a";
-    hash = "sha256-gm5SO1fEa13evE0mLUsVFn1ueqZ5YfQvU4/im55EglE=";
+    rev = "c3464c11c60b1352d5e8f5f0428a3a6943837568";
+    hash = "sha256-SgUWRVdHeCqQ4mKHG8JcbHvYbM9GAcr32MvBtNc5zks=";
   };
 
   ponytail = pkgs.fetchFromGitHub {
