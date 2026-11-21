@@ -90,7 +90,7 @@
         # rewriting resolv.conf: https://github.com/tailscale/tailscale/issues/4254
         services.resolved.enable = true;
         # TODO: remove once https://github.com/NixOS/nixpkgs/issues/569970 is
-        # fixed: dhcpcd hands the router's DNS servers to resolved through a
+        # fixed (fix PR: https://github.com/NixOS/nixpkgs/pull/569997): dhcpcd hands the router's DNS servers to resolved through a
         # polkit rule (nixpkgs#370971) but doesn't turn polkit on; without it
         # resolved has no upstream servers, and Docker containers can't
         # resolve names.
