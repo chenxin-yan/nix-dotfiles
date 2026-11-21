@@ -1,8 +1,7 @@
 local viteplus = require 'cyan.plugins.languages.web.viteplus'
 
--- astro is intentionally absent: oxfmt does not yet support .astro
--- (https://github.com/oxc-project/oxc/issues/15665). svelte needs svelte/compiler
--- installed in the project for oxfmt to work on .svelte files.
+-- svelte needs svelte/compiler installed in the project for oxfmt to work on .svelte
+-- files; astro needs oxfmt >= 0.78, @astrojs/compiler-rs, and `astro: true` in the oxfmt config.
 local oxfmt_supported = {
   javascript = true,
   javascriptreact = true,
@@ -12,6 +11,7 @@ local oxfmt_supported = {
   jsonc = true,
   vue = true,
   svelte = true,
+  astro = true,
   css = true,
   scss = true,
   less = true,
