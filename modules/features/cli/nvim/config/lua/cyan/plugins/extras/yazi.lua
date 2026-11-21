@@ -1,7 +1,9 @@
 return {
   'mikavilpas/yazi.nvim',
+  -- Load at startup so open_for_directories can take over `nvim <dir>`.
+  event = 'VeryLazy',
   init = function()
-    -- yazi.nvim documents this so it can open directories:
+    -- yazi.nvim recommends this with open_for_directories:
     -- https://github.com/mikavilpas/yazi.nvim/issues/802
     vim.g.loaded_netrwPlugin = 1
   end,
@@ -19,6 +21,7 @@ return {
     },
   },
   opts = {
+    open_for_directories = true,
     yazi_floating_window_border = 'none',
     keymaps = {
       replace_in_directory = '<c-r>',
