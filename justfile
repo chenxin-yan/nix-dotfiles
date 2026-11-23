@@ -52,6 +52,8 @@ secret-set NAME FILE='secrets/shared.yaml':
       sops encrypt --in-place "$file"
     fi
     read -rsp "Value for $name: " value; echo
+    # read without readline keeps a terminal's bracketed-paste markers.
+    value=${value#$'\e[200~'}; value=${value%$'\e[201~'}
     # JSON on stdin keeps the value out of argv and shell history.
     printf '%s' "$value" | jq -Rs . | sops set --value-stdin "$file" "[\"$name\"]"
     echo "Set $name in $file. Commit it, then switch the hosts that use it."
