@@ -32,8 +32,8 @@
   ponytail = pkgs.fetchFromGitHub {
     owner = "DietrichGebert";
     repo = "ponytail";
-    rev = "96608e078b2d5ea607c5c3b8b5a54d1c1fba6846";
-    hash = "sha256-PhPtZbeX2wBp19GtWRy+fV93+fFYZe5S487eXPDl/us=";
+    rev = "ebd8654c2c627f721eb8f9c0d1bd4090a29f9e10";
+    hash = "sha256-5m6JW3U6EMYUg4YVLh7nRRTWGY3shrFQ0wK0bediVFc=";
   };
 
   humanlayerSkills = pkgs.fetchFromGitHub {
