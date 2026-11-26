@@ -42,4 +42,11 @@
     rev = "4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329";
     hash = "sha256-ZuDObFjOFAahsvrxqDbL9FHrMVWx6Lnh5dttdsW+czo=";
   };
+
+  caldoSkills = pkgs.fetchFromGitHub {
+    owner = "caldoai";
+    repo = "skills";
+    rev = "d5b68dace378219890d821adb3685538e2c69b04";
+    hash = "sha256-VkGhevHArTXRUV87vR5stCIOb6hPqTRJFIOsvwB68Lg=";
+  };
 }

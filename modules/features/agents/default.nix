@@ -269,6 +269,15 @@ in
           recursive = true;
         };
 
+        ".agents/skills/untangle-codebase" = {
+          source = "${sources.caldoSkills}/skills/untangle-codebase";
+          recursive = true;
+        };
+        ".agents/skills/prune-tests" = {
+          source = "${sources.caldoSkills}/skills/prune-tests";
+          recursive = true;
+        };
+
       };
     };
 }
