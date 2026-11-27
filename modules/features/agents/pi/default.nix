@@ -77,8 +77,6 @@ in
         # Local deterministic compression for noisy Pi tool output. Adds
         # /hypa diagnostics plus hypa_shell/read/grep/find/ls tools.
         "@hypabolic/pi-hypa"
-        # /rewind checkpoint navigation and /checkpoint storage manager.
-        "@ayulab/pi-rewind"
         # /fast toggles provider Fast mode (Codex `service_tier: priority`,
         # Claude `speed: fast` + beta) for the selected model.
         "@diegopetrucci/pi-fast"
